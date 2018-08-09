@@ -759,8 +759,8 @@ def binding_energy(job_total,
         job_names[i] = "'" + job_names[i] + "'"
     job_names = ', '.join(job_names)
 
-    output = '''from merlin import *
-import jobs
+    output = '''
+import squid import jobs
 try:
     s_units=sys.argv[1]
 except:

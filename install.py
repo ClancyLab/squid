@@ -212,7 +212,6 @@ autoload bashcompinit
 bashcompinit
 
 # Aliases
-alias merlin="$PYTHON_PATH -i $CWD/console_scripts/merlin.py"
 alias chkDFT='python $CWD/console_scripts/chkDFT.py'
 alias scanDFT='python $CWD/console_scripts/scanDFT.py'
 alias chko='function _chko() { chkDFT $1 -dft orca $@ ; } ; _chko'

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Merlin documentation build configuration file, created by
+# Squid documentation build configuration file, created by
 # sphinx-quickstart on Mon Sep 12 15:39:28 2016.
 #
 # This file is execfile()d with the current directory set to its
@@ -55,7 +55,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Merlin'
+project = u'Squid'
 copyright = u'2016, Henry Herbol'
 author = u'Henry Herbol'
 
@@ -144,7 +144,7 @@ html_theme_options = {
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
 #
-# html_title = u'Merlin v0.0.1'
+# html_title = u'Squid v0.0.1'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #
@@ -244,7 +244,7 @@ html_sidebars = { '**': ['globaltoc.html', 'relations.html', 'sourcelink.html', 
 # html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'Merlindoc'
+htmlhelp_basename = 'Squiddoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -272,7 +272,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'Merlin.tex', u'Merlin Documentation',
+    (master_doc, 'Squid.tex', u'Squid Documentation',
      u'Henry Herbol', 'manual'),
 ]
 
@@ -314,7 +314,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'merlin', u'Merlin Documentation',
+    (master_doc, 'squid', u'Squid Documentation',
      [author], 1)
 ]
 
@@ -329,8 +329,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'Merlin', u'Merlin Documentation',
-     author, 'Merlin', 'One line description of project.',
+    (master_doc, 'Squid', u'Squid Documentation',
+     author, 'Squid', 'One line description of project.',
      'Miscellaneous'),
 ]
 

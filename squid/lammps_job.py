@@ -638,10 +638,9 @@ export LD_LIBRARY_PATH=/fs/home/yma3/usr/local/lib/fftw3/lib:$LD_LIBRARY_PATH
     NBS.close()
 
     pyScript = open(lineName + '.py', 'w')
-    pyScriptText = '''from lammps_job import job
+    pyScriptText = '''from squid.lammps_job import job
 import cPickle as pickle
 import os
-from merlin import *
 os.chdir(\'''' + currdir + '''\')
 
 run_name = "''' + run_name + '''"

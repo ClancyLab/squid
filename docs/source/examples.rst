@@ -86,8 +86,8 @@ acid dimer.
 
 .. code-block:: python
 
-	import files
-	import orca
+	from squid import orca
+	from squid import files
 
 	# Read in the xyz file
 	frames = files.read_xyz("acetic_acid_dimer.xyz")
@@ -103,8 +103,8 @@ of a DFT simulation.  Note, this uses g09's cubegen and formchk code.
 
 .. code-block:: python
 
-	import g09
-	import files
+	from squid import g09
+	from squid import files
 
 
 	# Run water simulation
@@ -159,8 +159,8 @@ in your extra_section before trying the visualization:
 
 .. code-block:: python
 
-	import orca
-	import structures
+	from squid import orca
+	from squid import structures
 
 	ROUTE_OPT = '! B97-D3 def2-TZVP OPT'
 	EXTRA_SECTION = ''
@@ -188,8 +188,8 @@ DFT - Electrostatic Potential Mapped on Electron Density Post Processing
 
 .. code-block:: python
 
-	import orca
-	import structures
+	from squid import orca
+	from squid import structures
 
 	ROUTE_OPT = '! B97-D3 def2-TZVP OPT'
 	EXTRA_SECTION = ''
@@ -227,8 +227,8 @@ with the NEB simulation.
 
 .. code-block:: python
 
-	import files
-	import neb
+	from squid import neb
+	from squid import files
 
 	frames = files.read_xyz("CNH_HCN.xyz")
 	new_opt_params = {'step_size': 0.1,
@@ -325,9 +325,9 @@ equilibrate the system via NPT and NVT calculations.
 
 .. code-block:: python
 
-	import structures
-	import lammps_job
-	import units
+	from squid import units
+	from squid import structures
+	from squid import lammps_job
 
 	# Generate the system object to hold our solvent
 	solvent_box = structures.System(name="solv_box", box_size=(15.0, 15.0, 15.0), box_angles=(90.0, 90.0, 90.0), periodic=True)
@@ -406,7 +406,7 @@ currently :func:`quick_min` does not work in this regard.
 
 	import numpy as np
 
-	from bfgs import bfgs
+	from squid.optimizers.bfgs import bfgs
 	# from lbfgs import lbfgs
 	# from steepest_descent import steepest_descent
 	# from fire import fire
