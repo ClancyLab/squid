@@ -1,0 +1,516 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>frc_opls &#8212; Merlin 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Merlin 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for frc_opls</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The OPLS Forcefield module contains functionality for parsing the OPLS</span>
+<span class="sd">forcefield and typing appropriately.</span>
+
+<span class="sd">- :func:`opls_options`</span>
+<span class="sd">- :func:`read_opls_parameters`</span>
+<span class="sd">- :func:`set_forcefield_parameters`</span>
+<span class="sd">- :func:`check_net_charge`</span>
+<span class="sd">- :func:`check_consistency`</span>
+
+<span class="sd">------------</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># System imports</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="c1"># Clancelot imports</span>
+<span class="kn">import</span> <span class="nn">files</span>
+<span class="kn">import</span> <span class="nn">units</span>
+<span class="kn">import</span> <span class="nn">structures</span>
+<span class="kn">import</span> <span class="nn">sysconst</span>
+
+
+<div class="viewcode-block" id="opls_options"><a class="viewcode-back" href="../codebase.html#frc_opls.opls_options">[docs]</a><span class="k">def</span> <span class="nf">opls_options</span><span class="p">(</span><span class="n">molecule</span><span class="p">,</span> <span class="n">parameter_file</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">opls_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Attempt to automatically type a molecule using the OPLS forcefield. If it</span>
+<span class="sd">    works, this will add forcefield types and parameters to the passed</span>
+<span class="sd">    molecule object.</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">        molecule: :class:`structures.Molecule`</span>
+<span class="sd">            A molecule object containing atomic and bonding information.</span>
+<span class="sd">        parameter_file: *str, optional*</span>
+<span class="sd">            Relative or absolute path to an opls parameter file, written in</span>
+<span class="sd">            the Tinker file format.</span>
+
+<span class="sd">    **Returns**</span>
+
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">atom_types</span><span class="p">,</span> <span class="n">bond_types</span><span class="p">,</span>
+        <span class="n">angle_types</span><span class="p">,</span> <span class="n">dihedral_types</span><span class="p">)</span> <span class="o">=</span> <span class="n">read_opls_parameters</span><span class="p">(</span><span class="n">parameter_file</span><span class="p">)</span>
+
+    <span class="n">elements_by_structure_indices</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">t</span><span class="o">.</span><span class="n">index2</span><span class="p">,</span> <span class="n">units</span><span class="o">.</span><span class="n">elem_i2s</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">element</span><span class="p">))</span>
+                                         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">atom_types</span><span class="p">])</span>
+    <span class="n">elements_by_structure_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;X&#39;</span>
+
+    <span class="k">def</span> <span class="nf">add_to_list</span><span class="p">(</span><span class="n">dic</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">dic</span><span class="p">:</span>
+            <span class="n">dic</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dic</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span>
+
+    <span class="n">dihedral_types_by_element</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dihedral_types</span><span class="p">:</span>
+        <span class="n">structure_indices</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">index2s</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">elements_by_structure_indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">structure_indices</span><span class="p">]</span>
+        <span class="n">add_to_list</span><span class="p">(</span><span class="n">dihedral_types_by_element</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">elements</span><span class="p">),</span> <span class="n">d</span><span class="p">)</span>
+        <span class="n">add_to_list</span><span class="p">(</span><span class="n">dihedral_types_by_element</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">elements</span><span class="p">)),</span> <span class="n">d</span><span class="p">)</span>
+
+    <span class="n">atoms</span><span class="p">,</span> <span class="n">bonds</span><span class="p">,</span> <span class="n">angles</span><span class="p">,</span> <span class="n">dihedrals</span> <span class="o">=</span> <span class="n">files</span><span class="o">.</span><span class="n">read_cml</span><span class="p">(</span><span class="n">molecule</span><span class="p">,</span>
+                                                     <span class="n">parameter_file</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">:</span>
+        <span class="n">a</span><span class="o">.</span><span class="n">index2_options</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dihedrals</span><span class="p">:</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">element</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">atoms</span><span class="p">])</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">dihedral_types_by_element</span><span class="p">[</span><span class="n">elements</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">elements</span> <span class="ow">in</span> <span class="n">dihedral_types_by_element</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span>
+                <span class="n">a</span><span class="o">.</span><span class="n">index2_options</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">set</span><span class="p">())</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">dihedral_types_by_element</span><span class="p">[</span><span class="n">elements</span><span class="p">]:</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+                    <span class="n">d</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">index2_options</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">index2s</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Error: dihedral&#39;</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span>
+                   <span class="s1">&#39;does not exist in OPLS file&#39;</span><span class="p">,</span> <span class="n">parameter_file</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">element</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="n">a</span><span class="o">.</span><span class="n">index2_options</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">option</span><span class="p">)</span>
+
+        <span class="n">options</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">index2_options</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">index2_options</span><span class="p">)):</span>
+            <span class="n">options</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">index2_options</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="read_opls_parameters"><a class="viewcode-back" href="../codebase.html#frc_opls.read_opls_parameters">[docs]</a><span class="k">def</span> <span class="nf">read_opls_parameters</span><span class="p">(</span><span class="n">parameter_file</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">opls_path</span><span class="p">,</span>
+                         <span class="n">pair_style</span><span class="o">=</span><span class="s1">&#39;lj/cut&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads an opls parameter file written in the Tinker file format.</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">        parameter_file: *str, optional*</span>
+<span class="sd">            Relative or absolute path to an opls parameter file, written in</span>
+<span class="sd">            the Tinker file format.</span>
+<span class="sd">        pair_style: *str, optional*</span>
+<span class="sd">            The pair style to be assigned.</span>
+
+<span class="sd">    **Returns**</span>
+
+<span class="sd">        elements: *dict*</span>
+<span class="sd">            Dictionary of elements as strings, with associated forcefield</span>
+<span class="sd">            types stored as :class:`structures.Struct`.</span>
+<span class="sd">        atom_types: *list,* :class:`structures.Struct`</span>
+<span class="sd">            A list of the forcefield types for atoms, stored as</span>
+<span class="sd">            :class:`structures.Struct`.</span>
+<span class="sd">        bond_types: *list,* :class:`structures.Struct`</span>
+<span class="sd">            A list of the forcefield types for bonds, stored as</span>
+<span class="sd">            :class:`structures.Struct`.</span>
+<span class="sd">        angle_types: *list,* :class:`structures.Struct`</span>
+<span class="sd">            A list of the forcefield types for angles, stored as</span>
+<span class="sd">            :class:`structures.Struct`.</span>
+<span class="sd">        dihedral_types: *list,* :class:`structures.Struct`</span>
+<span class="sd">            A list of the forcefield types for dihedrals, stored as</span>
+<span class="sd">            :class:`structures.Struct`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">atom_types</span><span class="p">,</span> <span class="n">bond_types</span><span class="p">,</span>
+        <span class="n">angle_types</span><span class="p">,</span> <span class="n">dihedral_types</span><span class="p">)</span> <span class="o">=</span> <span class="p">{},</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+
+    <span class="n">atom_line</span> <span class="o">=</span> <span class="s1">&#39;atom +(\d+) +(\d+) +(\S+) +&quot;([^&quot;]+)&quot; +(\d+) +(\S+) +(\d+)&#39;</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">parameter_file</span><span class="p">):</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">columns</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;atom&#39;</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">atom_line</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+            <span class="n">atom_type</span> <span class="o">=</span> <span class="n">structures</span><span class="o">.</span><span class="n">Struct</span><span class="p">(</span>
+                <span class="n">index</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="n">index2</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span>
+                <span class="n">element_name</span><span class="o">=</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">notes</span><span class="o">=</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span>
+                <span class="n">element</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">5</span><span class="p">)),</span> <span class="n">mass</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">6</span><span class="p">)),</span>
+                <span class="n">bond_count</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">7</span><span class="p">)),</span> <span class="n">style</span><span class="o">=</span><span class="n">pair_style</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">atom_type</span><span class="o">.</span><span class="n">element</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
+                <span class="n">elements</span><span class="p">[</span><span class="n">atom_type</span><span class="o">.</span><span class="n">element</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">elements</span><span class="p">[</span><span class="n">atom_type</span><span class="o">.</span><span class="n">element</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom_type</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">&#39;(UA)&#39;</span> <span class="ow">in</span> <span class="n">atom_type</span><span class="o">.</span><span class="n">notes</span><span class="p">:</span>
+                <span class="n">atom_type</span><span class="o">.</span><span class="n">element</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># reject united-atom parameters</span>
+            <span class="n">atom_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom_type</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;vdw&#39;</span><span class="p">:</span>
+            <span class="n">atom_types</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">vdw_r</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">columns</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+                                                        <span class="mf">1.0</span><span class="p">)</span>
+            <span class="c1"># Unknown why we have this, but set to small number.</span>
+            <span class="c1"># Legacy code from James Stevenson.</span>
+            <span class="n">atom_types</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">vdw_e</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">columns</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
+                                                        <span class="mf">1E-5</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;charge&#39;</span><span class="p">:</span>
+            <span class="n">atom_types</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">charge</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">columns</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;bond&#39;</span><span class="p">:</span>
+            <span class="n">bond_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">structures</span><span class="o">.</span><span class="n">Struct</span><span class="p">(</span>
+                    <span class="n">index2s</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span>
+                        <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]]</span>
+                    <span class="p">),</span>
+                    <span class="n">e</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">columns</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
+                    <span class="n">r</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">columns</span><span class="p">[</span><span class="mi">4</span><span class="p">]),</span>
+                    <span class="n">style</span><span class="o">=</span><span class="s1">&#39;harmonic&#39;</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;angle&#39;</span><span class="p">:</span>
+            <span class="n">angle_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">structures</span><span class="o">.</span><span class="n">Struct</span><span class="p">(</span>
+                    <span class="n">index2s</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span>
+                        <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]]</span>
+                    <span class="p">),</span>
+                    <span class="n">e</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">columns</span><span class="p">[</span><span class="mi">4</span><span class="p">]),</span>
+                    <span class="n">angle</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">columns</span><span class="p">[</span><span class="mi">5</span><span class="p">]),</span>
+                    <span class="n">style</span><span class="o">=</span><span class="s1">&#39;harmonic&#39;</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;torsion&#39;</span><span class="p">:</span>
+            <span class="n">dihedral_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">structures</span><span class="o">.</span><span class="n">Struct</span><span class="p">(</span>
+                    <span class="n">index2s</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span>
+                        <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">]]</span>
+                    <span class="p">),</span>
+                    <span class="n">e</span><span class="o">=</span><span class="nb">tuple</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">[</span><span class="mi">5</span><span class="p">::</span><span class="mi">3</span><span class="p">]]),</span>
+                    <span class="n">style</span><span class="o">=</span><span class="s1">&#39;opls&#39;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dihedral_types</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">e</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">dihedral_types</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">dihedral_types</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">e</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.</span><span class="p">,)</span>
+        <span class="k">elif</span> <span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;pair_type&#39;</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">elements</span><span class="p">,</span> <span class="n">atom_types</span><span class="p">,</span> <span class="n">bond_types</span><span class="p">,</span> <span class="n">angle_types</span><span class="p">,</span> <span class="n">dihedral_types</span></div>
+
+
+<div class="viewcode-block" id="set_forcefield_parameters"><a class="viewcode-back" href="../codebase.html#frc_opls.set_forcefield_parameters">[docs]</a><span class="k">def</span> <span class="nf">set_forcefield_parameters</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="p">[],</span> <span class="n">angles</span><span class="o">=</span><span class="p">[],</span> <span class="n">dihedrals</span><span class="o">=</span><span class="p">[],</span>
+                              <span class="n">parameter_file</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">opls_path</span><span class="p">,</span>
+                              <span class="n">name</span><span class="o">=</span><span class="s1">&#39;unnamed&#39;</span><span class="p">,</span> <span class="n">extra_parameters</span><span class="o">=</span><span class="p">{},</span>
+                              <span class="n">test_consistency</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">test_charges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                              <span class="n">allow_errors</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pair_style</span><span class="o">=</span><span class="s1">&#39;lj/cut&#39;</span><span class="p">,</span>
+                              <span class="n">allow_no_ffp</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads an opls parameter file written in the Tinker file format.</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">        atoms: *list,* :class:`structures.Atom`</span>
+<span class="sd">            List of atom objects to be parameterized.</span>
+<span class="sd">        bonds: *list,* :class:`structures.Bond` *, optional*</span>
+<span class="sd">            List of bond objects to be parameterized.</span>
+<span class="sd">        angles: *list,* :class:`structures.Angle` *, optional*</span>
+<span class="sd">            List of angle objects to be parameterized.</span>
+<span class="sd">        dihedrals: *list,* :class:`structures.Dihedral` *, optional*</span>
+<span class="sd">            List of dihedral objects to be parameterized.</span>
+<span class="sd">        parameter_file: *str, optional*</span>
+<span class="sd">            Path to the OPLS forcefield file in Tinker format.</span>
+<span class="sd">        name: *str, optional*</span>
+<span class="sd">            Name of the molecule/system you are parameterizing.</span>
+<span class="sd">        extra_parameters: *dict, optional*</span>
+<span class="sd">            Additional parameters not found in the forcefield.</span>
+<span class="sd">        test_consistency: *bool, optional*</span>
+<span class="sd">            Whether to verify all parameters have been set.</span>
+<span class="sd">        test_charges: *bool, optional*</span>
+<span class="sd">            Whether to verify the system is at a neutral state.</span>
+<span class="sd">        allow_errors: *bool, optional*</span>
+<span class="sd">            Whether to allow incomplete parameterizations, or to throw errors.</span>
+<span class="sd">        pair_style: *str, optional*</span>
+<span class="sd">            The pair style to be used.</span>
+<span class="sd">        allow_no_ffp: *bool, optional*</span>
+<span class="sd">            Whether to allow for situations in which some atoms are not</span>
+<span class="sd">            included in this force field.</span>
+
+<span class="sd">    **Returns**</span>
+
+<span class="sd">        atoms: *list,* :class:`structures.Atom`</span>
+<span class="sd">            A list of all atoms with set parameters.</span>
+<span class="sd">        bonds: *list,* :class:`structures.Bond`</span>
+<span class="sd">            A list of all bonds with set parameters.</span>
+<span class="sd">        angles: *list,* :class:`structures.Angle`</span>
+<span class="sd">            A list of all angles with set parameters.</span>
+<span class="sd">        dihedrals: *list,* :class:`structures.Dihedral`</span>
+<span class="sd">            A list of all dihedrals with set parameters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">atom_types</span><span class="p">,</span> <span class="n">bond_types</span><span class="p">,</span> <span class="n">angle_types</span><span class="p">,</span> <span class="n">dihedral_types</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+
+    <span class="c1"># If parameter_file=None, only extra parameters will be passed.</span>
+    <span class="c1"># Note, we don&#39;t read in the first element (elements) because we don&#39;t</span>
+    <span class="c1"># use it.</span>
+    <span class="k">if</span> <span class="n">parameter_file</span><span class="p">:</span>
+        <span class="p">(</span><span class="n">_</span><span class="p">,</span>
+         <span class="n">atom_types</span><span class="p">,</span>
+         <span class="n">bond_types</span><span class="p">,</span>
+         <span class="n">angle_types</span><span class="p">,</span>
+         <span class="n">dihedral_types</span><span class="p">)</span> <span class="o">=</span> <span class="n">read_opls_parameters</span><span class="p">(</span><span class="n">parameter_file</span><span class="p">,</span>
+                                                <span class="n">pair_style</span><span class="o">=</span><span class="n">pair_style</span><span class="p">)</span>
+
+    <span class="c1"># Add extra parameters, if any</span>
+    <span class="k">for</span> <span class="n">index2s</span><span class="p">,</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">extra_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">index2s</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>  <span class="c1"># Skip these</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">index2s</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">bond_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">structures</span><span class="o">.</span><span class="n">Struct</span><span class="p">(</span>
+                        <span class="n">index2s</span><span class="o">=</span><span class="n">index2s</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="n">r</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">style</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">bond_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">structures</span><span class="o">.</span><span class="n">Struct</span><span class="p">(</span>
+                        <span class="n">index2s</span><span class="o">=</span><span class="n">index2s</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="n">r</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;harmonic&#39;</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">index2s</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">angle_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">structures</span><span class="o">.</span><span class="n">Struct</span><span class="p">(</span>
+                        <span class="n">index2s</span><span class="o">=</span><span class="n">index2s</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="n">angle</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">style</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">angle_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">structures</span><span class="o">.</span><span class="n">Struct</span><span class="p">(</span>
+                        <span class="n">index2s</span><span class="o">=</span><span class="n">index2s</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="n">angle</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;harmonic&#39;</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">index2s</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+                <span class="n">dihedral_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">structures</span><span class="o">.</span><span class="n">Struct</span><span class="p">(</span>
+                        <span class="n">index2s</span><span class="o">=</span><span class="n">index2s</span><span class="p">,</span>
+                        <span class="n">e</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
+                        <span class="n">style</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="mi">4</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dihedral_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">structures</span><span class="o">.</span><span class="n">Struct</span><span class="p">(</span>
+                        <span class="n">index2s</span><span class="o">=</span><span class="n">index2s</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">params</span><span class="p">),</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;opls&#39;</span><span class="p">))</span>
+
+    <span class="c1"># Set atom types</span>
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">type_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">allow_no_ffp</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;OPLS label is missing from atom </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">index</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">allow_no_ffp</span> <span class="ow">and</span> <span class="n">a</span><span class="o">.</span><span class="n">type_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">atom_types</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">index</span> <span class="o">==</span> <span class="n">a</span><span class="o">.</span><span class="n">type_index</span><span class="p">:</span>
+                <span class="n">a</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">t</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">extra_parameters</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="n">a</span><span class="o">.</span><span class="n">type_index</span><span class="p">:</span>
+                <span class="n">a</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">extra_parameters</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
+
+    <span class="c1"># Set bond, angle, and dihedral types from parameter file</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bonds</span> <span class="o">+</span> <span class="n">angles</span> <span class="o">+</span> <span class="n">dihedrals</span><span class="p">:</span>
+        <span class="n">index2s</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">index2</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">atoms</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">])</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Match type from opls parameters. Updated to allow for</span>
+            <span class="c1"># wildcard torsions</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">index2s</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">(</span><span class="n">bond_types</span> <span class="o">+</span> <span class="n">angle_types</span> <span class="o">+</span> <span class="n">dihedral_types</span><span class="p">):</span>
+                <span class="c1"># Check for wildcard torsions</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">index2s</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">index2s</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">index2s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">t</span><span class="o">.</span><span class="n">index2s</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">match</span> <span class="o">=</span> <span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">index2s</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="n">index2s</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="ow">or</span>
+                                 <span class="n">t</span><span class="o">.</span><span class="n">index2s</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="n">indices</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+                    <span class="k">elif</span> <span class="n">t</span><span class="o">.</span><span class="n">index2s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">match</span> <span class="o">=</span> <span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">index2s</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="n">index2s</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="ow">or</span>
+                                 <span class="n">t</span><span class="o">.</span><span class="n">index2s</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="n">indices</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span>
+                    <span class="k">elif</span> <span class="n">t</span><span class="o">.</span><span class="n">index2s</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">match</span> <span class="o">=</span> <span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">index2s</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="n">index2s</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="ow">or</span>
+                                 <span class="n">t</span><span class="o">.</span><span class="n">index2s</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="n">indices</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">match</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">index2s</span> <span class="o">==</span> <span class="n">index2s</span> <span class="ow">or</span> <span class="n">t</span><span class="o">.</span><span class="n">index2s</span> <span class="o">==</span> <span class="n">indices</span>
+
+                <span class="c1"># Check bonds and angles</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">match</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">index2s</span> <span class="o">==</span> <span class="n">index2s</span> <span class="ow">or</span> <span class="n">t</span><span class="o">.</span><span class="n">index2s</span> <span class="o">==</span> <span class="n">indices</span>
+
+                <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                    <span class="n">x</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">t</span>
+                    <span class="k">break</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">test_charges</span><span class="p">:</span>
+        <span class="n">check_net_charge</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">test_consistency</span><span class="p">:</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">bonds</span><span class="p">,</span> <span class="n">angles</span><span class="p">,</span> <span class="n">dihedrals</span><span class="p">,</span>
+                          <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">allow_errors</span><span class="o">=</span><span class="n">allow_errors</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">bonds</span><span class="p">,</span> <span class="n">angles</span><span class="p">,</span> <span class="n">dihedrals</span></div>
+
+
+<span class="c1"># Check charges to see if it is a neutral molecule</span>
+<span class="c1"># Requires force field parameters: type.charge</span>
+<span class="c1"># Raises exception if non-neutral. Consider changing to warning to allow</span>
+<span class="c1"># non-neutral molecules</span>
+<div class="viewcode-block" id="check_net_charge"><a class="viewcode-back" href="../codebase.html#frc_opls.check_net_charge">[docs]</a><span class="k">def</span> <span class="nf">check_net_charge</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">q_tol</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check what the net charge is of the given list of atoms.  An error is</span>
+<span class="sd">    raised if the net_charge is greater than *q_tol*.</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">        atoms: *list,* :class:`structures.Atom`</span>
+
+<span class="sd">        name: *str, optional*</span>
+
+<span class="sd">    **Returns**</span>
+
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">net_charge</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">charge</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">net_charge</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">q_tol</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Non-neutral molecule, charge = </span><span class="si">%f</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span>
+                        <span class="o">%</span> <span class="p">(</span><span class="n">net_charge</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span></div>
+
+
+<span class="c1"># Check to see if all possible force field parameters have been assigned.</span>
+<span class="c1"># Raises exception if missing an bond or angle. Missing dihedrals allowed.</span>
+<span class="c1"># Can turn off raising exceptions.</span>
+<div class="viewcode-block" id="check_consistency"><a class="viewcode-back" href="../codebase.html#frc_opls.check_consistency">[docs]</a><span class="k">def</span> <span class="nf">check_consistency</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">bonds</span><span class="p">,</span> <span class="n">angles</span><span class="p">,</span> <span class="n">dihedrals</span><span class="p">,</span>
+                      <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">allow_errors</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check to see if all possible force field parameters have been assigned.</span>
+<span class="sd">    Raises exception if missing an bond or angle. Missing dihedrals allowed</span>
+<span class="sd">    by default. Can turn off raising exceptions.</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">        atoms: *list,* :class:`structures.Atom`</span>
+<span class="sd">            List of atom objects to check if parameters were set accordingly.</span>
+<span class="sd">        bonds: *list,* :class:`structures.Bond` *, optional*</span>
+<span class="sd">            List of bond objects to check if parameters were set accordingly.</span>
+<span class="sd">        angles: *list,* :class:`structures.Angle` *, optional*</span>
+<span class="sd">            List of angle objects to check if parameters were set accordingly.</span>
+<span class="sd">        dihedrals: *list,* :class:`structures.Dihedral` *, optional*</span>
+<span class="sd">            List of dihedral objects to check if parameters were set</span>
+<span class="sd">            accordingly.</span>
+<span class="sd">        name: *str, optional*</span>
+<span class="sd">            Name of the molecule/system.</span>
+<span class="sd">        allow_errors: *bool, optional*</span>
+<span class="sd">            Whether to allow incomplete parameterizations, or to throw errors.</span>
+
+<span class="sd">    **Returns**</span>
+
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bonds</span> <span class="o">+</span> <span class="n">angles</span> <span class="o">+</span> <span class="n">dihedrals</span><span class="p">:</span>
+        <span class="c1"># Compile all index types?</span>
+        <span class="n">index2s</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">index2</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">atoms</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">type</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;No type for structure indices&#39;</span><span class="p">,</span>
+                   <span class="nb">tuple</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">index2</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">atoms</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]),</span>
+                   <span class="s1">&#39;:&#39;</span><span class="p">,</span>
+                   <span class="nb">tuple</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">element</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">atoms</span><span class="p">]),</span>
+                   <span class="s1">&#39;: atoms&#39;</span><span class="p">,</span>
+                   <span class="nb">tuple</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">atoms</span><span class="p">]),</span>
+                   <span class="s1">&#39;in file&#39;</span><span class="p">,</span>
+                   <span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">structures</span><span class="o">.</span><span class="n">Dihedral</span><span class="p">):</span>
+                <span class="c1"># No params for dihedral is OK, just give warning</span>
+                <span class="n">x</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">structures</span><span class="o">.</span><span class="n">Struct</span><span class="p">(</span><span class="n">index2s</span><span class="o">=</span><span class="n">index2s</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">allow_errors</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;All forcefield parameters were not set </span><span class="se">\</span>
+<span class="s2">appropriately.  Ignore this using allow_errors=True.&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table Of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../squid.html">Squid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codebase.html">Codebase</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Merlin 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Henry Herbol.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
+    </div>
+  </body>
+</html>

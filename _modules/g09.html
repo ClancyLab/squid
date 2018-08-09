@@ -1,0 +1,1197 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>g09 &#8212; Merlin 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Merlin 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for g09</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The g09 module contains python functions for interfacing with the Gaussian09</span>
+<span class="sd">DFT software package. NOTE! Due to implementation restrictions this code will</span>
+<span class="sd">only work on the ICSE cluster.  Primarily the g09 job submission command is</span>
+<span class="sd">specific to the ICSE system.</span>
+
+<span class="sd">- :func:`read`</span>
+<span class="sd">- :func:`job`</span>
+<span class="sd">- :func:`cubegen_analysis`</span>
+
+<span class="sd">------------</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># System imports</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">Popen</span>
+<span class="c1"># Clancelot imports</span>
+<span class="kn">import</span> <span class="nn">geometry</span>
+<span class="kn">import</span> <span class="nn">constants</span>
+<span class="kn">import</span> <span class="nn">structures</span>
+<span class="kn">import</span> <span class="nn">results</span>
+<span class="kn">import</span> <span class="nn">jobs</span>
+<span class="kn">import</span> <span class="nn">print_helper</span>
+<span class="kn">import</span> <span class="nn">sysconst</span>
+
+
+<div class="viewcode-block" id="parse_route"><a class="viewcode-back" href="../codebase.html#g09.parse_route">[docs]</a><span class="k">def</span> <span class="nf">parse_route</span><span class="p">(</span><span class="n">route</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Function that parses the route into the following situations:</span>
+<span class="sd">        func/basis</span>
+<span class="sd">        key(a,b,c,...)</span>
+<span class="sd">        key(a)</span>
+<span class="sd">        key=a</span>
+<span class="sd">        key = a</span>
+<span class="sd">        key=(a,b,c,...)</span>
+
+<span class="sd">    *Parameters*</span>
+
+<span class="sd">        route: *str*</span>
+<span class="sd">            The route of a g09 simulation</span>
+
+<span class="sd">    *Returns*</span>
+
+<span class="sd">        parsed_list: *list, str*</span>
+<span class="sd">            Split list of g09 route line.</span>
+<span class="sd">        extra: *str*</span>
+<span class="sd">            What was not parsed is returned.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">parsed</span><span class="p">,</span> <span class="n">parsed_list</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="n">route</span>
+    <span class="n">parse</span> <span class="o">=</span> <span class="s1">&#39;(\w+\s*=\s*(?:(?:\([^\)]*\)|(?:\w+))))|</span><span class="se">\</span>
+<span class="s1">(\w+\s*\([^\)]*\))|([A-z]\w+\/[A-z]\w+)&#39;</span>
+    <span class="n">parsed</span> <span class="o">+=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">parse</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parsed</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">p</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="n">parsed_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parsed_list</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parsed_list</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="job"><a class="viewcode-back" href="../codebase.html#g09.job">[docs]</a><span class="k">def</span> <span class="nf">job</span><span class="p">(</span><span class="n">run_name</span><span class="p">,</span>
+        <span class="n">route</span><span class="p">,</span>
+        <span class="n">atoms</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">extra_section</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">queue</span><span class="o">=</span><span class="s1">&#39;short&#39;</span><span class="p">,</span>
+        <span class="n">procs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">verbosity</span><span class="o">=</span><span class="s1">&#39;N&#39;</span><span class="p">,</span>
+        <span class="n">charge_and_multiplicity</span><span class="o">=</span><span class="s1">&#39;0,1&#39;</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s1">&#39;run by gaussian.py&#39;</span><span class="p">,</span>
+        <span class="n">blurb</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">eRec</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">previous</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">neb</span><span class="o">=</span><span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">err</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">mem</span><span class="o">=</span><span class="mi">25</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper to submitting an Gaussian09 simulation.</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">        run_name: *str*</span>
+<span class="sd">            Name of the simulation to be run.</span>
+<span class="sd">        route: *route*</span>
+<span class="sd">            The DFT route line, containing the function, basis set, etc.</span>
+<span class="sd">        atoms: *list,* :class:`structures.Atom` *,optional*</span>
+<span class="sd">            A list of atoms for the simulation.</span>
+<span class="sd">        extra_section: *str, optional*</span>
+<span class="sd">            Additional DFT simulation parameters.</span>
+<span class="sd">        queue: *str, optional*</span>
+<span class="sd">            What queue to run the simulation on (queueing system dependent).</span>
+<span class="sd">        procs: *int, optional*</span>
+<span class="sd">            How many processors to run the simulation on.</span>
+<span class="sd">        verbosity: *str, optional*</span>
+<span class="sd">            Verbosity flag for Gaussian09 output.</span>
+<span class="sd">        charge_and_multiplicity: *str, optional*</span>
+<span class="sd">            Charge and multiplicity of the system.</span>
+<span class="sd">        title: *str, optional*</span>
+<span class="sd">            Comment line for Gaussian09 input file.</span>
+<span class="sd">        blurb: *str, deprecated*</span>
+<span class="sd">            Do not use</span>
+<span class="sd">        eRec: *bool, deprecated*</span>
+<span class="sd">            Do not use</span>
+<span class="sd">        force: *bool, optional*</span>
+<span class="sd">            Whether to overwrite a simulation with the same name.</span>
+<span class="sd">        previous: *str, optional*</span>
+<span class="sd">            Name of a previous simulation for which to try reading in</span>
+<span class="sd">            information using the MORead method.</span>
+<span class="sd">        neb: *list, bool, deprecated*</span>
+<span class="sd">            Do not use</span>
+<span class="sd">        err: *bool, deprecated*</span>
+<span class="sd">            Do not use</span>
+<span class="sd">        mem: *float, optional*</span>
+<span class="sd">            Amount of memory per processor that is available (in MB).</span>
+
+<span class="sd">    **Returns**</span>
+
+<span class="sd">        job: *subprocess.Popen or* :class:`jobs.Job`</span>
+<span class="sd">            If running locally, return the process handle, else return</span>
+<span class="sd">            the job container.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Header for the input file</span>
+    <span class="n">head</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span>\
+           <span class="n">verbosity</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">+</span>\
+           <span class="s1">&#39; &#39;</span> <span class="o">+</span>\
+           <span class="n">route</span> <span class="o">+</span>\
+           <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span> <span class="o">+</span>\
+           <span class="n">title</span> <span class="o">+</span>\
+           <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span> <span class="o">+</span>\
+           <span class="n">charge_and_multiplicity</span> <span class="o">+</span>\
+           <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+    <span class="c1"># Setup list of atoms for inp file</span>
+    <span class="k">if</span> <span class="n">atoms</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="c1"># Multiple lists of atoms (e.g. transistion state calculation)</span>
+        <span class="n">xyz</span> <span class="o">=</span> <span class="p">(</span><span class="n">title</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">0,1</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="p">[(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%f</span><span class="s2"> </span><span class="si">%f</span><span class="s2"> </span><span class="si">%f</span><span class="s2">&quot;</span>
+                  <span class="o">%</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">element</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">z</span><span class="p">))</span>
+                 <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atom_list</span><span class="p">])</span> <span class="o">+</span>
+             <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">atom_list</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Single list of atoms</span>
+        <span class="k">if</span> <span class="s1">&#39;oniom&#39;</span> <span class="ow">in</span> <span class="n">route</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="n">xyz</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="p">[(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> 0 </span><span class="si">%f</span><span class="s2"> </span><span class="si">%f</span><span class="s2"> </span><span class="si">%f</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span>
+                  <span class="o">%</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">element</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">layer</span><span class="p">))</span>
+                 <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span>
+        <span class="k">elif</span> <span class="s1">&#39;counterpoise&#39;</span> <span class="ow">in</span> <span class="n">route</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="n">xyz</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="p">[(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">(Fragment=</span><span class="si">%d</span><span class="s2">) </span><span class="si">%f</span><span class="s2"> </span><span class="si">%f</span><span class="s2"> </span><span class="si">%f</span><span class="s2">&quot;</span>
+                  <span class="o">%</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">element</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">fragment</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">z</span><span class="p">))</span>
+                 <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span>
+        <span class="k">elif</span> <span class="n">atoms</span><span class="p">:</span>
+            <span class="n">xyz</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="p">[(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%f</span><span class="s2"> </span><span class="si">%f</span><span class="s2"> </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">element</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">z</span><span class="p">))</span>
+                 <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">xyz</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+    <span class="c1"># Enter gaussian directory, set up .inp file, run simulation, Leave dir</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s2">&quot;gaussian&quot;</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="s2">&quot;gaussian&quot;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;gaussian&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">queue</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">run_name</span> <span class="o">+</span> <span class="s1">&#39;.inp&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inp</span><span class="p">:</span>
+            <span class="n">inp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">head</span> <span class="o">+</span> <span class="n">xyz</span> <span class="o">+</span> <span class="n">extra_section</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">previous</span><span class="p">:</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">previous</span> <span class="o">+</span> <span class="s1">&#39;.chk&#39;</span><span class="p">,</span> <span class="n">run_name</span> <span class="o">+</span> <span class="s1">&#39;.chk&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;g09sub &#39;</span> <span class="o">+</span>
+                  <span class="n">run_name</span> <span class="o">+</span>
+                  <span class="s1">&#39; -chk -queue &#39;</span> <span class="o">+</span>
+                  <span class="n">queue</span> <span class="o">+</span>
+                  <span class="p">((</span><span class="s1">&#39; -nproc &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">procs</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">procs</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">run_name</span> <span class="o">+</span> <span class="s1">&#39;.inp&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inp</span><span class="p">:</span>
+            <span class="n">csh</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;setenv g09root /usr/local/gaussian/g09d01</span>
+<span class="s1">source $g09root/g09/bsd/g09.login</span>
+<span class="s1">g09 &lt;&lt;END &gt; &#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">run_name</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;.log</span>
+<span class="s1">%NProcShared=1</span>
+<span class="s1">%RWF=/tmp/</span>
+<span class="s1">%Chk=&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">run_name</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;.chk</span>
+<span class="s1">%Mem=$$MEM$$MW</span>
+<span class="s1">&#39;&#39;&#39;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$$MEM$$&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">mem</span><span class="p">))</span>
+            <span class="n">inp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">csh</span> <span class="o">+</span>
+                      <span class="n">head</span> <span class="o">+</span>
+                      <span class="n">xyz</span> <span class="o">+</span>
+                      <span class="n">extra_section</span> <span class="o">+</span>
+                      <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">eof</span><span class="se">\n</span><span class="s1">rm /tmp/*.rwf&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">previous</span><span class="p">:</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">previous</span> <span class="o">+</span> <span class="s1">&#39;.chk&#39;</span><span class="p">,</span> <span class="n">run_name</span> <span class="o">+</span> <span class="s1">&#39;.chk&#39;</span><span class="p">)</span>
+        <span class="n">process_handle</span> <span class="o">=</span> <span class="n">Popen</span><span class="p">(</span><span class="s1">&#39;/bin/csh </span><span class="si">%s</span><span class="s1">.inp&#39;</span> <span class="o">%</span> <span class="n">run_name</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">pyPath</span> <span class="o">=</span> <span class="s1">&#39;../&#39;</span> <span class="o">+</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">pyPath</span><span class="p">):</span>
+        <span class="c1"># This is if sys.argv[0] is a full path</span>
+        <span class="n">pyPath</span> <span class="o">=</span> <span class="s1">&#39;../&#39;</span> <span class="o">+</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">pyPath</span><span class="p">,</span> <span class="n">run_name</span> <span class="o">+</span> <span class="s1">&#39;.py&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="c1"># If submitted a python script to the queue, this fails.</span>
+        <span class="c1"># I don&#39;t care about storing the .py so ignore.</span>
+        <span class="k">pass</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">queue</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">process_handle</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jobs</span><span class="o">.</span><span class="n">Job</span><span class="p">(</span><span class="n">run_name</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">restart_job</span><span class="p">(</span><span class="n">old_run_name</span><span class="p">,</span>
+                <span class="n">job_type</span><span class="o">=</span><span class="s1">&#39;ChkBasis Opt=Restart&#39;</span><span class="p">,</span>
+                <span class="n">queue</span><span class="o">=</span><span class="s1">&#39;short&#39;</span><span class="p">,</span>
+                <span class="n">procs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">run_name</span> <span class="o">=</span> <span class="n">old_run_name</span> <span class="o">+</span> <span class="s1">&#39;r&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s2">&quot;gaussian&quot;</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="s2">&quot;gaussian&quot;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;gaussian&#39;</span><span class="p">)</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">old_run_name</span> <span class="o">+</span> <span class="s1">&#39;.chk&#39;</span><span class="p">,</span> <span class="n">run_name</span> <span class="o">+</span> <span class="s1">&#39;.chk&#39;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">run_name</span> <span class="o">+</span> <span class="s1">&#39;.inp&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inp</span><span class="p">:</span>
+        <span class="n">inp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;#t &#39;</span> <span class="o">+</span> <span class="n">job_type</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">run by gaussian.py</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;g09sub &#39;</span> <span class="o">+</span>
+              <span class="n">run_name</span> <span class="o">+</span>
+              <span class="s1">&#39; -chk -queue &#39;</span> <span class="o">+</span>
+              <span class="n">queue</span> <span class="o">+</span>
+              <span class="p">((</span><span class="s1">&#39; -nproc &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">procs</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">procs</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span>
+              <span class="s1">&#39; -xhost sys_eei sys_icse&#39;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">parse_atoms</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span>
+                <span class="n">get_atoms</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">get_energy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">check_convergence</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">get_time</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">counterpoise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">parse_all</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="c1"># @input_file [str] : string name of log file</span>
+
+    <span class="c1"># Returns: (? energy, ? atoms, ? time) | None</span>
+    <span class="c1"># @energy [float] : If get_energy or parse_all, otherwise return omitted.</span>
+    <span class="c1"># @atoms |[atom list] : Iff parse_all, returns atom list list.</span>
+    <span class="c1">#       |[atom list list] : Iff not parse_all and get_atoms, atom list.</span>
+    <span class="c1">#                           Otherwise omitted.</span>
+    <span class="c1"># @time [float] : If get_time returns float (seconds). Otherwise, return</span>
+    <span class="c1">#                 omitted.</span>
+
+    <span class="c1"># Note that None may be returned in the event that Gaussian did not</span>
+    <span class="c1"># terminate normally (see 7 lines down).</span>
+
+    <span class="k">if</span> <span class="n">input_file</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span> <span class="o">!=</span> <span class="s1">&#39;.log&#39;</span><span class="p">:</span>
+        <span class="n">input_file</span> <span class="o">=</span> <span class="n">input_file</span> <span class="o">+</span> <span class="s1">&#39;.log&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">input_file</span><span class="p">):</span>
+        <span class="n">input_file</span> <span class="o">=</span> <span class="s2">&quot;gaussian/&quot;</span> <span class="o">+</span> <span class="n">input_file</span>
+    <span class="n">contents</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">check_convergence</span> <span class="ow">and</span>
+        <span class="n">get_energy</span> <span class="ow">and</span>
+        <span class="ow">not</span> <span class="n">parse_all</span> <span class="ow">and</span>
+            <span class="s1">&#39;Normal termination of Gaussian 09&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">contents</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;Normal termination of Gaussian 09&#39;</span> <span class="ow">in</span> <span class="n">contents</span><span class="p">)</span> <span class="ow">and</span>
+            <span class="p">(</span><span class="n">get_time</span> <span class="o">|</span> <span class="n">parse_all</span><span class="p">)):</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;Job cpu time: +(\S+) +days +(\S+) +hours </span><span class="se">\</span>
+<span class="s1">+(\S+) +minutes +(\S+) +seconds&#39;</span><span class="p">,</span> <span class="n">contents</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">time</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">+</span>\
+                <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">+</span>\
+                <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">+</span>\
+                <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;Summary of Optimized Potential Surface Scan&#39;</span> <span class="ow">in</span> <span class="n">contents</span> <span class="ow">and</span>
+            <span class="ow">not</span> <span class="n">parse_all</span><span class="p">):</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">contents</span><span class="o">.</span><span class="n">rindex</span><span class="p">(</span><span class="s1">&#39;Summary of Optimized Potential Surface Scan&#39;</span><span class="p">)</span>
+        <span class="n">end_section</span> <span class="o">=</span> <span class="n">contents</span><span class="p">[</span><span class="n">index</span><span class="p">:]</span>
+        <span class="n">energy_lines</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;Eigenvalues -- ([^</span><span class="se">\\</span><span class="s1">n]+)&#39;</span><span class="p">,</span> <span class="n">end_section</span><span class="p">)</span>
+        <span class="n">energy</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">energy_lines</span>
+                  <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;-[\d]+\.[\d]+&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">)]</span>
+
+        <span class="n">minima</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;Stationary point found&#39;</span><span class="p">,</span> <span class="n">contents</span><span class="p">)</span>
+        <span class="n">atoms</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">minima</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="n">coordinates</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;Coordinates (Angstroms)&#39;</span><span class="p">)</span>
+
+            <span class="n">start</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;---</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">)</span> <span class="o">+</span> <span class="mi">4</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1"> ---&#39;</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+            <span class="n">atoms</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">m</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+                <span class="n">columns</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="n">element</span> <span class="o">=</span> <span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]]</span>
+                <span class="n">atoms</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">structures</span><span class="o">.</span><span class="n">Atom</span><span class="p">(</span>
+                    <span class="n">element</span><span class="o">=</span><span class="n">constants</span><span class="o">.</span><span class="n">PERIODIC_TABLE</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">])][</span><span class="s1">&#39;sym&#39;</span><span class="p">],</span>
+                    <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+                    <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+                    <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">,</span>
+                    <span class="n">index</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">get_energy</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">energy</span><span class="p">,</span> <span class="n">atoms</span>
+
+    <span class="k">elif</span> <span class="n">get_energy</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">parse_all</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39; MP2/&#39;</span> <span class="ow">in</span> <span class="n">contents</span><span class="p">:</span>
+            <span class="c1"># MP2 files don&#39;t have just SCF energy</span>
+            <span class="n">energy</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;EUMP2 = +(\S+)&#39;</span><span class="p">,</span>
+                                      <span class="n">contents</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="s1">&#39; CCSD/&#39;</span> <span class="ow">in</span> <span class="n">contents</span><span class="p">:</span>
+            <span class="n">energy</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;E\(CORR\)= +(\S+)&#39;</span><span class="p">,</span> <span class="n">contents</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">counterpoise</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">a</span> <span class="o">=</span> <span class="n">contents</span><span class="o">.</span><span class="n">rindex</span><span class="p">(</span><span class="s1">&#39;SCF Done&#39;</span><span class="p">)</span>
+                    <span class="n">energy_line</span> <span class="o">=</span> <span class="n">contents</span><span class="p">[</span><span class="n">a</span><span class="p">:</span> <span class="n">contents</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">a</span><span class="p">)]</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;No SCF for &#39;</span> <span class="o">+</span> <span class="n">input_file</span><span class="p">)</span>
+                <span class="n">energy</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;SCF Done: +\S+ += +(\S+)&#39;</span><span class="p">,</span>
+                                         <span class="n">energy_line</span><span class="p">)</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">energy</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+                    <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;Counterpoise: corrected energy = +(\S+)&#39;</span><span class="p">,</span>
+                               <span class="n">contents</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">parse_all</span><span class="p">:</span>
+        <span class="n">energies</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">atom_frames</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">orientation</span> <span class="o">=</span> <span class="s1">&#39;Input orientation:&#39;</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Match energy</span>
+                <span class="n">input_orientation</span> <span class="o">=</span> <span class="n">contents</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">orientation</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">input_orientation</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">orientation</span> <span class="o">=</span> <span class="s1">&#39;Standard orientation&#39;</span>
+                    <span class="n">input_orientation</span> <span class="o">=</span> <span class="n">contents</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">orientation</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">input_orientation</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">start</span> <span class="o">=</span> <span class="n">input_orientation</span>
+                <span class="n">next_coordinates</span> <span class="o">=</span> <span class="n">contents</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;Coordinates (Angstroms)&#39;</span><span class="p">,</span>
+                                                  <span class="n">start</span><span class="p">)</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="n">contents</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;SCF Done&#39;</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+                <span class="n">energies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;SCF Done: +\S+ += +(\S+)&#39;</span><span class="p">,</span>
+                                                <span class="n">contents</span><span class="p">[</span><span class="n">start</span><span class="p">:])</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)))</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">contents</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;---</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">next_coordinates</span><span class="p">)</span> <span class="o">+</span> <span class="mi">4</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">contents</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1"> ---&#39;</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="n">contents</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">end</span>
+
+            <span class="n">atoms</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+                <span class="n">columns</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="n">element</span> <span class="o">=</span> <span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">columns</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+                <span class="n">atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">structures</span><span class="o">.</span><span class="n">Atom</span><span class="p">(</span><span class="n">element</span><span class="o">=</span><span class="n">element</span><span class="p">,</span>
+                                             <span class="n">x</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+                                             <span class="n">y</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">y</span><span class="p">),</span>
+                                             <span class="n">z</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">z</span><span class="p">)))</span>
+            <span class="n">atom_frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">energies</span><span class="p">,</span> <span class="n">atom_frames</span><span class="p">,</span> <span class="n">time</span>
+
+    <span class="k">if</span> <span class="n">get_energy</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">get_atoms</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">get_time</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">energy</span><span class="p">,</span> <span class="n">time</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">energy</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Get coordinates</span>
+        <span class="n">last_coordinates</span> <span class="o">=</span> <span class="n">contents</span><span class="o">.</span><span class="n">rindex</span><span class="p">(</span><span class="s1">&#39;Input orientation:&#39;</span><span class="p">)</span>
+        <span class="n">last_coordinates</span> <span class="o">=</span> <span class="n">contents</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;Coordinates (Angstroms)&#39;</span><span class="p">,</span>
+                                          <span class="n">last_coordinates</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">last_coordinates</span> <span class="o">=</span> <span class="n">contents</span><span class="o">.</span><span class="n">rindex</span><span class="p">(</span><span class="s1">&#39;Coordinates (Angstroms)&#39;</span><span class="p">)</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">contents</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;---</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">last_coordinates</span><span class="p">)</span> <span class="o">+</span> <span class="mi">4</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">contents</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1"> ---&#39;</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+    <span class="n">atoms</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">contents</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]]</span>
+        <span class="n">atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">structures</span><span class="o">.</span><span class="n">Atom</span><span class="p">(</span>
+            <span class="n">element</span><span class="o">=</span><span class="n">constants</span><span class="o">.</span><span class="n">PERIODIC_TABLE</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">])][</span><span class="s1">&#39;sym&#39;</span><span class="p">],</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+            <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">,</span>
+            <span class="n">index</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="s1">&#39;Forces (Hartrees/Bohr)&#39;</span> <span class="ow">in</span> <span class="n">contents</span><span class="p">:</span>
+        <span class="c1"># Get forces</span>
+        <span class="n">last_forces</span> <span class="o">=</span> <span class="n">contents</span><span class="o">.</span><span class="n">rindex</span><span class="p">(</span><span class="s1">&#39;Forces (Hartrees/Bohr)&#39;</span><span class="p">)</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">contents</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;---</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">last_forces</span><span class="p">)</span> <span class="o">+</span> <span class="mi">4</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">contents</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1"> ---&#39;</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">contents</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()):</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="n">read_force</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">5</span><span class="p">]]</span>
+            <span class="n">atoms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">fx</span><span class="p">,</span> <span class="n">atoms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">fy</span><span class="p">,</span> <span class="n">atoms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">fz</span> <span class="o">=</span> <span class="n">read_force</span>
+
+    <span class="c1"># Return the appropriate values</span>
+    <span class="k">if</span> <span class="n">get_time</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">get_atoms</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">energy</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">time</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">energy</span><span class="p">,</span> <span class="n">time</span>
+    <span class="k">if</span> <span class="n">get_energy</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">energy</span><span class="p">,</span> <span class="n">atoms</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">atoms</span>
+
+
+<span class="k">def</span> <span class="nf">atoms</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">parse_atoms</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span>
+                       <span class="n">get_atoms</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                       <span class="n">get_energy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                       <span class="n">check_convergence</span><span class="o">=</span><span class="n">check</span><span class="p">,</span>
+                       <span class="n">get_time</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                       <span class="n">counterpoise</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">bandgap</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">parse_all</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">input_file</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span> <span class="o">!=</span> <span class="s1">&#39;.log&#39;</span><span class="p">:</span>
+        <span class="n">input_file</span> <span class="o">=</span> <span class="s1">&#39;gaussian/&#39;</span> <span class="o">+</span> <span class="n">input_file</span> <span class="o">+</span> <span class="s1">&#39;.log&#39;</span>
+    <span class="n">hold</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="n">bandgap</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;The electronic state is&#39;</span>
+    <span class="k">while</span> <span class="n">hold</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">hold</span> <span class="o">=</span> <span class="n">hold</span><span class="p">[</span><span class="n">hold</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">):]</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">hold</span><span class="p">[:</span><span class="n">hold</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;Condensed&#39;</span><span class="p">)]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">tp</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tmp</span><span class="p">):</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;virt.&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error in calculating bandgap. Lowest eigenvalue </span><span class="se">\</span>
+<span class="s2">energy is empty.&quot;</span><span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+                <span class="n">bandgap</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">tp</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+                <span class="k">break</span>
+            <span class="n">tp</span> <span class="o">=</span> <span class="n">t</span>
+        <span class="n">hold</span> <span class="o">=</span> <span class="n">hold</span><span class="p">[</span><span class="n">hold</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">parse_all</span><span class="p">:</span>
+        <span class="n">bandgap</span> <span class="o">=</span> <span class="n">bandgap</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">bandgap</span>
+
+
+<span class="k">def</span> <span class="nf">convergence</span><span class="p">(</span><span class="n">input_file</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;gaussian/&#39;</span> <span class="o">+</span> <span class="n">input_file</span> <span class="o">+</span> <span class="s1">&#39;.log&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;Converged?&quot;</span><span class="p">):]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span>
+    <span class="n">convergence</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
+        <span class="n">c</span><span class="p">,</span> <span class="n">tmp</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="p">[]</span>
+        <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]))</span>
+        <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+        <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span>
+        <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+        <span class="n">convergence</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">convergence</span>
+
+
+<span class="k">def</span> <span class="nf">parse_scan</span><span class="p">(</span><span class="n">input_file</span><span class="p">):</span>
+    <span class="n">contents</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">if</span> <span class="s1">&#39;Normal termination of Gaussian 09&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">contents</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">scan_steps</span> <span class="o">=</span> <span class="n">contents</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;on scan point&#39;</span><span class="p">)</span>
+    <span class="n">energy_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">atoms_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">scan_steps</span> <span class="o">=</span> <span class="p">[</span><span class="n">scan_steps</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">scan_steps</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                  <span class="k">if</span> <span class="n">scan_steps</span><span class="p">[</span><span class="n">i</span><span class="p">][:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span>
+                  <span class="n">scan_steps</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]]</span>
+
+    <span class="k">for</span> <span class="n">scan_step</span> <span class="ow">in</span> <span class="n">scan_steps</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">scan_step</span><span class="o">.</span><span class="n">rindex</span><span class="p">(</span><span class="s1">&#39;SCF Done&#39;</span><span class="p">)</span>
+        <span class="n">energy_line</span> <span class="o">=</span> <span class="n">scan_step</span><span class="p">[</span><span class="n">a</span><span class="p">:</span><span class="n">scan_step</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">a</span><span class="p">)]</span>
+        <span class="n">energy</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;SCF Done: +\S+ += +(\S+)&#39;</span><span class="p">,</span>
+                                 <span class="n">energy_line</span><span class="p">)</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+        <span class="n">last_coordinates</span> <span class="o">=</span> <span class="n">scan_step</span><span class="o">.</span><span class="n">rindex</span><span class="p">(</span><span class="s1">&#39;Coordinates (Angstroms)&#39;</span><span class="p">)</span>
+
+        <span class="n">start</span> <span class="o">=</span> <span class="n">scan_step</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;---</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">last_coordinates</span><span class="p">)</span> <span class="o">+</span> <span class="mi">4</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">scan_step</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1"> ---&#39;</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+        <span class="n">atoms</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">scan_step</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]]</span>
+            <span class="n">atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">structures</span><span class="o">.</span><span class="n">Atom</span><span class="p">(</span>
+                <span class="n">element</span><span class="o">=</span><span class="n">constants</span><span class="o">.</span><span class="n">PERIODIC_TABLE</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">])][</span><span class="s1">&#39;sym&#39;</span><span class="p">],</span>
+                <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+                <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+                <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">))</span>
+        <span class="n">energy_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">energy</span><span class="p">)</span>
+        <span class="n">atoms_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">energy_list</span><span class="p">,</span> <span class="n">atoms_list</span>
+
+
+<span class="k">def</span> <span class="nf">parse_chelpg</span><span class="p">(</span><span class="n">input_file</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">input_file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;gaussian/&#39;</span><span class="p">):</span>
+        <span class="n">input_file</span> <span class="o">=</span> <span class="s1">&#39;gaussian/&#39;</span> <span class="o">+</span> <span class="n">input_file</span> <span class="o">+</span> <span class="s1">&#39;.log&#39;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">inp</span><span class="p">:</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="s1">&#39;Normal termination of Gaussian 09&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">contents</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">contents</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;Fitting point charges to electrostatic potential&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">charges</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">contents</span><span class="o">.</span><span class="n">rindex</span><span class="p">(</span>
+            <span class="s1">&#39;Fitting point charges to electrostatic potential&#39;</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">contents</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;-----------------&#39;</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+        <span class="n">charges</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">contents</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">charges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">columns</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">charges</span>
+
+
+<span class="c1"># Optimize a custom PM6 semi-empirical method based on Gaussian examples at a</span>
+<span class="c1"># higher level of theory</span>
+<span class="k">def</span> <span class="nf">optimize_pm6</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">examples</span><span class="p">,</span> <span class="n">param_string</span><span class="p">,</span> <span class="n">starting_params</span><span class="p">,</span> <span class="n">queue</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="k">import</span> <span class="n">minimize</span>
+
+    <span class="n">examples</span> <span class="o">=</span> <span class="p">[</span><span class="n">structures</span><span class="o">.</span><span class="n">Struct</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">example</span><span class="p">,</span> <span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">(</span><span class="n">example</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">example</span> <span class="ow">in</span> <span class="n">examples</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">examples</span><span class="p">:</span>
+        <span class="n">e</span><span class="o">.</span><span class="n">bonds</span> <span class="o">=</span> <span class="p">[(</span><span class="n">b</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                   <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">get_bonds</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">atoms</span><span class="p">)]</span>
+
+    <span class="n">n_bonds</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">bonds</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">examples</span><span class="p">])</span>
+
+    <span class="n">counter</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">pm6_error</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+        <span class="c1"># Run Gaussian jobs with new parameters</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">example</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">examples</span><span class="p">):</span>
+            <span class="n">running_jobs</span> <span class="o">=</span> <span class="p">[</span><span class="n">job</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">-</span><span class="si">%d</span><span class="s1">-</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">counter</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">i</span><span class="p">),</span>
+                                <span class="s1">&#39;PM6=(Input,Print) Opt=Loose&#39;</span><span class="p">,</span>
+                                <span class="n">example</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span>
+                                <span class="n">extra_section</span><span class="o">=</span><span class="n">param_string</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">params</span><span class="p">),</span>
+                                <span class="n">queue</span><span class="o">=</span><span class="n">queue</span><span class="p">,</span>
+                                <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)]</span>
+        <span class="c1"># Wait for all jobs to finish</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">running_jobs</span><span class="p">:</span>
+            <span class="n">j</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+
+        <span class="c1"># Get forces and energies resulting from new parameters</span>
+        <span class="n">geom_error</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">example</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">examples</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">new_energy</span><span class="p">,</span> <span class="n">new_atoms</span> <span class="o">=</span> <span class="n">parse_atoms</span><span class="p">(</span>
+                    <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">-</span><span class="si">%d</span><span class="s1">-</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">counter</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">i</span><span class="p">),</span>
+                    <span class="n">check_convergence</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="nb">print</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">-</span><span class="si">%d</span><span class="s1">-</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">counter</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">i</span><span class="p">),</span> <span class="s1">&#39;has no data&#39;</span>
+                <span class="n">exit</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">parse_atoms</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">-</span><span class="si">%d</span><span class="s1">-</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">counter</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">i</span><span class="p">))</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="nb">print</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">-</span><span class="si">%d</span><span class="s1">-</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">counter</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">i</span><span class="p">),</span>\
+                      <span class="s1">&#39;did not converge fully&#39;</span>
+
+            <span class="c1"># Compare results</span>
+            <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">example</span><span class="o">.</span><span class="n">bonds</span><span class="p">:</span>
+                <span class="n">d1</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">example</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">example</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+                <span class="n">d2</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">new_atoms</span><span class="p">[</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">new_atoms</span><span class="p">[</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+                <span class="n">geom_error</span> <span class="o">+=</span> <span class="p">(</span><span class="n">d1</span> <span class="o">-</span> <span class="n">d2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+
+        <span class="n">error</span> <span class="o">=</span> <span class="n">geom_error</span> <span class="o">/</span> <span class="n">n_bonds</span>
+
+        <span class="nb">print</span> <span class="n">error</span><span class="o">**</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">params</span>
+
+        <span class="n">counter</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">error</span>
+
+    <span class="n">minimize</span><span class="p">(</span><span class="n">pm6_error</span><span class="p">,</span>
+             <span class="n">starting_params</span><span class="p">,</span>
+             <span class="n">method</span><span class="o">=</span><span class="s1">&#39;Nelder-Mead&#39;</span><span class="p">,</span>
+             <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;disp&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+
+
+<span class="c1"># A function that returns the binding energy of a molecule A with BSSE (Basis</span>
+<span class="c1"># Set Superposition Error) corrections.</span>
+<span class="c1">#     job_total - This is the name of a gaussian job that holds the full</span>
+<span class="c1">#                 system (optimized)</span>
+<span class="c1">#     job_A - This is the name of a gaussian job that holds the optimized</span>
+<span class="c1">#             molecule A</span>
+<span class="c1">#     job_B - This is the name of a gaussian job that holds the optimized</span>
+<span class="c1">#             molecule B</span>
+<span class="c1">#     zero_indexed_atom_indices_A - This is a list of indices for molecule</span>
+<span class="c1">#                                   A in job_total.  First values of a .xyz</span>
+<span class="c1">#                                   file start at 0.</span>
+<span class="k">def</span> <span class="nf">binding_energy</span><span class="p">(</span><span class="n">job_total</span><span class="p">,</span>
+                   <span class="n">job_A</span><span class="p">,</span>
+                   <span class="n">job_B</span><span class="p">,</span>
+                   <span class="n">zero_indexed_atom_indices_A</span><span class="p">,</span>
+                   <span class="n">route</span><span class="o">=</span><span class="s1">&#39;SP SCRF(Solvent=Toluene)&#39;</span><span class="p">,</span>
+                   <span class="n">blurb</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                   <span class="n">procs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                   <span class="n">queue</span><span class="o">=</span><span class="s1">&#39;short&#39;</span><span class="p">,</span>
+                   <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                   <span class="n">bind_tck_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">ghost_job</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span>
+                  <span class="n">name</span><span class="p">,</span>
+                  <span class="n">previous_job</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">route</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">blurb</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">procs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                  <span class="n">queue</span><span class="o">=</span><span class="s1">&#39;short&#39;</span><span class="p">,</span>
+                  <span class="n">extras</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                  <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+        <span class="c1"># To ensure we do not overwrite a file we increment a value until we</span>
+        <span class="c1"># find that the run doesn&#39;t exist</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s1">&#39;gaussian/</span><span class="si">%s</span><span class="s1">.inp&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">):</span>
+            <span class="c1"># Check if normal file exists</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Check if the last thing is an integer to increment</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">name</span><span class="p">[</span><span class="n">name</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:])</span>
+                <span class="c1"># If the last thing after _ is an integer, increment it</span>
+                <span class="k">while</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s1">&#39;gaussian/</span><span class="si">%s</span><span class="s1">_</span><span class="si">%d</span><span class="s1">.inp&#39;</span>
+                                     <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">[:</span><span class="n">name</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)],</span> <span class="n">i</span><span class="p">)):</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">[:</span><span class="n">name</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">while</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s1">&#39;gaussian/</span><span class="si">%s</span><span class="s1">_</span><span class="si">%d</span><span class="s1">.inp&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">i</span><span class="p">)):</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+
+        <span class="c1"># Get appropriate level of theory, if not supplied</span>
+        <span class="k">if</span> <span class="n">route</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">theory</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;gaussian/&#39;</span> <span class="o">+</span> <span class="n">previous_job</span> <span class="o">+</span> <span class="s1">&#39;.inp&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">readline</span><span class="p">()[</span><span class="mi">2</span><span class="p">:]</span>
+            <span class="n">theory</span> <span class="o">=</span> <span class="n">theory</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+            <span class="c1"># If we need to get mixed basis sets</span>
+            <span class="k">if</span> <span class="n">theory</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;genecp&#39;</span><span class="p">,</span> <span class="s1">&#39;gen&#39;</span><span class="p">]:</span>
+                <span class="n">extras</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;gaussian/&#39;</span> <span class="o">+</span> <span class="n">previous_job</span> <span class="o">+</span> <span class="s1">&#39;.inp&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+                <span class="n">extras</span> <span class="o">=</span> <span class="n">extras</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)[</span><span class="mi">3</span><span class="p">:]</span>
+                <span class="n">extras</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">extras</span><span class="p">)</span>
+                <span class="n">extras</span> <span class="o">=</span> <span class="n">extras</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">extras</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="n">route</span> <span class="o">=</span> <span class="s1">&#39;Pseudo=Read &#39;</span> <span class="o">+</span> <span class="n">route</span>
+            <span class="n">route</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">theory</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">route</span>
+
+        <span class="c1"># Run the job and return the job name for the user to use later</span>
+        <span class="n">job</span><span class="p">(</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">route</span><span class="p">,</span>
+            <span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">,</span>
+            <span class="n">queue</span><span class="o">=</span><span class="n">queue</span><span class="p">,</span>
+            <span class="n">extra_section</span><span class="o">=</span><span class="n">extras</span><span class="p">,</span>
+            <span class="n">blurb</span><span class="o">=</span><span class="n">blurb</span><span class="p">,</span>
+            <span class="n">procs</span><span class="o">=</span><span class="n">procs</span><span class="p">,</span>
+            <span class="n">previous</span><span class="o">=</span><span class="n">previous_job</span><span class="p">,</span>
+            <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">name</span>
+
+    <span class="c1"># First get the atoms from the gaussian job for the full system</span>
+    <span class="n">AB</span> <span class="o">=</span> <span class="n">atoms</span><span class="p">(</span><span class="n">job_total</span><span class="p">)</span>
+    <span class="n">AB_A</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">AB</span><span class="p">)</span>
+    <span class="c1"># For AB_A, we want all atoms not part of molecule A to be ghost atoms</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">atom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">AB_A</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">zero_indexed_atom_indices_A</span><span class="p">:</span>
+            <span class="n">atom</span><span class="o">.</span><span class="n">element</span> <span class="o">+=</span> <span class="s1">&#39;-Bq&#39;</span>
+    <span class="n">AB_B</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">AB</span><span class="p">)</span>
+    <span class="c1"># # For AB_B we want all atoms part of molecule A to be ghost atoms</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">atom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">AB_B</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">zero_indexed_atom_indices_A</span><span class="p">:</span>
+            <span class="n">atom</span><span class="o">.</span><span class="n">element</span> <span class="o">+=</span> <span class="s1">&#39;-Bq&#39;</span>
+
+    <span class="c1"># Now AB_A is A from AB, AB_B is B from AB</span>
+    <span class="n">name1</span> <span class="o">=</span> <span class="n">ghost_job</span><span class="p">(</span><span class="n">AB_A</span><span class="p">,</span>
+                      <span class="n">job_total</span> <span class="o">+</span> <span class="s1">&#39;_A0&#39;</span><span class="p">,</span>
+                      <span class="n">blurb</span><span class="o">=</span><span class="n">blurb</span><span class="p">,</span>
+                      <span class="n">queue</span><span class="o">=</span><span class="n">queue</span><span class="p">,</span>
+                      <span class="n">procs</span><span class="o">=</span><span class="n">procs</span><span class="p">,</span>
+                      <span class="n">previous_job</span><span class="o">=</span><span class="n">job_total</span><span class="p">,</span>
+                      <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span>
+                      <span class="n">route</span><span class="o">=</span><span class="n">route</span><span class="p">)</span>
+    <span class="n">name2</span> <span class="o">=</span> <span class="n">ghost_job</span><span class="p">(</span><span class="n">AB_B</span><span class="p">,</span>
+                      <span class="n">job_total</span> <span class="o">+</span> <span class="s1">&#39;_B0&#39;</span><span class="p">,</span>
+                      <span class="n">blurb</span><span class="o">=</span><span class="n">blurb</span><span class="p">,</span>
+                      <span class="n">queue</span><span class="o">=</span><span class="n">queue</span><span class="p">,</span>
+                      <span class="n">procs</span><span class="o">=</span><span class="n">procs</span><span class="p">,</span>
+                      <span class="n">previous_job</span><span class="o">=</span><span class="n">job_total</span><span class="p">,</span>
+                      <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span>
+                      <span class="n">route</span><span class="o">=</span><span class="n">route</span><span class="p">)</span>
+
+    <span class="c1"># Non-rigid correction:</span>
+    <span class="n">AB_A</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">AB_A</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">atom</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;-Bq&#39;</span><span class="p">)]</span>
+    <span class="n">AB_B</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">AB_B</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">atom</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;-Bq&#39;</span><span class="p">)]</span>
+    <span class="n">name3</span> <span class="o">=</span> <span class="n">ghost_job</span><span class="p">(</span><span class="n">AB_A</span><span class="p">,</span>
+                      <span class="n">job_A</span> <span class="o">+</span> <span class="s1">&#39;_AB0&#39;</span><span class="p">,</span>
+                      <span class="n">blurb</span><span class="o">=</span><span class="n">blurb</span><span class="p">,</span>
+                      <span class="n">queue</span><span class="o">=</span><span class="n">queue</span><span class="p">,</span>
+                      <span class="n">procs</span><span class="o">=</span><span class="n">procs</span><span class="p">,</span>
+                      <span class="n">previous_job</span><span class="o">=</span><span class="n">job_A</span><span class="p">,</span>
+                      <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span>
+                      <span class="n">route</span><span class="o">=</span><span class="n">route</span><span class="p">)</span>
+    <span class="n">name4</span> <span class="o">=</span> <span class="n">ghost_job</span><span class="p">(</span><span class="n">AB_B</span><span class="p">,</span>
+                      <span class="n">job_B</span> <span class="o">+</span> <span class="s1">&#39;_AB0&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;2&#39;</span> <span class="k">if</span> <span class="n">job_A</span> <span class="o">==</span> <span class="n">job_B</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+                      <span class="n">blurb</span><span class="o">=</span><span class="n">blurb</span><span class="p">,</span>
+                      <span class="n">queue</span><span class="o">=</span><span class="n">queue</span><span class="p">,</span>
+                      <span class="n">procs</span><span class="o">=</span><span class="n">procs</span><span class="p">,</span>
+                      <span class="n">previous_job</span><span class="o">=</span><span class="n">job_B</span><span class="p">,</span>
+                      <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span>
+                      <span class="n">route</span><span class="o">=</span><span class="n">route</span><span class="p">)</span>
+
+    <span class="c1"># To get the binding energy we need to take into account the superposition</span>
+    <span class="c1"># error and the deformation error:</span>
+    <span class="c1"># Superposition Error Correction is done by taking the total energy of the</span>
+    <span class="c1"># job and subtracting from it:</span>
+    <span class="c1">#       name1 = Original system with molecule A as ghost atoms and basis</span>
+    <span class="c1">#               set of original system</span>
+    <span class="c1">#       name2 = Original system with molecule B as ghost atoms and basis</span>
+    <span class="c1">#               set of original system</span>
+    <span class="c1"># Deformation energy corrections are done by taking the difference in</span>
+    <span class="c1"># energy of molecules in the same basis set between</span>
+    <span class="c1"># geometries:</span>
+    <span class="c1">#       Add the following</span>
+    <span class="c1">#       name3 = Molecule A in the geometry of the original System but in</span>
+    <span class="c1">#               the basis set of what molecule A was done in</span>
+    <span class="c1">#       name4 = Molecule B in the geometry of the original System but in</span>
+    <span class="c1">#               the basis set of what molecule B was done in</span>
+    <span class="c1">#       Subtract the following</span>
+    <span class="c1">#       job_A = Molecule A in the basis set it was done in</span>
+    <span class="c1">#       job_B = Molecule B in the basis set it was done in</span>
+    <span class="nb">print</span> <span class="s1">&#39;E_binding = </span><span class="si">%s</span><span class="s1"> - </span><span class="si">%s</span><span class="s1"> - </span><span class="si">%s</span><span class="s1"> + </span><span class="si">%s</span><span class="s1"> + </span><span class="si">%s</span><span class="s1"> - </span><span class="si">%s</span><span class="s1"> - </span><span class="si">%s</span><span class="s1">&#39;</span>\
+          <span class="o">%</span> <span class="p">(</span><span class="n">job_total</span><span class="p">,</span> <span class="n">name1</span><span class="p">,</span> <span class="n">name2</span><span class="p">,</span> <span class="n">name3</span><span class="p">,</span> <span class="n">name4</span><span class="p">,</span> <span class="n">job_A</span><span class="p">,</span> <span class="n">job_B</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">bind_tck_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s1">&#39;bind_tck_#.py&#39;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))):</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;bind_tck_#.py&#39;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bind_tck_name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">bind_tck_name</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;.py&#39;</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">bind_tck_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.py&quot;</span> <span class="o">%</span> <span class="n">bind_tck_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+
+    <span class="n">job_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">job_total</span><span class="p">,</span> <span class="n">name1</span><span class="p">,</span> <span class="n">name2</span><span class="p">,</span> <span class="n">name3</span><span class="p">,</span> <span class="n">name4</span><span class="p">,</span> <span class="n">job_A</span><span class="p">,</span> <span class="n">job_B</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">job_names</span><span class="p">)):</span>
+        <span class="n">job_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="n">job_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
+    <span class="n">job_names</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">job_names</span><span class="p">)</span>
+
+    <span class="n">output</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;from merlin import *</span>
+<span class="s1">import jobs</span>
+<span class="s1">try:</span>
+<span class="s1">    s_units=sys.argv[1]</span>
+<span class="s1">except:</span>
+<span class="s1">    s_units=&#39;Ha&#39;</span>
+<span class="s1">job_names = [$$$$$]</span>
+<span class="s1"># Check if jobs are still running</span>
+<span class="s1">for s in jobs.get_running_jobs():</span>
+<span class="s1">    if s in job_names:</span>
+<span class="s1">        print(&quot;Sorry, all simulations haven&#39;t finished yet...&quot;)</span>
+<span class="s1">        sys.exit()</span>
+
+<span class="s1"># Else, we can get the energy</span>
+<span class="s1">energies = []</span>
+<span class="s1">print(&#39;Jobs Calculated From: &#39;)</span>
+<span class="s1">for s in job_names:</span>
+<span class="s1">    try:</span>
+<span class="s1">        e,atoms = g09.parse_atoms(s)</span>
+<span class="s1">        energies.append(e)</span>
+<span class="s1">        print &#39;</span><span class="se">\t</span><span class="si">%20s</span><span class="se">\t</span><span class="si">%lg</span><span class="s1">&#39; % (s,e), &#39; &#39;.join([a.element for a in atoms])</span>
+<span class="s1">    except:</span>
+<span class="s1">        raise Exception(&#39;Error, could not get data from </span><span class="si">%s</span><span class="s1">.&#39; </span><span class="si">% s</span><span class="s1">)</span>
+
+<span class="s1">sp_corr = units.convert_energy(&#39;Ha&#39;,</span>
+<span class="s1">                               s_units,</span>
+<span class="s1">                               energies[0] - energies[1] - energies[2])</span>
+<span class="s1">deform_a = units.convert_energy(&#39;Ha&#39;,</span>
+<span class="s1">                                s_units,</span>
+<span class="s1">                                energies[3] - energies[5])</span>
+<span class="s1">deform_b = units.convert_energy(&#39;Ha&#39;,</span>
+<span class="s1">                                s_units,</span>
+<span class="s1">                                energies[4] - energies[6])</span>
+<span class="s1">geom_corr = deform_a + deform_b</span>
+<span class="s1">print(&#39;------------&#39;)</span>
+<span class="s1">print(&#39;Superposition Correction = &#39;+str(sp_corr)+&#39; &#39;+s_units)</span>
+<span class="s1">print(&#39;Geometry Correction = &#39;+str(geom_corr)+&#39; &#39;+s_units)</span>
+<span class="s1">print(&#39;</span><span class="se">\t</span><span class="s1">Deformation of A = &#39;+str(deform_a)+&#39; &#39;+s_units)</span>
+<span class="s1">print(&#39;</span><span class="se">\t</span><span class="s1">Deformation of B = &#39;+str(deform_b)+&#39; &#39;+s_units)</span>
+<span class="s1">print(&#39;Binding Energy = &#39;+str(sp_corr + geom_corr)+&#39; &#39;+s_units)&#39;&#39;&#39;</span>
+
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;$$$$$&#39;</span><span class="p">,</span> <span class="n">job_names</span><span class="p">))</span>
+
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="read"><a class="viewcode-back" href="../codebase.html#g09.read">[docs]</a><span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="n">input_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    General read in of all possible data from an Gaussian09 output file (.log).</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">        input_file: *str*</span>
+<span class="sd">            Gaussian .log file to be parsed.</span>
+
+<span class="sd">    **Returns**</span>
+
+<span class="sd">        data: :class:`results.DFT_out`</span>
+<span class="sd">            Generic DFT output object containing all parsed results.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">DFT_out</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="s1">&#39;g09&#39;</span><span class="p">)</span>
+
+    <span class="n">data</span><span class="o">.</span><span class="n">frames</span> <span class="o">=</span> <span class="n">parse_atoms</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span>
+                              <span class="n">get_atoms</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                              <span class="n">get_energy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                              <span class="n">check_convergence</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                              <span class="n">get_time</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                              <span class="n">counterpoise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                              <span class="n">parse_all</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">frames</span> <span class="o">==</span> <span class="p">[]:</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">frames</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">frames</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">frames</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">energies</span> <span class="o">=</span> <span class="n">parse_atoms</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span>
+                                <span class="n">get_atoms</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                <span class="n">get_energy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                <span class="n">check_convergence</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                <span class="n">get_time</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                <span class="n">counterpoise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                <span class="n">parse_all</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">energy</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">energies</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">charges_CHELPG</span> <span class="o">=</span> <span class="n">parse_chelpg</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">charges</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">charges_CHELPG</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">convergence</span> <span class="o">=</span> <span class="n">convergence</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">converged</span> <span class="o">=</span> <span class="n">parse_atoms</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span>
+                                 <span class="n">get_atoms</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                 <span class="n">get_energy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                 <span class="n">check_convergence</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                 <span class="n">get_time</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                 <span class="n">counterpoise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                 <span class="n">parse_all</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">parse_atoms</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span>
+                            <span class="n">get_atoms</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">get_energy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">check_convergence</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">get_time</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">counterpoise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">parse_all</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">bandgap</span> <span class="o">=</span> <span class="n">bandgap</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="cubegen_analysis"><a class="viewcode-back" href="../codebase.html#g09.cubegen_analysis">[docs]</a><span class="k">def</span> <span class="nf">cubegen_analysis</span><span class="p">(</span><span class="n">old_job</span><span class="p">,</span>
+                     <span class="n">orbital</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">path</span><span class="o">=</span><span class="s1">&#39;gaussian/&#39;</span><span class="p">,</span>
+                     <span class="n">chk_conv</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                     <span class="n">skip_potential</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Post process a g09 job using cubegen and vmd to display molecular orbitals</span>
+<span class="sd">    and the potential surface.</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">        old_job: *str*</span>
+<span class="sd">            Gaussian file name.  Only use the name, such as &#39;water&#39; instead</span>
+<span class="sd">            of &#39;water.chk&#39;.  Note, do not pass a path as it is assumed you</span>
+<span class="sd">            are in the parent directory of the job to analyze.  If not, use</span>
+<span class="sd">            the path variable.</span>
+<span class="sd">        orbital: *str, optional*</span>
+<span class="sd">            The orbital to analyze (0, 1, 2, 3, ...). By default HOMO and</span>
+<span class="sd">            LUMO will be analyzed, thus this only is useful if you wish to</span>
+<span class="sd">            see other orbitals.</span>
+<span class="sd">        path: *str, optional*</span>
+<span class="sd">            Path to where the gaussian job was run.  By default, this is a</span>
+<span class="sd">            gaussian subfolder.</span>
+<span class="sd">        chk_conv: *bool, optional*</span>
+<span class="sd">            Check if the simulation converged before proceeding.  If you only</span>
+<span class="sd">            have a .chk file and you are certain it converged, this can be</span>
+<span class="sd">            set to False.</span>
+<span class="sd">        skip_potential: *bool, optional*</span>
+<span class="sd">            If you only care about MO&#39;s, skip the expensive potential</span>
+<span class="sd">            surface calculation.</span>
+
+<span class="sd">    **Returns**</span>
+
+<span class="sd">        None</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># Error handling</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">+=</span> <span class="s2">&quot;/&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s%s</span><span class="s1">.chk&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">old_job</span><span class="p">)):</span>
+        <span class="nb">print</span> <span class="s1">&#39;Fatal error: file &quot;</span><span class="si">%s%s</span><span class="s1">.chk&quot; does not exist.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">old_job</span><span class="p">)</span>
+        <span class="n">exit</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">chk_conv</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">parse_atoms</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="n">old_job</span><span class="p">):</span>
+        <span class="nb">print</span> <span class="s1">&#39;Fatal error: &quot;</span><span class="si">%s</span><span class="s1">&quot; is not converged. gcube does not work on </span><span class="se">\</span>
+<span class="s1">    unconverged jobs.&#39;</span> <span class="o">%</span> <span class="n">old_job</span>
+        <span class="n">exit</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">orbital</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">orbital</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">orbital</span><span class="p">)</span>
+
+    <span class="c1"># Get the file to check</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s%s</span><span class="s1">.fchk&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">old_job</span><span class="p">)):</span>
+        <span class="nb">print</span> <span class="s1">&#39;Making </span><span class="si">%s%s</span><span class="s1">.fchk&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">old_job</span><span class="p">)</span>
+        <span class="n">Popen</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s%s</span><span class="s1">.chk </span><span class="si">%s%s</span><span class="s1">.fchk&#39;</span>
+              <span class="o">%</span> <span class="p">(</span><span class="n">sysconst</span><span class="o">.</span><span class="n">g09_formchk</span><span class="p">,</span>
+                 <span class="n">path</span><span class="p">,</span>
+                 <span class="n">old_job</span><span class="p">,</span>
+                 <span class="n">path</span><span class="p">,</span>
+                 <span class="n">old_job</span><span class="p">),</span>
+              <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+
+    <span class="c1"># Make cube files</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;_d&quot;</span><span class="p">,</span> <span class="s2">&quot;_p&quot;</span><span class="p">,</span> <span class="s2">&quot;_HOMO&quot;</span><span class="p">,</span> <span class="s2">&quot;_LUMO&quot;</span><span class="p">]</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;density&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;potential&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;MO=Homo&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;MO=Lumo&quot;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">skip_potential</span><span class="p">:</span>
+        <span class="n">a</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;_p&quot;</span><span class="p">)</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;potential&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">orbital</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">a</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;_MO</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">orbital</span><span class="p">)</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;MO=</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">orbital</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">append</span><span class="p">,</span> <span class="n">orbit</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s%s</span><span class="s1">.cube&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">old_job</span> <span class="o">+</span> <span class="n">append</span><span class="p">)):</span>
+            <span class="nb">print</span> <span class="s1">&#39;Making </span><span class="si">%s%s</span><span class="s1">.cube&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">old_job</span> <span class="o">+</span> <span class="n">append</span><span class="p">)</span>
+            <span class="n">Popen</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> 0 </span><span class="si">%s</span><span class="s1"> </span><span class="si">%s%s</span><span class="s1">.fchk </span><span class="si">%s%s</span><span class="s1">.cube 0 h&#39;</span>
+                  <span class="o">%</span> <span class="p">(</span><span class="n">sysconst</span><span class="o">.</span><span class="n">g09_cubegen</span><span class="p">,</span>
+                     <span class="n">orbit</span><span class="p">,</span>
+                     <span class="n">path</span><span class="p">,</span>
+                     <span class="n">old_job</span><span class="p">,</span>
+                     <span class="n">path</span><span class="p">,</span>
+                     <span class="n">old_job</span> <span class="o">+</span> <span class="n">append</span><span class="p">),</span>
+                  <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+
+    <span class="c1"># Error handling</span>
+    <span class="k">for</span> <span class="n">tail</span> <span class="ow">in</span> <span class="n">a</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s%s</span><span class="s2">.cube&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">old_job</span><span class="p">,</span> <span class="n">tail</span><span class="p">)):</span>
+            <span class="nb">print</span> <span class="s1">&#39;Fatal error: cube files not created&#39;</span>
+            <span class="n">exit</span><span class="p">()</span>
+
+    <span class="c1"># Get cubefile ranges if needed</span>
+    <span class="k">def</span> <span class="nf">get_cube_range</span><span class="p">(</span><span class="n">fptr</span><span class="p">):</span>
+        <span class="n">raw</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fptr</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">N_atoms</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">raw</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">6</span> <span class="o">+</span> <span class="n">N_atoms</span><span class="p">:]</span>
+        <span class="n">low</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+        <span class="n">high</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;-inf&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">raw</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()]:</span>
+                <span class="k">if</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="n">high</span><span class="p">:</span>
+                    <span class="n">high</span> <span class="o">=</span> <span class="n">val</span>
+                <span class="k">if</span> <span class="n">val</span> <span class="o">&lt;</span> <span class="n">low</span><span class="p">:</span>
+                    <span class="n">low</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">return</span> <span class="n">low</span><span class="p">,</span> <span class="n">high</span>
+
+    <span class="n">low1</span><span class="p">,</span> <span class="n">high1</span> <span class="o">=</span> <span class="n">get_cube_range</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s%s</span><span class="s2">_LUMO.cube&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">old_job</span><span class="p">))</span>
+    <span class="n">low2</span><span class="p">,</span> <span class="n">high2</span> <span class="o">=</span> <span class="n">get_cube_range</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s%s</span><span class="s2">_HOMO.cube&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">old_job</span><span class="p">))</span>
+    <span class="n">vmd_file</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;# Type logfile console into console to see all commands</span>
+<span class="s1">    # Get data</span>
+<span class="s1">    mol new $$PATH$$$$FPTR$$_d.cube</span>
+<span class="s1">    mol addfile $$PATH$$$$FPTR$$_LUMO.cube</span>
+<span class="s1">    mol addfile $$PATH$$$$FPTR$$_HOMO.cube</span>
+<span class="s1">    $POTENTIAL$</span>
+<span class="s1">    # Adjust first rep</span>
+<span class="s1">    mol modcolor 0 0 element</span>
+<span class="s1">    mol modstyle 0 0 CPK</span>
+<span class="s1">    # Adjust LUMO and HOMO Positive Orbital</span>
+<span class="s1">    mol addrep 0</span>
+<span class="s1">    mol modcolor 1 0 Volume 1</span>
+<span class="s1">    mol modstyle 1 0 Isosurface 0.04 1 0 0 1 1</span>
+<span class="s1">    mol modmaterial 1 0 Transparent</span>
+<span class="s1">    mol addrep 0</span>
+<span class="s1">    mol modcolor 2 0 Volume 2</span>
+<span class="s1">    mol modstyle 2 0 Isosurface 0.04 2 0 0 1 1</span>
+<span class="s1">    mol modmaterial 2 0 Transparent</span>
+<span class="s1">    # Adjust LUMO and HOMO Negative Orbital</span>
+<span class="s1">    mol addrep 0</span>
+<span class="s1">    mol modcolor 3 0 Volume 1</span>
+<span class="s1">    mol modstyle 3 0 Isosurface -0.04 1 0 0 1 1</span>
+<span class="s1">    mol modmaterial 3 0 Transparent</span>
+<span class="s1">    mol addrep 0</span>
+<span class="s1">    mol modcolor 4 0 Volume 2</span>
+<span class="s1">    mol modstyle 4 0 Isosurface -0.04 2 0 0 1 1</span>
+<span class="s1">    mol modmaterial 4 0 Transparent</span>
+<span class="s1">    $POTENTIAL2$</span>
+<span class="s1">    # Change the color scale</span>
+<span class="s1">    mol scaleminmax 0 1 -100000 $$HIGH1$$</span>
+<span class="s1">    mol scaleminmax 0 2 -100000 $$HIGH2$$</span>
+<span class="s1">    mol scaleminmax 0 3 $$LOW1$$ 100000</span>
+<span class="s1">    mol scaleminmax 0 4 $$LOW2$$ 100000</span>
+<span class="s1">    $POTENTIAL3$&#39;&#39;&#39;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;$$FPTR$$&#39;</span><span class="p">,</span> <span class="n">old_job</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">skip_potential</span><span class="p">:</span>
+        <span class="n">vmd_file</span> <span class="o">=</span> <span class="n">vmd_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$POTENTIAL$&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">vmd_file</span> <span class="o">=</span> <span class="n">vmd_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$POTENTIAL2$&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">vmd_file</span> <span class="o">=</span> <span class="n">vmd_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$POTENTIAL3$&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">vmd_file</span> <span class="o">=</span> <span class="n">vmd_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$POTENTIAL$&quot;</span><span class="p">,</span>
+                                    <span class="s2">&quot;mol addfile $$PATH$$$$FPTR$$_p.cube&quot;</span><span class="p">)</span>
+        <span class="n">vmd_file</span> <span class="o">=</span> <span class="n">vmd_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$POTENTIAL2$&quot;</span><span class="p">,</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">    # Adjust Potential Surface rep</span>
+<span class="s1">    mol addrep 0</span>
+<span class="s1">    mol modcolor 5 0 Volume 3</span>
+<span class="s1">    mol modstyle 5 0 Isosurface 0.040000 0 0 0 1 1</span>
+<span class="s1">    mol modmaterial 5 0 Transparent&#39;&#39;&#39;</span><span class="p">)</span>
+        <span class="n">vmd_file</span> <span class="o">=</span> <span class="n">vmd_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$POTENTIAL3&quot;</span><span class="p">,</span>
+                                    <span class="s2">&quot;mol scaleminmax 0 5 -0.100000 0.050000&quot;</span><span class="p">)</span>
+    <span class="k">while</span> <span class="s2">&quot;$$HIGH1$$&quot;</span> <span class="ow">in</span> <span class="n">vmd_file</span><span class="p">:</span>
+        <span class="n">vmd_file</span> <span class="o">=</span> <span class="n">vmd_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$$HIGH1$$&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">high1</span><span class="p">))</span>
+    <span class="k">while</span> <span class="s2">&quot;$$LOW1$$&quot;</span> <span class="ow">in</span> <span class="n">vmd_file</span><span class="p">:</span>
+        <span class="n">vmd_file</span> <span class="o">=</span> <span class="n">vmd_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$$LOW1$$&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">low1</span><span class="p">))</span>
+
+    <span class="k">while</span> <span class="s2">&quot;$$HIGH2$$&quot;</span> <span class="ow">in</span> <span class="n">vmd_file</span><span class="p">:</span>
+        <span class="n">vmd_file</span> <span class="o">=</span> <span class="n">vmd_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$$HIGH2$$&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">high2</span><span class="p">))</span>
+    <span class="k">while</span> <span class="s2">&quot;$$LOW2$$&quot;</span> <span class="ow">in</span> <span class="n">vmd_file</span><span class="p">:</span>
+        <span class="n">vmd_file</span> <span class="o">=</span> <span class="n">vmd_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$$LOW2$$&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">low2</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">orbital</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">low3</span><span class="p">,</span> <span class="n">high3</span> <span class="o">=</span> <span class="n">get_cube_range</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s%s</span><span class="s2">_MO</span><span class="si">%s</span><span class="s2">.cube&quot;</span>
+                                     <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">old_job</span><span class="p">,</span> <span class="n">orbital</span><span class="p">))</span>
+        <span class="nb">print</span> <span class="n">low3</span><span class="p">,</span> <span class="n">high3</span>
+        <span class="n">vmd_file</span> <span class="o">+=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">    # Adding in extra MO</span>
+<span class="s1">    mol addfile $$PATH$$$$FPTR$$_MO$$ORBITAL$$.cube</span>
+<span class="s1">    # Adjust MO positive orbital</span>
+<span class="s1">    mol addrep 0</span>
+<span class="s1">    mol modcolor 6 0 Volume 4</span>
+<span class="s1">    mol modstyle 6 0 Isosurface 0.04 4 0 0 1 1</span>
+<span class="s1">    mol modmaterial 6 0 Transparent</span>
+<span class="s1">    # Adjust MO Negative orbital</span>
+<span class="s1">    mol addrep 0</span>
+<span class="s1">    mol modcolor 7 0 Volume 4</span>
+<span class="s1">    mol modstyle 7 0 Isosurface -0.04 4 0 0 1 1</span>
+<span class="s1">    mol modmaterial 7 0 Transparent</span>
+<span class="s1">    # Change color scale</span>
+<span class="s1">    mol scaleminmax 0 6 -100000 $$HIGH3$$</span>
+<span class="s1">    mol scaleminmax 0 7 $$LOW3$$ 100000&#39;&#39;&#39;</span>
+
+        <span class="k">while</span> <span class="s2">&quot;$$HIGH3$$&quot;</span> <span class="ow">in</span> <span class="n">vmd_file</span><span class="p">:</span>
+            <span class="n">vmd_file</span> <span class="o">=</span> <span class="n">vmd_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$$HIGH3$$&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">high3</span><span class="p">))</span>
+        <span class="k">while</span> <span class="s2">&quot;$$LOW3$$&quot;</span> <span class="ow">in</span> <span class="n">vmd_file</span><span class="p">:</span>
+            <span class="n">vmd_file</span> <span class="o">=</span> <span class="n">vmd_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$$LOW3$$&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">low3</span><span class="p">))</span>
+        <span class="k">while</span> <span class="s2">&quot;$$ORBITAL$$&quot;</span> <span class="ow">in</span> <span class="n">vmd_file</span><span class="p">:</span>
+            <span class="n">vmd_file</span> <span class="o">=</span> <span class="n">vmd_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$$ORBITAL$$&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">orbital</span><span class="p">))</span>
+        <span class="k">while</span> <span class="s2">&quot;$$FPTR$$&quot;</span> <span class="ow">in</span> <span class="n">vmd_file</span><span class="p">:</span>
+            <span class="n">vmd_file</span> <span class="o">=</span> <span class="n">vmd_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;$$FPTR$$&#39;</span><span class="p">,</span> <span class="n">old_job</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="s2">&quot;$$PATH$$&quot;</span> <span class="ow">in</span> <span class="n">vmd_file</span><span class="p">:</span>
+        <span class="n">vmd_file</span> <span class="o">=</span> <span class="n">vmd_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$$PATH$$&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;tmp.vmd&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">vmd_file</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">disp</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+
+<span class="s1">    Representations are as follows:</span>
+
+<span class="s1">        1 - CPK of atoms</span>
+<span class="s1">        2 - LUMO Positive</span>
+<span class="s1">        3 - HOMO Positive</span>
+<span class="s1">        4 - LUMO Negative</span>
+<span class="s1">        5 - HOMO Negative</span>
+<span class="s1">        $POTENTIAL$</span>
+<span class="s1">        $$MO$$</span>
+
+<span class="s1">    &#39;&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="n">orbital</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">disp</span> <span class="o">=</span> <span class="n">disp</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$$MO$$&quot;</span><span class="p">,</span> <span class="s2">&quot;7 - MO </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">orbital</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">disp</span> <span class="o">=</span> <span class="n">disp</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$$MO$$&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">skip_potential</span><span class="p">:</span>
+        <span class="n">disp</span> <span class="o">=</span> <span class="n">disp</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$POTENTIAL$&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">disp</span> <span class="o">=</span> <span class="n">disp</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$POTENTIAL$&quot;</span><span class="p">,</span> <span class="s2">&quot;6 - Potential Surface&quot;</span><span class="p">)</span>
+
+    <span class="n">disp</span> <span class="o">=</span> <span class="n">print_helper</span><span class="o">.</span><span class="n">color_set</span><span class="p">(</span><span class="n">disp</span><span class="p">,</span> <span class="s1">&#39;BLUE&#39;</span><span class="p">)</span>
+    <span class="n">disp</span> <span class="o">=</span> <span class="n">print_helper</span><span class="o">.</span><span class="n">color_set</span><span class="p">(</span><span class="n">disp</span><span class="p">,</span> <span class="s1">&#39;BOLD&#39;</span><span class="p">)</span>
+
+    <span class="nb">print</span> <span class="n">disp</span>
+
+    <span class="n">Popen</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> -e tmp.vmd&#39;</span> <span class="o">%</span> <span class="n">sysconst</span><span class="o">.</span><span class="n">vmd_path</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table Of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../squid.html">Squid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codebase.html">Codebase</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Merlin 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Henry Herbol.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
+    </div>
+  </body>
+</html>
