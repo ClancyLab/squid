@@ -102,8 +102,8 @@ due to switching between internal coordinates and cartesian coordinates.</p>
 <h2>DFT - Geometry Optimization of Acetic Acid<a class="headerlink" href="#dft-geometry-optimization-of-acetic-acid" title="Permalink to this headline">¶</a></h2>
 <p>The below code shows how to use Orca to optimize the geometry of an acetic
 acid dimer.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">files</span>
-<span class="kn">import</span> <span class="nn">orca</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">squid</span> <span class="kn">import</span> <span class="n">orca</span>
+<span class="kn">from</span> <span class="nn">squid</span> <span class="kn">import</span> <span class="n">files</span>
 
 <span class="c1"># Read in the xyz file</span>
 <span class="n">frames</span> <span class="o">=</span> <span class="n">files</span><span class="o">.</span><span class="n">read_xyz</span><span class="p">(</span><span class="s2">&quot;acetic_acid_dimer.xyz&quot;</span><span class="p">)</span>
@@ -116,8 +116,8 @@ acid dimer.</p>
 <h2>DFT - Molecular Orbitals Post Processing<a class="headerlink" href="#dft-molecular-orbitals-post-processing" title="Permalink to this headline">¶</a></h2>
 <p>The below code shows how to use g09 and vmd to generate and display molecular orbitals
 of a DFT simulation.  Note, this uses g09’s cubegen and formchk code.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">g09</span>
-<span class="kn">import</span> <span class="nn">files</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">squid</span> <span class="kn">import</span> <span class="n">g09</span>
+<span class="kn">from</span> <span class="nn">squid</span> <span class="kn">import</span> <span class="n">files</span>
 
 
 <span class="c1"># Run water simulation</span>
@@ -158,8 +158,8 @@ in your extra_section before trying the visualization:</p>
 <div class="highlight-none"><div class="highlight"><pre><span></span>%scf FracOcc true end
 </pre></div>
 </div>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">orca</span>
-<span class="kn">import</span> <span class="nn">structures</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">squid</span> <span class="kn">import</span> <span class="n">orca</span>
+<span class="kn">from</span> <span class="nn">squid</span> <span class="kn">import</span> <span class="n">structures</span>
 
 <span class="n">ROUTE_OPT</span> <span class="o">=</span> <span class="s1">&#39;! B97-D3 def2-TZVP OPT&#39;</span>
 <span class="n">EXTRA_SECTION</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
@@ -185,8 +185,8 @@ in your extra_section before trying the visualization:</p>
 </div>
 <div class="section" id="dft-electrostatic-potential-mapped-on-electron-density-post-processing">
 <h2>DFT - Electrostatic Potential Mapped on Electron Density Post Processing<a class="headerlink" href="#dft-electrostatic-potential-mapped-on-electron-density-post-processing" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">orca</span>
-<span class="kn">import</span> <span class="nn">structures</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">squid</span> <span class="kn">import</span> <span class="n">orca</span>
+<span class="kn">from</span> <span class="nn">squid</span> <span class="kn">import</span> <span class="n">structures</span>
 
 <span class="n">ROUTE_OPT</span> <span class="o">=</span> <span class="s1">&#39;! B97-D3 def2-TZVP OPT&#39;</span>
 <span class="n">EXTRA_SECTION</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
@@ -213,8 +213,8 @@ in your extra_section before trying the visualization:</p>
 minimum energy pathway.  Note, this is a rough example, and in reality one would make sure
 to optimize both endpoints of <em>frames</em> at the same level of theory and then to proceed
 with the NEB simulation.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">files</span>
-<span class="kn">import</span> <span class="nn">neb</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">squid</span> <span class="kn">import</span> <span class="n">neb</span>
+<span class="kn">from</span> <span class="nn">squid</span> <span class="kn">import</span> <span class="n">files</span>
 
 <span class="n">frames</span> <span class="o">=</span> <span class="n">files</span><span class="o">.</span><span class="n">read_xyz</span><span class="p">(</span><span class="s2">&quot;CNH_HCN.xyz&quot;</span><span class="p">)</span>
 <span class="n">new_opt_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;step_size&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
@@ -302,9 +302,9 @@ NEB converged the RMS force.
 <h2>MD - Equilibration of Solvent Box<a class="headerlink" href="#md-equilibration-of-solvent-box" title="Permalink to this headline">¶</a></h2>
 <p>Below is a method of using squid to (1) read in a solvent molecule, (2) utilize the packmol hook to pack a box, and (3)
 equilibrate the system via NPT and NVT calculations.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">structures</span>
-<span class="kn">import</span> <span class="nn">lammps_job</span>
-<span class="kn">import</span> <span class="nn">units</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">squid</span> <span class="kn">import</span> <span class="n">units</span>
+<span class="kn">from</span> <span class="nn">squid</span> <span class="kn">import</span> <span class="n">structures</span>
+<span class="kn">from</span> <span class="nn">squid</span> <span class="kn">import</span> <span class="n">lammps_job</span>
 
 <span class="c1"># Generate the system object to hold our solvent</span>
 <span class="n">solvent_box</span> <span class="o">=</span> <span class="n">structures</span><span class="o">.</span><span class="n">System</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;solv_box&quot;</span><span class="p">,</span> <span class="n">box_size</span><span class="o">=</span><span class="p">(</span><span class="mf">15.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">),</span> <span class="n">box_angles</span><span class="o">=</span><span class="p">(</span><span class="mf">90.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">),</span> <span class="n">periodic</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
@@ -376,7 +376,7 @@ for example, the following equation:</p>
 currently <a class="reference internal" href="optimizers.html#module-quick_min" title="quick_min"><code class="xref py py-func docutils literal"><span class="pre">quick_min()</span></code></a> does not work in this regard.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">bfgs</span> <span class="kn">import</span> <span class="n">bfgs</span>
+<span class="kn">from</span> <span class="nn">squid.optimizers.bfgs</span> <span class="kn">import</span> <span class="n">bfgs</span>
 <span class="c1"># from lbfgs import lbfgs</span>
 <span class="c1"># from steepest_descent import steepest_descent</span>
 <span class="c1"># from fire import fire</span>
