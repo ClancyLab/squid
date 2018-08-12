@@ -95,9 +95,9 @@ class Coul(object):
         '''
         self.validate()
         if bounds is not None:
-            return "%s %.2f" % (self.index, self.charge_bounds[bounds])
+            return "%s %.2f %s %.4f" % (self.index, self.charge_bounds[bounds], self.element, self.mass)
         else:
-            return "%s %.2f" % (self.index, self.charge)
+            return "%s %.2f %s %.4f" % (self.index, self.charge, self.element, self.mass)
 
     def print_lower(self):
         return self._printer(bounds=0)
@@ -169,10 +169,12 @@ class Coul(object):
         line = line.strip().split()
         index = line[0]
         charge = float(line[1])
-        return index, charge
+        element = line[2]
+        mass = float(line[3])
+        return index, charge, element, mass
 
     def assign_line(self, line):
-        self.index, self.charge = self.parse_line(line)
+        self.index, self.charge, self.element, self.mass = self.parse_line(line)
         self.validate()
 
     def fix(self, params='all'):
@@ -213,8 +215,8 @@ class Coul(object):
         pfile = [cls.parse_line(line) for line in pfile]
 
         return [
-            cls(index=index, charge=charge)
-            for index, charge in pfile if check_restriction(index, restrict)
+            cls(index=index, charge=charge, element=element, mass=mass)
+            for index, charge, element, mass in pfile if check_restriction(index, restrict)
         ]
 
     @classmethod

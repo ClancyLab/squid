@@ -40,7 +40,6 @@ from forcefields.connectors import Bond, Angle, Dihedral
 from forcefields.smooth_sin import SmoothSin
 import forcefields.helper as ffh
 
-
 SUPPORTED_STYLES = ["lj/cut/coul/cut", "morse", "tersoff", "opls", "smooth"]
 SMRFF_DICT = {
     "lj": ["sigma", "epsilon"],
@@ -523,18 +522,18 @@ class Parameters(object):
         '''
 
         param_types, param_string_identifiers = self._get_param_list()
-        print "DONE!"
         out, bounds_lower, bounds_upper = [], [], []
         for param_type in param_types:
             for p in param_type:
-                if ffh.check_restriction(p, self.restrict):
-                    if with_bounds:
-                        local_out, local_bounds_l, local_bounds_u = p.unpack(with_indices, with_bounds=with_bounds)
-                        out += local_out
-                        bounds_lower += local_bounds_l
-                        bounds_upper += local_bounds_u
-                    else:
-                        out += p.unpack(with_indices)
+                if not ffh.check_restriction(p, self.restrict):
+                    continue
+                if with_bounds:
+                    local_out, local_bounds_l, local_bounds_u = p.unpack(with_indices, with_bounds=with_bounds)
+                    out += local_out
+                    bounds_lower += local_bounds_l
+                    bounds_upper += local_bounds_u
+                else:
+                    out += p.unpack(with_indices)
 
         if with_bounds:
             return out, bounds_lower, bounds_upper
@@ -564,9 +563,8 @@ class Parameters(object):
         offset = 0
         for param_type in param_types:
             for p in param_type:
-                if not ffh.check_restriction(p, self.restrict):
-                    continue
-                p.pack(params[offset: offset + p.N_params + int(with_indices)])
+                if ffh.check_restriction(p, self.restrict):
+                    p.pack(params[offset: offset + p.N_params + int(with_indices)])
                 offset += p.N_params + int(with_indices)
 
     def dump_style(self, style=None, tfile_name=None, tstyle_smrff=False):
@@ -733,9 +731,10 @@ class Parameters(object):
                     continue
                 sigma_ij = (self.lj_params[i].sigma * self.lj_params[j].sigma) ** 0.5
                 epsilon_ij = (self.lj_params[i].epsilon * self.lj_params[j].epsilon) ** 0.5
-                type_i = str(self.restrict.index(self.lj_params[i].index) + 1)
-                type_j = str(self.restrict.index(self.lj_params[j].index) + 1)
-                lammps_command.append('pair_coeff %s %s lj/cut/coul/cut %f %f' % (type_i, type_j, epsilon_ij, sigma_ij))
+                type_i = int(self.restrict.index(self.lj_params[i].index) + 1)
+                type_j = int(self.restrict.index(self.lj_params[j].index) + 1)
+                type_i, type_j = sorted([type_i, type_j])
+                lammps_command.append('pair_coeff %d %d lj/cut/coul/cut %f %f' % (type_i, type_j, epsilon_ij, sigma_ij))
 
         lammps_command = "\n".join(lammps_command)
         return lammps_command
@@ -833,6 +832,8 @@ class Parameters(object):
 
             index_i = self.restrict.index(str(self.morse_params[k].indices[0])) + 1
             index_j = self.restrict.index(str(self.morse_params[k].indices[1])) + 1
+
+            index_i, index_j = sorted([index_i, index_j])
 
             D0 = self.morse_params[k].D0
             alpha = self.morse_params[k].alpha

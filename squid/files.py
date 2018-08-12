@@ -1433,6 +1433,11 @@ def write_lammps_data(system, name=None, params=None,
     local_atom_types = system.atom_coul_types if new_method else system.atom_types
     local_atom_lj_types = system.atom_lj_types if new_method else system.atom_types
 
+    # Ensure mass exists, if not then try to assign it, else error
+    for t in local_atom_types:
+        if t.mass is None:
+            t.mass = units.elem_weight(t.element)
+
     # start writing file
     f = open(name + '.data', 'w')
     f.write('LAMMPS Description\n\n%d atoms\n%d bonds\n%d angles\n\

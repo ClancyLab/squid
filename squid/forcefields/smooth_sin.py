@@ -84,6 +84,48 @@ class SmoothSin(object):
 
         self.N_params = 2 + int(r_out is not None) * 2 + int(c_r is not None) * 2
 
+        #########################################################################
+        # Generate the bounds based on input cuts
+        R_IN_BOUNDS = (gcut * RADII_OFFSET, gcut * (1.0 - RADII_OFFSET))
+        D_IN_BOUNDS = (LOWER_CUT, gcut * RADII_OFFSET - EPSILON)
+
+        # In the case of inout, we need the outer bounds.  Further, if
+        # we are coupling with inout and lr is not None, we STILL needs
+        # the outer bounds
+        if lr is None or (c_lr is None and coupled):
+            # gcut for bounds will depend on which smooth is further out
+            if coupled:
+                local_gcut = coupled_lr_cut
+            else:
+                local_gcut = gcut
+
+            R_IN_BOUNDS = (gcut * RADII_OFFSET, gcut * 0.5)
+            R_OUT_BOUNDS = (gcut * 0.5, gcut * (1.0 - RADII_OFFSET))
+            D_IN_BOUNDS = (LOWER_CUT, gcut * RADII_OFFSET - EPSILON)
+            D_OUT_BOUNDS = (LOWER_CUT, gcut * RADII_OFFSET - EPSILON)
+
+            # In the case when both are inout, we need to also use C_
+            if lr is None and coupled and c_lr is None:
+                R_IN_BOUNDS = (gcut * RADII_OFFSET, gcut / 3.0)
+                D_IN_BOUNDS = (LOWER_CUT, gcut * RADII_OFFSET - EPSILON)
+                C_R_BOUNDS = (gcut * RADII_OFFSET, gcut * 2.0 / 3.0)
+                C_D_BOUNDS = (LOWER_CUT, gcut * RADII_OFFSET - EPSILON)
+            else:
+                C_R_BOUNDS = None
+                C_D_BOUNDS = None
+        else:
+            C_R_BOUNDS = None
+            C_D_BOUNDS = None
+            R_OUT_BOUNDS = None
+            D_OUT_BOUNDS = None
+
+        self.R_IN_BOUNDS = R_IN_BOUNDS
+        self.D_IN_BOUNDS = D_IN_BOUNDS
+        self.R_OUT_BOUNDS = R_OUT_BOUNDS
+        self.D_OUT_BOUNDS = D_OUT_BOUNDS
+        self.C_R_BOUNDS = C_R_BOUNDS
+        self.C_D_BOUNDS = C_D_BOUNDS
+
         self.validate()
 
     def __repr__(self):
