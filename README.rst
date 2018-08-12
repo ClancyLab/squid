@@ -1,8 +1,6 @@
 Squid
 ==============================
 
-Warning - Still in Alpha.  Due to code refactoring, some functions no longer work as expected.  All functionality shown in :any:`examples` is verified as working; however, all other functions have not been verfied as of yet.
-
 Squid is an open-source molecular simulation codebase developed by the Clancy Lab at Cornell University. The codebase includes simplified Molecular Dynamics (MD) and Density Functional Theory (DFT) simulation submission, as well as other utilities such as file I/O and post-processing.
 
 
