@@ -593,6 +593,7 @@ class Parameters(object):
 
         if style in ["lj/cut/coul/cut", 'all'] and all([self.lj_mask, self.coul_mask]):
             script.append(self.dump_lj_cut_coul_cut())
+            script.append(self.dump_set_charge())
         if style in ["morse", 'all'] and self.morse_mask:
             script.append(self.dump_morse())
         if style in ["smooth", 'all'] and self.smooth_mask:
