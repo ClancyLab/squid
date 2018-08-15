@@ -1,6 +1,8 @@
 '''
 The coulomb object.  This stores the index and charge.
 '''
+import numpy as np
+
 from squid.units import elem_i2s, elem_weight
 from squid.forcefields.helper import check_restriction
 
@@ -51,13 +53,12 @@ class Coul(object):
         elif line is None and all([x is not None for x in [index, charge]]):
             assert not isinstance(index, list), "In Coul, initialized with index being a list, not a string/int!"
             self.index, self.charge, self.mass, self.element = index, charge, mass, element
-
-            # Assign default bounds
-            self.charge_bounds = tuple(sorted([self.charge * 0.5, self.charge * 1.5]))
-
-            self.validate()
         else:
             raise Exception("Either specify index and charge, or the line to be parsed, but not both.")
+
+        # Assign default bounds
+        self.charge_bounds = tuple(sorted([self.charge * 0.5, np.sign(self.charge) * min(abs(self.charge) * 1.5, CHARGE_LIMIT)]))
+        self.validate()
 
     def __repr__(self):
         '''
