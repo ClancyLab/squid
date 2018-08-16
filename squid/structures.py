@@ -533,7 +533,7 @@ class Molecule(_Physical):
         if in_place:
             self.translate(center)
 
-    def perturbate(self, dx=0.1, dr=5, center_of_geometry=True):
+    def perturbate(self, dx=0.1, dr=5, center_of_geometry=True, rotate=True):
         """
         Randomly perturbate atomic coordinates, and apply a slight rotation.
 
@@ -546,6 +546,8 @@ class Molecule(_Physical):
             center_of_geometry: *bool, optional*
                 Whether to do the random rotation by the center of geometry (True) or mass (False).
                 Note, if types are not set, it will fail in the case of center of mass.
+            rotate: *bool, optional*
+                Whether to randomly rotate the molecule or not.
 
         **Returns**
 
@@ -554,7 +556,8 @@ class Molecule(_Physical):
         for a in self.atoms:
             rand_step = [np.random.random() * dx for i in range(3)]
             a.translate(rand_step)
-        self.rand_rotate(limit_angle=dr, center_of_geometry=center_of_geometry)
+        if rotate:
+            self.rand_rotate(limit_angle=dr, center_of_geometry=center_of_geometry)
 
     def translate(self, v):
         """
