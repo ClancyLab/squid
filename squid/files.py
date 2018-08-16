@@ -185,6 +185,11 @@ def read_cml(name, new_method=False,
 
     # Loop through molecules
     molecules = []
+
+    total_charge = None
+    if root.tag == "molecule" and "charge" in root.attrib.keys():
+        total_charge = float(root.attrib["charge"])
+
     for child in root:
         # Strip away any {} info
         if "{" in child.tag:
@@ -208,6 +213,11 @@ def read_cml(name, new_method=False,
 
         # Read in molecules
         if child.tag == 'molecule':
+
+            local_charge = None
+            if "charge" in child.attrib.keys():
+                local_charge = float(child.attrib["charge"])
+
             c_atoms, c_bonds, c_angles, c_dihedrals = [], [], [], []
             c2_atoms, c2_bonds, c2_angles, c2_dihedrals = [], [], [], []
 
@@ -267,7 +277,8 @@ def read_cml(name, new_method=False,
                                                  angles=c_angles,
                                                  dihedrals=c_dihedrals,
                                                  test_charges=False,
-                                                 allow_errors=True))
+                                                 allow_errors=True,
+                                                 charge=local_charge))
 
     if parameter_file:
         ffparams = set_ffparams(atoms,
@@ -303,7 +314,8 @@ def read_cml(name, new_method=False,
                 angles=angles,
                 dihedrals=dihedrals,
                 test_charges=False,
-                allow_errors=True)
+                allow_errors=True,
+                charge=total_charge)
             ]
 
         P = None
@@ -323,7 +335,8 @@ def read_cml(name, new_method=False,
                                         angles=angles,
                                         dihedrals=dihedrals,
                                         test_charges=False,
-                                        allow_errors=True)]
+                                        allow_errors=True,
+                                        charge=total_charge)]
         else:
             return molecules
     else:

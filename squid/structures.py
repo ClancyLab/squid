@@ -405,6 +405,8 @@ class Molecule(_Physical):
             A default forcefield angle type to be set if angle types are set to None.
         test_consistency: *bool, optional*
             Whether to validate the input cml file against OPLS.
+        charge: *float, optional*
+            The total charge of this molecule.
 
     **Returns**
 
@@ -415,7 +417,7 @@ class Molecule(_Physical):
     def __init__(self, atoms_or_filename, bonds=None, angles=None,
      dihedrals=None, parameter_file=sysconst.opls_path, extra_parameters={},
      test_charges=False, allow_errors=False, default_angles=None,
-     test_consistency=False): 
+     test_consistency=False, charge=None): 
         # Set atoms, bonds, etc, or assume 'atoms' contains all those things if only one parameter is passed in
         if type(atoms_or_filename)==type('string'):
             self.filename = atoms_or_filename
@@ -443,6 +445,7 @@ class Molecule(_Physical):
         self.bonds = bonds
         self.angles = angles
         self.dihedrals = dihedrals
+        self.charge = charge
 
     def set_types(self, P):
         '''
