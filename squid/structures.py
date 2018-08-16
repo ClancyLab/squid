@@ -187,8 +187,9 @@ class Atom(_Physical):
         self.z = z
         self.index = index
         self.molecule_index = molecule_index
-        self.bonded=bonded
-        self.type_index=type_index
+        self.bonded = bonded
+        self.type_index = type_index
+        self.label = type_index
         # When parameterized by OPLS, 'type' dict contains: {'bond_count': 3, 'index': 588, 'notes': '1,10-Phenanthroline C2', 'vdw_r': 3.55, 'element': 6, 'vdw_e': 0.07, 'charge': 0.392, 'mass': 12.011, 'index2': 48, 'element_name': 'CA'}
         # Object May also contain lammps_type, mass, and charge
         self.type = type
