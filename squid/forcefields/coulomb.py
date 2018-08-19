@@ -10,8 +10,10 @@ from squid.forcefields.helper import check_restriction
 # NOTE! THEY ARE CASE SENSITIVE!
 COUL_PFILE_ID = "COULOMB"
 END_ID = "END"
+CHARGE_LOWER = 0.5
 CHARGE_UPPER = 3.0
-CHARGE_LIMIT = 4.0
+CHARGE_UPPER_LIMIT = 4.0
+CHARGE_LOWER_LIMIT = 0.01
 
 """
 The Coul class contains: 
@@ -57,7 +59,10 @@ class Coul(object):
             raise Exception("Either specify index and charge, or the line to be parsed, but not both.")
 
         # Assign default bounds
-        self.charge_bounds = tuple(sorted([self.charge * 0.5, np.sign(self.charge) * min(abs(self.charge) * 1.5, CHARGE_LIMIT)]))
+        self.charge_bounds = tuple(
+            sorted(
+                [np.sign(self.charge) * max(abs(self.charge) * 0.5, CHARGE_LOWER_LIMIT),
+                 np.sign(self.charge) * min(abs(self.charge) * 1.5, CHARGE_UPPER_LIMIT)]))
         self.validate()
 
     def __repr__(self):
@@ -155,7 +160,8 @@ class Coul(object):
         In this case, we simply ensure data types are appropriate.
         '''
         self.index, self.charge = str(self.index), float(self.charge)
-        assert abs(self.charge) < CHARGE_LIMIT, "In Coul, tried assigning an unreasonably large charge! (Q = %.2f)" % self.charge
+        assert abs(self.charge) <= CHARGE_UPPER_LIMIT, "In Coul, tried assigning an unreasonably large charge! (Q = %.2f)" % self.charge
+        assert abs(self.charge) >= CHARGE_LOWER_LIMIT, "In Coul, tried assigning an unreasonably small charge! (Q = %.2f)" % self.charge
 
     @staticmethod
     def parse_line(line):
@@ -271,7 +277,7 @@ class Coul(object):
 
         for atype, elem, sign in zip(atom_types, elems, signs):
             assert sign in [-1.0, 1.0], "Error - sign is not valid! Must be -1.0 or 1.0"
-            charge_bounds = tuple(sorted([0.0, CHARGE_UPPER * float(sign)]))
+            charge_bounds = tuple(sorted([CHARGE_LOWER * float(sign), CHARGE_UPPER * float(sign)]))
             charge = random_in_range(charge_bounds)
             mass = elem_weight(elem)
             coul_objs.append(cls(atype, charge, mass, elem))
