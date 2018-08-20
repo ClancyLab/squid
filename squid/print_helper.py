@@ -17,6 +17,7 @@ The Linux Helper module contains functionality to aid linux users to automate so
 import os
 import re
 import sys
+from subprocess import Popen, PIPE
 # Squid imports
 import constants
 
@@ -151,13 +152,21 @@ def printProgressBar(iteration, total, prefix='', suffix='', decimals=1, length=
             printProgressBar.buf -= 1
             return
 
+    assert "stty" not in prefix and "stty" not in suffix, "Don't have 'stty' in prefix or suffix."
+
     percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
     filledLength = int(length * iteration // total)
     bar = fill * filledLength + '-' * (length - filledLength)
     bar = '\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix)
     if pad:
         try:
-            cols = int(os.popen('stty size', 'r').read().split()[-1])
+#            cols = int(os.popen('stty size', 'r').read().split()[-1])
+            p = Popen("stty size".split(), stdout=PIPE, stderr=PIPE)
+            cols, stderr = p.communicate()
+            if stderr.strip() is not "":
+                cols = 300
+            else:
+                cols = int(cols.strip().split()[-1])
         except IndexError:
             cols = 300  # This is a backup in the case that this code is run on the queue or something.
         cols = max([cols, len(bar) + 1])  # Ensure we are always long enough

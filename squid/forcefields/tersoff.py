@@ -123,19 +123,6 @@ class Tersoff(object):
         P = [indices, m, gamma, lambda3, c, d, costheta0,
              n, beta, lambda2, B, R, D, lambda1, A]
 
-        # Assign default bounds
-        self.lambda3_bounds = (0.1, 10.0)
-        self.c_bounds = (0.1, 20000.0)
-        self.d_bounds = (0.1, 50.0)
-        self.costheta0_bounds = (-1.0, 1.0)
-        self.n_bounds = (0.1, 50.0)
-        self.lambda2_bounds = (0.1, 10.0)
-        self.B_bounds = (0.0, 100000.0)
-        self.R_bounds = (1.1, 3.0)
-        self.D_bounds = (0.1, 1.0)
-        self.lambda1_bounds = (0.1, 10.0)
-        self.A_bounds = (0.0, 100000.0)
-
         # How many parameters exist in this potential
         self.N_params = 14
 
@@ -148,7 +135,7 @@ class Tersoff(object):
                 self.m_bounds = (1, 1)
                 self.beta_bounds = (1, 1)
                 self.gamma_bounds = (0, 1)
-            self.assign_line(line)
+            self.assign_line(line, validate=False)
         elif line is None and all([x is not None for x in P]):
             assert isinstance(indices, list) or isinstance(indices, tuple), "In Tersoff, initialized with indices not being a list or tuple!"
 
@@ -181,9 +168,24 @@ class Tersoff(object):
             self.lambda1 = lambda1
             self.A = A
 
-            self.validate()
         else:
             raise Exception("Either specify all Tersoff parameters, or the line to be parsed, but not both.")
+
+        # Assign default bounds
+        self.lambda3_bounds = (0.1, 10.0)
+        self.c_bounds = (0.1, 20000.0)
+        self.d_bounds = (0.1, 50.0)
+        self.costheta0_bounds = (-1.0, 1.0)
+        self.n_bounds = (0.1, 50.0)
+        self.lambda2_bounds = (0.1, 10.0)
+        self.B_bounds = (0.0, 100000.0)
+        self.R_bounds = (1.1, 5.0)
+        self.D_bounds = (0.1, 1.1)
+        self.lambda1_bounds = (0.1, 10.0)
+        self.A_bounds = (0.0, 100000.0)
+
+
+        self.validate()
 
     def __repr__(self):
         '''
@@ -495,10 +497,11 @@ class Tersoff(object):
 
         return indices, m, gamma, lambda3, c, d, costheta0, n, beta, lambda2, B, R, D, lambda1, A
 
-    def assign_line(self, line):
+    def assign_line(self, line, validate=True):
         (self.indices, self.m, self.gamma, self.lambda3, self.c, self.d, self.costheta0,
          self.n, self.beta, self.lambda2, self.B, self.R, self.D, self.lambda1, self.A) = self.parse_line(line)
-        self.validate()
+        if validate:
+            self.validate()
 
     def fix(self, params='all'):
         '''
