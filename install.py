@@ -196,7 +196,7 @@ for s, v in zip(s_vars_to_include, vars_to_include):
 #    v_str = namestr(v).upper()
 #    sysconst_file_string = sysconst_file_string.replace("$%s" % v_str, v)
 
-fptr_sysconst = open("pys/sysconst.py", 'w')
+fptr_sysconst = open("squid/sysconst.py", 'w')
 fptr_sysconst.write(sysconst_file_string)
 fptr_sysconst.close()
 
@@ -228,8 +228,7 @@ alias view_lmp='function _view_lmp() { $PYTHON_PATH $CWD/console_scripts/view_lm
 alias vmd_lmp='function _vmd_lmp() { $PYTHON_PATH $CWD/console_scripts/vmd_lmp.py $1 $@ ; } ; _vmd_lmp'
 
 # Exports
-export PYTHONPATH=$CWD/pys:$PYTHONPATH
-export PYTHONPATH=$CWD/pys/optimizers:$PYTHONPATH
+export PYTHONPATH=$CWD:$PYTHONPATH
 export PATH=$CWD/console_scripts:$PATH
 export PATH=$CWD/external_programs/potfit-0.7.1:$PATH
 
