@@ -149,7 +149,7 @@ class Parameters(object):
                 if param_type is not None:
                     params = params.strip() + "\n" + param_string + "\n"
                     if param_string in OPLS_STRUCTURES:
-                        params += "\n".join([str(p) for p in param_type if ffh.check_restriction(p, self.restrict_structure)])
+                        params += "\n".join([str(p) for p in param_type if ffh.check_restriction(p, self.restrict_structure_dict.keys())])
                     else:    
                         params += "\n".join([str(p) for p in param_type if ffh.check_restriction(p, self.restrict)])
                     params += "\nEND"
@@ -284,7 +284,7 @@ class Parameters(object):
                 A dictionary that has keys being OPLS atom types, and values
                 being OPLS structure types.
         '''
-        return {ra: rsl for ra, rsl in zip(self.restrict, self.restrict_structure)}
+        return {ra: self.restrict_structure_dict[ra] for ra in self.restrict}
 
     def set_all_masks(self, set_on):
         '''
@@ -431,16 +431,17 @@ class Parameters(object):
             translate_AtomID_to_StructID['*'] = '*'
             translate_AtomID_to_StructID['0'] = '*'
 
-            self.restrict_structure = [translate_AtomID_to_StructID[str(r)] for r in self.restrict]
+            self.restrict_structure_dict = {r: translate_AtomID_to_StructID[str(r)] for r in self.restrict}
         else:
-            self.restrict_structure = None
+            self.restrict_structure_dict = {}
 
         # For each possible param type, check if it exists and load it
         self.lj_params += LJ.load_opls(atom_types, pfptr=None, restrict=self.restrict)
         self.coul_params += Coul.load_opls(atom_types, pfptr=None, restrict=self.restrict)
-        self.bond_params += Bond.load_opls(bond_types, pfptr=None, restrict=self.restrict_structure)
-        self.angle_params += Angle.load_opls(angle_types, pfptr=None, restrict=self.restrict_structure)
-        self.dihedral_params += Dihedral.load_opls(dihedral_types, pfptr=None, restrict=self.restrict_structure)
+        restrict_structures = [v for _, v in self.restrict_structure_dict.items()]
+        self.bond_params += Bond.load_opls(bond_types, pfptr=None, restrict=restrict_structures)
+        self.angle_params += Angle.load_opls(angle_types, pfptr=None, restrict=restrict_structures)
+        self.dihedral_params += Dihedral.load_opls(dihedral_types, pfptr=None, restrict=restrict_structures)
         self.system_name = fname[:fname.index(".")]
 
     def load_smrff(self, fname):
@@ -629,7 +630,7 @@ class Parameters(object):
                 The structure type, as either a list (if bond/angle/dihedral)
                 or a string (if charge/lj).
         '''
-        return ffh.map_to_lmp_index(x, self.restrict_structure)
+        return ffh.map_to_lmp_index(x, self.restrict_structure_dict)
 
     def dump_bonds(self):
         '''
@@ -648,7 +649,7 @@ class Parameters(object):
         index = 1
         for bond in self.bond_params:
             # Skip those that are not included
-            if not ffh.check_restriction(bond, self.restrict_structure):
+            if not ffh.check_restriction(bond, self.restrict_structure_dict.keys()):
                 continue
             # Get the bond coeff string
             lammps_command.append("bond_coeff %d %s" % (index, bond.printer(map_indices=self.mapper)))
@@ -673,7 +674,7 @@ class Parameters(object):
         index = 1
         for angle in self.angle_params:
             # Skip those that are not included
-            if not ffh.check_restriction(angle, self.restrict_structure):
+            if not ffh.check_restriction(angle, self.restrict_structure_dict.keys()):
                 continue
             # Get the angle coeff string
             lammps_command.append("angle_coeff %d %s" % (index, angle.printer(map_indices=self.mapper)))
@@ -698,7 +699,7 @@ class Parameters(object):
         index = 1
         for dihedral in self.dihedral_params:
             # Skip those that are not included
-            if not ffh.check_restriction(dihedral, self.restrict_structure):
+            if not ffh.check_restriction(dihedral, self.restrict_structure_dict.keys()):
                 continue
             # Get the dihedral coeff string
             lammps_command.append("dihedral_coeff %d %s" % (index, dihedral.printer(map_indices=self.mapper)))
