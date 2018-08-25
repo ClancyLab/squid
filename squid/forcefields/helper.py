@@ -75,26 +75,26 @@ def check_restriction(p, restrict):
 def map_to_lmp_index(p, restrict):
     assert restrict is not None, "Error - Without restrict we cannot map to lmp index!"
 
-    mapper = lambda x: restrict.index(str(x)) + 1
+    rkeys = restrict.keys()
 
     if isinstance(p, int) or isinstance(p, str):
-        assert str(p) in restrict, "Error - %s is not in the restrict list!" % str(p)
-        return mapper(p)
+        assert str(p) in rkeys, "Error - %s is not in the restrict list!" % str(p)
+        return restrict[str(p)]
     elif isinstance(p, list) or isinstance(p, tuple):
-        assert all([str(i) in restrict for i in p]), "Error - %s is not in the restrict list!" % str(p)
-        return [mapper(i) for i in p]
+        assert all([str(i) in rkeys for i in p]), "Error - %s is not in the restrict list!" % str(p)
+        return [rkeys[str(i)] for i in p]
     elif hasattr(p, "index") and type(p.index) in [int, str]:
         # Note - we need to also ensure p.index is not a function, as
         # a lot of other objects such as lists have this as a function!
-        assert str(p.index) in restrict, "Error - %s is not in the restrict list!" % str(p.index)
-        return mapper(p.index)
+        assert str(p.index) in rkeys, "Error - %s is not in the restrict list!" % str(p.index)
+        return restrict[str(p.index)]
     elif hasattr(p, "indices"):
-        assert all([str(i) in restrict for i in p.indices]), "Error - %s is not in the restrict list!" % str(p.indices)
-        return [mapper(i) for i in p.indices]
+        assert all([str(i) in rkeys for i in p.indices]), "Error - %s is not in the restrict list!" % str(p.indices)
+        return [restrict[str(i)] for i in p.indices]
 #    elif isinstance(p, Struct):
     elif is_struct(p):
-        assert all([str(i) in restrict for i in p.index2s]), "Error - %s is not in the restrict list!" % str(p.index2s)
-        return [mapper(i) for i in p.index2s]
+        assert all([str(i) in rkeys for i in p.index2s]), "Error - %s is not in the restrict list!" % str(p.index2s)
+        return [restrict[str(i)] for i in p.index2s]
     else:
         raise Exception("Error - Incorrect object type passed to check_restrict")
 

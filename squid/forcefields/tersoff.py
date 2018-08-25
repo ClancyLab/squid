@@ -641,11 +641,11 @@ class Tersoff(object):
             costheta0 = random_in_range((-1.0, 1.0))
             n = random_in_range((0.1, 50.0))
             lambda2 = random_in_range((0.1, 10.0))
-            B = random_in_range((0.0, 100000.0))
+            B = random_in_range((100.0, 100000.0))
             R = random_in_range((1.1, 3.0))
             D = random_in_range((0.1, 1.0))
             lambda1 = random_in_range((0.1, 10.0))
-            A = random_in_range((0.0, 100000.0))
+            A = random_in_range((100.0, 100000.0))
 
             Tersoff_Objs.append(
                 cls(
