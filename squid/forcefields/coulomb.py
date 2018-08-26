@@ -191,7 +191,7 @@ class Coul(object):
         if params in ['all', 'charge']:
             self.charge_bounds = (self.charge, self.charge)
         else:
-            raise Exception("In LJ, tried fixing %s parameter (does not exist)!" % params)
+            raise Exception("In Coulomb, tried fixing %s parameter (does not exist)!" % params)
 
     @classmethod
     def load_smrff(cls, pfile, pfptr=None, restrict=None):
