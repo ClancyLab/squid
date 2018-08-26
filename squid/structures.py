@@ -458,22 +458,19 @@ class Molecule(_Physical):
             P: :class:`squid.ff_params.Parameters`
                 A general parameter object
         '''
-        # Only necessary if we have OPLS parameters
-        if len(self.bonds) > 0:
-            atom_id_2_struc_id = P.opls_atom_2_struct()
 
         for a in self.atoms:
             index = [P.coul_params.index(str(a.label)), P.lj_params.index(str(a.label))]
             a.coul_type = P.coul_params[index[0]]
             a.lj_type = P.lj_params[index[1]]
         for b in self.bonds:
-            index = P.bond_params.index([str(atom_id_2_struc_id[a.label]) for a in b.atoms])
+            index = P.bond_params.index([str(P.opls_structure_dict[a.label]) for a in b.atoms])
             b.type = P.bond_params[index]
         for b in self.angles:
-            index = P.angle_params.index([str(atom_id_2_struc_id[a.label]) for a in b.atoms])
+            index = P.angle_params.index([str(P.opls_structure_dict[a.label]) for a in b.atoms])
             b.type = P.angle_params[index]
         for b in self.dihedrals:
-            index = P.dihedral_params.index([str(atom_id_2_struc_id[a.label]) for a in b.atoms])
+            index = P.dihedral_params.index([str(P.opls_structure_dict[a.label]) for a in b.atoms])
             b.type = P.dihedral_params[index]
 
     def flatten(self):
