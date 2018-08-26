@@ -405,7 +405,7 @@ Please run simulation with grad=True." % (input_file, os.getcwd()))
 def job(run_name, route, atoms=[], extra_section='', grad=False,
         queue=None, walltime="00:30:00", sandbox=True, procs=1,
         charge=None, multiplicity=None, charge_and_multiplicity='0 1',
-        redundancy=False, use_NBS_sandbox=False,
+        redundancy=False, use_NBS_sandbox=False, unique_name=True,
         previous=None, mem=2000, priority=None, xhost=None, orca4=False):
     """
     Wrapper to submitting an Orca simulation.
@@ -451,6 +451,12 @@ def job(run_name, route, atoms=[], extra_section='', grad=False,
             With redundancy on, if the job is submitted and unique_name is on, then
             if another job of the same name is running, a pointer to that job will
             instead be returned.
+        unique_name: *bool, optional*
+            Whether to force the requirement of a unique name or not.  NOTE! If
+            you submit simulations from the same folder, ensure that this is True
+            lest you have a redundancy problem! To overcome said issue, you can
+            set redundancy to True as well (but only if the simulation is truly
+            redundant).
         previous: *str, optional*
             Name of a previous simulation for which to try reading in
             information using the MORead method.
@@ -664,7 +670,7 @@ less than 2 atoms!")
             sandbox = None
         job_obj = jobs.submit_job(run_name, job_to_submit,
                                   procs, queue, mem, priority, walltime, xhost,
-                                  unique_name=True, redundancy=redundancy,
+                                  unique_name=unique_name, redundancy=redundancy,
                                   sandbox=sandbox, use_NBS_sandbox=use_NBS_sandbox,
                                   additional_env_vars=orca_env,
                                   sub_flag=sysconst.orca_sub_flag)
