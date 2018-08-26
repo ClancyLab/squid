@@ -470,12 +470,12 @@ class Molecule(_Physical):
             b.type = P.bond_params[index]
         for b in self.angles:
             tag = [str(P.opls_structure_dict[a.label]) for a in b.atoms]
-            assert tag in P.bond_params, "Non-OPLS Angle was defined!  Likely an error in typing OPLS parameters, or within your CML files."
+            assert tag in P.angle_params, "Non-OPLS Angle was defined!  Likely an error in typing OPLS parameters, or within your CML files."
             index = P.angle_params.index(tag)
             b.type = P.angle_params[index]
         for b in self.dihedrals:
             tag = [str(P.opls_structure_dict[a.label]) for a in b.atoms]
-            assert tag in P.bond_params, "Non-OPLS Dihedral was defined!  Likely an error in typing OPLS parameters, or within your CML files."
+            assert tag in P.dihedral_params, "Non-OPLS Dihedral was defined!  Likely an error in typing OPLS parameters, or within your CML files."
             index = P.dihedral_params.index(tag)
             b.type = P.dihedral_params[index]
 
