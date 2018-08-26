@@ -464,13 +464,19 @@ class Molecule(_Physical):
             a.coul_type = P.coul_params[index[0]]
             a.lj_type = P.lj_params[index[1]]
         for b in self.bonds:
-            index = P.bond_params.index([str(P.opls_structure_dict[a.label]) for a in b.atoms])
+            tag = [str(P.opls_structure_dict[a.label]) for a in b.atoms]
+            assert tag in P.bond_params, "Non-OPLS Bond was defined!  Likely an error in typing OPLS parameters, or within your CML files."
+            index = P.bond_params.index(tag)
             b.type = P.bond_params[index]
         for b in self.angles:
-            index = P.angle_params.index([str(P.opls_structure_dict[a.label]) for a in b.atoms])
+            tag = [str(P.opls_structure_dict[a.label]) for a in b.atoms]
+            assert tag in P.bond_params, "Non-OPLS Angle was defined!  Likely an error in typing OPLS parameters, or within your CML files."
+            index = P.angle_params.index(tag)
             b.type = P.angle_params[index]
         for b in self.dihedrals:
-            index = P.dihedral_params.index([str(P.opls_structure_dict[a.label]) for a in b.atoms])
+            tag = [str(P.opls_structure_dict[a.label]) for a in b.atoms]
+            assert tag in P.bond_params, "Non-OPLS Dihedral was defined!  Likely an error in typing OPLS parameters, or within your CML files."
+            index = P.dihedral_params.index(tag)
             b.type = P.dihedral_params[index]
 
     def flatten(self):
