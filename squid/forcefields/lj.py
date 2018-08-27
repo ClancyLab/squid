@@ -101,12 +101,12 @@ class LJ(object):
         '''
         self.validate()
         if bounds is not None:
-            return "%s %.2f %.2f" % (self.index, self.sigma_bounds[bounds], self.epsilon_bounds[bounds])
+            return "%s %.4f %.4f" % (self.index, self.sigma_bounds[bounds], self.epsilon_bounds[bounds])
         else:
-            return "%s %.2f %.2f" % (self.index, self.sigma, self.epsilon)
+            return "%s %.4f %.4f" % (self.index, self.sigma, self.epsilon)
 
     def pair_coeff_dump(self):
-        return "%.2f %.2f" % (self.epsilon, self.sigma)
+        return "%.4f %.4f" % (self.epsilon, self.sigma)
 
     def print_lower(self):
         '''
