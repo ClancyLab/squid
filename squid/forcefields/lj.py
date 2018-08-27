@@ -60,8 +60,8 @@ class LJ(object):
         # Assign default bounds
         # self.sigma_bounds = tuple(sorted([self.sigma * 0.5, self.sigma * 1.5]))
         # self.epsilon_bounds = tuple(sorted([self.epsilon * 0.5, self.epsilon * 1.5]))
-        self.sigma_bounds = (0.01, 5.0)
-        self.epsilon_bounds = (0.001, 1.0)
+        self.sigma_bounds = (0.01, 6.5)
+        self.epsilon_bounds = (0.0001, 1.0)
 
     def __repr__(self):
         '''
@@ -101,12 +101,12 @@ class LJ(object):
         '''
         self.validate()
         if bounds is not None:
-            return "%s %.2f %.2f" % (self.index, self.sigma_bounds[bounds], self.epsilon_bounds[bounds])
+            return "%s %.4f %.4f" % (self.index, self.sigma_bounds[bounds], self.epsilon_bounds[bounds])
         else:
-            return "%s %.2f %.2f" % (self.index, self.sigma, self.epsilon)
+            return "%s %.4f %.4f" % (self.index, self.sigma, self.epsilon)
 
     def pair_coeff_dump(self):
-        return "%.2f %.2f" % (self.epsilon, self.sigma)
+        return "%.4f %.4f" % (self.epsilon, self.sigma)
 
     def print_lower(self):
         '''
@@ -185,8 +185,8 @@ class LJ(object):
         '''
         self.index = str(self.index)
         self.sigma, self.epsilon = float(self.sigma), float(self.epsilon)
-        assert self.sigma > 0, "In LJ, sigma should be larger than 0!  It is %f" % self.sigma
-        assert self.epsilon > 0, "In LJ, epsilon should be larger than 0!"
+        assert self.sigma > 0, "In LJ, sigma should be larger than 0! It is %f" % self.sigma
+        assert self.epsilon > 0, "In LJ, epsilon should be larger than 0! It is %f" % self.epsilon
 
     @staticmethod
     def parse_line(line):
