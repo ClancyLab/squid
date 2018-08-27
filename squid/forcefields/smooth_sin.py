@@ -178,6 +178,12 @@ class SmoothSin(object):
 
         self.validate()
 
+        # Handle restrict appropriately
+        if self.atom_i is not "*" and not check_restriction(self.atom_i, restricts):
+            return ""
+        if self.atom_j is not "*" and not check_restriction(self.atom_j, restricts):
+            return ""
+
         if self.atom_i is None:
             ai = "*"
         else:

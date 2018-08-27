@@ -442,12 +442,27 @@ class Parameters(object):
             self.opls_structure_dict = {}
 
         # For each possible param type, check if it exists and load it
-        self.lj_params += LJ.load_opls(atom_types, pfptr=None, restrict=self.restrict)
-        self.coul_params += Coul.load_opls(atom_types, pfptr=None, restrict=self.restrict)
+        lj_params = LJ.load_opls(atom_types, pfptr=None, restrict=self.restrict)
+        for lj in lj_params:
+            if lj not in self.lj_params:
+                self.lj_params.append(lj)
+            else:
+                lj_index = self.lj_params.index(lj)
+                self.lj_params[lj_index].pack(lj.unpack())
+
+        coul_params = Coul.load_opls(atom_types, pfptr=None, restrict=self.restrict)
+        for coul in coul_params:
+            if coul not in self.coul_params:
+                self.coul_params.append(coul)
+            else:
+                coul_index = self.coul_params.index(coul)
+                self.coul_params[coul_index].pack(coul.unpack())
+
         if self.opls_structure_dict is None:
             restrict_structures = None
         else:
             restrict_structures = [v for _, v in self.opls_structure_dict.items()]
+
         self.bond_params += Bond.load_opls(bond_types, pfptr=None, restrict=restrict_structures)
         self.angle_params += Angle.load_opls(angle_types, pfptr=None, restrict=restrict_structures)
         self.dihedral_params += Dihedral.load_opls(dihedral_types, pfptr=None, restrict=restrict_structures)
