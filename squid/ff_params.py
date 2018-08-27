@@ -489,8 +489,22 @@ class Parameters(object):
         raw = smrff_utils.parse_pfile(fname)
 
         # For each possible param type, check if it exists and load it
-        self.lj_params += LJ.load_smrff(raw, pfptr=None, restrict=self.restrict)
-        self.coul_params += Coul.load_smrff(raw, pfptr=None, restrict=self.restrict)
+        lj_params = LJ.load_smrff(raw, pfptr=None, restrict=self.restrict)
+        for lj in lj_params:
+            if lj not in self.lj_params:
+                self.lj_params.append(lj)
+            else:
+                lj_index = self.lj_params.index(lj)
+                self.lj_params[lj_index].pack(lj.unpack())
+
+        coul_params = Coul.load_smrff(raw, pfptr=None, restrict=self.restrict)
+        for coul in coul_params:
+            if coul not in self.coul_params:
+                self.coul_params.append(coul)
+            else:
+                coul_index = self.coul_params.index(coul)
+                self.coul_params[coul_index].pack(coul.unpack())
+
         self.tersoff_params += Tersoff.load_smrff(raw, pfptr=None, restrict=self.restrict)
         self.morse_params += Morse.load_smrff(raw, pfptr=None, restrict=self.restrict)
         self.SR_SMOOTHS += SmoothSin.load_smrff(raw, pfptr=None, restrict=self.restrict)
