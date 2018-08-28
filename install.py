@@ -21,8 +21,6 @@ lmp_path = "/fs/europa/g_pc/lmp_serial"
 python_path = "/fs/home/$USER/anaconda/bin/python2.7"
 text_editor_path = "/fs/home/$USER/lib/sublime_text_3/sublime_text"
 
-lammps_mcsmrff = '/fs/home/hch54/lammps/lammps-7Dec15/src/lmp_serial'
-
 '''
 System Constants. This includes common environment variables needed for
 some programs to run.  If you are using a queueing system other than
@@ -49,11 +47,7 @@ export PATH=/fs/europa/g_pc/orca_4_0_0_2_linux_x86-64:$PATH
 export LD_LIBRARY_PATH=/fs/europa/g_pc/ompi_2_0_2/lib:$LD_LIBRARY_PATH
 '''
 lmp_env_vars = '''
-export PYTHONPATH=/fs/home/yma3/Software/lammps_git/python:$PYTHONPATH
-export PYTHONPATH=/fs/home/yma3/Projects/Forcefields/OPLS:$PYTHONPATH
-export LD_LIBRARY_PATH=/fs/home/yma3/Software/lammps_git/src:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=/usr/local/mpich2/icse/lib:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=/fs/home/yma3/usr/local/lib/fftw3/lib:$LD_LIBRARY_PATH
 '''
 
 # Mpi preface for job submission
@@ -142,13 +136,13 @@ if ans != "y":
 
 vars_to_include = [
     orca_path, orca4_path, vmd_path, ovito_path, opls_path, packmol_path,
-    lmp_path, lammps_mcsmrff, queueing_system, orca_sub_flag, env_vars,
+    lmp_path, queueing_system, orca_sub_flag, env_vars,
     orca_env_vars, orca4_env_vars, lmp_env_vars, mpi_preface, python_path,
     text_editor_path, g09_formchk, g09_cubegen]
 
 s_vars_to_include = [
     "orca_path", "orca4_path", "vmd_path", "ovito_path", "opls_path",
-    "packmol_path", "lmp_path", "lammps_mcsmrff", "queueing_system",
+    "packmol_path", "lmp_path", "queueing_system",
     "orca_sub_flag", "env_vars", "orca_env_vars", "orca4_env_vars",
     "lmp_env_vars", "mpi_preface", "python_path", "TEXT_EDITOR_PATH",
     "g09_formchk", "g09_cubegen"]
@@ -165,8 +159,6 @@ opls_path = "$OPLS_PATH"
 packmol_path = "$PACKMOL_PATH"
 lmp_path = "$LMP_PATH"
 python_path = "$PYTHON_PATH"
-
-lammps_mcsmrff = "$LAMMPS_MCSMRFF"
 
 queueing_system = "$QUEUEING_SYSTEM" # nbs, pbs
 nbs_ssh = $NBS_SSH
@@ -231,7 +223,7 @@ alias txto='otxt'
 alias get_ext_list='$PYTHON_PATH $CWD/console_scripts/get_ext_list.py'
 alias pysub='$CWD/console_scripts/pysub.py $PWD/'
 alias procrustes='$CWD/console_scripts/procrustes.py $PWD/'
-alias get_jlist='$CWD/console_scripts/get_jlist.sh'
+alias get_jlist='$CWD/console_scripts/get_jlist.py'
 alias view_lmp='function _view_lmp() { $PYTHON_PATH $CWD/console_scripts/view_lmp.py $1 $@ ; } ; _view_lmp'
 alias vmd_lmp='function _vmd_lmp() { $PYTHON_PATH $CWD/console_scripts/vmd_lmp.py $1 $@ ; } ; _vmd_lmp'
 
@@ -533,7 +525,7 @@ if ovito:
     cmd = '''export PATH=/fs/europa/g_pc/ovito-2.6.2-x86_64/bin:$PATH'''
     clanshell_add(cmd, clanshell)
 
-for fptr in ["pysub.py", "procrustes.py", "get_jlist.sh",
+for fptr in ["pysub.py", "procrustes.py", "get_jlist.py",
              "jlist.py", "jsub.py", "jdel.py", "jshow.py",
              "qlist.py", "qshow.py"]:
     os.system("chmod 744 %s/console_scripts/%s" % (cwd, fptr))
