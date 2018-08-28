@@ -30,6 +30,7 @@ the NBS one, please specify it here.
 '''
 
 queueing_system = 'nbs'  # nbs, pbs
+nbs_ssh = "login-2"
 
 # Submission flags for queueing system
 orca_sub_flag = "-prop orca"
@@ -168,6 +169,7 @@ python_path = "$PYTHON_PATH"
 lammps_mcsmrff = "$LAMMPS_MCSMRFF"
 
 queueing_system = "$QUEUEING_SYSTEM" # nbs, pbs
+nbs_ssh = $NBS_SSH
 
 # Submission flags for queueing system
 orca_sub_flag = "$ORCA_SUB_FLAG"
@@ -181,6 +183,12 @@ lmp_env_vars = '''$LMP_ENV_VARS'''
 # Mpi preface for job submission
 mpi_preface = "$MPI_PREFACE"
 """
+
+if nbs_ssh is None or nbs_ssh == "None":
+    sysconst_file_string = sysconst_file_string.replace("$NBS_SSH", "None")
+else:
+    sysconst_file_string = sysconst_file_string.replace("$NBS_SSH", '"%s"' % nbs_ssh)
+
 
 for s, v in zip(s_vars_to_include, vars_to_include):
     ss = "$" + s.upper()

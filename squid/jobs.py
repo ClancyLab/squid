@@ -157,7 +157,8 @@ def get_all_jobs(queueing_system=sysconst.queueing_system, detail=0):
     """
     if queueing_system.strip().lower() == "nbs":
         # Get input from jlist as a string
-        p = subprocess.Popen(['jlist'], stdout=subprocess.PIPE)
+        #p = subprocess.Popen(['jlist'], stdout=subprocess.PIPE)
+        p = run_nbs_cmd("jlist")
         output = p.stdout.read()
 
         # Get data from string
@@ -180,7 +181,8 @@ def get_all_jobs(queueing_system=sysconst.queueing_system, detail=0):
             return [i[-1] for i in info]
         if detail == 2:
             for i, a in enumerate(info):
-                p = subprocess.Popen(['jshow', a[0]], stdout=subprocess.PIPE)
+                #p = subprocess.Popen(['jshow', a[0]], stdout=subprocess.PIPE)
+                p = run_nbs_cmd("jshow %s" % a[0])
                 s = p.stdout.read()
                 serv = s[s.find('Queue name:'):].split()[2].strip()
                 try:
@@ -460,7 +462,8 @@ def submit_job(name,
         f.close()
 
         # Submit job
-        job_pipe = subprocess.Popen('jsub %s.nbs %s' % (name, sub_flag.strip()), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        #job_pipe = subprocess.Popen('jsub %s.nbs %s' % (name, sub_flag.strip()), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        job_pipe = run_nbs_cmd("jsub %s.nbs %s" % (name, sub_flag.strip()))
         job_err = job_pipe.stderr.read()
 
         if redundancy and "+notunique:" in job_err:
@@ -694,7 +697,8 @@ strings, or None")
         NBS_fptr.close()
 
         # Submit job
-        job_pipe = subprocess.Popen('jsub ' + job_name + '.nbs', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        #job_pipe = subprocess.Popen('jsub ' + job_name + '.nbs', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        job_pipe = run_nbs_cmd("jsub %s.nbs" % job_name)
         job_err = job_pipe.stderr.read()
 
         if redundancy and "+notunique:" in job_err:
@@ -770,8 +774,18 @@ Please choose NBS or PBS for now.")
 
 
 def get_nbs_queues():
-    p = subprocess.Popen(['qlist'], stdout=subprocess.PIPE)
+    p = run_nbs_cmd("qlist")
     all_queues = p.stdout.read().strip().split('\n')[:-1]
     all_queues = [a.split() for a in all_queues]
     all_queues = [a[0] for a in all_queues if len(a) > 1]
     return [a.lower() for a in all_queues if a.lower() not in ["queue", "name", ""]]
+
+
+def run_nbs_cmd(cmd):
+    if sysconst.nbs_ssh is not None:
+        p = subprocess.Popen(['ssh', sysconst.nbs_ssh] + [cmd], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    else:
+        p = subprocess.Popen(cmd.split(), shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    return p
+
+
