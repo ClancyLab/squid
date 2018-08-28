@@ -2,7 +2,7 @@
 from sys import argv
 from squid.jobs import run_nbs_cmd as rnc
 
-cmd = "qlist"
+cmd = "/opt/voyager/nbs/bin/qlist"
 if len(argv) > 1:
     cmd += " " + " ".join(argv[1:])
 

@@ -2,7 +2,7 @@
 from sys import argv
 from squid.jobs import run_nbs_cmd as rnc
 
-cmd = "jlist.py"
+cmd = "/opt/voyager/nbs/bin/jlist"
 if len(argv) > 1:
     cmd += " " + " ".join(argv[1:])
 

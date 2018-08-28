@@ -2,7 +2,7 @@
 from sys import argv
 from squid.jobs import run_nbs_cmd as rnc
 
-cmd = "jshow"
+cmd = "/opt/voyager/nbs/bin/jshow"
 if len(argv) > 1:
     cmd += " " + " ".join(argv[1:])
 

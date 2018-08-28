@@ -235,6 +235,13 @@ alias get_jlist='$CWD/console_scripts/get_jlist.sh'
 alias view_lmp='function _view_lmp() { $PYTHON_PATH $CWD/console_scripts/view_lmp.py $1 $@ ; } ; _view_lmp'
 alias vmd_lmp='function _vmd_lmp() { $PYTHON_PATH $CWD/console_scripts/vmd_lmp.py $1 $@ ; } ; _vmd_lmp'
 
+alias jlist=$CWD/console_scripts/jlist.py
+alias jsub=$CWD/console_scripts/jsub.py
+alias jdel=$CWD/console_scripts/jdel.py
+alias jshow=$CWD/console_scripts/jshow.py
+alias qlist=$CWD/console_scripts/qlist.py
+alias qshow=$CWD/console_scripts/qshow.py
+
 # Exports
 export PYTHONPATH=$CWD:$PYTHONPATH
 export PATH=$CWD/console_scripts:$PATH
