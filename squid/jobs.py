@@ -805,9 +805,17 @@ def get_nbs_queues():
     return [a.lower() for a in all_queues if a.lower() not in ["queue", "name", ""]]
 
 
+def _test_jlist():
+    try:
+        p = subprocess.Popen(['jlist'], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return True
+    except OSError:
+        return False
+
+
 def run_nbs_cmd(cmd):
-    cmd = "cd %s; %s" % (os.getcwd(), cmd)
-    if sysconst.nbs_ssh is not None:
+    if not _test_jlist() and sysconst.nbs_ssh is not None:
+        cmd = "cd %s; %s" % (os.getcwd(), cmd)
         p = subprocess.Popen(['ssh', sysconst.nbs_ssh] + [cmd], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     else:
         p = subprocess.Popen(cmd.split(), shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

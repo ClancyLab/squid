@@ -1,5 +1,5 @@
-import files
-import orca
+from squid import files
+from squid import orca
 
 
 def opt_CNH_start():
