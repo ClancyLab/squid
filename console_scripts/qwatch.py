@@ -6,6 +6,7 @@ from subprocess import Popen, PIPE
 
 # Squid imports
 from squid import print_helper
+from squid.jobs import run_nbs_cmd
 
 KNOWN_USERS = {"ns728": "Nikita",
                "hch54": "Henry",
@@ -64,7 +65,7 @@ def get_colour_2(lvl):
 USER = getpass.getuser()
 while 1:
     # Get input from jlist as a string
-    p = Popen(['jlist', '-all'], stdout=PIPE)
+    p = run_nbs_cmd("jlist -all")
     output = p.stdout.read().split('\n')[4:-2]
 
     # Get user data

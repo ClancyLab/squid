@@ -230,7 +230,7 @@ alias otxt='function _otxt() { $TEXT_EDITOR_PATH orca/$1/$1.out & ; } ; _otxt'
 alias txto='otxt'
 alias get_ext_list='$PYTHON_PATH $CWD/console_scripts/get_ext_list.py'
 alias pysub='$CWD/console_scripts/pysub.py $PWD/'
-alias procrustes='$CWD/console_scripts/procrustes.sh'
+alias procrustes='$CWD/console_scripts/procrustes.py $PWD/'
 alias get_jlist='$CWD/console_scripts/get_jlist.sh'
 alias view_lmp='function _view_lmp() { $PYTHON_PATH $CWD/console_scripts/view_lmp.py $1 $@ ; } ; _view_lmp'
 alias vmd_lmp='function _vmd_lmp() { $PYTHON_PATH $CWD/console_scripts/vmd_lmp.py $1 $@ ; } ; _vmd_lmp'
@@ -533,15 +533,7 @@ if ovito:
     cmd = '''export PATH=/fs/europa/g_pc/ovito-2.6.2-x86_64/bin:$PATH'''
     clanshell_add(cmd, clanshell)
 
-#pysub_fptr = open(cwd + "/console_scripts/pysub.sh", 'w')
-#pysub_fptr.write("python %s/console_scripts/pysub.py $PWD'/' $@" % cwd)
-#pysub_fptr.close()
-
-procrustes_fptr = open(cwd + "/console_scripts/procrustes.sh", 'w')
-procrustes_fptr.write("python %s/console_scripts/procrustes.py $PWD'/' $@" % cwd)
-procrustes_fptr.close()
-
-for fptr in ["pysub.py", "procrustes.sh", "get_jlist.sh",
+for fptr in ["pysub.py", "procrustes.py", "get_jlist.sh",
              "jlist.py", "jsub.py", "jdel.py", "jshow.py",
              "qlist.py", "qshow.py"]:
     os.system("chmod 744 %s/console_scripts/%s" % (cwd, fptr))
