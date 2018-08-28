@@ -2,7 +2,7 @@
 from sys import argv
 from squid.jobs import run_nbs_cmd as rnc
 
-cmd = "jsub"
+cmd = "qlist"
 if len(argv) > 1:
     cmd += " " + " ".join(argv[1:])
 

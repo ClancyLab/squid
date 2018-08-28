@@ -2,5 +2,9 @@
 from sys import argv
 from squid.jobs import run_nbs_cmd as rnc
 
-print rnc('jdel %s' % ' '.join(argv[1:])).stdout.read()
+cmd = "jdel"
+if len(argv) > 1:
+    cmd += " " + " ".join(argv[1:])
+
+print rnc(cmd).stdout.read()
 
