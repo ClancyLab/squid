@@ -16,6 +16,7 @@ submission to queueing systems.
 # System Imports
 import os
 import re
+import sys
 import time
 import getpass
 import subprocess
@@ -158,7 +159,7 @@ def get_all_jobs(queueing_system=sysconst.queueing_system, detail=0):
     if queueing_system.strip().lower() == "nbs":
         # Get input from jlist as a string
         #p = subprocess.Popen(['jlist'], stdout=subprocess.PIPE)
-        p = run_nbs_cmd("jlist")
+        p = run_nbs_cmd("%s/jlist" % sysconst.nbs_bin_path)
         output = p.stdout.read()
 
         # Get data from string
@@ -182,7 +183,7 @@ def get_all_jobs(queueing_system=sysconst.queueing_system, detail=0):
         if detail == 2:
             for i, a in enumerate(info):
                 #p = subprocess.Popen(['jshow', a[0]], stdout=subprocess.PIPE)
-                p = run_nbs_cmd("jshow %s" % a[0])
+                p = run_nbs_cmd("%s/jshow %s" % (sysconst.nbs_bin_path, a[0]))
                 s = p.stdout.read()
                 serv = s[s.find('Queue name:'):].split()[2].strip()
                 try:
@@ -463,7 +464,7 @@ def submit_job(name,
 
         # Submit job
         #job_pipe = subprocess.Popen('jsub %s.nbs %s' % (name, sub_flag.strip()), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        job_pipe = run_nbs_cmd("jsub %s.nbs %s" % (name, sub_flag.strip()))
+        job_pipe = run_nbs_cmd("%s/jsub %s.nbs %s" % (sysconst.nbs_bin_path, name, sub_flag.strip()))
         job_err = job_pipe.stderr.read()
 
         if redundancy and "+notunique:" in job_err:
@@ -482,6 +483,12 @@ def submit_job(name,
             raise Exception("Job with name %s already exists in the queue!" % name)
 
         job_id_str = job_pipe.stdout.read()
+
+        if "submitted to queue" not in job_id_str:
+            print("\nFailed to submit the job!")
+            print job_pipe.stderr.read()
+            raise Exception()
+
         try:
             job_id = job_id_str.split("submitted to queue")[0].split()[-1][2:-1]
         except IndexError:
@@ -698,7 +705,7 @@ strings, or None")
 
         # Submit job
         #job_pipe = subprocess.Popen('jsub ' + job_name + '.nbs', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        job_pipe = run_nbs_cmd("jsub %s.nbs" % job_name)
+        job_pipe = run_nbs_cmd("%s/jsub %s.nbs" % (sysconst.nbs_bin_path, job_name))
         job_err = job_pipe.stderr.read()
 
         if redundancy and "+notunique:" in job_err:
@@ -715,6 +722,15 @@ strings, or None")
             raise Exception("Job with name %s already exists in the queue!" % job_name)
 
         job_id = job_pipe.stdout.read()
+
+        if "submitted to queue" not in job_id:
+            print("\nFailed to submit the job!")
+            print("---------------------------------")
+            print job_pipe.stderr.read()
+            print("---------------------------------")
+            sys.stdout.flush()
+            raise Exception()
+
         job_id = job_id.split("submitted to queue")[0].split()[-1][2:-1]
 
         if remove_sub_script:
@@ -774,7 +790,7 @@ Please choose NBS or PBS for now.")
 
 
 def get_nbs_queues():
-    p = run_nbs_cmd("qlist")
+    p = run_nbs_cmd("%s/qlist" % sysconst.nbs_bin_path)
     all_queues = p.stdout.read().strip().split('\n')[:-1]
     all_queues = [a.split() for a in all_queues]
     all_queues = [a[0] for a in all_queues if len(a) > 1]
@@ -782,10 +798,10 @@ def get_nbs_queues():
 
 
 def run_nbs_cmd(cmd):
+    print("\n\tCMD = %s\n" % cmd)
     if sysconst.nbs_ssh is not None:
         p = subprocess.Popen(['ssh', sysconst.nbs_ssh] + [cmd], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     else:
         p = subprocess.Popen(cmd.split(), shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return p
-
 

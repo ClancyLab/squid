@@ -29,6 +29,7 @@ the NBS one, please specify it here.
 
 queueing_system = 'nbs'  # nbs, pbs
 nbs_ssh = "login-2"
+nbs_bin_path = "/opt/voyager/nbs/bin"
 
 # Submission flags for queueing system
 orca_sub_flag = "-prop orca"
@@ -136,13 +137,13 @@ if ans != "y":
 
 vars_to_include = [
     orca_path, orca4_path, vmd_path, ovito_path, opls_path, packmol_path,
-    lmp_path, queueing_system, orca_sub_flag, env_vars,
+    lmp_path, queueing_system, nbs_bin_path, orca_sub_flag, env_vars,
     orca_env_vars, orca4_env_vars, lmp_env_vars, mpi_preface, python_path,
     text_editor_path, g09_formchk, g09_cubegen]
 
 s_vars_to_include = [
     "orca_path", "orca4_path", "vmd_path", "ovito_path", "opls_path",
-    "packmol_path", "lmp_path", "queueing_system",
+    "packmol_path", "lmp_path", "queueing_system", "nbs_bin_path",
     "orca_sub_flag", "env_vars", "orca_env_vars", "orca4_env_vars",
     "lmp_env_vars", "mpi_preface", "python_path", "TEXT_EDITOR_PATH",
     "g09_formchk", "g09_cubegen"]
@@ -162,6 +163,7 @@ python_path = "$PYTHON_PATH"
 
 queueing_system = "$QUEUEING_SYSTEM" # nbs, pbs
 nbs_ssh = $NBS_SSH
+nbs_bin_path = "$NBS_BIN_PATH"
 
 # Submission flags for queueing system
 orca_sub_flag = "$ORCA_SUB_FLAG"
