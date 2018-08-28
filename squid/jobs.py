@@ -332,7 +332,8 @@ def submit_job(name,
     **Parameters**
 
         name: *str*
-            Name of the job to be submitted to the queue.
+            Name of the job to be submitted to the queue.  In the case of NBS,
+            it must be without the suffix.  Ex. 'job' works but 'job.nbs' fails.
         job_to_submit: *str*
             String holding code you wish to submit.
         procs: *int, optional*
@@ -486,7 +487,12 @@ def submit_job(name,
 
         if "submitted to queue" not in job_id_str:
             print("\nFailed to submit the job!")
-            print job_pipe.stderr.read()
+            print("--------------- JOB OUTPUT ---------------")
+            print job_id_str
+            print("---------------- JOB ERROR ---------------")
+            print job_err
+            print("---------------------------------")
+            sys.stdout.flush()
             raise Exception()
 
         try:
@@ -725,8 +731,10 @@ strings, or None")
 
         if "submitted to queue" not in job_id:
             print("\nFailed to submit the job!")
-            print("---------------------------------")
-            print job_pipe.stderr.read()
+            print("--------------- JOB OUTPUT ---------------")
+            print job_id
+            print("---------------- JOB ERROR ---------------")
+            print job_err
             print("---------------------------------")
             sys.stdout.flush()
             raise Exception()
@@ -798,7 +806,7 @@ def get_nbs_queues():
 
 
 def run_nbs_cmd(cmd):
-    print("\n\tCMD = %s\n" % cmd)
+    cmd = "cd %s; %s" % (os.getcwd(), cmd)
     if sysconst.nbs_ssh is not None:
         p = subprocess.Popen(['ssh', sysconst.nbs_ssh] + [cmd], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     else:
