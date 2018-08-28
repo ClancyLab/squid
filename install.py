@@ -541,8 +541,9 @@ procrustes_fptr = open(cwd + "/console_scripts/procrustes.sh", 'w')
 procrustes_fptr.write("python %s/console_scripts/procrustes.py $PWD'/' $@" % cwd)
 procrustes_fptr.close()
 
-os.system("chmod 744 %s/console_scripts/pysub.sh" % cwd)
-os.system("chmod 744 %s/console_scripts/procrustes.sh" % cwd)
-os.system("chmod 744 %s/console_scripts/get_jlist.sh" % cwd)
+for fptr in ["pysub.sh", "procrustes.sh", "get_jlist.sh",
+             "jlist.py", "jsub.py", "jdel.py", "jshow.py",
+             "qlist.py", "qshow.py"]:
+    os.system("chmod 744 %s/console_scripts/%s" % (cwd, fptr))
 
 os.system("source ~/%s" % shell)
