@@ -337,11 +337,12 @@ def anaconda_install(clanshell):
     # First check if anaconda folder exists
     if os.path.exists(os.path.expanduser("~/anaconda")):
         print("Folder ~/anaconda already exists. Skipping anaconda installation.")
+        clanshell_add('export PATH=~/anaconda/bin:$PATH', clanshell)
     else:
         os.system('wget -P ~/lib/ https://repo.continuum.io/archive/Anaconda-2.2.0-Linux-x86_64.sh')
         os.system('bash ~/lib/Anaconda-2.2.0-Linux-x86_64.sh -fb')
         os.system('rm ~/lib/Anaconda-2.2.0-Linux-x86_64.sh')
-    clanshell_add('export PATH=~/anaconda/bin:$PATH', clanshell)
+        clanshell_add('export PATH=~/anaconda/bin:$PATH', clanshell)
 
 
 def sublime_install(clanshell):
@@ -459,6 +460,8 @@ if install_anaconda:
     anaconda_install(clanshell)
 elif os.path.exists(os.path.expanduser("~/anaconda")):
     clanshell_add('export PATH=~/anaconda/bin:$PATH', clanshell)
+else:
+    print("Anaconda installed in non-standard location.  Please ensure that your python path is adequately set by using 'which python'!")
 
 if install_sublime_3:
     sublime_install(clanshell)
