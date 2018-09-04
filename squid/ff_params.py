@@ -466,7 +466,6 @@ class Parameters(object):
         self.bond_params += Bond.load_opls(bond_types, pfptr=None, restrict=restrict_structures)
         self.angle_params += Angle.load_opls(angle_types, pfptr=None, restrict=restrict_structures)
         self.dihedral_params += Dihedral.load_opls(dihedral_types, pfptr=None, restrict=restrict_structures)
-        self.system_name = fname[:fname.index(".")]
 
     def load_smrff(self, fname):
         '''
@@ -508,7 +507,6 @@ class Parameters(object):
         self.tersoff_params += Tersoff.load_smrff(raw, pfptr=None, restrict=self.restrict)
         self.morse_params += Morse.load_smrff(raw, pfptr=None, restrict=self.restrict)
         self.SR_SMOOTHS += SmoothSin.load_smrff(raw, pfptr=None, restrict=self.restrict)
-        self.system_name = fname[:fname.index(".")]
 
     def write_smrff(self, fname):
         '''
