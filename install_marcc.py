@@ -52,43 +52,6 @@ mpi_preface = ""
 shell = '.bashrc'
 
 ##############################################################################
-# Here are some extra programs we find useful and recommend
-install_all_programs = False  # Default all programs below to True
-##############################################################################
-install_anaconda = False
-install_sublime_3 = False
-##############################################################################
-
-##############################################################################
-# Here are some default settings of linux (centOS) we like to change
-##############################################################################
-change_file_browser = False
-##############################################################################
-
-##############################################################################
-# Here are some commands only useful for the Clancy group
-install_all_clancy_group_supports = False  # Default all below to True
-##############################################################################
-add_prnt_command = False
-add_vmd_path = False
-set_vmd_defaults = True
-jsub_auto_tab = False
-jdel_auto_tab = False
-get_qwatch = False
-bindkeys = False
-view_cmd = False
-ovito = False
-##############################################################################
-
-
-
-
-
-
-
-
-
-##############################################################################
 # DO NOT CHANGE ANY SETTINGS BELOW THIS POINT!
 ##############################################################################
 ##############################################################################
@@ -198,80 +161,44 @@ fptr_sysconst.close()
 # This is the current directory WITH NO TRAILING SLASH!
 cwd = os.getcwd()
 exports_and_aliases = """
-########################################################################
-#                  Squid Exports and Aliases v 0.0.1                   #
-########################################################################
+--------------------------------------------------------------------------
+---------           Squid Exports and Aliases v 0.0.1            ---------
+--------------------------------------------------------------------------
 
-# Let us use bash commands - Mainly used here for autocompleting
-autoload bashcompinit
-bashcompinit
+help([[
+For detailed instructions, go to:
+   https://clancylab.github.io/squid/squid.html
 
-# Aliases
-alias chkDFT='python $CWD/console_scripts/chkDFT.py'
-alias scanDFT='python $CWD/console_scripts/scanDFT.py'
-alias chko='function _chko() { chkDFT $1 -dft orca $@ ; } ; _chko'
-alias viewo='function _viewo() { chkDFT $1 -dft orca -v $@ ; } ; _viewo'
-alias otail='function _otail() { tail orca/$1/$1.out $2 $3 ; } ; _otail'
-alias tailo='otail'
-alias otxt='function _otxt() { $TEXT_EDITOR_PATH orca/$1/$1.out & ; } ; _otxt'
-alias txto='otxt'
-alias get_ext_list='$PYTHON_PATH $CWD/console_scripts/get_ext_list.py'
-alias pysub='$CWD/console_scripts/pysub.py $PWD/'
-alias procrustes='$CWD/console_scripts/procrustes.py $PWD/'
-alias get_jlist='$CWD/console_scripts/get_jlist.py'
-alias view_lmp='function _view_lmp() { $PYTHON_PATH $CWD/console_scripts/view_lmp.py $1 $@ ; } ; _view_lmp'
-alias vmd_lmp='function _vmd_lmp() { $PYTHON_PATH $CWD/console_scripts/vmd_lmp.py $1 $@ ; } ; _vmd_lmp'
+]])
+whatis("Version: 1.0")
+whatis("Keywords: Squid, Clancy")
+whatis("URL: https://clancylab.github.io/squid/squid.html")
+whatis("Description: Clancy Lab Codebase")
 
-alias jlist=$CWD/console_scripts/jlist.py
-alias jsub=$CWD/console_scripts/jsub.py
-alias jdel=$CWD/console_scripts/jdel.py
-alias jshow=$CWD/console_scripts/jshow.py
-alias qlist=$CWD/console_scripts/qlist.py
-alias qshow=$CWD/console_scripts/qshow.py
+prepend_path( "PYTHONPATH",     "/home-2/hherbol1@jhu.edu/programs/squid")
 
-# Exports
-export PYTHONPATH=$CWD:$PYTHONPATH
-export PATH=$CWD/console_scripts:$PATH
-export PATH=$CWD/external_programs/potfit-0.7.1:$PATH
+-- Aliases
+set_alias('chkDFT','python $CWD/console_scripts/chkDFT.py')
+set_alias('scanDFT','python $CWD/console_scripts/scanDFT.py')
+set_alias('chko','function _chko() { chkDFT $1 -dft orca $@ ; } ; _chko')
+set_alias('viewo','function _viewo() { chkDFT $1 -dft orca -v $@ ; } ; _viewo')
+set_alias('otail','function _otail() { tail orca/$1/$1.out $2 $3 ; } ; _otail')
+set_alias('tailo','otail')
+set_alias('otxt','function _otxt() {  orca/$1/$1.out & ; } ; _otxt')
+set_alias('txto','otxt')
+set_alias('get_ext_list','$PYTHON_PATH $CWD/console_scripts/get_ext_list.py')
+set_alias('pysub','$CWD/console_scripts/pysub.py $PWD/')
+set_alias('procrustes','$CWD/console_scripts/procrustes.py $PWD/')
+set_alias('view_lmp','function _view_lmp() { $PYTHON_PATH $CWD/console_scripts/view_lmp.py $1 $@ ; } ; _view_lmp')
+set_alias('vmd_lmp','function _vmd_lmp() { $PYTHON_PATH $CWD/console_scripts/vmd_lmp.py $1 $@ ; } ; _vmd_lmp')
 
-# MPICH
-MPICH=/fs/europa/g_pc/mpich-3.2
-export PATH=$MPICH/bin:$PATH
-export INCLUDE_PATH=$MPICH/include:$INCLUDE_PATH
-export LD_LIBRARY_PATH=$MPICH/lib:$LD_LIBRARY_PATH
+-- Load all dependencies
+load("python", "python/2.7-anaconda")
+load("orca", "orca/4.0.1.2")
+load("vmd", "vmd/1.93")
 
-# MKL
-MKL=/fs/europa/g_pc/intel/mkl
-export PATH=$MKL/bin:$PATH
-export INCLUDE_PATH=$MKL/include:$INCLUDE_PATH
-export LD_LIBRARY_PATH=$MKL/lib/intel64:$LD_LIBRARY_PATH
-
-# Avogadro
-AVOGADRO=/fs/europa/g_pc/avogadro
-export PATH=$AVOGADRO/bin:$PATH
-# Avogadro - Open babel environment variables
-export BABEL_LIBDIR=/fs/europa/g_pc/avogadro/lib/openbabel/2.4.1
-export BABEL_DATADIR=/fs/europa/g_pc/avogadro/src/openbabel-2.4.1/data
-
-# FUNCTIONS
-_pyAutoTab()
-{
-    local cur
-    local PYLIST
-    COMPREPLY=()
-    cur=${COMP_WORDS[COMP_CWORD]}
-    PYLIST=$(get_ext_list .py $PWD)
-        case "$cur" in
-        *)
-    COMPREPLY=( $( compgen -W '$PYLIST' $cur ) );;
-    esac
-    return 0
-}
-
-# Auto completes
-complete -F _pyAutoTab $CWD/console_scripts/pysub.py
-
-########################################################################
+-- Note - user must install packmol if this is to work.  By default commented out.
+-- load("packmol", "packmol")
 """
 
 while "$CWD" in exports_and_aliases:
@@ -282,27 +209,19 @@ for s, v in zip(s_vars_to_include, vars_to_include):
     while ss in exports_and_aliases:
         exports_and_aliases = exports_and_aliases.replace(ss, v)
 
-# String to read in the squid file
-clanshell = ".squidrc"
-
-shell_append = """
-
-# The following loads the squid Config File
-if [ -f ~/$CLANSHELL ]; then
-    source ~/$CLANSHELL
-else
-    print '404: ~/$CLANSHELL not found.'
-fi
-
-"""
-while "$CLANSHELL" in shell_append:
-    shell_append = shell_append.replace("$CLANSHELL", clanshell)
 
 HOMEDIR = os.path.expanduser("~")
+if not os.path.exists("%s/.modules" % HOMEDIR):
+    os.mkdir("%s/.modules" % HOMEDIR)
+shell_append = """
+# Add a new folder for personal modules
+export MODULEPATH=~/.modules:$MODULEPATH
+module load squid
+"""
 
-fptr_clanshell = open("%s/%s" % (HOMEDIR, clanshell), 'w')
-fptr_clanshell.write(exports_and_aliases)
-fptr_clanshell.close()
+fptr = open("%s/.modules/squid.lua" % HOMEDIR, 'w')
+fptr.write(exports_and_aliases)
+fptr.close()
 
 try:
     check_shell = open("%s/%s" % (HOMEDIR, shell), 'r').read()
@@ -315,217 +234,3 @@ if shell_append not in check_shell:
     fptr_shell.write(shell_append)
     fptr_shell.close()
 
-##############################################################################
-##############################################################################
-##############################################################################
-
-
-def clanshell_add(s_to_append, clanshell):
-    fptr_clanshell = open(os.path.expanduser("~/%s" % clanshell), 'a')
-    fptr_clanshell.write("\n%s\n" % s_to_append)
-    fptr_clanshell.close()
-
-
-def anaconda_install(clanshell):
-    # First check if anaconda folder exists
-    if os.path.exists(os.path.expanduser("~/anaconda")):
-        print("Folder ~/anaconda already exists. Skipping anaconda installation.")
-        clanshell_add('export PATH=~/anaconda/bin:$PATH', clanshell)
-    else:
-        os.system('wget -P ~/lib/ https://repo.continuum.io/archive/Anaconda-2.2.0-Linux-x86_64.sh')
-        os.system('bash ~/lib/Anaconda-2.2.0-Linux-x86_64.sh -fb')
-        os.system('rm ~/lib/Anaconda-2.2.0-Linux-x86_64.sh')
-        clanshell_add('export PATH=~/anaconda/bin:$PATH', clanshell)
-
-
-def sublime_install(clanshell):
-    if os.path.exists(os.path.expanduser("~/lib/sublime_text_3")):
-        print("Folder ~/lib/sublime_text_3 already exists. Skipping sublime installation.")
-    else:
-        os.system('mkdir -p ' + HOMEDIR + '/lib')
-        BUILD = "sublime_text_3_build_3126_x64.tar.bz2"
-        os.system('wget -P ~/lib/ https://download.sublimetext.com/' + BUILD)
-        os.system('tar xvf ' + HOMEDIR + '/lib/' + BUILD + ' -C ' + HOMEDIR + '/lib/')
-        os.system('rm ' + HOMEDIR + "/lib/" + BUILD)
-    clanshell_add("alias sublime='function _sublime() { ~/lib/sublime_text_3/sublime_text $@ & disown ; } ; _sublime'", clanshell)
-    clanshell_add("alias subl='function _subl() { ~/lib/sublime_text_3/sublime_text $@ & disown ; } ; _subl'", clanshell)
-
-
-def install_vmd_defaults(clanshell):
-    cmd = """# More commands can be found here
-# http://www.life.umd.edu/biology/sukharevlab/download/vmd_scripts/vmd.rc
-# Using the logfile command, you can log commands and learn new commands
-
-mol default style VDW
-mol modstyle 0 0 VDW 1.0 100.0
-display rendermode Normal
-display depthcue off
-animate pause
-animate goto end
-menu main on
-menu graphics on
-light 3 on
-light 4 on
-
-axes location off
-color Display Background white
-color Display FPS black
-color Axes Labels white
-
-mol modcolor 0 0 element
-color Element Se yellow3
-color Element Cl orange
-color Element I pink
-color Element Si silver
-color Element Br violet
-color Element Cs green
-"""
-    fptr_vmdrc = open(os.path.expanduser("~/.vmdrc"), 'w')
-    fptr_vmdrc.write(cmd)
-    fptr_vmdrc.close()
-
-
-def install_jsub_auto_tab(clanshell):
-    cmd = """
-_nbsAutoTab()
-{
-    local cur
-    local NBSLIST
-    COMPREPLY=()
-    cur=${COMP_WORDS[COMP_CWORD]}
-    NBSLIST=$(get_ext_list .nbs $PWD)
-        case "$cur" in
-        *)
-    COMPREPLY=( $( compgen -W '$NBSLIST' $cur ) );;
-    esac
-    return 0
-}
-
-complete -F _nbsAutoTab jsub
-"""
-    clanshell_add(cmd, clanshell)
-
-
-def install_jdel_auto_tab(clanshell):
-    cmd = """
-# This function provides auto-tab for the jlist
-_jAutoTab() # By convention, the function name starts with an underscore.
-{
-    local cur # Pointer to current completion word.
-    local JLIST # Pointer to a variable that will hold your list
-    COMPREPLY=() # Array variable storing the possible completions.
-    cur=${COMP_WORDS[COMP_CWORD]}
-    # Note, you can get the list however you choose. In this example, we call an aliased python file and pass it
-    # the current working directory so that it can return a list. These lists are in the format of space
-    # separated strings. For example: 'file1 file2 file3'. Note, we just need to print the list to screen from
-    # this python file, not return it.
-    JLIST=$(get_jlist)
-    # This is the function that will determine what words from your JLIST will be displayed for autocomplete
-        case "$cur" in
-        *)
-    COMPREPLY=( $( compgen -W '$JLIST' $cur ) );; # You need to enter your list here
-    esac
-    return 0
-}
-
-complete -F _jAutoTab jdel
-"""
-    clanshell_add(cmd, clanshell)
-
-##############################################################################
-##############################################################################
-##############################################################################
-
-
-if install_all_programs:
-    install_anaconda = True
-    install_sublime_3 = True
-
-if install_all_clancy_group_supports:
-    add_prnt_command = True
-    add_vmd_path = True
-    set_vmd_defaults = True
-    jsub_auto_tab = True
-    jdel_auto_tab = True
-    get_qwatch = True
-
-if install_anaconda:
-    anaconda_install(clanshell)
-elif os.path.exists(os.path.expanduser("~/anaconda")):
-    clanshell_add('export PATH=~/anaconda/bin:$PATH', clanshell)
-else:
-    print("Anaconda installed in non-standard location.  Please ensure that your python path is adequately set by using 'which python'!")
-
-if install_sublime_3:
-    sublime_install(clanshell)
-elif os.path.exists(os.path.expanduser("~/lib/sublime_text_3")):
-    clanshell_add("alias sublime='function _sublime() { ~/lib/sublime_text_3/sublime_text $@ & disown ; } ; _sublime'", clanshell)
-    clanshell_add("alias subl='function _subl() { ~/lib/sublime_text_3/sublime_text $@ & disown ; } ; _subl'", clanshell)
-
-if change_file_browser:
-    os.system('gconftool-2   --type bool --set /apps/nautilus/preferences/always_use_browser true')
-
-if add_prnt_command:
-    prnt_cmd = '''
-function _prnt()
-{
-gs \
- -sOutputFile="''' + HOMEDIR + '''/tmp.pdf" \
- -sDEVICE=pdfwrite \
- -sPAPERSIZE=letter \
- -dCompatibilityLevel=1.4 \
- -dNOPAUSE \
- -dBATCH \
- -dPDFFitPage \
- "$1"
-
-ssh asimov "lpr -P hplj4525-365 -o sides=two-sided-long-edge -o InputSlot=Tray2 ''' + HOMEDIR + '''/tmp.pdf;logout"
-
-rm ''' + HOMEDIR + '''/tmp.pdf
-
-echo "Done..."
-}
-
-alias prnt='_prnt'
-'''
-    clanshell_add(prnt_cmd, clanshell)
-
-if add_vmd_path:
-    cmd = "alias vmd='/fs/europa/g_pc/vmd/bin/vmd'"
-    clanshell_add(cmd, clanshell)
-
-if set_vmd_defaults:
-    install_vmd_defaults(clanshell)
-
-if jsub_auto_tab:
-    install_jsub_auto_tab(clanshell)
-
-if jdel_auto_tab:
-    install_jdel_auto_tab(clanshell)
-
-if get_qwatch:
-    cmd = "alias qwatch='python " + cwd + "/console_scripts/qwatch.py'"
-    clanshell_add(cmd, clanshell)
-
-if bindkeys:
-    cmd = '''bindkey '^[[3~' delete-char
-bindkey '^[OH' beginning-of-line
-bindkey '^[OF' end-of-line
-bindkey ';5C' emacs-forward-word
-bindkey ';5D' emacs-backward-word'''
-    clanshell_add(cmd, clanshell)
-
-if view_cmd:
-    cmd = '''alias view='xdg-open $PWD'''
-    clanshell_add(cmd, clanshell)
-
-if ovito:
-    cmd = '''export PATH=/fs/europa/g_pc/ovito-2.6.2-x86_64/bin:$PATH'''
-    clanshell_add(cmd, clanshell)
-
-for fptr in ["pysub.py", "procrustes.py", "get_jlist.py",
-             "jlist.py", "jsub.py", "jdel.py", "jshow.py",
-             "qlist.py", "qshow.py"]:
-    os.system("chmod 744 %s/console_scripts/%s" % (cwd, fptr))
-
-os.system("source ~/%s" % shell)
