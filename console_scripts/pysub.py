@@ -17,6 +17,7 @@ pysub [script.py] [Options]
 -help, -h     :            :  Print this help menu
 -n            :     1      :  Number of processors to use
 -o, -omp      :            :  Manually specify what OMP_NUM_THREADS should be.
+-mpi          :            :  Whether to run python with mpirun or not.
 -q            :            :  Which queue to submit to
 -walltime, -t :  00:30:00  :  The walltime to use
 -priority, -p :            :  Manually specify job priority
@@ -31,6 +32,8 @@ pysub [script.py] [Options]
 Default behaviour is to generate a job with the same name
 as the python script and to generate a .log file with the
 same name as well.
+
+When using -mpi, it will only be effective if nprocs > 1.
 
 NOTE! If using xhost or args, make sure it is the last flag
 as we assume all remaining inputs are the desired strings. This
@@ -57,6 +60,7 @@ priority = None
 unique = False
 omp = None
 py3 = False
+use_mpi = False
 
 if ".py" in job_name:
     job_name = job_name.split(".py")[0]
@@ -89,6 +93,8 @@ if "-a" in argv[2:]:
     args = argv[argv.index('-a') + 1:]
 elif "-args" in argv[2:]:
     args = argv[argv.index('-argv') + 1:]
+if "-mpi" in argv[2:]:
+    use_mpi = True
 if "-k" in argv[2:]:
     rss = False
 elif "-keep" in argv[2:]:
@@ -102,4 +108,4 @@ if "-walltime" in argv[2:]:
 
 pysub(job_name, nprocs=nprocs, omp=omp, queue=queue, xhost=xhost,
       path=getcwd(), remove_sub_script=rss, priority=priority,
-      walltime=walltime, unique_name=unique, py3=py3)
+      walltime=walltime, unique_name=unique, py3=py3, use_mpi=use_mpi)
