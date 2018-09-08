@@ -261,7 +261,7 @@ def read_dump(fptr, ext=".dump", coordinates=["x", "y", "z"], extras=[]):
 def job(run_name,
         input_script,
         system=None,
-        queue=None,
+        queue=sysconst.default_queue,
         procs=1,
         email=None,
         write_data_file=True,
@@ -464,7 +464,7 @@ def read_TIP4P_types(data_file):
 
 
 def PotEngSurfaceJob(run_name, input_script, system, domain, spanMolecule,
-                     resolution=.1, queue='short', procs=1, email='',
+                     resolution=.1, queue=sysconst.default_queue, procs=1, email='',
                      pair_coeffs_included=True, hybrid_pair=False, split=0,
                      floor=[0.0, 0.0, 0.0]):
 

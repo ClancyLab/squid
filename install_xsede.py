@@ -15,6 +15,7 @@ text_editor_path = ""
 lammps_mcsmrff = ''
 
 queueing_system = 'slurm'  # nbs, pbs, slurm
+default_queue = "shared"
 
 # Submission flags for queueing system
 orca_sub_flag = ""
@@ -123,14 +124,15 @@ if ans != "y":
 vars_to_include = [
     orca_path, vmd_path, ovito_path, opls_path, packmol_path,
     lmp_path, lammps_mcsmrff, queueing_system, orca_sub_flag, env_vars,
-    orca_env_vars, lmp_env_vars, mpi_preface, python_path, text_editor_path
+    orca_env_vars, lmp_env_vars, mpi_preface, python_path, text_editor_path,
+    default_queue
 ]
 
 s_vars_to_include = [
     "orca_path", "vmd_path", "ovito_path", "opls_path",
     "packmol_path", "lmp_path", "lammps_mcsmrff", "queueing_system",
     "orca_sub_flag", "env_vars", "orca_env_vars", "lmp_env_vars", "mpi_preface",
-    "python_path", "TEXT_EDITOR_PATH"
+    "python_path", "TEXT_EDITOR_PATH", "default_queue"
 ]
 
 sysconst_file_string = """
@@ -145,7 +147,8 @@ python_path = "$PYTHON_PATH"
 
 lammps_mcsmrff = "$LAMMPS_MCSMRFF"
 
-queueing_system = "$QUEUEING_SYSTEM" # nbs, pbs
+queueing_system = "$QUEUEING_SYSTEM" # nbs, pbs, slurm
+default_queue = "$DEFAULT_QUEUE"
 
 # Submission flags for queueing system
 orca_sub_flag = "$ORCA_SUB_FLAG"
