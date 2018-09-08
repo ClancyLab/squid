@@ -92,8 +92,9 @@ orca_sub_flag = ""
 
 
 # System imports
-import sys
 import os
+import sys
+import time
 
 ans = raw_input("Use settings currently in the install file (y/N): ")
 ans = ans.strip().lower()
@@ -113,9 +114,19 @@ if not os.path.exists("%s/.modules" % HOMEDIR):
     os.mkdir("%s/.modules" % HOMEDIR)
 shell_append = """
 # Add a new folder for personal modules
-export MODULEPATH=~/.modules:$MODULEPATH
+export MODULEPATH=""" + HOMEDIR + """/.modules:$MODULEPATH
 module load squid
 """
+try:
+    check_shell = open("%s/%s" % (HOMEDIR, shell), 'r').read()
+except IOError:
+    check_shell = ""
+if shell_append not in check_shell:
+    fptr_shell = open("%s/%s" % (HOMEDIR, shell), 'w')
+    fptr_shell.write(check_shell)
+    fptr_shell.write(shell_append)
+    fptr_shell.close()
+
 
 # If we are to make lammps, then we can set lmp_path ourselves (if None or
 # empty)
@@ -211,7 +222,7 @@ load("gcc", "gcc/6.4.0")
 prepend_path("PATH",    "$CWD/packmol")
 '''
     packmol_mod_file = packmol_mod_file.replace("$CWD", cwd)
-    fptr = open("~/.modules/packmol.lua", 'w')
+    fptr = open("%s/.modules/packmol.lua" % HOMEDIR, 'w')
     fptr.write(packmol_mod_file)
     fptr.close()
     os.chdir("../")
@@ -403,7 +414,16 @@ if install_lammps:
     if os.path.exists("lammps/lammps-%s" % lammps_version):
         print("Warning - lammps version already exists locally.  Either delete or choose another.")
     else:
-        os.system("wget http://lammps.sandia.gov/tars/lammps-%s.tar.gz" % lammps_version)
+        for i in range(10):
+            print("Attempt %d to downloading lammps version %s..." % (i, lammps_version))
+            os.system("wget https://lammps.sandia.gov/tars/lammps-%s.tar.gz" % lammps_version)
+            if os.path.exists("lammps-%s.tar.gz" % lammps_version):
+                print("Download successful.")
+                break
+            time.sleep(2)
+            if i == 9:
+                print("\nFAILED TO DOWNLOAD LAMMPS! FORCE QUITTING!\n")
+                sys.exit()
         os.system("tar -C lammps -xzvf lammps-%s.tar.gz" % lammps_version)
         os.system("mv lammps/lammps-%s lammps/%s" % (lammps_version, lammps_version))
         os.chdir("lammps/%s/src" % lammps_version)
@@ -472,7 +492,7 @@ prepend_path("PATH",    "$CWD/lammps/$VERSION/src")
         while a in use_mod_file:
             use_mod_file = use_mod_file.replace(a, b)
 
-    fptr = open("~/.modules/%s.lua" % name, 'w')
+    fptr = open("%s/.modules/%s.lua" % (HOMEDIR, name), 'w')
     fptr.write(use_mod_file)
     fptr.close()
 
@@ -484,20 +504,8 @@ for s, v in zip(s_vars_to_include, vars_to_include):
     while ss in exports_and_aliases:
         exports_and_aliases = exports_and_aliases.replace(ss, v)
 
-
-
 fptr = open("%s/.modules/squid.lua" % HOMEDIR, 'w')
 fptr.write(exports_and_aliases)
 fptr.close()
 
-try:
-    check_shell = open("%s/%s" % (HOMEDIR, shell), 'r').read()
-except IOError:
-    check_shell = ""
-
-if shell_append not in check_shell:
-    fptr_shell = open("%s/%s" % (HOMEDIR, shell), 'w')
-    fptr_shell.write(check_shell)
-    fptr_shell.write(shell_append)
-    fptr_shell.close()
-
+os.system("source %s/.bashrc" % HOMEDIR)
