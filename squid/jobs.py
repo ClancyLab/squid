@@ -377,6 +377,9 @@ def submit_job(name,
     if queueing_system.lower() == "nbs" and queue.lower() not in get_nbs_queues():
         raise Exception("NBS queue %s does not exist!" % queue)
 
+    if queueing_system.lower() == "slurm" and queue.lower() not in get_slurm_queues():
+        raise Exception("SLURM queue %s does not exist!" % queue)
+
     if redundancy and not queueing_system.strip().lower() == "nbs":
         print("Warning - redundancy not implemented for non-NBS queueing systems.")
 
@@ -619,6 +622,9 @@ def pysub(job_name,
     if queueing_system.lower() == "nbs" and queue.lower() not in get_nbs_queues():
         raise Exception("NBS queue %s does not exist!" % queue)
 
+    if queueing_system.lower() == "slurm" and queue.lower() not in get_slurm_queues():
+        raise Exception("SLURM queue %s does not exist!" % queue)
+
     if queue is None:
         queue = "none"
 
@@ -803,6 +809,17 @@ def get_nbs_queues():
     all_queues = [a.split() for a in all_queues]
     all_queues = [a[0] for a in all_queues if len(a) > 1]
     return [a.lower() for a in all_queues if a.lower() not in ["queue", "name", ""]]
+
+
+def get_slurm_queues():
+    p = subprocess.Popen(["sinfo"], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    all_queues = p.stdout.read().strip()
+    if all_queues == '':
+        return []
+    all_queues = all_queues.split("\n")[1:]
+    all_queues = [q.split()[0] for q in all_queues if q.split()[1] == 'up']
+    all_queues = list(set(all_queues))
+    return [q if "*" not in q else q.replace("*", "") for q in all_queues]
 
 
 def _test_jlist():
