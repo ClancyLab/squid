@@ -193,7 +193,6 @@ if nbs_ssh is None or nbs_ssh == "None":
 else:
     sysconst_file_string = sysconst_file_string.replace("$NBS_SSH", '"%s"' % nbs_ssh)
 
-
 for s, v in zip(s_vars_to_include, vars_to_include):
     ss = "$" + s.upper()
     while ss in sysconst_file_string:
@@ -229,15 +228,10 @@ prepend_path("PATH",    "$CWD/packmol")
 elif os.path.exists("packmol"):
     print("WARNING - Packmol folder already exists, so will not re-install.")
 
-
-# Function to get the name of a variable with a unique assignment.
-# Note it breaks when two variables have the same assigned values so we
-# don't use this.  Just leaving it here because the idea is cool.
-# def namestr(obj, namespace=globals()):
-#    return [name for name in namespace if namespace[name] is obj][0]
-# for v in vars_to_include:
-#    v_str = namestr(v).upper()
-#    sysconst_file_string = sysconst_file_string.replace("$%s" % v_str, v)
+lammps_module_name = "lammps-%s" % lammps_version
+if smrff_path is not None and os.path.exists(smrff_path):
+    use_mod_file = module_smrff_file
+    lammps_module_name = "smrff"
 
 fptr_sysconst = open("squid/sysconst.py", 'w')
 fptr_sysconst.write(sysconst_file_string)
@@ -283,7 +277,13 @@ load("vmd", "vmd/1.93")
 """
 if not install_packmol:
     exports_and_aliases += "--"
-exports_and_aliases += 'load("packmol", "packmol")'
+exports_and_aliases += 'load("packmol", "packmol")\n'
+
+exports_and_aliases += '''-- Note - user must install lammps if this is to work.  By default commented out.
+'''
+if not install_lammps:
+    exports_and_aliases += "--"
+exports_and_aliases += 'load("' + lammps_module_name + '", "' + lammps_module_name + '")\n'
 
 marcc_lammps_makefile = '''
 SHELL = /bin/sh
@@ -459,8 +459,9 @@ load("gcc", "gcc/6.4.0")
 load("python", "python/2.7-anaconda")
 load("orca", "orca/4.0.1.2")
 
-prepend_path("PATH",       "$CWD/lammps/$VERSION/src")
-prepend_path("PYTHONPATH", "$CWD/lammps/$VERSION/python")
+prepend_path("PATH",            "$CWD/lammps/$VERSION/src")
+prepend_path("PYTHONPATH",      "$CWD/lammps/$VERSION/python")
+prepend_path("LD_LIBRARY_PATH", "$CWD/lammps/$VERSION/src")
 '''
     module_smrff_file = '''help([[
 For detailed instructions, go to:
@@ -477,21 +478,18 @@ load("gcc", "gcc/6.4.0")
 load("python", "python/2.7-anaconda")
 load("orca", "orca/4.0.1.2")
 
-prepend_path("PATH",       "$CWD/lammps/$VERSION/src")
-prepend_path("PYTHONPATH", "$CWD/lammps/$VERSION/python")
+prepend_path("PATH",            "$CWD/lammps/$VERSION/src")
+prepend_path("PYTHONPATH",      "$CWD/lammps/$VERSION/python")
+prepend_path("LD_LIBRARY_PATH", "$CWD/lammps/$VERSION/src")
 '''
 
     use_mod_file = module_file
-    name = "lammps-%s" % lammps_version
-    if smrff_path is not None and os.path.exists(smrff_path):
-        use_mod_file = module_smrff_file
-        name = "smrff"
 
     for a, b in zip(["$VERSION", "$CWD"], [lammps_version, cwd]):
         while a in use_mod_file:
             use_mod_file = use_mod_file.replace(a, b)
 
-    fptr = open("%s/.modules/%s.lua" % (HOMEDIR, name), 'w')
+    fptr = open("%s/.modules/%s.lua" % (HOMEDIR, lammps_module_name), 'w')
     fptr.write(use_mod_file)
     fptr.close()
 
