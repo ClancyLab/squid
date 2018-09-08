@@ -566,6 +566,7 @@ def pysub(job_name,
           unique_name=False,
           redundancy=False,
           py3=False,
+          use_mpi=True,
           queueing_system=sysconst.queueing_system):
     """
     Submission of python scripts to run on your queue.
@@ -576,6 +577,8 @@ def pysub(job_name,
             Name of the python script (with or without the .py extension).
         nprocs: *str, optional*
             Number of processors to run your script on.
+        use_mpi: *bool, optional*
+            Whether to run python via mpirun or not.
         omp: *int, None*
             The number OMP_NUM_THREADS should be manually assigned to.
         queue: *str, optional*
@@ -683,6 +686,16 @@ source /fs/home/$USER/.zshrc
 $PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$> $PY_NAME2$.log 2>&1
 
 '''
+
+        if nprocs > 1 and use_mpi:
+            NBS += '''
+$MPIRUN$ -np $NPROCS$ $PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$> $PY_NAME2$.log 2>&1
+'''.replace("$MPIRUN$", sysconst.mpirun_path).replace("$NPROCS$", str(nprocs))
+        else:
+            NBS += '''
+$PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$> $PY_NAME2$.log 2>&1
+'''
+
         NBS = NBS.replace("$UNIQUE$", ["", "##NBS-unique: yes"][int(unique_name)])
         NBS = NBS.replace("$PYTHON_PATH$", py_path)
         NBS = NBS.replace("$JOB_NAME$", job_name)
@@ -765,10 +778,17 @@ strings, or None")
 
 $OMP$
 source ~/.bashrc
-
-$PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$> $PY_NAME2$.log 2>&1
-
 '''
+
+        if nprocs > 1 and use_mpi:
+            SLURM += '''
+$MPIRUN$ -np $NPROCS$ $PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$> $PY_NAME2$.log 2>&1
+'''.replace("$MPIRUN$", sysconst.mpirun_path).replace("$NPROCS$", str(nprocs))
+        else:
+            SLURM += '''
+$PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$> $PY_NAME2$.log 2>&1
+'''
+
 
         SLURM = SLURM.replace("$PYTHON_PATH$", py_path)
         SLURM = SLURM.replace("$JOB_NAME1$", job_name)
