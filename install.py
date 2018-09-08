@@ -21,6 +21,8 @@ lmp_path = "/fs/europa/g_pc/lmp_serial"
 python_path = "/fs/home/$USER/anaconda/bin/python2.7"
 text_editor_path = "/fs/home/$USER/lib/sublime_text_3/sublime_text"
 
+mpirun_path = "/fs/europa/g_pc/mpich-3.2/bin/mpirun"
+
 '''
 System Constants. This includes common environment variables needed for
 some programs to run.  If you are using a queueing system other than
@@ -139,14 +141,14 @@ vars_to_include = [
     orca_path, orca4_path, vmd_path, ovito_path, opls_path, packmol_path,
     lmp_path, queueing_system, nbs_bin_path, orca_sub_flag, env_vars,
     orca_env_vars, orca4_env_vars, lmp_env_vars, mpi_preface, python_path,
-    text_editor_path, g09_formchk, g09_cubegen]
+    text_editor_path, g09_formchk, g09_cubegen, mpirun_path]
 
 s_vars_to_include = [
     "orca_path", "orca4_path", "vmd_path", "ovito_path", "opls_path",
     "packmol_path", "lmp_path", "queueing_system", "nbs_bin_path",
     "orca_sub_flag", "env_vars", "orca_env_vars", "orca4_env_vars",
     "lmp_env_vars", "mpi_preface", "python_path", "TEXT_EDITOR_PATH",
-    "g09_formchk", "g09_cubegen"]
+    "g09_formchk", "g09_cubegen", "mpirun_path"]
 
 sysconst_file_string = """
 # System Constants. This includes paths to where things are installed
@@ -160,6 +162,8 @@ opls_path = "$OPLS_PATH"
 packmol_path = "$PACKMOL_PATH"
 lmp_path = "$LMP_PATH"
 python_path = "$PYTHON_PATH"
+
+mpirun_path = "$MPIRUN_PATH"
 
 queueing_system = "$QUEUEING_SYSTEM" # nbs, pbs
 nbs_ssh = $NBS_SSH
