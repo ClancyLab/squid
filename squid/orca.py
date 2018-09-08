@@ -403,7 +403,7 @@ Please run simulation with grad=True." % (input_file, os.getcwd()))
 
 # A function to run an Orca DFT Simulation
 def job(run_name, route, atoms=[], extra_section='', grad=False,
-        queue=None, walltime="00:30:00", sandbox=True, procs=1,
+        queue=None, walltime="00:30:00", sandbox=sysconst.sandbox_orca, procs=1,
         charge=None, multiplicity=None, charge_and_multiplicity='0 1',
         redundancy=False, use_NBS_sandbox=False, unique_name=True,
         previous=None, mem=2000, priority=None, xhost=None, orca4=sysconst.use_orca4):

@@ -10,6 +10,7 @@ are if programs are installed in differents locations.
 orca_path = ''
 orca4_path = "/software/apps/orca/4.0.1.2/bin/orca"
 use_orca4 = True
+sandbox_orca = False
 
 g09_formchk = ""
 g09_cubegen = ""
@@ -159,6 +160,7 @@ sysconst_file_string = """
 orca_path = "$ORCA_PATH"
 orca4_path = "$ORCA4_PATH"
 use_orca4 = """ + str(use_orca4) + """
+sandbox_orca = """ + str(sandbox_orca) + """
 
 g09_formchk = "$G09_FORMCHK"
 g09_cubegen = "$G09_CUBEGEN"

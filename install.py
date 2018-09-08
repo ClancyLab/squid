@@ -10,6 +10,7 @@ are if programs are installed in differents locations.
 orca_path = '/fs/europa/g_pc/orca_3_0_3_linux_x86-64/orca'
 orca4_path = "/fs/europa/g_pc/orca_4_0_1_linux_x86-64_openmpi202/orca"
 use_orca4 = False
+sandbox_orca = False
 
 g09_formchk = "/usr/local/gaussian/g09/g09/formchk"
 g09_cubegen = "/usr/local/gaussian/g09/g09/cubegen"
@@ -156,6 +157,7 @@ sysconst_file_string = """
 orca_path = "$ORCA_PATH"
 orca4_path = "$ORCA4_PATH"
 use_orca4 = """ + str(use_orca4) + """
+sandbox_orca = """ + str(sandbox_orca) + """
 
 g09_formchk = "$G09_FORMCHK"
 g09_cubegen = "$G09_CUBEGEN"
