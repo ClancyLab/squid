@@ -107,6 +107,15 @@ if ans != "y":
 # This is the current directory WITH NO TRAILING SLASH!
 cwd = os.getcwd()
 
+HOMEDIR = os.path.expanduser("~")
+if not os.path.exists("%s/.modules" % HOMEDIR):
+    os.mkdir("%s/.modules" % HOMEDIR)
+shell_append = """
+# Add a new folder for personal modules
+export MODULEPATH=~/.modules:$MODULEPATH
+module load squid
+"""
+
 # If we are to make lammps, then we can set lmp_path ourselves (if None or
 # empty)
 if lammps_makefile_name is None:
@@ -467,14 +476,6 @@ for s, v in zip(s_vars_to_include, vars_to_include):
         exports_and_aliases = exports_and_aliases.replace(ss, v)
 
 
-HOMEDIR = os.path.expanduser("~")
-if not os.path.exists("%s/.modules" % HOMEDIR):
-    os.mkdir("%s/.modules" % HOMEDIR)
-shell_append = """
-# Add a new folder for personal modules
-export MODULEPATH=~/.modules:$MODULEPATH
-module load squid
-"""
 
 fptr = open("%s/.modules/squid.lua" % HOMEDIR, 'w')
 fptr.write(exports_and_aliases)
