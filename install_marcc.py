@@ -33,7 +33,8 @@ text_editor_path = ""
 
 mpirun_path = "/software/apps/orca/4.0.1.2/openmpi/2.0.4/bin/mpirun"
 
-queueing_system = 'slurm'  # nbs, pbs 
+queueing_system = 'slurm'  # nbs, pbs, slurm
+default_queue = 'shared'
 
 # A list of all paths/environment variables needed for queue submission
 env_vars = '''
@@ -146,14 +147,14 @@ vars_to_include = [
     orca_path, orca4_path, vmd_path, ovito_path, opls_path, packmol_path,
     lmp_path, queueing_system, nbs_bin_path, orca_sub_flag, env_vars,
     orca_env_vars, orca4_env_vars, lmp_env_vars, mpi_preface, python_path,
-    text_editor_path, g09_formchk, g09_cubegen, mpirun_path]
+    text_editor_path, g09_formchk, g09_cubegen, mpirun_path, default_queue]
 
 s_vars_to_include = [
     "orca_path", "orca4_path", "vmd_path", "ovito_path", "opls_path",
     "packmol_path", "lmp_path", "queueing_system", "nbs_bin_path",
     "orca_sub_flag", "env_vars", "orca_env_vars", "orca4_env_vars",
     "lmp_env_vars", "mpi_preface", "python_path", "TEXT_EDITOR_PATH",
-    "g09_formchk", "g09_cubegen", "mpirun_path"]
+    "g09_formchk", "g09_cubegen", "mpirun_path", "default_queue"]
 
 sysconst_file_string = """
 # System Constants. This includes paths to where things are installed
@@ -173,7 +174,8 @@ python_path = "$PYTHON_PATH"
 
 mpirun_path = "$MPIRUN_PATH"
 
-queueing_system = "$QUEUEING_SYSTEM" # nbs, pbs
+queueing_system = "$QUEUEING_SYSTEM" # nbs, pbs, slurm
+default_queue = "$DEFAULT_QUEUE"
 nbs_ssh = $NBS_SSH
 nbs_bin_path = "$NBS_BIN_PATH"
 

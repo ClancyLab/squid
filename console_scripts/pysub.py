@@ -2,6 +2,7 @@
 from sys import argv, exit
 from os import getcwd
 
+from squid import sysconst
 from squid.jobs import pysub
 
 # Default Documentation
@@ -16,7 +17,7 @@ pysub [script.py] [Options]
 -help, -h     :            :  Print this help menu
 -n            :     1      :  Number of processors to use
 -o, -omp      :            :  Manually specify what OMP_NUM_THREADS should be.
--q            :    short   :  Which queue to submit to
+-q            :            :  Which queue to submit to
 -walltime, -t :  00:30:00  :  The walltime to use
 -priority, -p :            :  Manually specify job priority
 -unique, -u   :   False    :  Whether to require a unique simulation name.
@@ -44,7 +45,7 @@ if '-h' in argv or '-help' in argv or len(argv) < 3:
 
 # Parse Arguments
 nprocs = '1'
-queue = 'short'
+queue = sysconst.default_queue
 xhost = None
 debug = False
 rss = True
