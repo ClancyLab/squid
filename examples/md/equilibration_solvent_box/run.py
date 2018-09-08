@@ -114,12 +114,13 @@ velocity all create 300.0 23123 rot yes dist gaussian
 timestep 1.0
 
 fix motion_npt all npt temp 300.0 300.0 100.0 iso 0.0 0.0 1000.0
-run 10000
+run 100
+#run 10000
 unfix motion_npt
 
-fix motion_nvt all nvt temp 300.0 300.0 300.0
-run 10000
-unfix motion_nvt
+#fix motion_nvt all nvt temp 300.0 300.0 300.0
+#run 10000
+#unfix motion_nvt
 """
 
-lammps_job.job("solv_box", input_script, system=solvent_box, queue=None, hybrid_angle=False, params=P, pair_coeffs_included=False)
+lammps_job.job("solv_box", input_script, system=solvent_box, procs=2, queue=None, hybrid_angle=False, params=P, pair_coeffs_included=False, no_echo=True)

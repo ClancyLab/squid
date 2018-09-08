@@ -352,8 +352,10 @@ length is 31." % len(run_name))
 
     # Run the simulation
     if queue is None:
-        cmd_to_run = sysconst.lmp_env_vars
-        cmd_to_run = cmd_to_run + "\n%s -in %s.in -log %s.log"\
+        cmd_to_run = sysconst.lmp_env_vars + "\n"
+        if procs > 1:
+            cmd_to_run += "%s -np %d " % (sysconst.mpirun_path, procs)
+        cmd_to_run = cmd_to_run + "%s -in %s.in -log %s.log"\
             % (lmp_path, run_name, run_name)
 
         if no_echo:

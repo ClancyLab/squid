@@ -15,11 +15,13 @@ g09_cubegen = ""
 
 vmd_path = '/software/apps/vmd/1.9.3/bin/vmd'
 ovito_path = ''
-opls_path = '/home-2/hherbol1@jhu.edu/programs/squid/forcefield_parameters'
+opls_path = '/home-2/hherbol1@jhu.edu/programs/squid/forcefield_parameters/oplsaa.prm'
 packmol_path = "/home-2/hherbol1@jhu.edu/programs/packmol/packmol"
 lmp_path = ""
 python_path = "/software/apps/anaconda/5.2/python/2.7/bin/python"
 text_editor_path = ""
+
+mpirun_path = "/software/apps/orca/4.0.1.2/openmpi/2.0.4/bin/mpirun"
 
 '''
 System Constants. This includes common environment variables needed for
@@ -50,6 +52,17 @@ mpi_preface = ""
 # Select what shell's resource file path relative to the home dir
 # Typically this will be either .zshrc or .bashrc
 shell = '.bashrc'
+
+##############################################################################
+smrff_path = '/home-2/hherbol1@jhu.edu/programs/SMRFF'
+install_packmol = True
+install_lammps = True
+lammps_version = "16Mar18"
+extra_lammps_packages = [
+    "python"
+]
+
+lammps_makefile_name = None  # Generate our own makefile
 
 ##############################################################################
 # DO NOT CHANGE ANY SETTINGS BELOW THIS POINT!
@@ -91,18 +104,28 @@ if ans != "y":
  settings appropriately.")
     sys.exit()
 
+# This is the current directory WITH NO TRAILING SLASH!
+cwd = os.getcwd()
+
+# If we are to make lammps, then we can set lmp_path ourselves (if None or
+# empty)
+if lammps_makefile_name is None:
+    lammps_makefile_name = "marcc"
+if lmp_path is None or lmp_path.strip() == '':
+    lmp_path = cwd + "/lammps/" + lammps_version + "/src/lmp_" + lammps_makefile_name
+
 vars_to_include = [
     orca_path, orca4_path, vmd_path, ovito_path, opls_path, packmol_path,
     lmp_path, queueing_system, nbs_bin_path, orca_sub_flag, env_vars,
     orca_env_vars, orca4_env_vars, lmp_env_vars, mpi_preface, python_path,
-    text_editor_path, g09_formchk, g09_cubegen]
+    text_editor_path, g09_formchk, g09_cubegen, mpirun_path]
 
 s_vars_to_include = [
     "orca_path", "orca4_path", "vmd_path", "ovito_path", "opls_path",
     "packmol_path", "lmp_path", "queueing_system", "nbs_bin_path",
     "orca_sub_flag", "env_vars", "orca_env_vars", "orca4_env_vars",
     "lmp_env_vars", "mpi_preface", "python_path", "TEXT_EDITOR_PATH",
-    "g09_formchk", "g09_cubegen"]
+    "g09_formchk", "g09_cubegen", "mpirun_path"]
 
 sysconst_file_string = """
 # System Constants. This includes paths to where things are installed
@@ -116,6 +139,8 @@ opls_path = "$OPLS_PATH"
 packmol_path = "$PACKMOL_PATH"
 lmp_path = "$LMP_PATH"
 python_path = "$PYTHON_PATH"
+
+mpirun_path = "$MPIRUN_PATH"
 
 queueing_system = "$QUEUEING_SYSTEM" # nbs, pbs
 nbs_ssh = $NBS_SSH
@@ -145,6 +170,37 @@ for s, v in zip(s_vars_to_include, vars_to_include):
     while ss in sysconst_file_string:
         sysconst_file_string = sysconst_file_string.replace("$%s" % s.upper(), v)
 
+# Install packmol if desired
+if install_packmol and not os.path.exists("packmol"):
+    os.system("git clone https://github.com/mcubeg/packmol")
+    os.chdir("packmol")
+    os.system("module load gcc/6.4.0")
+    os.system("./configure")
+    os.system("make")
+
+    packmol_mod_file = '''help([[
+For detailed instructions, go to:
+    http://m3g.iqm.unicamp.br/packmol/home.shtml
+
+]])
+whatis("Version: 1.0")
+whatis("Keywords: Packmol, Clancy")
+whatis("URL: http://m3g.iqm.unicamp.br/packmol/home.shtml")
+whatis("Description: Packmol")
+
+load("gcc", "gcc/6.4.0")
+
+prepend_path("PATH",    "$CWD/packmol")
+'''
+    packmol_mod_file = packmol_mod_file.replace("$CWD", cwd)
+    fptr = open("~/.modules/packmol.lua", 'w')
+    fptr.write(packmol_mod_file)
+    fptr.close()
+    os.chdir("../")
+elif os.path.exists("packmol"):
+    print("WARNING - Packmol folder already exists, so will not re-install.")
+
+
 # Function to get the name of a variable with a unique assignment.
 # Note it breaks when two variables have the same assigned values so we
 # don't use this.  Just leaving it here because the idea is cool.
@@ -158,8 +214,6 @@ fptr_sysconst = open("squid/sysconst.py", 'w')
 fptr_sysconst.write(sysconst_file_string)
 fptr_sysconst.close()
 
-# This is the current directory WITH NO TRAILING SLASH!
-cwd = os.getcwd()
 exports_and_aliases = """
 --------------------------------------------------------------------------
 ---------           Squid Exports and Aliases v 0.0.1            ---------
@@ -196,10 +250,213 @@ set_alias('vmd_lmp','function _vmd_lmp() { $PYTHON_PATH $CWD/console_scripts/vmd
 load("python", "python/2.7-anaconda")
 load("orca", "orca/4.0.1.2")
 load("vmd", "vmd/1.93")
-
 -- Note - user must install packmol if this is to work.  By default commented out.
--- load("packmol", "packmol")
 """
+if not install_packmol:
+    exports_and_aliases += "--"
+exports_and_aliases += 'load("packmol", "packmol")'
+
+marcc_lammps_makefile = '''
+SHELL = /bin/sh
+
+# ---------------------------------------------------------------------
+# compiler/linker settings
+# specify flags and libraries needed for your compiler
+
+CC =        /software/apps/orca/4.0.1.2/openmpi/2.0.4/bin/mpic++
+CCFLAGS =	-g -O3 -m64 -static-libgcc -static-libstdc++ -Wall -Wextra -gdwarf-3 #need -static because system default glibcxx is too old. -gdwarf-3 for debug info readable by our old version of gdb.
+SHFLAGS =	-fPIC
+DEPFLAGS =	-M
+
+LINK =      /software/apps/orca/4.0.1.2/openmpi/2.0.4/bin/mpic++
+LINKFLAGS = -g -O3 -m64 -static-libgcc -static-libstdc++ -gdwarf-3
+LIB =  -lm
+SIZE =		size
+
+ARCHIVE =	ar
+ARFLAGS =	-rc
+SHLIBFLAGS =	-shared
+
+# ---------------------------------------------------------------------
+# LAMMPS-specific settings, all OPTIONAL
+# specify settings for LAMMPS features you will use
+# if you change any -D setting, do full re-compile after "make clean"
+
+# LAMMPS ifdef settings
+# see possible settings in Section 2.2 (step 4) of manual
+
+LMP_INC =	-DLAMMPS_GZIP
+
+# MPI library
+# see discussion in Section 2.2 (step 5) of manual
+# MPI wrapper compiler/linker can provide this info
+# can point to dummy MPI library in src/STUBS as in Makefile.serial
+# use -D MPICH and OMPI settings in INC to avoid C++ lib conflicts
+# INC = path for mpi.h, MPI compiler settings
+# PATH = path for MPI library
+# LIB = name of MPI library
+
+MPI_INC =       -I/software/apps/orca/4.0.1.2/openmpi/2.0.4/include -I/software/apps/anaconda/5.2/python/2.7/include/python2.7
+MPI_PATH =      -L/software/apps/orca/4.0.1.2/openmpi/2.0.4/lib -L/software/apps/anaconda/5.2/python/2.7/lib
+MPI_LIB =       -lpthread -lpython2.7
+
+# FFT library
+# see discussion in Section 2.2 (step 6) of manaul
+# can be left blank to use provided KISS FFT library
+# INC = -DFFT setting, e.g. -DFFT_FFTW, FFT compiler settings
+# PATH = path for FFT library
+# LIB = name of FFT library
+
+FFT_INC =    	
+FFT_PATH = 
+FFT_LIB =	
+
+# JPEG and/or PNG library
+# see discussion in Section 2.2 (step 7) of manual
+# only needed if -DLAMMPS_JPEG or -DLAMMPS_PNG listed with LMP_INC
+# INC = path(s) for jpeglib.h and/or png.h
+# PATH = path(s) for JPEG library and/or PNG library
+# LIB = name(s) of JPEG library and/or PNG library
+
+JPG_INC =       
+JPG_PATH = 	
+JPG_LIB =	
+
+# ---------------------------------------------------------------------
+# build rules and dependencies
+# do not edit this section
+
+include	Makefile.package.settings
+include	Makefile.package
+
+EXTRA_INC = $(LMP_INC) $(PKG_INC) $(MPI_INC) $(FFT_INC) $(JPG_INC) $(PKG_SYSINC)
+EXTRA_PATH = $(PKG_PATH) $(MPI_PATH) $(FFT_PATH) $(JPG_PATH) $(PKG_SYSPATH)
+EXTRA_LIB = $(PKG_LIB) $(MPI_LIB) $(FFT_LIB) $(JPG_LIB) $(PKG_SYSLIB)
+EXTRA_CPP_DEPENDS = $(PKG_CPP_DEPENDS)
+EXTRA_LINK_DEPENDS = $(PKG_LINK_DEPENDS)
+
+# Path to src files
+
+vpath %.cpp ..
+vpath %.h ..
+
+# Link target
+
+$(EXE):	$(OBJ) $(EXTRA_LINK_DEPENDS)
+	$(LINK) $(LINKFLAGS) $(EXTRA_PATH) $(OBJ) $(EXTRA_LIB) $(LIB) -o $(EXE)
+	$(SIZE) $(EXE)
+
+# Library targets
+
+lib:	$(OBJ) $(EXTRA_LINK_DEPENDS)
+	$(ARCHIVE) $(ARFLAGS) $(EXE) $(OBJ)
+
+shlib:	$(OBJ) $(EXTRA_LINK_DEPENDS)
+	$(CC) $(CCFLAGS) $(SHFLAGS) $(SHLIBFLAGS) $(EXTRA_PATH) -o $(EXE) \
+        $(OBJ) $(EXTRA_LIB) $(LIB)
+
+# Compilation rules
+
+%.o:%.cpp $(EXTRA_CPP_DEPENDS)
+	$(CC) $(CCFLAGS) $(SHFLAGS) $(EXTRA_INC) -c $<
+
+%.d:%.cpp $(EXTRA_CPP_DEPENDS)
+	$(CC) $(CCFLAGS) $(EXTRA_INC) $(DEPFLAGS) $< > $@
+
+%.o:%.cu $(EXTRA_CPP_DEPENDS)
+	$(CC) $(CCFLAGS) $(SHFLAGS) $(EXTRA_INC) -c $<
+
+# Individual dependencies
+
+DEPENDS = $(OBJ:.o=.d)
+sinclude $(DEPENDS)
+
+'''
+
+if isinstance(smrff_path, str) and smrff_path[-1] == "/":
+    smrff_path = smrff_path[:-1]
+
+if install_lammps:
+    os.system("module load orca")
+    os.system("module load gcc/6.4.0")
+    os.system("module load python/2.7-anaconda")
+    if not os.path.exists("lammps"):
+        os.mkdir("lammps")
+    if os.path.exists("lammps/lammps-%s" % lammps_version):
+        print("Warning - lammps version already exists locally.  Either delete or choose another.")
+    else:
+        os.system("wget http://lammps.sandia.gov/tars/lammps-%s.tar.gz" % lammps_version)
+        os.system("tar -C lammps -xzvf lammps-%s.tar.gz" % lammps_version)
+        os.system("mv lammps/lammps-%s lammps/%s" % (lammps_version, lammps_version))
+        os.chdir("lammps/%s/src" % lammps_version)
+
+        for pkg in extra_lammps_packages:
+            os.system("make yes-%s" % pkg)
+
+        if smrff_path is not None and os.path.exists(smrff_path):
+            if lammps_version != "16Mar18":
+                print("WARNING! SMRFF is only guaranteed to work for lammps version 16Mar18.  Will compile anyways, but good luck.")
+            os.system("cp -rf %s/lammps/lammps-16Mar18/src/* ." % smrff_path)
+
+        if lammps_makefile_name is None:
+            fptr = open("MAKE/Makefile.marcc", 'w')
+            fptr.write(marcc_lammps_makefile)
+            fptr.close()
+            os.system("make marcc -j 4")
+            os.system("make marcc -j 4 mode=shlib")
+        else:
+            os.system("make %s -j 4" % lammps_makefile_name)
+            os.system("make %s -j 4 mode=shlib" % lammps_makefile_name)
+
+        os.chdir("../../../")
+
+    module_file = '''help([[
+For detailed instructions, go to:
+    https://lammps.sandia.gov
+
+]])
+whatis("Version: $VERSION")
+whatis("Keywords: LAMMPs, Clancy")
+whatis("URL: https://lammps.sandia.gov")
+whatis("Description: LAMMPs")
+
+load("gcc", "gcc/6.4.0")
+load("python", "python/2.7-anaconda")
+load("orca", "orca/4.0.1.2")
+
+prepend_path("PATH",    "$CWD/lammps/$VERSION/src")
+'''
+    module_smrff_file = '''help([[
+For detailed instructions, go to:
+    https://clancylab.github.io/SMRFF/
+    https://lammps.sandia.gov
+]])
+whatis("Version: $VERSION")
+whatis("Keywords: LAMMPs, SMRFF, Clancy")
+whatis("URL1: https://clancylab.github.io/SMRFF/")
+whatis("URL2: https://lammps.sandia.gov")
+whatis("Description: SMRFF")
+
+load("gcc", "gcc/6.4.0")
+load("python", "python/2.7-anaconda")
+load("orca", "orca/4.0.1.2")
+
+prepend_path("PATH",    "$CWD/lammps/$VERSION/src")
+'''
+
+    use_mod_file = module_file
+    name = "lammps-%s" % lammps_version
+    if smrff_path is not None and os.path.exists(smrff_path):
+        use_mod_file = module_smrff_file
+        name = "smrff"
+
+    for a, b in zip(["$VERSION", "$CWD"], [lammps_version, cwd]):
+        while a in use_mod_file:
+            use_mod_file = use_mod_file.replace(a, b)
+
+    fptr = open("~/.modules/%s.lua" % name, 'w')
+    fptr.write(use_mod_file)
+    fptr.close()
 
 while "$CWD" in exports_and_aliases:
     exports_and_aliases = exports_and_aliases.replace("$CWD", cwd)
