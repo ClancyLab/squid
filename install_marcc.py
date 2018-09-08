@@ -432,19 +432,16 @@ if install_lammps:
             os.system("make yes-%s" % pkg)
 
         if smrff_path is not None and os.path.exists(smrff_path):
+            print("Will install smrff into this lammps install.")
             if lammps_version != "16Mar18":
                 print("WARNING! SMRFF is only guaranteed to work for lammps version 16Mar18.  Will compile anyways, but good luck.")
             os.system("cp -rf %s/lammps/lammps-16Mar18/src/* ." % smrff_path)
 
-        if lammps_makefile_name is None:
-            fptr = open("MAKE/Makefile.marcc", 'w')
-            fptr.write(marcc_lammps_makefile)
-            fptr.close()
-            os.system("make marcc -j 4")
-            os.system("make marcc -j 4 mode=shlib")
-        else:
-            os.system("make %s -j 4" % lammps_makefile_name)
-            os.system("make %s -j 4 mode=shlib" % lammps_makefile_name)
+        fptr = open("MAKE/Makefile.marcc", 'w')
+        fptr.write(marcc_lammps_makefile)
+        fptr.close()
+        os.system("make marcc -j 4")
+        os.system("make marcc -j 4 mode=shlib")
 
         os.chdir("../../../")
 
