@@ -459,7 +459,8 @@ load("gcc", "gcc/6.4.0")
 load("python", "python/2.7-anaconda")
 load("orca", "orca/4.0.1.2")
 
-prepend_path("PATH",    "$CWD/lammps/$VERSION/src")
+prepend_path("PATH",       "$CWD/lammps/$VERSION/src")
+prepend_path("PYTHONPATH", "$CWD/lammps/$VERSION/python")
 '''
     module_smrff_file = '''help([[
 For detailed instructions, go to:
@@ -476,7 +477,8 @@ load("gcc", "gcc/6.4.0")
 load("python", "python/2.7-anaconda")
 load("orca", "orca/4.0.1.2")
 
-prepend_path("PATH",    "$CWD/lammps/$VERSION/src")
+prepend_path("PATH",       "$CWD/lammps/$VERSION/src")
+prepend_path("PYTHONPATH", "$CWD/lammps/$VERSION/python")
 '''
 
     use_mod_file = module_file
