@@ -66,7 +66,7 @@ def read_vpot(vpot):
     return np.array(v)
 
 
-def electrostatic_potential_cubegen(fname, npoints=80, orca4=False):
+def electrostatic_potential_cubegen(fname, npoints=80, orca4=sysconst.use_orca4):
     '''
     '''
 

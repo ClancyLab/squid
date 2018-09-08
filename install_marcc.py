@@ -9,32 +9,30 @@ are if programs are installed in differents locations.
 '''
 orca_path = ''
 orca4_path = "/software/apps/orca/4.0.1.2/bin/orca"
+use_orca4 = True
 
 g09_formchk = ""
 g09_cubegen = ""
 
 vmd_path = '/software/apps/vmd/1.9.3/bin/vmd'
 ovito_path = ''
-opls_path = '/home-2/hherbol1@jhu.edu/programs/squid/forcefield_parameters/oplsaa.prm'
-packmol_path = "/home-2/hherbol1@jhu.edu/programs/packmol/packmol"
-lmp_path = ""
+
+# If specifing we are to install these below, then leave paths as None
+smrff_path = '/home-2/hherbol1@jhu.edu/programs/SMRFF'
+install_packmol = True
+install_lammps = True
+lmp_path = None
+packmol_path = None
+
+# If opls_path is None, we use default ones in squid
+opls_path = None
+
 python_path = "/software/apps/anaconda/5.2/python/2.7/bin/python"
 text_editor_path = ""
 
 mpirun_path = "/software/apps/orca/4.0.1.2/openmpi/2.0.4/bin/mpirun"
 
-'''
-System Constants. This includes common environment variables needed for
-some programs to run.  If you are using a queueing system other than
-the NBS one, please specify it here.
-'''
-
-queueing_system = 'slurm'  # nbs, pbs
-nbs_ssh = None
-nbs_bin_path = ""
-
-# Submission flags for queueing system
-orca_sub_flag = "-prop orca"
+queueing_system = 'slurm'  # nbs, pbs 
 
 # A list of all paths/environment variables needed for queue submission
 env_vars = '''
@@ -54,16 +52,19 @@ mpi_preface = ""
 shell = '.bashrc'
 
 ##############################################################################
-smrff_path = '/home-2/hherbol1@jhu.edu/programs/SMRFF'
-install_packmol = True
-install_lammps = True
 lammps_version = "16Mar18"
 extra_lammps_packages = [
     "python"
 ]
-
 lammps_makefile_name = None  # Generate our own makefile
+##############################################################################
 
+# ADVANCED SETTINGS LIKELY NOT TO BE NEEDED OR CHANGED!
+nbs_ssh = None
+nbs_bin_path = ""
+
+# Submission flags for queueing system
+orca_sub_flag = ""
 ##############################################################################
 # DO NOT CHANGE ANY SETTINGS BELOW THIS POINT!
 ##############################################################################
@@ -123,6 +124,12 @@ if lammps_makefile_name is None:
 if lmp_path is None or lmp_path.strip() == '':
     lmp_path = cwd + "/lammps/" + lammps_version + "/src/lmp_" + lammps_makefile_name
 
+if packmol_path is None and install_packmol:
+    packmol_path = cwd + "/packmol/packmol"
+
+if opls_path is None:
+    opls_path = cwd + '/forcefield_parameters/oplsaa.prm'
+
 vars_to_include = [
     orca_path, orca4_path, vmd_path, ovito_path, opls_path, packmol_path,
     lmp_path, queueing_system, nbs_bin_path, orca_sub_flag, env_vars,
@@ -140,6 +147,8 @@ sysconst_file_string = """
 # System Constants. This includes paths to where things are installed
 orca_path = "$ORCA_PATH"
 orca4_path = "$ORCA4_PATH"
+use_orca4 = """ + str(use_orca4) + """
+
 g09_formchk = "$G09_FORMCHK"
 g09_cubegen = "$G09_CUBEGEN"
 vmd_path = "$VMD_PATH"

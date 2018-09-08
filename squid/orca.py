@@ -406,7 +406,7 @@ def job(run_name, route, atoms=[], extra_section='', grad=False,
         queue=None, walltime="00:30:00", sandbox=True, procs=1,
         charge=None, multiplicity=None, charge_and_multiplicity='0 1',
         redundancy=False, use_NBS_sandbox=False, unique_name=True,
-        previous=None, mem=2000, priority=None, xhost=None, orca4=False):
+        previous=None, mem=2000, priority=None, xhost=None, orca4=sysconst.use_orca4):
     """
     Wrapper to submitting an Orca simulation.
 
@@ -918,7 +918,7 @@ def mo_analysis(name,
     vmd.plot_MO_from_cube(MOs, wireframe=wireframe, hide=hide, iso=iso)
 
 
-def pot_analysis(name, wireframe=True, npoints=80, orca4=False):
+def pot_analysis(name, wireframe=True, npoints=80, orca4=sysconst.use_orca4):
     '''
     Post process an orca job using orca_plot and vmd to display the electrostatic
     potential mapped onto the electron density surface.
