@@ -204,16 +204,16 @@ def get_all_jobs(queueing_system=sysconst.queueing_system, detail=0):
         # Do This
         raise Exception("THIS CODE NOT WRITTEN YET.")
     elif queueing_system.strip().lower() == "slurm":
-        p = subprocess.Popen(['showq'], stdout=subprocess.PIPE)
+        p = subprocess.Popen(['squeue'], stdout=subprocess.PIPE)
         output = p.stdout.read().split('\n')
         all_jobs = [job.strip().split()
                     for job in output if getpass.getuser() in job]
         if detail == 2:
-            all_jobs = [(j[1], j[5], j[3], 'TACC', j[4]) for j in all_jobs]
+            all_jobs = [(j[2], j[5], j[4], j[1], j[6]) for j in all_jobs]
         elif detail == 1:
-            all_jobs = [(j[1], j[5], j[3]) for j in all_jobs]
+            all_jobs = [(j[2], j[5], j[4]) for j in all_jobs]
         else:
-            all_jobs = [j[1] for j in all_jobs]
+            all_jobs = [j[2] for j in all_jobs]
         return all_jobs
     else:
         raise Exception("Unknown queueing system passed to get_all_jobs. \
@@ -380,10 +380,10 @@ def submit_job(name,
     if queueing_system.lower() == "slurm" and queue.lower() not in get_slurm_queues():
         raise Exception("SLURM queue %s does not exist!" % queue)
 
-    if redundancy and not queueing_system.strip().lower() == "nbs":
+    if redundancy and queueing_system.strip().lower() not in ["slurm", "nbs"]:
         print("Warning - redundancy not implemented for non-NBS queueing systems.")
 
-    if unique_name and not queueing_system.strip().lower() == "nbs":
+    if unique_name and queueing_system.strip().lower() not in ["slurm", "nbs"]:
         print("Warning - unique_name not implemented for non-NBS queueing systems.")
 
     if queue is "debug":
@@ -545,9 +545,46 @@ source ~/.bashrc
         f.write(generic_script)
         f.close()
 
-        os.system('sbatch %s.slurm %s' % (name, sub_flag.strip()))
+        job_exists = name in get_all_jobs(detail=0)
+        if redundancy and job_exists:
+            try:
+                job_info = _get_job(name)[0]
+            except IndexError:
+                # Job finished in process of submitting and redundancy call
+                job_to_return = Job(name)
+                # Attach the redundancy flag
+                job_to_return.redundancy = True
+                return job_to_return
+            job_to_return = Job(job_info[0], job_id=job_info[-1])
+            job_to_return.redundancy = True
+            return job_to_return
+        elif job_exists:
+            raise Exception("Job with name %s already exists in the queue!" % name)
 
-        return Job(name)
+        # Submit job
+        cmd = 'sbatch %s.slurm %s' % (name, sub_flag.strip())
+        job_pipe = subprocess.Popen(cmd.split(), shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        # Get the error message
+        job_err = job_pipe.stderr.read()
+
+        # If we figure out redundancy, add it here
+        # CODE FORE REDUNDANCY IN SLURM
+        job_id = job_pipe.stdout.read()
+
+        if "Submitted batch job" not in job_id:
+            print("\nFailed to submit the job!")
+            print("--------------- JOB OUTPUT ---------------")
+            print job_id
+            print("---------------- JOB ERROR ---------------")
+            print job_err
+            print("---------------------------------")
+            sys.stdout.flush()
+            raise Exception()
+
+        job_id = job_id.split()[-1].strip()
+
+        return Job(name, job_id=job_id)
     else:
         raise Exception("Unknown queueing system passed to submit_job. \
 Please choose NBS or PBS for now.")
@@ -813,11 +850,49 @@ strings, or None")
         SLURM_fptr.write(SLURM)
         SLURM_fptr.close()
 
+        job_exists = job_name in get_all_jobs(detail=0)
+        if redundancy and job_exists:
+            try:
+                job_info = _get_job(job_name)[0]
+            except IndexError:
+                # Job finished in process of submitting and redundancy call
+                job_to_return = Job(job_name)
+                # Attach the redundancy flag
+                job_to_return.redundancy = True
+                return job_to_return
+            job_to_return = Job(job_info[0], job_id=job_info[-1])
+            job_to_return.redundancy = True
+            return job_to_return
+        elif job_exists:
+            raise Exception("Job with name %s already exists in the queue!" % job_name)
+
         # Submit job
-        os.system('sbatch ' + job_name + '.slurm')
+        cmd = 'sbatch ' + job_name + '.slurm'
+        job_pipe = subprocess.Popen(cmd.split(), shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        # Get the error message
+        job_err = job_pipe.stderr.read()
+
+        # If we figure out redundancy, add it here
+        # CODE FORE REDUNDANCY IN SLURM
+        job_id = job_pipe.stdout.read()
+
+        if "Submitted batch job" not in job_id:
+            print("\nFailed to submit the job!")
+            print("--------------- JOB OUTPUT ---------------")
+            print job_id
+            print("---------------- JOB ERROR ---------------")
+            print job_err
+            print("---------------------------------")
+            sys.stdout.flush()
+            raise Exception()
+
+        job_id = job_id.split()[-1].strip()
 
         if remove_sub_script:
             os.system('rm ' + job_name + '.slurm')
+
+        return Job(job_name, job_id=job_id)
     else:
         raise Exception("Unknown queueing system passed to pysub. \
 Please choose NBS or PBS for now.")

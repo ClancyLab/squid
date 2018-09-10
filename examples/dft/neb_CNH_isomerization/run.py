@@ -29,9 +29,11 @@ def lbfgs(frames=files.read_xyz("CNH_HCN.xyz"), maxiter=1000):
                       'reset_step_size': 20,
                       'maxiter': maxiter}
     return neb.NEB("neb_test",
-                   frames,
+                   frames, 
                    "! HF-3c",
                    opt="LBFGS",
+                   queue="shared",
+                   procs=1,
                    new_opt_params=new_opt_params,
                    ci_neb=True,
                    no_energy=False)
