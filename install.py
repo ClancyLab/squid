@@ -10,7 +10,7 @@ are if programs are installed in differents locations.
 orca_path = '/fs/europa/g_pc/orca_3_0_3_linux_x86-64/orca'
 orca4_path = "/fs/europa/g_pc/orca_4_0_1_linux_x86-64_openmpi202/orca"
 use_orca4 = False
-sandbox_orca = False
+sandbox_orca = True
 
 g09_formchk = "/usr/local/gaussian/g09/g09/formchk"
 g09_cubegen = "/usr/local/gaussian/g09/g09/cubegen"
