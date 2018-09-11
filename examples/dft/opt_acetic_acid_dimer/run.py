@@ -13,5 +13,5 @@ def example_run_on_queue():
     return orca.job("aa_dimer_queue", "! HF-3c Opt", atoms=frames, queue='shared', procs=2)
 
 
-example_run_on_queue()
-#example_run_local()
+#example_run_on_queue()
+example_run_local()

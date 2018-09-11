@@ -294,7 +294,7 @@ whatis("Keywords: Squid, Clancy")
 whatis("URL: https://clancylab.github.io/squid/squid.html")
 whatis("Description: Clancy Lab Codebase")
 
-prepend_path( "PYTHONPATH",     "/home-2/hherbol1@jhu.edu/programs/squid")
+prepend_path( "PYTHONPATH",     "$CWD")
 
 -- Aliases
 set_alias('chkDFT','python $CWD/console_scripts/chkDFT.py')
