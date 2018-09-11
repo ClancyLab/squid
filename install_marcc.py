@@ -232,6 +232,44 @@ prepend_path("PATH",    "$CWD/packmol")
 elif os.path.exists("packmol"):
     print("WARNING - Packmol folder already exists, so will not re-install.")
 
+module_file = '''help([[
+For detailed instructions, go to:
+    https://lammps.sandia.gov
+
+]])
+whatis("Version: $VERSION")
+whatis("Keywords: LAMMPs, Clancy")
+whatis("URL: https://lammps.sandia.gov")
+whatis("Description: LAMMPs")
+
+load("gcc", "gcc/6.4.0")
+load("python", "python/2.7-anaconda")
+load("orca", "orca/4.0.1.2")
+
+prepend_path("PATH",            "$CWD/lammps/$VERSION/src")
+prepend_path("PYTHONPATH",      "$CWD/lammps/$VERSION/python")
+prepend_path("LD_LIBRARY_PATH", "$CWD/lammps/$VERSION/src")
+'''
+module_smrff_file = '''help([[
+For detailed instructions, go to:
+    https://clancylab.github.io/SMRFF/
+    https://lammps.sandia.gov
+]])
+whatis("Version: $VERSION")
+whatis("Keywords: LAMMPs, SMRFF, Clancy")
+whatis("URL1: https://clancylab.github.io/SMRFF/")
+whatis("URL2: https://lammps.sandia.gov")
+whatis("Description: SMRFF")
+
+load("gcc", "gcc/6.4.0")
+load("python", "python/2.7-anaconda")
+load("orca", "orca/4.0.1.2")
+
+prepend_path("PATH",            "$CWD/lammps/$VERSION/src")
+prepend_path("PYTHONPATH",      "$CWD/lammps/$VERSION/python")
+prepend_path("LD_LIBRARY_PATH", "$CWD/lammps/$VERSION/src")
+'''
+use_mod_file = module_file
 lammps_module_name = "lammps-%s" % lammps_version
 if smrff_path is not None and os.path.exists(smrff_path):
     use_mod_file = module_smrff_file
@@ -448,46 +486,6 @@ if install_lammps:
         os.system("make marcc -j 4 mode=shlib")
 
         os.chdir("../../../")
-
-    module_file = '''help([[
-For detailed instructions, go to:
-    https://lammps.sandia.gov
-
-]])
-whatis("Version: $VERSION")
-whatis("Keywords: LAMMPs, Clancy")
-whatis("URL: https://lammps.sandia.gov")
-whatis("Description: LAMMPs")
-
-load("gcc", "gcc/6.4.0")
-load("python", "python/2.7-anaconda")
-load("orca", "orca/4.0.1.2")
-
-prepend_path("PATH",            "$CWD/lammps/$VERSION/src")
-prepend_path("PYTHONPATH",      "$CWD/lammps/$VERSION/python")
-prepend_path("LD_LIBRARY_PATH", "$CWD/lammps/$VERSION/src")
-'''
-    module_smrff_file = '''help([[
-For detailed instructions, go to:
-    https://clancylab.github.io/SMRFF/
-    https://lammps.sandia.gov
-]])
-whatis("Version: $VERSION")
-whatis("Keywords: LAMMPs, SMRFF, Clancy")
-whatis("URL1: https://clancylab.github.io/SMRFF/")
-whatis("URL2: https://lammps.sandia.gov")
-whatis("Description: SMRFF")
-
-load("gcc", "gcc/6.4.0")
-load("python", "python/2.7-anaconda")
-load("orca", "orca/4.0.1.2")
-
-prepend_path("PATH",            "$CWD/lammps/$VERSION/src")
-prepend_path("PYTHONPATH",      "$CWD/lammps/$VERSION/python")
-prepend_path("LD_LIBRARY_PATH", "$CWD/lammps/$VERSION/src")
-'''
-
-    use_mod_file = module_file
 
     for a, b in zip(["$VERSION", "$CWD"], [lammps_version, cwd]):
         while a in use_mod_file:
