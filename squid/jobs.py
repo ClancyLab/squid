@@ -312,6 +312,7 @@ Please choose NBS, PBS, or SLURM for now.")
 def submit_job(name,
                job_to_submit,
                procs=1,
+               ntasks=1,
                queue=sysconst.default_queue,
                mem=1000,
                priority=None,
@@ -338,6 +339,9 @@ def submit_job(name,
             String holding code you wish to submit.
         procs: *int, optional*
             Number of processors requested.
+        ntasks: *int, optional*
+            (For SLURM) The number of tasks this job will run, each task uses
+            procs number of cores.
         queue: *str, optional*
             Queue you are submitting to (queueing system dependent).
         mem: *float, optional*
@@ -515,7 +519,8 @@ def submit_job(name,
         generic_script = '''#!/bin/sh
 #SBATCH -J  ''' + name + '''
 #SBATCH -o  ''' + name + '''.o%j
-#SBATCH -n ''' + str(procs) + '''
+#SBATCH -n ''' + str(ntasks) + '''
+#SBATCH -c ''' + str(procs) + '''
 #SBATCH -p ''' + queue + '''
 #SBATCH -t ''' + walltime + '''
 
@@ -592,6 +597,7 @@ Please choose NBS or PBS for now.")
 
 def pysub(job_name,
           nprocs="1",
+          ntasks="1",
           omp=None,
           queue=sysconst.default_queue,
           walltime="00:30:00",
@@ -614,6 +620,9 @@ def pysub(job_name,
             Name of the python script (with or without the .py extension).
         nprocs: *str, optional*
             Number of processors to run your script on.
+        ntasks: *int, optional*
+            (For SLURM) The number of tasks this job will run, each task uses
+            procs number of cores.
         use_mpi: *bool, optional*
             Whether to run python via mpirun or not.
         omp: *int, None*
@@ -809,7 +818,8 @@ strings, or None")
         SLURM = '''#!/bin/sh
 #SBATCH -J "$JOB_NAME1$"
 #SBATCH -o $JOB_NAME2$.o%j
-#SBATCH -n $NPROCS$
+#SBATCH -n $NTASKS$
+#SBATCH -c $NPROCS$
 #SBATCH -p $QUEUE$
 #SBATCH -t $WALLTIME$
 
@@ -831,6 +841,7 @@ $PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$> $PY_NAME2$.log 2>&1
         SLURM = SLURM.replace("$JOB_NAME1$", job_name)
         SLURM = SLURM.replace("$JOB_NAME2$", job_name)
         SLURM = SLURM.replace("$NPROCS$", str(nprocs))
+        SLURM = SLURM.replace("$NTASKS$", str(ntasks))
         SLURM = SLURM.replace("$QUEUE$", queue)
         SLURM = SLURM.replace("$WALLTIME$", walltime)
         SLURM = SLURM.replace("$PY_NAME1$", path + '/' + job_name)

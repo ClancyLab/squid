@@ -16,6 +16,7 @@ pysub [script.py] [Options]
     Flag          Default     Description
 -help, -h     :            :  Print this help menu
 -n            :     1      :  Number of processors to use
+-tasks        :     1      :  Number of tasks this job will run
 -o, -omp      :            :  Manually specify what OMP_NUM_THREADS should be.
 -mpi          :            :  Whether to run python with mpirun or not.
 -q            :            :  Which queue to submit to
@@ -61,12 +62,15 @@ unique = False
 omp = None
 py3 = False
 use_mpi = False
+tasks = 1
 
 if ".py" in job_name:
     job_name = job_name.split(".py")[0]
 
 if "-n" in argv[2:]:
     nprocs = argv[argv.index('-n') + 1]
+if "-tasks" in argv[2:]:
+    tasks = int(argv[argv.index('-tasks') + 1])
 if "-o" in argv[2:]:
     omp = argv[argv.index('-o') + 1]
 elif "-omp" in argv[2:]:
@@ -106,6 +110,6 @@ if "-t" in argv[2:]:
 if "-walltime" in argv[2:]:
     walltime = argv[argv.index('-walltime') + 1]
 
-pysub(job_name, nprocs=nprocs, omp=omp, queue=queue, xhost=xhost,
+pysub(job_name, nprocs=nprocs, ntasks=tasks, omp=omp, queue=queue, xhost=xhost,
       path=getcwd(), remove_sub_script=rss, priority=priority,
       walltime=walltime, unique_name=unique, py3=py3, use_mpi=use_mpi)
