@@ -821,7 +821,7 @@ if lammps_version not in lammps_hashes:
 if install_lammps:
     if not os.path.exists("lammps"):
         os.mkdir("lammps")
-    if os.path.exists("lammps/lammps-%s" % lammps_version):
+    if os.path.exists("lammps/%s" % lammps_version):
         print("Warning - lammps version already exists locally.  Either delete or choose another.")
     else:
         download_file(cwd, "https://lammps.sandia.gov/tars/lammps-%s.tar.gz" % lammps_version, lammps_hashes[lammps_version])
