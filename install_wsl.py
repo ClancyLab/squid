@@ -268,7 +268,7 @@ if install_nlopt:
         os.system("mv nlopt-2.5.0/nlopt-2.5.0 nlopt-2.5.0/src")
         os.mkdir("nlopt-2.5.0/src/build")
         os.chdir("nlopt-2.5.0/src/build")
-        os.system("cmake .. -DCMAKE_INSTALL_PREFIX=%s/build -DPYTHON_EXECUTABLE=%s" % (cwd, python_path))
+        os.system("cmake .. -DCMAKE_INSTALL_PREFIX=%s/nlopt-2.5.0/build -DPYTHON_EXECUTABLE=%s" % (cwd, python_path))
         os.system("make; make install")
         os.chdir("../../../")
     else:
