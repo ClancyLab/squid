@@ -307,21 +307,6 @@ if install_necessary_openmpi:
             os.system("make -j 4")
             os.system("make install")
             os.chdir("../../../")
-            ompi_mod_file = '''
-help([[
-For detailed instructions, go to:
-    https://www.open-mpi.org
-
-    ]])
-whatis("Version: 2.0.2")
-whatis("URL: https://www.open-mpi.org")
-whatis("Description: OpenMPI")
-
-prepend_path("PATH",            "$CWD/openmpi/openmpi-2.0.2/build/bin")
-prepend_path("LD_LIBRARY_PATH", "$CWD/openmpi/openmpi-2.0.2/build/lib")
-'''.replace("$CWD", cwd).replace("$CWD", cwd)
-
-            save_module(ompi_mod_file, "openmpi-2.0.2")
     if isvalid(orca_path):
         if not os.path.exists("openmpi"):
             os.mkdir("openmpi")
@@ -339,21 +324,6 @@ prepend_path("LD_LIBRARY_PATH", "$CWD/openmpi/openmpi-2.0.2/build/lib")
             os.system("make -j 4")
             os.system("make install")
             os.chdir("../../../")
-            ompi_mod_file = '''
-help([[
-For detailed instructions, go to:
-    https://www.open-mpi.org
-
-    ]])
-whatis("Version: 1.6.5")
-whatis("URL: https://www.open-mpi.org")
-whatis("Description: OpenMPI")
-
-prepend_path("PATH",            "$CWD/openmpi/openmpi-1.6.5/build/bin")
-prepend_path("LD_LIBRARY_PATH", "$CWD/openmpi/openmpi-1.6.5/build/lib")
-'''.replace("$CWD", cwd).replace("$CWD", cwd)
-
-            save_module(ompi_mod_file, "openmpi-1.6.5")
 
 if isvalid(orca_path):
     orca_mod_file = '''
@@ -373,6 +343,20 @@ prepend_path("PATH",               "$ORCA$")
 prepend_path("LD_LIBRARY_PATH",    "$ORCA$")
 '''.replace("$ORCA$", orca_path).replace("$ORCA$", orca_path)
     save_module(orca_mod_file, "orca-3")
+    ompi_mod_file = '''
+help([[
+For detailed instructions, go to:
+    https://www.open-mpi.org
+
+    ]])
+whatis("Version: 1.6.5")
+whatis("URL: https://www.open-mpi.org")
+whatis("Description: OpenMPI")
+
+prepend_path("PATH",            "$CWD/openmpi/openmpi-1.6.5/build/bin")
+prepend_path("LD_LIBRARY_PATH", "$CWD/openmpi/openmpi-1.6.5/build/lib")
+'''.replace("$CWD", cwd).replace("$CWD", cwd)
+    save_module(ompi_mod_file, "openmpi-1.6.5")
 
 if isvalid(orca4_path):
     orca_mod_file = '''
@@ -390,8 +374,23 @@ load("openmpi-2.0.2")
 
 prepend_path("PATH",               "$ORCA$")
 prepend_path("LD_LIBRARY_PATH",    "$ORCA$")
-'''.replace("$ORCA$", orca_path).replace("$ORCA$", orca_path)
+'''.replace("$ORCA$", orca4_path).replace("$ORCA$", orca4_path)
     save_module(orca_mod_file, "orca-4")
+
+    ompi_mod_file = '''
+help([[
+For detailed instructions, go to:
+    https://www.open-mpi.org
+
+    ]])
+whatis("Version: 2.0.2")
+whatis("URL: https://www.open-mpi.org")
+whatis("Description: OpenMPI")
+
+prepend_path("PATH",            "$CWD/openmpi/openmpi-2.0.2/build/bin")
+prepend_path("LD_LIBRARY_PATH", "$CWD/openmpi/openmpi-2.0.2/build/lib")
+'''.replace("$CWD", cwd).replace("$CWD", cwd)
+    save_module(ompi_mod_file, "openmpi-2.0.2")
 
 vars_to_include = [
     orca_path, orca4_path, vmd_path, ovito_path, opls_path, packmol_path,
@@ -563,13 +562,13 @@ load("anaconda-2.7", "orca-4")
 """
 if not install_packmol:
     exports_and_aliases += "--"
-exports_and_aliases += 'load("packmol", "packmol")\n'
+exports_and_aliases += 'load("packmol")\n'
 
 exports_and_aliases += '''-- Note - user must install lammps if this is to work.  By default commented out.
 '''
 if not install_lammps:
     exports_and_aliases += "--"
-exports_and_aliases += 'load("' + lammps_module_name + '", "' + lammps_module_name + '")\n'
+exports_and_aliases += 'load("' + lammps_module_name + '")\n'
 
 if install_nlopt:
     exports_and_aliases +=  '\nload("nlopt-2.5.0")\n'
