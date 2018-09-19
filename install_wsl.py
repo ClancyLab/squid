@@ -167,7 +167,7 @@ print('''Before you can install squid locally, it is recommended that the
 following be installed:
 
     - build-essential (can be installed via 'sudo apt-get install build-essential')
-    - make, g++, and git (can be installed via 'sudo apt-get install make g++ git')
+    - make, cmake, g++, and git (can be installed via 'sudo apt-get install make cmake g++ git')
     - mpich (can be installed via 'sudo apt-get install mpich')
     - lmod (can be installed via 'sudo apt-get install lmod')
 
@@ -224,35 +224,6 @@ if not isvalid(packmol_path) and install_packmol:
 if not isvalid(opls_path):
     opls_path = cwd + '/forcefield_parameters/oplsaa.prm'
 
-if install_nlopt:
-    if not os.path.exists("nlopt-2.5.0"):
-        os.system("mkdir nlopt-2.5.0")
-        os.system("mkdir nlopt-2.5.0/build")
-        download_file(cwd, "https://github.com/stevengj/nlopt/archive/v2.5.0.tar.gz", "ada08c648bf9b52faf8729412ff6dd6d")
-        os.system("tar -C nlopt-2.5.0 -xzf nlopt-v2.5.0.tar.gz")
-        os.system("mv nlopt-2.5.0/nlopt-2.5.0 nlopt-2.5.0/src")
-        os.mkdir("nlopt-2.5.0/src/build")
-        os.chdir("nlopt-2.5.0/src/build")
-        os.system("cmake .. -DCMAKE_INSTALL_PREFIX=%s/build" % cwd)
-        os.chdir("../../../")
-    else:
-        print("NLOpt folder already exists, so will not re-install.")
-
-    nlopt_mod_file = '''help([[
-For detailed instructions, go to:
-    https://nlopt.readthedocs.io/en/latest/
-
-]])
-whatis("Version: 2.5.0")
-whatis("Keywords: NLOpt")
-whatis("URL: https://nlopt.readthedocs.io/en/latest/")
-whatis("Description: NLOpt")
-
-prepend_path("PATH",               "$CWD/nlopt-2.5.0/build/bin")
-prepend_path("LD_LIBRARY_PATH",    "$CWD/nlopt-2.5.0/build/lib")
-'''.replace("$CWD", cwd).replace("$CWD", cwd)
-    save_module(nlopt_mod_file, "nlopt-2.5.0")
-
 # Try and find an installed version of anaconda
 potential_anaconda_install_dirs = [
     HOMEDIR + "/anaconda",
@@ -287,6 +258,36 @@ whatis("Description: Anaconda, Python")
 prepend_path("PATH",    "$HOMEDIR$/anaconda/bin")
 '''.replace("$HOMEDIR$", HOMEDIR)
 save_module(anaconda_module, "anaconda-2.7")
+
+if install_nlopt:
+    if not os.path.exists("nlopt-2.5.0"):
+        os.system("mkdir nlopt-2.5.0")
+        os.system("mkdir nlopt-2.5.0/build")
+        download_file(cwd, "https://github.com/stevengj/nlopt/archive/v2.5.0.tar.gz", "ada08c648bf9b52faf8729412ff6dd6d")
+        os.system("tar -C nlopt-2.5.0/ -xzf nlopt-2.5.0.tar.gz")
+        os.system("mv nlopt-2.5.0/nlopt-2.5.0 nlopt-2.5.0/src")
+        os.mkdir("nlopt-2.5.0/src/build")
+        os.chdir("nlopt-2.5.0/src/build")
+        os.system("cmake .. -DCMAKE_INSTALL_PREFIX=%s/build -DPYTHON_EXECUTABLE=%s" % (cwd, python_path))
+        os.system("make; make install")
+        os.chdir("../../../")
+    else:
+        print("NLOpt folder already exists, so will not re-install.")
+
+    nlopt_mod_file = '''help([[
+For detailed instructions, go to:
+    https://nlopt.readthedocs.io/en/latest/
+
+]])
+whatis("Version: 2.5.0")
+whatis("Keywords: NLOpt")
+whatis("URL: https://nlopt.readthedocs.io/en/latest/")
+whatis("Description: NLOpt")
+
+prepend_path("PATH",               "$CWD/nlopt-2.5.0/build/bin")
+prepend_path("LD_LIBRARY_PATH",    "$CWD/nlopt-2.5.0/build/lib")
+'''.replace("$CWD", cwd).replace("$CWD", cwd)
+    save_module(nlopt_mod_file, "nlopt-2.5.0")
 
 if install_necessary_openmpi:
     if isvalid(orca4_path):
