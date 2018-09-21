@@ -245,7 +245,7 @@ else:
     download_file(HOMEDIR, "https://repo.continuum.io/archive/Anaconda2-5.2.0-Linux-x86_64.sh", "5c034a4ab36ec9b6ae01fa13d8a04462")
     os.system('bash ~/Anaconda2-5.2.0-Linux-x86_64.sh -fb')
     anaconda_path = HOMEDIR + "/anaconda2"
-    python_path = HOMEDIR + "/anaconda/bin/python2.7"
+    python_path = HOMEDIR + "/anaconda2/bin/python2.7"
 
 anaconda_module = '''
 help([[
@@ -255,8 +255,8 @@ For detailed instructions, go to:
 whatis("Version: Anaconda 5.2.0, Python 2.7")
 whatis("Description: Anaconda, Python")
 
-prepend_path("PATH",    "$HOMEDIR$/anaconda/bin")
-'''.replace("$HOMEDIR$", HOMEDIR)
+prepend_path("PATH",    "$ANACONDA/bin")
+'''.replace("$ANACONDA", anaconda_path)
 save_module(anaconda_module, "anaconda-2.7")
 
 if install_nlopt:
