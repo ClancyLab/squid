@@ -268,11 +268,13 @@ load("orca", "orca/4.0.1.2")
 prepend_path("PATH",            "$CWD/lammps/$VERSION/src")
 prepend_path("PYTHONPATH",      "$CWD/lammps/$VERSION/python")
 prepend_path("LD_LIBRARY_PATH", "$CWD/lammps/$VERSION/src")
+prepend_path("PYTHONPATH",      "$SMRFF")
 '''
 use_mod_file = module_file
 lammps_module_name = "lammps-%s" % lammps_version
 if smrff_path is not None and os.path.exists(smrff_path):
     use_mod_file = module_smrff_file
+    use_mod_file = use_mod_file.replace("$SMRFF", smrff_path)
     lammps_module_name = "smrff"
 
 fptr_sysconst = open("squid/sysconst.py", 'w')

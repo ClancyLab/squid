@@ -379,10 +379,12 @@ def submit_job(name,
 
     # Throw an error if we request nbs queueing with unknown queue
     if queueing_system.lower() == "nbs" and queue.lower() not in get_nbs_queues():
-        raise Exception("NBS queue %s does not exist!" % queue)
+        if queue.lower() != "none":
+            raise Exception("NBS queue %s does not exist!" % queue)
 
     if queueing_system.lower() == "slurm" and queue.lower() not in get_slurm_queues():
-        raise Exception("SLURM queue %s does not exist!" % queue)
+        if queue.lower() != "none":
+            raise Exception("SLURM queue %s does not exist!" % queue)
 
     if redundancy and queueing_system.strip().lower() not in ["slurm", "nbs"]:
         print("Warning - redundancy not implemented for non-NBS queueing systems.")
@@ -609,7 +611,7 @@ def pysub(job_name,
           unique_name=False,
           redundancy=False,
           py3=False,
-          use_mpi=True,
+          use_mpi=False,
           queueing_system=sysconst.queueing_system):
     """
     Submission of python scripts to run on your queue.
@@ -669,10 +671,12 @@ def pysub(job_name,
 
     # Throw an error if we request nbs queueing with unknown queue
     if queueing_system.lower() == "nbs" and queue.lower() not in get_nbs_queues():
-        raise Exception("NBS queue %s does not exist!" % queue)
+        if queue.lower() != "none":
+            raise Exception("NBS queue %s does not exist!" % queue)
 
     if queueing_system.lower() == "slurm" and queue.lower() not in get_slurm_queues():
-        raise Exception("SLURM queue %s does not exist!" % queue)
+        if queue.lower() != "none":
+            raise Exception("SLURM queue %s does not exist!" % queue)
 
     if queue is None:
         queue = "none"
