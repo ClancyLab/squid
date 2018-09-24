@@ -403,7 +403,7 @@ Please run simulation with grad=True." % (input_file, os.getcwd()))
 
 # A function to run an Orca DFT Simulation
 def job(run_name, route, atoms=[], extra_section='', grad=False,
-        queue=None, walltime="00:30:00", sandbox=sysconst.sandbox_orca, procs=1,
+        queue=None, walltime="00:30:00", sandbox=sysconst.sandbox_orca, procs=1, ntasks=1,
         charge=None, multiplicity=None, charge_and_multiplicity='0 1',
         redundancy=False, use_NBS_sandbox=False, unique_name=True,
         previous=None, mem=2000, priority=None, xhost=None, orca4=sysconst.use_orca4):
@@ -435,6 +435,9 @@ def job(run_name, route, atoms=[], extra_section='', grad=False,
             files (False).
         procs: *int, optional*
             How many processors to run the simulation on.
+        ntasks: *int, optional*
+            (For SLURM) The number of tasks this job will run, each task uses
+            procs number of cores.
         charge: *float, optional*
             Charge of the system.  If this is used, then
             charge_and_multiplicity is ignored. If multiplicity is used,
@@ -668,12 +671,16 @@ less than 2 atoms!")
             sandbox = [sandbox_in, sandbox_out]
         else:
             sandbox = None
-        job_obj = jobs.submit_job(run_name, job_to_submit,
-                                  procs, queue, mem, priority, walltime, xhost,
-                                  unique_name=unique_name, redundancy=redundancy,
-                                  sandbox=sandbox, use_NBS_sandbox=use_NBS_sandbox,
-                                  additional_env_vars=orca_env,
-                                  sub_flag=sysconst.orca_sub_flag)
+        job_obj = jobs.submit_job(
+            run_name, job_to_submit,
+            ntasks=ntasks, procs=procs, queue=queue,
+            mem=mem, priority=priority,
+            walltime=walltime, xhosts=xhost,
+            unique_name=unique_name, redundancy=redundancy,
+            sandbox=sandbox, use_NBS_sandbox=use_NBS_sandbox,
+            additional_env_vars=orca_env,
+            sub_flag=sysconst.orca_sub_flag
+        )
         time.sleep(0.5)
 
     # Copy run script
