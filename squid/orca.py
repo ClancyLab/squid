@@ -509,6 +509,13 @@ Switching to Single Point.")
         orca_path = sysconst.orca_path
         orca_env = sysconst.orca_env_vars
 
+    procs = int(procs)
+    ntasks = int(ntasks)
+    cores_to_use = procs * ntasks
+    if queueing_system.lower() == "slurm" and cores_to_use > ntasks:
+        # This is an issue due to "Slots" being allocated whenever ntasks is specified, but not when cpu-per-task is specified.  Orca apparently requests N slots, so we need to call for ntasks, not procs.
+        raise Exception("Error - When using slurm, you must specify ntasks instead of procs for number of cores to use.")
+
     # Generate the orca input file
     os.system('mkdir -p orca/%s' % run_name)
     os.chdir('orca/%s' % run_name)
@@ -534,8 +541,8 @@ than 2 atoms. Auto-swapped Opt for SP.")
 less than 2 atoms!")
 
     # If running on system with more than one core, tell orca
-    if procs > 1:
-        add_to_extra = '%pal nprocs ' + str(procs) + ' end\n'
+    if cores_to_use > 1:
+        add_to_extra = '%pal nprocs ' + str(cores_to_use) + ' end\n'
         extra_section = add_to_extra + extra_section.strip()
 
     # If desiring .orca.engrad output, tell orca
