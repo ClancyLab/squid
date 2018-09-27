@@ -168,9 +168,12 @@ following be installed:
 
     - update apt-get appropriate ('sudo apt-get update' and then 'sudo apt-get upgrade')
     - build-essential (can be installed via 'sudo apt-get install build-essential')
-    - make, cmake, g++, and git (can be installed via 'sudo apt-get install make cmake g++ git')
+    - make, cmake, g++, git, and swig (can be installed via 'sudo apt-get install make cmake g++ git swig')
     - mpich (can be installed via 'sudo apt-get install mpich')
     - lmod (can be installed via 'sudo apt-get install lmod')
+
+    -> This is in total the following command:
+        sudo apt-get update; sudo apt-get upgrade; sudo apt-get install build-essential make cmake g++ git swig mpich lmod
 
 NOTE! After install lmod, close and reopen the bash shell.  If you find that you
 are getting a weird error about posix not existing, this is a bug in lua install.
