@@ -298,6 +298,7 @@ whatis("Description: NLOpt")
 
 prepend_path("PATH",               "$CWD/nlopt-2.5.0/build/bin")
 prepend_path("LD_LIBRARY_PATH",    "$CWD/nlopt-2.5.0/build/lib")
+prepend_path("PYTHONPATH",         "$CWD/nlopt-2.5.0/build/lib/python2.7/site-packages")
 '''.replace("$CWD", cwd).replace("$CWD", cwd)
     save_module(nlopt_mod_file, "nlopt-2.5.0")
 
