@@ -733,8 +733,6 @@ $XHOST$
 $OMP$
 source /fs/home/$USER/.zshrc
 
-$PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$> $PY_NAME2$.log 2>&1
-
 '''
 
         if nprocs > 1 and use_mpi:
@@ -839,7 +837,6 @@ $MPIRUN$ -np $NPROCS$ $PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$> $PY_NAME2$.log 2>&1
             SLURM += '''
 $PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$> $PY_NAME2$.log 2>&1
 '''
-
 
         SLURM = SLURM.replace("$PYTHON_PATH$", py_path)
         SLURM = SLURM.replace("$JOB_NAME1$", job_name)
