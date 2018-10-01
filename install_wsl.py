@@ -166,10 +166,21 @@ def download_file(loc, link, md5sum):
 print('''Before you can install squid locally, it is recommended that the
 following be installed:
 
+    - update apt-get appropriate ('sudo apt-get update' and then 'sudo apt-get upgrade')
     - build-essential (can be installed via 'sudo apt-get install build-essential')
-    - make, cmake, g++, and git (can be installed via 'sudo apt-get install make cmake g++ git')
+    - make, cmake, g++, git, and swig (can be installed via 'sudo apt-get install make cmake g++ git swig')
     - mpich (can be installed via 'sudo apt-get install mpich')
     - lmod (can be installed via 'sudo apt-get install lmod')
+
+    -> This is in total the following command:
+        sudo apt-get update; sudo apt-get upgrade; sudo apt-get install build-essential make cmake g++ git swig mpich lmod
+
+NOTE! After install lmod, close and reopen the bash shell.  If you find that you
+are getting a weird error about posix not existing, this is a bug in lua install.
+Simply put, take the path it wants and make a simlink to point to posix_c.so.  An
+example of how to do this is as follows (note, your lua version may or may not be 5.2).
+
+    sudo ln -s /usr/lib/x86_64-linux-gnu/lua/5.2/posix_c.so /usr/lib/x86_64-linux-gnu/lua/5.2/posix.so
 
 If you wish for ORCA to be installed, then you will need to manually download
 whichever version you so choose (or both if desired):
@@ -255,8 +266,9 @@ For detailed instructions, go to:
 whatis("Version: Anaconda 5.2.0, Python 2.7")
 whatis("Description: Anaconda, Python")
 
-prepend_path("PATH",    "$ANACONDA/bin")
-'''.replace("$ANACONDA", anaconda_path)
+prepend_path("PATH",            "$ANACONDA/bin")
+prepend_path("LD_LIBRARY_PATH", "$ANACONDA/lib")
+'''.replace("$ANACONDA", anaconda_path).replace("$ANACONDA", anaconda_path)
 save_module(anaconda_module, "anaconda-2.7")
 
 if install_nlopt:
@@ -264,7 +276,7 @@ if install_nlopt:
         os.system("mkdir nlopt-2.5.0")
         os.system("mkdir nlopt-2.5.0/build")
         download_file(cwd, "https://github.com/stevengj/nlopt/archive/v2.5.0.tar.gz", "ada08c648bf9b52faf8729412ff6dd6d")
-        os.system("tar -C nlopt-2.5.0/ -xzf nlopt-2.5.0.tar.gz")
+        os.system("tar -C nlopt-2.5.0/ -xzf v2.5.0.tar.gz")
         os.system("mv nlopt-2.5.0/nlopt-2.5.0 nlopt-2.5.0/src")
         os.mkdir("nlopt-2.5.0/src/build")
         os.chdir("nlopt-2.5.0/src/build")
@@ -286,6 +298,7 @@ whatis("Description: NLOpt")
 
 prepend_path("PATH",               "$CWD/nlopt-2.5.0/build/bin")
 prepend_path("LD_LIBRARY_PATH",    "$CWD/nlopt-2.5.0/build/lib")
+prepend_path("PYTHONPATH",         "$CWD/nlopt-2.5.0/build/lib/python2.7/site-packages")
 '''.replace("$CWD", cwd).replace("$CWD", cwd)
     save_module(nlopt_mod_file, "nlopt-2.5.0")
 
@@ -864,4 +877,4 @@ for s, v in zip(s_vars_to_include, vars_to_include):
 
 save_module(exports_and_aliases, "squid")
 
-os.system("source %s/.bashrc" % HOMEDIR)
+print("Install is complete! Please source %s or simply restart your terminal." % shell)
