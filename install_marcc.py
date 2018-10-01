@@ -312,6 +312,7 @@ set_alias('pysub','$CWD/console_scripts/pysub.py $PWD/')
 set_alias('procrustes','$CWD/console_scripts/procrustes.py $PWD/')
 set_alias('view_lmp','function _view_lmp() { $PYTHON_PATH $CWD/console_scripts/view_lmp.py $1 $@ ; } ; _view_lmp')
 set_alias('vmd_lmp','function _vmd_lmp() { $PYTHON_PATH $CWD/console_scripts/vmd_lmp.py $1 $@ ; } ; _vmd_lmp')
+--set_alias('jdel','function _jdel() { /software/apps/marcc/bin/sqme | grep $USER | grep "\b$1\b" | awk '"'"'{print $2}'"'"' | xargs scancel ; } ; _jdel')
 
 -- Load all dependencies
 load("python", "python/2.7-anaconda")
