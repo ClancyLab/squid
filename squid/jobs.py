@@ -732,9 +732,6 @@ $PRIORITY$
 $XHOST$
 $OMP$
 source /fs/home/$USER/.zshrc
-
-$PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$> $PY_NAME2$.log 2>&1
-
 '''
 
         if nprocs > 1 and use_mpi:
