@@ -8,8 +8,11 @@ Verify that they do indeed point to your install locations.  When you see
 $USER, it is recommended that you change this to the actual username, as
 at times this is not properly expanded.
 '''
+
+INSTALL_ON_MARCC = False
+
 orca_path = ""
-orca4_path = "/home/hherbol/orca/orca-4.0.1.2"
+orca4_path = "/home/hherbol/orca/orca-4.0.1.2/orca"
 use_orca4 = True
 sandbox_orca = False
 install_necessary_openmpi = True
@@ -67,7 +70,8 @@ smrff_path = None
 lammps_version = "16Mar18"
 extra_lammps_packages = [
     "python",
-    "rigid"
+    "rigid",
+    "replica"
 ]
 # If the name is 'wsl' or 'marcc', then generate a makefile based on those
 # systems.  Otherwise, assume the Makefile specified is within lammps and use
@@ -162,6 +166,16 @@ def download_file(loc, link, md5sum):
             print("FAILURE TO DOWNLOAD %s! Verify your internet connection and try again." % fname)
             sys.exit()
 
+if anaconda_path is None and INSTALL_ON_MARCC:
+    anaconda_path = "/software/apps/anaconda/5.2/python/2.7"
+
+if INSTALL_ON_MARCC:
+    if lammps_makefile_name != "marcc":
+        print("WARNING! lammps_makefile_name is not marcc.  Please double check before continuing.")
+
+if mpirun_path is not None and not os.path.exists(mpirun_path):
+    print("WARNING! mpirun_path does not seem valid.  Please double check before continuing.")
+
 # Print pre-requisite warning
 print('''Before you can install squid locally, it is recommended that the
 following be installed:
@@ -238,7 +252,8 @@ if not isvalid(opls_path):
 # Try and find an installed version of anaconda
 potential_anaconda_install_dirs = [
     HOMEDIR + "/anaconda",
-    HOMEDIR + "/anaconda2"
+    HOMEDIR + "/anaconda2",
+    "/software/apps/anaconda/5.2/python/2.7"
 ]
 for folder in potential_anaconda_install_dirs:
     if os.path.exists(folder):
@@ -338,6 +353,8 @@ if install_necessary_openmpi:
             os.system("make install")
             os.chdir("../../../")
 
+# We allow this to be written on MARCC if requested as MARCC only has
+# orca 4 installed
 if isvalid(orca_path):
     orca_mod_file = '''
 help([[
@@ -371,7 +388,7 @@ prepend_path("LD_LIBRARY_PATH", "$CWD/openmpi/openmpi-1.6.5/build/lib")
 '''.replace("$CWD", cwd).replace("$CWD", cwd)
     save_module(ompi_mod_file, "openmpi-1.6.5")
 
-if isvalid(orca4_path):
+if isvalid(orca4_path) and not INSTALL_ON_MARCC:
     orca_mod_file = '''
 help([[
 For detailed instructions, go to:
@@ -537,6 +554,11 @@ fptr_sysconst = open("squid/sysconst.py", 'w')
 fptr_sysconst.write(sysconst_file_string)
 fptr_sysconst.close()
 
+default_modules = 'load("anaconda-2.7", "orca-4")'
+if INSTALL_ON_MARCC:
+    default_modules = 'load("python/2.7-anaconda", "orca/4.0.1.2", "vmd/1.93")\n'
+    default_modules += 'unload("openmpi/3.1")'
+
 exports_and_aliases = """
 --------------------------------------------------------------------------
 ---------           Squid Exports and Aliases v 0.0.1            ---------
@@ -570,7 +592,8 @@ set_alias('view_lmp','function _view_lmp() { $PYTHON_PATH $CWD/console_scripts/v
 set_alias('vmd_lmp','function _vmd_lmp() { $PYTHON_PATH $CWD/console_scripts/vmd_lmp.py $1 $@ ; } ; _vmd_lmp')
 
 -- Load all dependencies
-load("anaconda-2.7", "orca-4")
+""" + default_modules + 
+"""
 -- Note - user must install packmol if this is to work.  By default commented out.
 """
 if not install_packmol:

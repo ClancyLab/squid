@@ -19,9 +19,11 @@ vmd_path = '/software/apps/vmd/1.9.3/bin/vmd'
 ovito_path = ''
 
 # If specifing we are to install these below, then leave paths as None
-smrff_path = '/home-2/hherbol1@jhu.edu/programs/SMRFF'
 install_packmol = True
 install_lammps = True
+# Once again, as we plan to install lammps and packmol using this script, we
+# will not specify these paths.  If you already have a path specified, then
+# install_X will default to None
 lmp_path = None
 packmol_path = None
 
@@ -54,9 +56,12 @@ mpi_preface = ""
 shell = '.bashrc'
 
 ##############################################################################
+smrff_path = None
 lammps_version = "16Mar18"
 extra_lammps_packages = [
-    "python"
+    "python",
+    "rigid",
+    "replica"
 ]
 lammps_makefile_name = None  # Generate our own makefile
 ##############################################################################
