@@ -31,6 +31,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
@@ -62,7 +65,7 @@
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">Popen</span>
-<span class="c1"># Clancelot imports</span>
+<span class="c1"># Squid imports</span>
 <span class="kn">import</span> <span class="nn">geometry</span>
 <span class="kn">import</span> <span class="nn">constants</span>
 <span class="kn">import</span> <span class="nn">structures</span>
@@ -803,8 +806,8 @@
         <span class="n">job_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="n">job_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
     <span class="n">job_names</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">job_names</span><span class="p">)</span>
 
-    <span class="n">output</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;from merlin import *</span>
-<span class="s1">import jobs</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">import squid import jobs</span>
 <span class="s1">try:</span>
 <span class="s1">    s_units=sys.argv[1]</span>
 <span class="s1">except:</span>
@@ -1179,6 +1182,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
       </ul>

@@ -31,6 +31,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
@@ -66,7 +69,7 @@
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 
-<span class="c1"># Clancelot imports</span>
+<span class="c1"># Squid imports</span>
 <span class="kn">import</span> <span class="nn">vmd</span>
 <span class="kn">import</span> <span class="nn">jobs</span>
 <span class="kn">import</span> <span class="nn">units</span>
@@ -447,10 +450,10 @@
 
 <span class="c1"># A function to run an Orca DFT Simulation</span>
 <div class="viewcode-block" id="job"><a class="viewcode-back" href="../codebase.html#orca.job">[docs]</a><span class="k">def</span> <span class="nf">job</span><span class="p">(</span><span class="n">run_name</span><span class="p">,</span> <span class="n">route</span><span class="p">,</span> <span class="n">atoms</span><span class="o">=</span><span class="p">[],</span> <span class="n">extra_section</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">queue</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">walltime</span><span class="o">=</span><span class="s2">&quot;00:30:00&quot;</span><span class="p">,</span> <span class="n">sandbox</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">procs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">queue</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">walltime</span><span class="o">=</span><span class="s2">&quot;00:30:00&quot;</span><span class="p">,</span> <span class="n">sandbox</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">sandbox_orca</span><span class="p">,</span> <span class="n">procs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ntasks</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">charge</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">multiplicity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">charge_and_multiplicity</span><span class="o">=</span><span class="s1">&#39;0 1&#39;</span><span class="p">,</span>
-        <span class="n">redundancy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_NBS_sandbox</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">previous</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mem</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">priority</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xhost</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">orca4</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">redundancy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_NBS_sandbox</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unique_name</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">previous</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mem</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">priority</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xhost</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">orca4</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">use_orca4</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper to submitting an Orca simulation.</span>
 
@@ -479,6 +482,9 @@
 <span class="sd">            files (False).</span>
 <span class="sd">        procs: *int, optional*</span>
 <span class="sd">            How many processors to run the simulation on.</span>
+<span class="sd">        ntasks: *int, optional*</span>
+<span class="sd">            (For SLURM) The number of tasks this job will run, each task uses</span>
+<span class="sd">            procs number of cores.</span>
 <span class="sd">        charge: *float, optional*</span>
 <span class="sd">            Charge of the system.  If this is used, then</span>
 <span class="sd">            charge_and_multiplicity is ignored. If multiplicity is used,</span>
@@ -495,6 +501,12 @@
 <span class="sd">            With redundancy on, if the job is submitted and unique_name is on, then</span>
 <span class="sd">            if another job of the same name is running, a pointer to that job will</span>
 <span class="sd">            instead be returned.</span>
+<span class="sd">        unique_name: *bool, optional*</span>
+<span class="sd">            Whether to force the requirement of a unique name or not.  NOTE! If</span>
+<span class="sd">            you submit simulations from the same folder, ensure that this is True</span>
+<span class="sd">            lest you have a redundancy problem! To overcome said issue, you can</span>
+<span class="sd">            set redundancy to True as well (but only if the simulation is truly</span>
+<span class="sd">            redundant).</span>
 <span class="sd">        previous: *str, optional*</span>
 <span class="sd">            Name of a previous simulation for which to try reading in</span>
 <span class="sd">            information using the MORead method.</span>
@@ -544,6 +556,13 @@
         <span class="n">orca_path</span> <span class="o">=</span> <span class="n">sysconst</span><span class="o">.</span><span class="n">orca_path</span>
         <span class="n">orca_env</span> <span class="o">=</span> <span class="n">sysconst</span><span class="o">.</span><span class="n">orca_env_vars</span>
 
+    <span class="n">procs</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">procs</span><span class="p">)</span>
+    <span class="n">ntasks</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ntasks</span><span class="p">)</span>
+    <span class="n">cores_to_use</span> <span class="o">=</span> <span class="n">procs</span> <span class="o">*</span> <span class="n">ntasks</span>
+    <span class="k">if</span> <span class="n">sysconst</span><span class="o">.</span><span class="n">queueing_system</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;slurm&quot;</span> <span class="ow">and</span> <span class="n">cores_to_use</span> <span class="o">&gt;</span> <span class="n">ntasks</span><span class="p">:</span>
+        <span class="c1"># This is an issue due to &quot;Slots&quot; being allocated whenever ntasks is specified, but not when cpu-per-task is specified.  Orca apparently requests N slots, so we need to call for ntasks, not procs.</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Error - When using slurm, you must specify ntasks instead of procs for number of cores to use.&quot;</span><span class="p">)</span>
+
     <span class="c1"># Generate the orca input file</span>
     <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;mkdir -p orca/</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">run_name</span><span class="p">)</span>
     <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;orca/</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">run_name</span><span class="p">)</span>
@@ -569,8 +588,8 @@
 <span class="s2">less than 2 atoms!&quot;</span><span class="p">)</span>
 
     <span class="c1"># If running on system with more than one core, tell orca</span>
-    <span class="k">if</span> <span class="n">procs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">add_to_extra</span> <span class="o">=</span> <span class="s1">&#39;%pal nprocs &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">procs</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; end</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="k">if</span> <span class="n">cores_to_use</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">add_to_extra</span> <span class="o">=</span> <span class="s1">&#39;%pal nprocs &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">cores_to_use</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; end</span><span class="se">\n</span><span class="s1">&#39;</span>
         <span class="n">extra_section</span> <span class="o">=</span> <span class="n">add_to_extra</span> <span class="o">+</span> <span class="n">extra_section</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
     <span class="c1"># If desiring .orca.engrad output, tell orca</span>
@@ -706,12 +725,16 @@
             <span class="n">sandbox</span> <span class="o">=</span> <span class="p">[</span><span class="n">sandbox_in</span><span class="p">,</span> <span class="n">sandbox_out</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">sandbox</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">job_obj</span> <span class="o">=</span> <span class="n">jobs</span><span class="o">.</span><span class="n">submit_job</span><span class="p">(</span><span class="n">run_name</span><span class="p">,</span> <span class="n">job_to_submit</span><span class="p">,</span>
-                                  <span class="n">procs</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span> <span class="n">mem</span><span class="p">,</span> <span class="n">priority</span><span class="p">,</span> <span class="n">walltime</span><span class="p">,</span> <span class="n">xhost</span><span class="p">,</span>
-                                  <span class="n">unique_name</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">redundancy</span><span class="o">=</span><span class="n">redundancy</span><span class="p">,</span>
-                                  <span class="n">sandbox</span><span class="o">=</span><span class="n">sandbox</span><span class="p">,</span> <span class="n">use_NBS_sandbox</span><span class="o">=</span><span class="n">use_NBS_sandbox</span><span class="p">,</span>
-                                  <span class="n">additional_env_vars</span><span class="o">=</span><span class="n">orca_env</span><span class="p">,</span>
-                                  <span class="n">sub_flag</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">orca_sub_flag</span><span class="p">)</span>
+        <span class="n">job_obj</span> <span class="o">=</span> <span class="n">jobs</span><span class="o">.</span><span class="n">submit_job</span><span class="p">(</span>
+            <span class="n">run_name</span><span class="p">,</span> <span class="n">job_to_submit</span><span class="p">,</span>
+            <span class="n">ntasks</span><span class="o">=</span><span class="n">ntasks</span><span class="p">,</span> <span class="n">procs</span><span class="o">=</span><span class="n">procs</span><span class="p">,</span> <span class="n">queue</span><span class="o">=</span><span class="n">queue</span><span class="p">,</span>
+            <span class="n">mem</span><span class="o">=</span><span class="n">mem</span><span class="p">,</span> <span class="n">priority</span><span class="o">=</span><span class="n">priority</span><span class="p">,</span>
+            <span class="n">walltime</span><span class="o">=</span><span class="n">walltime</span><span class="p">,</span> <span class="n">xhosts</span><span class="o">=</span><span class="n">xhost</span><span class="p">,</span>
+            <span class="n">unique_name</span><span class="o">=</span><span class="n">unique_name</span><span class="p">,</span> <span class="n">redundancy</span><span class="o">=</span><span class="n">redundancy</span><span class="p">,</span>
+            <span class="n">sandbox</span><span class="o">=</span><span class="n">sandbox</span><span class="p">,</span> <span class="n">use_NBS_sandbox</span><span class="o">=</span><span class="n">use_NBS_sandbox</span><span class="p">,</span>
+            <span class="n">additional_env_vars</span><span class="o">=</span><span class="n">orca_env</span><span class="p">,</span>
+            <span class="n">sub_flag</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">orca_sub_flag</span>
+        <span class="p">)</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
 
     <span class="c1"># Copy run script</span>
@@ -956,7 +979,7 @@
     <span class="n">vmd</span><span class="o">.</span><span class="n">plot_MO_from_cube</span><span class="p">(</span><span class="n">MOs</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="n">wireframe</span><span class="p">,</span> <span class="n">hide</span><span class="o">=</span><span class="n">hide</span><span class="p">,</span> <span class="n">iso</span><span class="o">=</span><span class="n">iso</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="pot_analysis"><a class="viewcode-back" href="../codebase.html#orca.pot_analysis">[docs]</a><span class="k">def</span> <span class="nf">pot_analysis</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">npoints</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">orca4</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="pot_analysis"><a class="viewcode-back" href="../codebase.html#orca.pot_analysis">[docs]</a><span class="k">def</span> <span class="nf">pot_analysis</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">npoints</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">orca4</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">use_orca4</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Post process an orca job using orca_plot and vmd to display the electrostatic</span>
 <span class="sd">    potential mapped onto the electron density surface.</span>
@@ -1016,6 +1039,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
       </ul>

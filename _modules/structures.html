@@ -31,6 +31,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
@@ -74,13 +77,14 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">copy</span>
-<span class="c1"># Clancelot imports</span>
+<span class="c1"># Squid imports</span>
 <span class="kn">import</span> <span class="nn">units</span>
-<span class="kn">import</span> <span class="nn">files</span>
 <span class="kn">import</span> <span class="nn">geometry</span>
 <span class="kn">import</span> <span class="nn">sysconst</span>
+<span class="kn">import</span> <span class="nn">files</span>
 <span class="c1"># External imports</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
 
 <span class="k">class</span> <span class="nc">_Physical</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -230,8 +234,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">z</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">index</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">molecule_index</span> <span class="o">=</span> <span class="n">molecule_index</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bonded</span><span class="o">=</span><span class="n">bonded</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">type_index</span><span class="o">=</span><span class="n">type_index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bonded</span> <span class="o">=</span> <span class="n">bonded</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type_index</span> <span class="o">=</span> <span class="n">type_index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">type_index</span>
         <span class="c1"># When parameterized by OPLS, &#39;type&#39; dict contains: {&#39;bond_count&#39;: 3, &#39;index&#39;: 588, &#39;notes&#39;: &#39;1,10-Phenanthroline C2&#39;, &#39;vdw_r&#39;: 3.55, &#39;element&#39;: 6, &#39;vdw_e&#39;: 0.07, &#39;charge&#39;: 0.392, &#39;mass&#39;: 12.011, &#39;index2&#39;: 48, &#39;element_name&#39;: &#39;CA&#39;}</span>
         <span class="c1"># Object May also contain lammps_type, mass, and charge</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">type</span>
@@ -448,6 +453,8 @@
 <span class="sd">            A default forcefield angle type to be set if angle types are set to None.</span>
 <span class="sd">        test_consistency: *bool, optional*</span>
 <span class="sd">            Whether to validate the input cml file against OPLS.</span>
+<span class="sd">        charge: *float, optional*</span>
+<span class="sd">            The total charge of this molecule.</span>
 
 <span class="sd">    **Returns**</span>
 
@@ -458,7 +465,7 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atoms_or_filename</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
      <span class="n">dihedrals</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parameter_file</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">opls_path</span><span class="p">,</span> <span class="n">extra_parameters</span><span class="o">=</span><span class="p">{},</span>
      <span class="n">test_charges</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_errors</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default_angles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-     <span class="n">test_consistency</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span> 
+     <span class="n">test_consistency</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">charge</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
         <span class="c1"># Set atoms, bonds, etc, or assume &#39;atoms&#39; contains all those things if only one parameter is passed in</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">atoms_or_filename</span><span class="p">)</span><span class="o">==</span><span class="nb">type</span><span class="p">(</span><span class="s1">&#39;string&#39;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">atoms_or_filename</span>
@@ -486,6 +493,38 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span> <span class="o">=</span> <span class="n">bonds</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">angles</span> <span class="o">=</span> <span class="n">angles</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dihedrals</span> <span class="o">=</span> <span class="n">dihedrals</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">charge</span> <span class="o">=</span> <span class="n">charge</span>
+
+<div class="viewcode-block" id="Molecule.set_types"><a class="viewcode-back" href="../codebase.html#structures.Molecule.set_types">[docs]</a>    <span class="k">def</span> <span class="nf">set_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This will, using a parameter object, assign a pointer of which type</span>
+<span class="sd">        corresponds with each atom, bond, angle, and dihedral.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            P: :class:`squid.ff_params.Parameters`</span>
+<span class="sd">                A general parameter object</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="n">P</span><span class="o">.</span><span class="n">coul_params</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">label</span><span class="p">)),</span> <span class="n">P</span><span class="o">.</span><span class="n">lj_params</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">label</span><span class="p">))]</span>
+            <span class="n">a</span><span class="o">.</span><span class="n">coul_type</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">coul_params</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="n">a</span><span class="o">.</span><span class="n">lj_type</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">lj_params</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span><span class="p">:</span>
+            <span class="n">tag</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">P</span><span class="o">.</span><span class="n">opls_structure_dict</span><span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">label</span><span class="p">])</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">b</span><span class="o">.</span><span class="n">atoms</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">P</span><span class="o">.</span><span class="n">bond_params</span><span class="p">,</span> <span class="s2">&quot;Non-OPLS Bond was defined!  Likely an error in typing OPLS parameters, or within your CML files.&quot;</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">bond_params</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+            <span class="n">b</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">bond_params</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">angles</span><span class="p">:</span>
+            <span class="n">tag</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">P</span><span class="o">.</span><span class="n">opls_structure_dict</span><span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">label</span><span class="p">])</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">b</span><span class="o">.</span><span class="n">atoms</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">P</span><span class="o">.</span><span class="n">angle_params</span><span class="p">,</span> <span class="s2">&quot;Non-OPLS Angle was defined!  Likely an error in typing OPLS parameters, or within your CML files.&quot;</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">angle_params</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+            <span class="n">b</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">angle_params</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dihedrals</span><span class="p">:</span>
+            <span class="n">tag</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">P</span><span class="o">.</span><span class="n">opls_structure_dict</span><span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">label</span><span class="p">])</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">b</span><span class="o">.</span><span class="n">atoms</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">P</span><span class="o">.</span><span class="n">dihedral_params</span><span class="p">,</span> <span class="s2">&quot;Non-OPLS Dihedral was defined!  Likely an error in typing OPLS parameters, or within your CML files.&quot;</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">dihedral_params</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+            <span class="n">b</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">dihedral_params</span><span class="p">[</span><span class="n">index</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Molecule.flatten"><a class="viewcode-back" href="../codebase.html#structures.Molecule.flatten">[docs]</a>    <span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -548,7 +587,7 @@
         <span class="k">if</span> <span class="n">in_place</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">center</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Molecule.perturbate"><a class="viewcode-back" href="../codebase.html#structures.Molecule.perturbate">[docs]</a>    <span class="k">def</span> <span class="nf">perturbate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">dr</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">center_of_geometry</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="Molecule.perturbate"><a class="viewcode-back" href="../codebase.html#structures.Molecule.perturbate">[docs]</a>    <span class="k">def</span> <span class="nf">perturbate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">dr</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">center_of_geometry</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rotate</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Randomly perturbate atomic coordinates, and apply a slight rotation.</span>
 
@@ -561,6 +600,8 @@
 <span class="sd">            center_of_geometry: *bool, optional*</span>
 <span class="sd">                Whether to do the random rotation by the center of geometry (True) or mass (False).</span>
 <span class="sd">                Note, if types are not set, it will fail in the case of center of mass.</span>
+<span class="sd">            rotate: *bool, optional*</span>
+<span class="sd">                Whether to randomly rotate the molecule or not.</span>
 
 <span class="sd">        **Returns**</span>
 
@@ -569,7 +610,8 @@
         <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span>
             <span class="n">rand_step</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">*</span> <span class="n">dx</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
             <span class="n">a</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">rand_step</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rand_rotate</span><span class="p">(</span><span class="n">limit_angle</span><span class="o">=</span><span class="n">dr</span><span class="p">,</span> <span class="n">center_of_geometry</span><span class="o">=</span><span class="n">center_of_geometry</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">rotate</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rand_rotate</span><span class="p">(</span><span class="n">limit_angle</span><span class="o">=</span><span class="n">dr</span><span class="p">,</span> <span class="n">center_of_geometry</span><span class="o">=</span><span class="n">center_of_geometry</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Molecule.translate"><a class="viewcode-back" href="../codebase.html#structures.Molecule.translate">[docs]</a>    <span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -756,29 +798,29 @@
 <span class="sd">    </span>
 <span class="sd">        system: :class:`structures.System`</span>
 <span class="sd">            The System class container.</span>
-<span class="sd">    &quot;&quot;&quot;</span> 
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Initialize all system variables. Convert to float as necessary to prepare for any needed math</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">box_size</span><span class="o">=</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span><span class="mf">10.0</span><span class="p">,</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">box_angles</span><span class="o">=</span><span class="p">(</span><span class="mf">90.0</span><span class="p">,</span><span class="mf">90.0</span><span class="p">,</span><span class="mf">90.0</span><span class="p">),</span> <span class="n">periodic</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">box_size</span><span class="o">=</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">),</span> <span class="n">box_angles</span><span class="o">=</span><span class="p">(</span><span class="mf">90.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">),</span> <span class="n">periodic</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">angles</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dihedrals</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">box_size</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">param</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">box_size</span><span class="p">]</span> <span class="c1"># (a, b, c)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">box_angles</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">param</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">box_angles</span><span class="p">]</span> <span class="c1"># (alpha, beta, gamma)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">box_size</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">param</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">box_size</span><span class="p">]</span>  <span class="c1"># (a, b, c)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">box_angles</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">param</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">box_angles</span><span class="p">]</span>  <span class="c1"># (alpha, beta, gamma)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">molecules</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">periodic</span> <span class="o">=</span> <span class="n">periodic</span>
 
         <span class="c1"># If the system is not a monoclinic box, set lammps triclinic parameters</span>
-        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">box_angles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">90</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.001</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="n">box_angles</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">90</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.001</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="n">box_angles</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="mi">90</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.001</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">setTriclinicBox</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">periodic</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">box_size</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">box_angles</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">box_angles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">90</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.001</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="n">box_angles</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">90</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.001</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="n">box_angles</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mi">90</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.001</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setTriclinicBox</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">periodic</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">box_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">box_angles</span><span class="p">)</span>
 
         <span class="c1"># If system is a monoclinic box and set default lammps triclinic parameters</span>
         <span class="c1"># Assumes center of box is the origin</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">xlo</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">box_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mf">2.0</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ylo</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">box_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mf">2.0</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">zlo</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">box_size</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">/</span><span class="mf">2.0</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">xhi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">box_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mf">2.0</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">yhi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">box_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mf">2.0</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">zhi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">box_size</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">/</span><span class="mf">2.0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xlo</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">box_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ylo</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">box_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">zlo</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">box_size</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xhi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">box_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">yhi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">box_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">zhi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">box_size</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="mf">2.0</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">xy</span> <span class="o">=</span> <span class="mf">0.0</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">xz</span> <span class="o">=</span> <span class="mf">0.0</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">yz</span> <span class="o">=</span> <span class="mf">0.0</span>
@@ -802,7 +844,7 @@
 
 <span class="sd">            None</span>
 
-<span class="sd">        &quot;&quot;&quot;</span> 
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">box_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">box_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">box_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">box_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">box_size</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">box_size</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
@@ -859,7 +901,7 @@
 
 <span class="sd">            None</span>
 
-<span class="sd">        &quot;&quot;&quot;</span> 
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">atom_offset</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">molecule</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span>
             <span class="n">new_atom</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
@@ -1198,11 +1240,16 @@
 
         <span class="k">return</span> <span class="n">atom_list</span></div>
 
-<div class="viewcode-block" id="System.set_types"><a class="viewcode-back" href="../codebase.html#structures.System.set_types">[docs]</a>    <span class="k">def</span> <span class="nf">set_types</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="System.set_types"><a class="viewcode-back" href="../codebase.html#structures.System.set_types">[docs]</a>    <span class="k">def</span> <span class="nf">set_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Given the atoms, bonds, angles, and dihedrals in a system object,</span>
 <span class="sd">        generate a list of the unique atom, bond, angle, dihedral types</span>
 <span class="sd">        and assign that to the system object.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            params: :class:`squid.ff_params.Parameters`, optional</span>
+<span class="sd">                A parameters object holding all the possible parameters.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="c1"># unpack values from system</span>
@@ -1226,63 +1273,118 @@
                   <span class="bp">self</span><span class="o">.</span><span class="n">yz</span><span class="p">)</span>
         <span class="n">xlo</span><span class="p">,</span> <span class="n">ylo</span><span class="p">,</span> <span class="n">zlo</span><span class="p">,</span> <span class="n">xhi</span><span class="p">,</span> <span class="n">yhi</span><span class="p">,</span> <span class="n">zhi</span><span class="p">,</span> <span class="n">xy</span><span class="p">,</span> <span class="n">xz</span><span class="p">,</span> <span class="n">yz</span> <span class="o">=</span> <span class="n">unpack</span>
 
-        <span class="c1"># ignore angles with no energy (~0 energy)</span>
-        <span class="n">angles</span> <span class="o">=</span> <span class="p">[</span><span class="n">ang</span> <span class="k">for</span> <span class="n">ang</span> <span class="ow">in</span> <span class="n">angles</span> <span class="k">if</span> <span class="p">(</span><span class="n">ang</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">e</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">ang</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">e</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
-        <span class="c1"># ignore dihedrals with no energy or no typing information.</span>
-        <span class="n">dihedrals</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dihedrals</span> <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">e</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># ignore angles with no energy (~0 energy) or no typing information</span>
+            <span class="n">angles</span> <span class="o">=</span> <span class="p">[</span><span class="n">ang</span> <span class="k">for</span> <span class="n">ang</span> <span class="ow">in</span> <span class="n">angles</span> <span class="k">if</span> <span class="n">ang</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">ang</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">e</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">ang</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">e</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+            <span class="c1"># ignore dihedrals with no energy or no typing information.</span>
+            <span class="n">dihedrals</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dihedrals</span> <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">e</span><span class="p">)]</span>
 
-        <span class="c1"># get list of unique atom types</span>
-        <span class="c1"># Note, the original implementation doesn&#39;t actually work.  So using a</span>
-        <span class="c1"># naiive approach.  Due to issues with __eq__ and geometry.reduce_list</span>
-        <span class="c1"># not working.</span>
-        <span class="k">def</span> <span class="nf">reduce</span><span class="p">(</span><span class="n">xx</span><span class="p">):</span>
-            <span class="n">yy</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xx</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">yy</span><span class="p">:</span>
-                    <span class="n">yy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">yy</span>
+            <span class="c1"># get list of unique atom types</span>
+            <span class="c1"># Note, the original implementation doesn&#39;t actually work.  So using a</span>
+            <span class="c1"># naiive approach.  Due to issues with __eq__ and geometry.reduce_list</span>
+            <span class="c1"># not working.</span>
+            <span class="k">def</span> <span class="nf">reduce</span><span class="p">(</span><span class="n">xx</span><span class="p">):</span>
+                <span class="n">yy</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xx</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">yy</span><span class="p">:</span>
+                        <span class="n">yy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">yy</span>
 
-        <span class="n">atom_types_full</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">]</span>
-        <span class="n">bond_types_full</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">bonds</span><span class="p">]</span>
-        <span class="n">angle_types_full</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">angles</span><span class="p">]</span>
-        <span class="n">dihedral_types_full</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">dihedrals</span><span class="p">]</span>
+            <span class="n">atom_types_full</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">]</span>
+            <span class="n">bond_types_full</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">bonds</span><span class="p">]</span>
+            <span class="n">angle_types_full</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">angles</span><span class="p">]</span>
+            <span class="n">dihedral_types_full</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">dihedrals</span><span class="p">]</span>
 
-        <span class="n">atom_types</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="n">atom_types_full</span><span class="p">)</span>
-        <span class="n">bond_types</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="n">bond_types_full</span><span class="p">)</span>
-        <span class="n">angle_types</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="n">angle_types_full</span><span class="p">)</span>
-        <span class="n">dihedral_types</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="n">dihedral_types_full</span><span class="p">)</span>
+            <span class="n">atom_types</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="n">atom_types_full</span><span class="p">)</span>
+            <span class="n">bond_types</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="n">bond_types_full</span><span class="p">)</span>
+            <span class="n">angle_types</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="n">angle_types_full</span><span class="p">)</span>
+            <span class="n">dihedral_types</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="n">dihedral_types_full</span><span class="p">)</span>
 
-        <span class="n">at_i</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom_types</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">at</span><span class="p">)</span> <span class="k">for</span> <span class="n">at</span> <span class="ow">in</span> <span class="n">atom_types_full</span><span class="p">]</span>
-        <span class="n">bt_i</span> <span class="o">=</span> <span class="p">[</span><span class="n">bond_types</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">at</span><span class="p">)</span> <span class="k">for</span> <span class="n">at</span> <span class="ow">in</span> <span class="n">bond_types_full</span><span class="p">]</span>
-        <span class="n">ant_i</span> <span class="o">=</span> <span class="p">[</span><span class="n">angle_types</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">at</span><span class="p">)</span> <span class="k">for</span> <span class="n">at</span> <span class="ow">in</span> <span class="n">angle_types_full</span><span class="p">]</span>
-        <span class="n">dt_i</span> <span class="o">=</span> <span class="p">[</span><span class="n">dihedral_types</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">at</span><span class="p">)</span> <span class="k">for</span> <span class="n">at</span> <span class="ow">in</span> <span class="n">dihedral_types_full</span><span class="p">]</span>
+            <span class="n">at_i</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom_types</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">at</span><span class="p">)</span> <span class="k">for</span> <span class="n">at</span> <span class="ow">in</span> <span class="n">atom_types_full</span><span class="p">]</span>
+            <span class="n">bt_i</span> <span class="o">=</span> <span class="p">[</span><span class="n">bond_types</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">at</span><span class="p">)</span> <span class="k">for</span> <span class="n">at</span> <span class="ow">in</span> <span class="n">bond_types_full</span><span class="p">]</span>
+            <span class="n">ant_i</span> <span class="o">=</span> <span class="p">[</span><span class="n">angle_types</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">at</span><span class="p">)</span> <span class="k">for</span> <span class="n">at</span> <span class="ow">in</span> <span class="n">angle_types_full</span><span class="p">]</span>
+            <span class="n">dt_i</span> <span class="o">=</span> <span class="p">[</span><span class="n">dihedral_types</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">at</span><span class="p">)</span> <span class="k">for</span> <span class="n">at</span> <span class="ow">in</span> <span class="n">dihedral_types_full</span><span class="p">]</span>
 
-        <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">at_i</span><span class="p">):</span>
-            <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">atom_types</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bonds</span><span class="p">,</span> <span class="n">bt_i</span><span class="p">):</span>
-            <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">bond_types</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="n">ant_i</span><span class="p">):</span>
-            <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">angle_types</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">dihedrals</span><span class="p">,</span> <span class="n">dt_i</span><span class="p">):</span>
-            <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">dihedral_types</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">at_i</span><span class="p">):</span>
+                <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">atom_types</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bonds</span><span class="p">,</span> <span class="n">bt_i</span><span class="p">):</span>
+                <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">bond_types</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="n">ant_i</span><span class="p">):</span>
+                <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">angle_types</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">dihedrals</span><span class="p">,</span> <span class="n">dt_i</span><span class="p">):</span>
+                <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">dihedral_types</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">atom_types</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bond_types</span> <span class="o">=</span> <span class="n">atom_types</span><span class="p">,</span> <span class="n">bond_types</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">angle_types</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dihedral_types</span> <span class="o">=</span> <span class="n">angle_types</span><span class="p">,</span> <span class="n">dihedral_types</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">angles</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dihedrals</span> <span class="o">=</span> <span class="n">angles</span><span class="p">,</span> <span class="n">dihedrals</span>
-        <span class="c1"># sort atom types by mass, largest masses first</span>
-        <span class="n">atom_types</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="o">-</span><span class="n">t</span><span class="o">.</span><span class="n">mass</span> <span class="o">+</span>
-                        <span class="p">(</span><span class="o">-</span><span class="mf">1e6</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="s1">&#39;reax&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="mi">0</span><span class="p">))</span>
-        <span class="c1"># get type numbers to identify types to LAMMPS</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atom_types</span><span class="p">):</span>
-            <span class="n">t</span><span class="o">.</span><span class="n">lammps_type</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bond_types</span><span class="p">):</span>
-            <span class="n">t</span><span class="o">.</span><span class="n">lammps_type</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">angle_types</span><span class="p">):</span>
-            <span class="n">t</span><span class="o">.</span><span class="n">lammps_type</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dihedral_types</span><span class="p">):</span>
-            <span class="n">t</span><span class="o">.</span><span class="n">lammps_type</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">atom_types</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bond_types</span> <span class="o">=</span> <span class="n">atom_types</span><span class="p">,</span> <span class="n">bond_types</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">angle_types</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dihedral_types</span> <span class="o">=</span> <span class="n">angle_types</span><span class="p">,</span> <span class="n">dihedral_types</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">angles</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dihedrals</span> <span class="o">=</span> <span class="n">angles</span><span class="p">,</span> <span class="n">dihedrals</span>
 
-<div class="viewcode-block" id="System.packmol"><a class="viewcode-back" href="../codebase.html#structures.System.packmol">[docs]</a>    <span class="k">def</span> <span class="nf">packmol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">molecules</span><span class="p">,</span> <span class="n">molecule_ratio</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span>
+            <span class="c1"># If we have mass info in our types, sort by mass, else don&#39;t sort</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># sort atom types by mass, largest masses first</span>
+                <span class="n">atom_types</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="o">-</span><span class="n">t</span><span class="o">.</span><span class="n">mass</span> <span class="o">+</span>
+                                <span class="p">(</span><span class="o">-</span><span class="mf">1e6</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="s1">&#39;reax&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="mi">0</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="c1"># get type numbers to identify types to LAMMPS</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atom_types</span><span class="p">):</span>
+                <span class="n">t</span><span class="o">.</span><span class="n">lammps_type</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bond_types</span><span class="p">):</span>
+                <span class="n">t</span><span class="o">.</span><span class="n">lammps_type</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">angle_types</span><span class="p">):</span>
+                <span class="n">t</span><span class="o">.</span><span class="n">lammps_type</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dihedral_types</span><span class="p">):</span>
+                <span class="n">t</span><span class="o">.</span><span class="n">lammps_type</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Step 1 - Get a list of all unique bonds, angles, and dihedrals and</span>
+            <span class="c1"># assign this to atom_types, bond_types, angle_types, and dihedral_types</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">atom_coul_types</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">coul_type</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">]))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">atom_lj_types</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">lj_type</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">]))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bond_types</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">bonds</span><span class="p">]))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">angle_types</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">angles</span><span class="p">]))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dihedral_types</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">dihedrals</span><span class="p">]))</span>
+
+            <span class="c1"># To be consistent, we&#39;ll sort by atom indices.  Note, these are strings!</span>
+            <span class="c1"># But they will be consistent for all things, so atom_coul_types would now</span>
+            <span class="c1"># be guaranteed same order as atom_lj_types</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">atom_coul_types</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">a</span><span class="p">:</span> <span class="n">a</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">atom_lj_types</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">a</span><span class="p">:</span> <span class="n">a</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bond_types</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">a</span><span class="p">:</span> <span class="n">a</span><span class="o">.</span><span class="n">indices</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">angle_types</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">a</span><span class="p">:</span> <span class="n">a</span><span class="o">.</span><span class="n">indices</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dihedral_types</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">a</span><span class="p">:</span> <span class="n">a</span><span class="o">.</span><span class="n">indices</span><span class="p">)</span>
+
+            <span class="c1"># Assign the lammps types to the actual types!</span>
+            <span class="k">for</span> <span class="n">type_obj</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">atom_coul_types</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">atom_lj_types</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">bond_types</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">angle_types</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dihedral_types</span><span class="p">]:</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">type_obj</span><span class="p">):</span>
+                    <span class="n">a</span><span class="o">.</span><span class="n">lammps_type</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+
+            <span class="c1"># Step 2 - Ensure each type now is ordered via lammps output (1, 2, 3, 4...)</span>
+            <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span>
+                <span class="n">a</span><span class="o">.</span><span class="n">lammps_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_coul_types</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">coul_type</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span><span class="p">:</span>
+                <span class="n">b</span><span class="o">.</span><span class="n">lammps_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bond_types</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">type</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">angles</span><span class="p">:</span>
+                <span class="n">b</span><span class="o">.</span><span class="n">lammps_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">angle_types</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">type</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dihedrals</span><span class="p">:</span>
+                <span class="n">b</span><span class="o">.</span><span class="n">lammps_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dihedral_types</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">type</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span></div>
+
+    <span class="k">def</span> <span class="nf">dump_pair_coeffs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">lammps_command</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_coul_types</span><span class="p">:</span>
+            <span class="n">lammps_command</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;set type </span><span class="si">%d</span><span class="s1"> charge </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">lammps_type</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">charge</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_lj_types</span><span class="p">:</span>
+            <span class="n">lammps_command</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;pair_coeff </span><span class="si">%d</span><span class="s1"> </span><span class="si">%d</span><span class="s1"> </span><span class="si">%f</span><span class="s1"> </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">lammps_type</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">lammps_type</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">epsilon</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">sigma</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lammps_command</span><span class="p">)</span>
+
+<div class="viewcode-block" id="System.packmol"><a class="viewcode-back" href="../codebase.html#structures.System.packmol">[docs]</a>    <span class="k">def</span> <span class="nf">packmol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">molecules</span><span class="p">,</span> <span class="n">new_method</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">molecule_ratio</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span>
                 <span class="n">density</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">persist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                 <span class="n">custom</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1337,7 +1439,8 @@
         <span class="c1"># convert density to amu/angstrom^3. 1 g/mL = 0.6022 amu/angstrom^3</span>
         <span class="n">density</span> <span class="o">*=</span> <span class="mf">0.6022</span>
         <span class="n">average_molecular_weight</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">mass</span> <span class="o">*</span> <span class="n">molecule_ratio</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="p">[(</span><span class="n">a</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">mass</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">new_method</span> <span class="k">else</span> <span class="n">a</span><span class="o">.</span><span class="n">coul_type</span><span class="o">.</span><span class="n">mass</span><span class="p">)</span> <span class="o">*</span>
+             <span class="n">molecule_ratio</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
              <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">molecules</span><span class="p">))</span>
              <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">molecules</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="p">])</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">molecule_ratio</span><span class="p">)</span>
         <span class="n">count</span> <span class="o">=</span> <span class="p">(</span><span class="n">density</span> <span class="o">*</span>
@@ -1389,7 +1492,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">persist</span><span class="p">:</span>
             <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;rm -rf sys_packmol&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="System.get_elements"><a class="viewcode-back" href="../codebase.html#structures.System.get_elements">[docs]</a>    <span class="k">def</span> <span class="nf">get_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="System.get_elements"><a class="viewcode-back" href="../codebase.html#structures.System.get_elements">[docs]</a>    <span class="k">def</span> <span class="nf">get_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This simplifies using dump_modify by getting a list of the elements in</span>
 <span class="sd">        this system, sorted by their weight.  Note, duplicates will exist if</span>
@@ -1404,13 +1507,17 @@
 
         <span class="n">atom_types</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">elems</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">molec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">molecules</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">molec</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">index</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">atom_types</span><span class="p">:</span>
-                    <span class="n">atom_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
-                    <span class="n">elems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">element</span><span class="p">)</span>
-        <span class="n">elem_mass</span> <span class="o">=</span> <span class="p">[</span><span class="n">units</span><span class="o">.</span><span class="n">elem_weight</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">elems</span><span class="p">]</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">elem_mass</span><span class="p">,</span> <span class="n">elems</span><span class="p">))][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+        <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">molec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">molecules</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">molec</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">index</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">atom_types</span><span class="p">:</span>
+                        <span class="n">atom_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+                        <span class="n">elems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">element</span><span class="p">)</span>
+            <span class="n">elem_mass</span> <span class="o">=</span> <span class="p">[</span><span class="n">units</span><span class="o">.</span><span class="n">elem_weight</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">elems</span><span class="p">]</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">elem_mass</span><span class="p">,</span> <span class="n">elems</span><span class="p">))][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_types</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">element</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_coul_types</span><span class="p">]</span></div>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
@@ -1742,6 +1849,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
       </ul>

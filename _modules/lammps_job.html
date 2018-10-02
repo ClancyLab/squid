@@ -31,6 +31,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
@@ -66,7 +69,7 @@
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">cPickle</span> <span class="k">as</span> <span class="nn">pickle</span>
-<span class="c1"># Clancelot imports</span>
+<span class="c1"># Squid imports</span>
 <span class="kn">from</span> <span class="nn">lammps_log</span> <span class="k">import</span> <span class="n">lammps_log</span>
 <span class="kn">import</span> <span class="nn">files</span>
 <span class="kn">import</span> <span class="nn">sysconst</span>
@@ -305,15 +308,17 @@
 <div class="viewcode-block" id="job"><a class="viewcode-back" href="../codebase.html#lammps_job.job">[docs]</a><span class="k">def</span> <span class="nf">job</span><span class="p">(</span><span class="n">run_name</span><span class="p">,</span>
         <span class="n">input_script</span><span class="p">,</span>
         <span class="n">system</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">queue</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">queue</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">default_queue</span><span class="p">,</span>
         <span class="n">procs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">email</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">write_data_file</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">pair_coeffs_included</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">hybrid_pair</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">hybrid_angle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">TIP4P</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">no_echo</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">redundancy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">lmp_path</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">lmp_path</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper to submitting a LAMMPs simulation.</span>
@@ -369,8 +374,9 @@
     <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;lammps/</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">run_name</span><span class="p">)</span>
 
     <span class="c1"># Generate the lammps data file</span>
-    <span class="k">if</span> <span class="n">system</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">system</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">write_data_file</span><span class="p">:</span>
         <span class="n">files</span><span class="o">.</span><span class="n">write_lammps_data</span><span class="p">(</span><span class="n">system</span><span class="p">,</span>
+                                <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                                 <span class="n">pair_coeffs_included</span><span class="o">=</span><span class="n">pair_coeffs_included</span><span class="p">,</span>
                                 <span class="n">hybrid_pair</span><span class="o">=</span><span class="n">hybrid_pair</span><span class="p">,</span>
                                 <span class="n">hybrid_angle</span><span class="o">=</span><span class="n">hybrid_angle</span><span class="p">)</span>
@@ -393,8 +399,13 @@
 
     <span class="c1"># Run the simulation</span>
     <span class="k">if</span> <span class="n">queue</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">cmd_to_run</span> <span class="o">=</span> <span class="n">sysconst</span><span class="o">.</span><span class="n">lmp_env_vars</span>
-        <span class="n">cmd_to_run</span> <span class="o">=</span> <span class="n">cmd_to_run</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="si">%s</span><span class="s2"> -in </span><span class="si">%s</span><span class="s2">.in -log </span><span class="si">%s</span><span class="s2">.log&quot;</span>\
+        <span class="n">cmd_to_run</span> <span class="o">=</span> <span class="n">sysconst</span><span class="o">.</span><span class="n">lmp_env_vars</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">procs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">cmd_to_run</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> -np </span><span class="si">%d</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sysconst</span><span class="o">.</span><span class="n">mpirun_path</span><span class="p">,</span> <span class="n">procs</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning - Trying to run LAMMPs in parallel locally without specifying mpirun_path in sysconst.&quot;</span><span class="p">)</span>
+        <span class="n">cmd_to_run</span> <span class="o">=</span> <span class="n">cmd_to_run</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> -in </span><span class="si">%s</span><span class="s2">.in -log </span><span class="si">%s</span><span class="s2">.log&quot;</span>\
             <span class="o">%</span> <span class="p">(</span><span class="n">lmp_path</span><span class="p">,</span> <span class="n">run_name</span><span class="p">,</span> <span class="n">run_name</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">no_echo</span><span class="p">:</span>
@@ -500,7 +511,7 @@
 
 
 <div class="viewcode-block" id="PotEngSurfaceJob"><a class="viewcode-back" href="../codebase.html#lammps_job.PotEngSurfaceJob">[docs]</a><span class="k">def</span> <span class="nf">PotEngSurfaceJob</span><span class="p">(</span><span class="n">run_name</span><span class="p">,</span> <span class="n">input_script</span><span class="p">,</span> <span class="n">system</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">spanMolecule</span><span class="p">,</span>
-                     <span class="n">resolution</span><span class="o">=.</span><span class="mi">1</span><span class="p">,</span> <span class="n">queue</span><span class="o">=</span><span class="s1">&#39;short&#39;</span><span class="p">,</span> <span class="n">procs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                     <span class="n">resolution</span><span class="o">=.</span><span class="mi">1</span><span class="p">,</span> <span class="n">queue</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">default_queue</span><span class="p">,</span> <span class="n">procs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
                      <span class="n">pair_coeffs_included</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hybrid_pair</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                      <span class="n">floor</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]):</span>
 
@@ -679,10 +690,9 @@
     <span class="n">NBS</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="n">pyScript</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">lineName</span> <span class="o">+</span> <span class="s1">&#39;.py&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
-    <span class="n">pyScriptText</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;from lammps_job import job</span>
+    <span class="n">pyScriptText</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;from squid.lammps_job import job</span>
 <span class="s1">import cPickle as pickle</span>
 <span class="s1">import os</span>
-<span class="s1">from merlin import *</span>
 <span class="s1">os.chdir(</span><span class="se">\&#39;</span><span class="s1">&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">currdir</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\&#39;</span><span class="s1">)</span>
 
 <span class="s1">run_name = &quot;&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">run_name</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;&quot;</span>
@@ -807,7 +817,7 @@
 <span class="c1">#          X Y ... = columns to include (optional), X,Y are thermo keywords</span>
 <span class="c1">#                    if no columns listed, all columns are included</span>
 <span class="c1"># Author:  Steve Plimpton (Sandia), sjplimp at sandia.gov</span>
-<span class="c1"># Modified by Yaset Acevedo to use updated log.py included in clancelot</span>
+<span class="c1"># Modified by Yaset Acevedo to use updated log.py included in squid</span>
 <div class="viewcode-block" id="thermo_2_text"><a class="viewcode-back" href="../codebase.html#lammps_job.thermo_2_text">[docs]</a><span class="k">def</span> <span class="nf">thermo_2_text</span><span class="p">(</span><span class="n">run_name</span><span class="p">,</span> <span class="o">*</span><span class="n">properties</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This will convert a lammps .log file to a parsed .txt file, isolating</span>
@@ -1046,6 +1056,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
       </ul>

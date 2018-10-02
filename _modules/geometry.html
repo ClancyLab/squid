@@ -31,6 +31,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
@@ -89,9 +92,8 @@
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">from</span> <span class="nn">scipy.linalg.decomp_svd</span> <span class="k">import</span> <span class="n">svd</span>
 <span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="k">import</span> <span class="n">linear_sum_assignment</span>
-<span class="c1"># Clancelot imports</span>
+<span class="c1"># Squid imports</span>
 <span class="kn">import</span> <span class="nn">structures</span>
-<span class="kn">import</span> <span class="nn">files</span>
 
 
 <div class="viewcode-block" id="rms"><a class="viewcode-back" href="../codebase.html#geometry.rms">[docs]</a><span class="k">def</span> <span class="nf">rms</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -1649,7 +1651,6 @@
                <span class="n">N_FRAMES</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                <span class="n">PROCRUSTES</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                <span class="n">outName</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-               <span class="n">write_xyz</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Smooth out an xyz file by linearly interpolating frames to minimize the</span>
@@ -1658,8 +1659,8 @@
 
 <span class="sd">    **Parameters**</span>
 
-<span class="sd">        name: *str or list, list,* :class:`structures.Atom`</span>
-<span class="sd">            Input file name (with .xyz extension) or a list of lists of atoms.</span>
+<span class="sd">        name: *list, list,* :class:`structures.Atom`</span>
+<span class="sd">            A list of lists of atoms.</span>
 <span class="sd">        R_MAX: *float, optional*</span>
 <span class="sd">            The maximum motion allowed between consecutive frames.</span>
 <span class="sd">        F_MAX: *int, optional*</span>
@@ -1675,9 +1676,6 @@
 <span class="sd">        outName: *str, optional*</span>
 <span class="sd">            An output file name for the smoothed frames (without the .xyz</span>
 <span class="sd">            extension).</span>
-<span class="sd">        write_xyz: *bool, optional*</span>
-<span class="sd">            Whether an output file is to be written of the smoothed frames</span>
-<span class="sd">            (True), or not (False).</span>
 <span class="sd">        verbose: *bool, optional*</span>
 <span class="sd">            Whether additional stdout is desired (True), or not (False).</span>
 
@@ -1687,9 +1685,7 @@
 <span class="sd">            Returns a list of smoothed frames</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Get data as either frames or a file</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">frames</span> <span class="o">=</span> <span class="n">files</span><span class="o">.</span><span class="n">read_xyz</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
         <span class="n">frames</span> <span class="o">=</span> <span class="n">name</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error - Invalid name input.  Should be either the name of an </span><span class="se">\</span>
@@ -1773,9 +1769,6 @@
         <span class="n">procrustes</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">There are now a total of </span><span class="si">%d</span><span class="s2"> frames&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">))</span>
-
-    <span class="k">if</span> <span class="n">write_xyz</span><span class="p">:</span>
-        <span class="n">files</span><span class="o">.</span><span class="n">write_xyz</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="s1">&#39;pretty_xyz&#39;</span> <span class="k">if</span> <span class="n">outName</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">outName</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">frames</span></div>
 
@@ -1938,7 +1931,6 @@
 
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">structures</span><span class="o">.</span><span class="n">Atom</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">elems</span><span class="p">)]</span></div>
-
 </pre></div>
 
           </div>
@@ -1973,6 +1965,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
       </ul>

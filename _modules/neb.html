@@ -31,6 +31,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
@@ -59,19 +62,19 @@
 <span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="k">import</span> <span class="n">block_diag</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">copy</span>
-<span class="c1"># Clancelot imports</span>
+<span class="c1"># Squid imports</span>
 <span class="kn">import</span> <span class="nn">geometry</span>
 <span class="kn">import</span> <span class="nn">print_helper</span>
 <span class="kn">import</span> <span class="nn">orca</span>
 <span class="kn">import</span> <span class="nn">g09</span>
 <span class="kn">import</span> <span class="nn">units</span>
 
-<span class="kn">from</span> <span class="nn">steepest_descent</span> <span class="k">import</span> <span class="n">steepest_descent</span>
-<span class="kn">from</span> <span class="nn">bfgs</span> <span class="k">import</span> <span class="n">bfgs</span>
-<span class="kn">from</span> <span class="nn">lbfgs</span> <span class="k">import</span> <span class="n">lbfgs</span>
-<span class="kn">from</span> <span class="nn">quick_min</span> <span class="k">import</span> <span class="n">quick_min</span>
-<span class="kn">from</span> <span class="nn">fire</span> <span class="k">import</span> <span class="n">fire</span>
-<span class="kn">from</span> <span class="nn">conjugate_gradient</span> <span class="k">import</span> <span class="n">conjugate_gradient</span>
+<span class="kn">from</span> <span class="nn">optimizers.steepest_descent</span> <span class="k">import</span> <span class="n">steepest_descent</span>
+<span class="kn">from</span> <span class="nn">optimizers.bfgs</span> <span class="k">import</span> <span class="n">bfgs</span>
+<span class="kn">from</span> <span class="nn">optimizers.lbfgs</span> <span class="k">import</span> <span class="n">lbfgs</span>
+<span class="kn">from</span> <span class="nn">optimizers.quick_min</span> <span class="k">import</span> <span class="n">quick_min</span>
+<span class="kn">from</span> <span class="nn">optimizers.fire</span> <span class="k">import</span> <span class="n">fire</span>
+<span class="kn">from</span> <span class="nn">optimizers.conjugate_gradient</span> <span class="k">import</span> <span class="n">conjugate_gradient</span>
 
 <span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="k">import</span> <span class="n">minimize</span>
 
@@ -81,7 +84,7 @@
 <span class="kn">from</span> <span class="nn">constants</span> <span class="k">import</span> <span class="n">G_MAX_CONVERGENCE</span>
 <span class="kn">from</span> <span class="nn">constants</span> <span class="k">import</span> <span class="n">G_RMS_CONVERGENCE</span>
 
-<span class="c1"># Clancelot Nudged Elastic Band package</span>
+<span class="c1"># Squid Nudged Elastic Band package</span>
 <span class="c1"># Currently supports g09</span>
 <span class="c1"># Cite NEB:</span>
 <span class="c1">#     http://scitation.aip.org/content/aip/journal/jcp/113/22/10.1063/1.1323224</span>
@@ -1006,6 +1009,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
       </ul>

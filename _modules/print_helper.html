@@ -31,6 +31,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
@@ -61,7 +64,9 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">sys</span>
-<span class="c1"># Clancelot imports</span>
+<span class="kn">import</span> <span class="nn">psutil</span>
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span>
+<span class="c1"># Squid imports</span>
 <span class="kn">import</span> <span class="nn">constants</span>
 
 
@@ -195,13 +200,21 @@
             <span class="n">printProgressBar</span><span class="o">.</span><span class="n">buf</span> <span class="o">-=</span> <span class="mi">1</span>
             <span class="k">return</span>
 
+    <span class="k">assert</span> <span class="s2">&quot;stty&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prefix</span> <span class="ow">and</span> <span class="s2">&quot;stty&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">suffix</span><span class="p">,</span> <span class="s2">&quot;Don&#39;t have &#39;stty&#39; in prefix or suffix.&quot;</span>
+
     <span class="n">percent</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;{0:.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">decimals</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;f}&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">iteration</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">total</span><span class="p">)))</span>
     <span class="n">filledLength</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">length</span> <span class="o">*</span> <span class="n">iteration</span> <span class="o">//</span> <span class="n">total</span><span class="p">)</span>
     <span class="n">bar</span> <span class="o">=</span> <span class="n">fill</span> <span class="o">*</span> <span class="n">filledLength</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="n">length</span> <span class="o">-</span> <span class="n">filledLength</span><span class="p">)</span>
     <span class="n">bar</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\r</span><span class="si">%s</span><span class="s1"> |</span><span class="si">%s</span><span class="s1">| </span><span class="si">%s%%</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">bar</span><span class="p">,</span> <span class="n">percent</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">pad</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">cols</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s1">&#39;stty size&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="c1">#            cols = int(os.popen(&#39;stty size&#39;, &#39;r&#39;).read().split()[-1])</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">Popen</span><span class="p">(</span><span class="s2">&quot;stty size&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="n">stdout</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">PIPE</span><span class="p">)</span>
+            <span class="n">cols</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">stderr</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="n">cols</span> <span class="o">=</span> <span class="mi">300</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cols</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cols</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
         <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
             <span class="n">cols</span> <span class="o">=</span> <span class="mi">300</span>  <span class="c1"># This is a backup in the case that this code is run on the queue or something.</span>
         <span class="n">cols</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">cols</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>  <span class="c1"># Ensure we are always long enough</span>
@@ -212,6 +225,25 @@
         <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span></div>
+
+
+<span class="k">def</span> <span class="nf">bytes2human</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="c1"># http://code.activestate.com/recipes/578019</span>
+    <span class="c1"># &gt;&gt;&gt; bytes2human(10000)</span>
+    <span class="c1"># &#39;9.8K&#39;</span>
+    <span class="c1"># &gt;&gt;&gt; bytes2human(100001221)</span>
+    <span class="c1"># &#39;95.4M&#39;</span>
+    <span class="n">symbols</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;K&#39;</span><span class="p">,</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">)</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">symbols</span><span class="p">):</span>
+        <span class="n">prefix</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">symbols</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="n">prefix</span><span class="p">[</span><span class="n">s</span><span class="p">]:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="n">prefix</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
+            <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%.1f%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">B&quot;</span> <span class="o">%</span> <span class="n">n</span>
+
+
 </pre></div>
 
           </div>
@@ -246,6 +278,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
       </ul>

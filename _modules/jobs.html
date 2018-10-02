@@ -31,6 +31,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
@@ -60,12 +63,12 @@
 <span class="c1"># System Imports</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">types</span>
 <span class="kn">import</span> <span class="nn">getpass</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="c1"># Clancelot Imports</span>
-<span class="kn">import</span> <span class="nn">sysconst</span>
+<span class="c1"># Squid Imports</span>
+<span class="kn">from</span> <span class="nn">squid</span> <span class="k">import</span> <span class="n">sysconst</span>
 
 
 <span class="k">def</span> <span class="nf">_isFloat</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -202,7 +205,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">queueing_system</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;nbs&quot;</span><span class="p">:</span>
         <span class="c1"># Get input from jlist as a string</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s1">&#39;jlist&#39;</span><span class="p">],</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+        <span class="c1">#p = subprocess.Popen([&#39;jlist&#39;], stdout=subprocess.PIPE)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">run_nbs_cmd</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/jlist&quot;</span> <span class="o">%</span> <span class="n">sysconst</span><span class="o">.</span><span class="n">nbs_bin_path</span><span class="p">)</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
         <span class="c1"># Get data from string</span>
@@ -225,7 +229,8 @@
             <span class="k">return</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">info</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">detail</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">info</span><span class="p">):</span>
-                <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s1">&#39;jshow&#39;</span><span class="p">,</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+                <span class="c1">#p = subprocess.Popen([&#39;jshow&#39;, a[0]], stdout=subprocess.PIPE)</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">run_nbs_cmd</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/jshow </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sysconst</span><span class="o">.</span><span class="n">nbs_bin_path</span><span class="p">,</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
                 <span class="n">s</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
                 <span class="n">serv</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;Queue name:&#39;</span><span class="p">):]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                 <span class="k">try</span><span class="p">:</span>
@@ -246,16 +251,16 @@
         <span class="c1"># Do This</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;THIS CODE NOT WRITTEN YET.&quot;</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">queueing_system</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;slurm&quot;</span><span class="p">:</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s1">&#39;showq&#39;</span><span class="p">],</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s1">&#39;squeue&#39;</span><span class="p">],</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="n">all_jobs</span> <span class="o">=</span> <span class="p">[</span><span class="n">job</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
                     <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">output</span> <span class="k">if</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getuser</span><span class="p">()</span> <span class="ow">in</span> <span class="n">job</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">detail</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">all_jobs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">j</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">j</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">j</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="s1">&#39;TACC&#39;</span><span class="p">,</span> <span class="n">j</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">all_jobs</span><span class="p">]</span>
+            <span class="n">all_jobs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">j</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">j</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">j</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">j</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">j</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">all_jobs</span><span class="p">]</span>
         <span class="k">elif</span> <span class="n">detail</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">all_jobs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">j</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">j</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">j</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">all_jobs</span><span class="p">]</span>
+            <span class="n">all_jobs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">j</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">j</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">j</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">all_jobs</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">all_jobs</span> <span class="o">=</span> <span class="p">[</span><span class="n">j</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">all_jobs</span><span class="p">]</span>
+            <span class="n">all_jobs</span> <span class="o">=</span> <span class="p">[</span><span class="n">j</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">all_jobs</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">all_jobs</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unknown queueing system passed to get_all_jobs. </span><span class="se">\</span>
@@ -354,7 +359,8 @@
 <div class="viewcode-block" id="submit_job"><a class="viewcode-back" href="../codebase.html#jobs.submit_job">[docs]</a><span class="k">def</span> <span class="nf">submit_job</span><span class="p">(</span><span class="n">name</span><span class="p">,</span>
                <span class="n">job_to_submit</span><span class="p">,</span>
                <span class="n">procs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-               <span class="n">queue</span><span class="o">=</span><span class="s1">&#39;short&#39;</span><span class="p">,</span>
+               <span class="n">ntasks</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+               <span class="n">queue</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">default_queue</span><span class="p">,</span>
                <span class="n">mem</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
                <span class="n">priority</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                <span class="n">walltime</span><span class="o">=</span><span class="s2">&quot;00:30:00&quot;</span><span class="p">,</span>
@@ -374,11 +380,15 @@
 <span class="sd">    **Parameters**</span>
 
 <span class="sd">        name: *str*</span>
-<span class="sd">            Name of the job to be submitted to the queue.</span>
+<span class="sd">            Name of the job to be submitted to the queue.  In the case of NBS,</span>
+<span class="sd">            it must be without the suffix.  Ex. &#39;job&#39; works but &#39;job.nbs&#39; fails.</span>
 <span class="sd">        job_to_submit: *str*</span>
 <span class="sd">            String holding code you wish to submit.</span>
 <span class="sd">        procs: *int, optional*</span>
 <span class="sd">            Number of processors requested.</span>
+<span class="sd">        ntasks: *int, optional*</span>
+<span class="sd">            (For SLURM) The number of tasks this job will run, each task uses</span>
+<span class="sd">            procs number of cores.</span>
 <span class="sd">        queue: *str, optional*</span>
 <span class="sd">            Queue you are submitting to (queueing system dependent).</span>
 <span class="sd">        mem: *float, optional*</span>
@@ -414,10 +424,19 @@
 <span class="sd">        None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">if</span> <span class="n">redundancy</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">queueing_system</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;nbs&quot;</span><span class="p">:</span>
+    <span class="c1"># Throw an error if we request nbs queueing with unknown queue</span>
+    <span class="k">if</span> <span class="n">queueing_system</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;nbs&quot;</span> <span class="ow">and</span> <span class="n">queue</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">get_nbs_queues</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">queue</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;NBS queue </span><span class="si">%s</span><span class="s2"> does not exist!&quot;</span> <span class="o">%</span> <span class="n">queue</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">queueing_system</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;slurm&quot;</span> <span class="ow">and</span> <span class="n">queue</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">get_slurm_queues</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">queue</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;SLURM queue </span><span class="si">%s</span><span class="s2"> does not exist!&quot;</span> <span class="o">%</span> <span class="n">queue</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">redundancy</span> <span class="ow">and</span> <span class="n">queueing_system</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;slurm&quot;</span><span class="p">,</span> <span class="s2">&quot;nbs&quot;</span><span class="p">]:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning - redundancy not implemented for non-NBS queueing systems.&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">unique_name</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">queueing_system</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;nbs&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">unique_name</span> <span class="ow">and</span> <span class="n">queueing_system</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;slurm&quot;</span><span class="p">,</span> <span class="s2">&quot;nbs&quot;</span><span class="p">]:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning - unique_name not implemented for non-NBS queueing systems.&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">queue</span> <span class="ow">is</span> <span class="s2">&quot;debug&quot;</span><span class="p">:</span>
@@ -501,7 +520,8 @@
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="c1"># Submit job</span>
-        <span class="n">job_pipe</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="s1">&#39;jsub </span><span class="si">%s</span><span class="s1">.nbs </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">sub_flag</span><span class="o">.</span><span class="n">strip</span><span class="p">()),</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1">#job_pipe = subprocess.Popen(&#39;jsub %s.nbs %s&#39; % (name, sub_flag.strip()), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)</span>
+        <span class="n">job_pipe</span> <span class="o">=</span> <span class="n">run_nbs_cmd</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/jsub </span><span class="si">%s</span><span class="s2">.nbs </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sysconst</span><span class="o">.</span><span class="n">nbs_bin_path</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">sub_flag</span><span class="o">.</span><span class="n">strip</span><span class="p">()))</span>
         <span class="n">job_err</span> <span class="o">=</span> <span class="n">job_pipe</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">redundancy</span> <span class="ow">and</span> <span class="s2">&quot;+notunique:&quot;</span> <span class="ow">in</span> <span class="n">job_err</span><span class="p">:</span>
@@ -519,8 +539,25 @@
         <span class="k">elif</span> <span class="s2">&quot;+notunique:&quot;</span> <span class="ow">in</span> <span class="n">job_err</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Job with name </span><span class="si">%s</span><span class="s2"> already exists in the queue!&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
 
-        <span class="n">job_id</span> <span class="o">=</span> <span class="n">job_pipe</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-        <span class="n">job_id</span> <span class="o">=</span> <span class="n">job_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;submitted to queue&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">job_id_str</span> <span class="o">=</span> <span class="n">job_pipe</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="s2">&quot;submitted to queue&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">job_id_str</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Failed to submit the job!&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--------------- JOB OUTPUT ---------------&quot;</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="n">job_id_str</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---------------- JOB ERROR ---------------&quot;</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="n">job_err</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---------------------------------&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">job_id</span> <span class="o">=</span> <span class="n">job_id_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;submitted to queue&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="s2">&quot;ERROR - job_id_str is:&quot;</span>
+            <span class="nb">print</span> <span class="n">job_id_str</span>
+            <span class="nb">print</span> <span class="s2">&quot;Defaulting to None, should still work... FIX!&quot;</span>
+            <span class="n">job_id</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">Job</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
 
     <span class="k">elif</span> <span class="n">queueing_system</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;pbs&quot;</span><span class="p">:</span>
@@ -531,7 +568,8 @@
         <span class="n">generic_script</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;#!/bin/sh</span>
 <span class="s1">#SBATCH -J  &#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">#SBATCH -o  &#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;.o%j</span>
-<span class="s1">#SBATCH -n &#39;&#39;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">procs</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">#SBATCH -n &#39;&#39;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ntasks</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">#SBATCH -c &#39;&#39;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">procs</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">#SBATCH -p &#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">queue</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">#SBATCH -t &#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">walltime</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span>
 
@@ -561,9 +599,46 @@
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">generic_script</span><span class="p">)</span>
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;sbatch </span><span class="si">%s</span><span class="s1">.slurm </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">sub_flag</span><span class="o">.</span><span class="n">strip</span><span class="p">()))</span>
+        <span class="n">job_exists</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">get_all_jobs</span><span class="p">(</span><span class="n">detail</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">redundancy</span> <span class="ow">and</span> <span class="n">job_exists</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">job_info</span> <span class="o">=</span> <span class="n">_get_job</span><span class="p">(</span><span class="n">name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                <span class="c1"># Job finished in process of submitting and redundancy call</span>
+                <span class="n">job_to_return</span> <span class="o">=</span> <span class="n">Job</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                <span class="c1"># Attach the redundancy flag</span>
+                <span class="n">job_to_return</span><span class="o">.</span><span class="n">redundancy</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">return</span> <span class="n">job_to_return</span>
+            <span class="n">job_to_return</span> <span class="o">=</span> <span class="n">Job</span><span class="p">(</span><span class="n">job_info</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">job_id</span><span class="o">=</span><span class="n">job_info</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">job_to_return</span><span class="o">.</span><span class="n">redundancy</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">return</span> <span class="n">job_to_return</span>
+        <span class="k">elif</span> <span class="n">job_exists</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Job with name </span><span class="si">%s</span><span class="s2"> already exists in the queue!&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">Job</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="c1"># Submit job</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;sbatch </span><span class="si">%s</span><span class="s1">.slurm </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">sub_flag</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+        <span class="n">job_pipe</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="n">shell</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+
+        <span class="c1"># Get the error message</span>
+        <span class="n">job_err</span> <span class="o">=</span> <span class="n">job_pipe</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+        <span class="c1"># If we figure out redundancy, add it here</span>
+        <span class="c1"># CODE FORE REDUNDANCY IN SLURM</span>
+        <span class="n">job_id</span> <span class="o">=</span> <span class="n">job_pipe</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="s2">&quot;Submitted batch job&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">job_id</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Failed to submit the job!&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--------------- JOB OUTPUT ---------------&quot;</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="n">job_id</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---------------- JOB ERROR ---------------&quot;</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="n">job_err</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---------------------------------&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">()</span>
+
+        <span class="n">job_id</span> <span class="o">=</span> <span class="n">job_id</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">Job</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unknown queueing system passed to submit_job. </span><span class="se">\</span>
 <span class="s2">Please choose NBS or PBS for now.&quot;</span><span class="p">)</span></div>
@@ -571,8 +646,9 @@
 
 <div class="viewcode-block" id="pysub"><a class="viewcode-back" href="../codebase.html#jobs.pysub">[docs]</a><span class="k">def</span> <span class="nf">pysub</span><span class="p">(</span><span class="n">job_name</span><span class="p">,</span>
           <span class="n">nprocs</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
+          <span class="n">ntasks</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
           <span class="n">omp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-          <span class="n">queue</span><span class="o">=</span><span class="s2">&quot;short&quot;</span><span class="p">,</span>
+          <span class="n">queue</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">default_queue</span><span class="p">,</span>
           <span class="n">walltime</span><span class="o">=</span><span class="s2">&quot;00:30:00&quot;</span><span class="p">,</span>
           <span class="n">xhost</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
           <span class="n">path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span>
@@ -582,6 +658,7 @@
           <span class="n">unique_name</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
           <span class="n">redundancy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
           <span class="n">py3</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+          <span class="n">use_mpi</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
           <span class="n">queueing_system</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">queueing_system</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Submission of python scripts to run on your queue.</span>
@@ -592,6 +669,11 @@
 <span class="sd">            Name of the python script (with or without the .py extension).</span>
 <span class="sd">        nprocs: *str, optional*</span>
 <span class="sd">            Number of processors to run your script on.</span>
+<span class="sd">        ntasks: *int, optional*</span>
+<span class="sd">            (For SLURM) The number of tasks this job will run, each task uses</span>
+<span class="sd">            procs number of cores.</span>
+<span class="sd">        use_mpi: *bool, optional*</span>
+<span class="sd">            Whether to run python via mpirun or not.</span>
 <span class="sd">        omp: *int, None*</span>
 <span class="sd">            The number OMP_NUM_THREADS should be manually assigned to.</span>
 <span class="sd">        queue: *str, optional*</span>
@@ -633,6 +715,15 @@
         <span class="n">xhost</span> <span class="o">=</span> <span class="p">[</span><span class="n">xhost</span><span class="p">]</span>
     <span class="k">if</span> <span class="s2">&quot;.py&quot;</span> <span class="ow">in</span> <span class="n">job_name</span><span class="p">:</span>
         <span class="n">job_name</span> <span class="o">=</span> <span class="n">job_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Throw an error if we request nbs queueing with unknown queue</span>
+    <span class="k">if</span> <span class="n">queueing_system</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;nbs&quot;</span> <span class="ow">and</span> <span class="n">queue</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">get_nbs_queues</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">queue</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;NBS queue </span><span class="si">%s</span><span class="s2"> does not exist!&quot;</span> <span class="o">%</span> <span class="n">queue</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">queueing_system</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;slurm&quot;</span> <span class="ow">and</span> <span class="n">queue</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">get_slurm_queues</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">queue</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;SLURM queue </span><span class="si">%s</span><span class="s2"> does not exist!&quot;</span> <span class="o">%</span> <span class="n">queue</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">queue</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">queue</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
@@ -689,9 +780,17 @@
 <span class="s1">$OMP$</span>
 <span class="s1">source /fs/home/$USER/.zshrc</span>
 
-<span class="s1">$PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$&gt; $PY_NAME2$.log 2&gt;&amp;1</span>
-
 <span class="s1">&#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="n">nprocs</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">use_mpi</span><span class="p">:</span>
+            <span class="n">NBS</span> <span class="o">+=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">$MPIRUN$ -np $NPROCS$ $PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$&gt; $PY_NAME2$.log 2&gt;&amp;1</span>
+<span class="s1">&#39;&#39;&#39;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$MPIRUN$&quot;</span><span class="p">,</span> <span class="n">sysconst</span><span class="o">.</span><span class="n">mpirun_path</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$NPROCS$&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">nprocs</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">NBS</span> <span class="o">+=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">$PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$&gt; $PY_NAME2$.log 2&gt;&amp;1</span>
+<span class="s1">&#39;&#39;&#39;</span>
+
         <span class="n">NBS</span> <span class="o">=</span> <span class="n">NBS</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$UNIQUE$&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;##NBS-unique: yes&quot;</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="n">unique_name</span><span class="p">)])</span>
         <span class="n">NBS</span> <span class="o">=</span> <span class="n">NBS</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$PYTHON_PATH$&quot;</span><span class="p">,</span> <span class="n">py_path</span><span class="p">)</span>
         <span class="n">NBS</span> <span class="o">=</span> <span class="n">NBS</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$JOB_NAME$&quot;</span><span class="p">,</span> <span class="n">job_name</span><span class="p">)</span>
@@ -725,7 +824,8 @@
         <span class="n">NBS_fptr</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="c1"># Submit job</span>
-        <span class="n">job_pipe</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="s1">&#39;jsub &#39;</span> <span class="o">+</span> <span class="n">job_name</span> <span class="o">+</span> <span class="s1">&#39;.nbs&#39;</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1">#job_pipe = subprocess.Popen(&#39;jsub &#39; + job_name + &#39;.nbs&#39;, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)</span>
+        <span class="n">job_pipe</span> <span class="o">=</span> <span class="n">run_nbs_cmd</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/jsub </span><span class="si">%s</span><span class="s2">.nbs&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sysconst</span><span class="o">.</span><span class="n">nbs_bin_path</span><span class="p">,</span> <span class="n">job_name</span><span class="p">))</span>
         <span class="n">job_err</span> <span class="o">=</span> <span class="n">job_pipe</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">redundancy</span> <span class="ow">and</span> <span class="s2">&quot;+notunique:&quot;</span> <span class="ow">in</span> <span class="n">job_err</span><span class="p">:</span>
@@ -742,6 +842,17 @@
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Job with name </span><span class="si">%s</span><span class="s2"> already exists in the queue!&quot;</span> <span class="o">%</span> <span class="n">job_name</span><span class="p">)</span>
 
         <span class="n">job_id</span> <span class="o">=</span> <span class="n">job_pipe</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="s2">&quot;submitted to queue&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">job_id</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Failed to submit the job!&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--------------- JOB OUTPUT ---------------&quot;</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="n">job_id</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---------------- JOB ERROR ---------------&quot;</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="n">job_err</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---------------------------------&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">()</span>
+
         <span class="n">job_id</span> <span class="o">=</span> <span class="n">job_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;submitted to queue&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">remove_sub_script</span><span class="p">:</span>
@@ -756,21 +867,29 @@
         <span class="n">SLURM</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;#!/bin/sh</span>
 <span class="s1">#SBATCH -J &quot;$JOB_NAME1$&quot;</span>
 <span class="s1">#SBATCH -o $JOB_NAME2$.o%j</span>
-<span class="s1">#SBATCH -n $NPROCS$</span>
+<span class="s1">#SBATCH -n $NTASKS$</span>
+<span class="s1">#SBATCH -c $NPROCS$</span>
 <span class="s1">#SBATCH -p $QUEUE$</span>
 <span class="s1">#SBATCH -t $WALLTIME$</span>
 
 <span class="s1">$OMP$</span>
 <span class="s1">source ~/.bashrc</span>
+<span class="s1">&#39;&#39;&#39;</span>
 
+        <span class="k">if</span> <span class="n">nprocs</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">use_mpi</span><span class="p">:</span>
+            <span class="n">SLURM</span> <span class="o">+=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">$MPIRUN$ -np $NPROCS$ $PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$&gt; $PY_NAME2$.log 2&gt;&amp;1</span>
+<span class="s1">&#39;&#39;&#39;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$MPIRUN$&quot;</span><span class="p">,</span> <span class="n">sysconst</span><span class="o">.</span><span class="n">mpirun_path</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$NPROCS$&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">nprocs</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">SLURM</span> <span class="o">+=</span> <span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">$PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$&gt; $PY_NAME2$.log 2&gt;&amp;1</span>
-
 <span class="s1">&#39;&#39;&#39;</span>
 
         <span class="n">SLURM</span> <span class="o">=</span> <span class="n">SLURM</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$PYTHON_PATH$&quot;</span><span class="p">,</span> <span class="n">py_path</span><span class="p">)</span>
         <span class="n">SLURM</span> <span class="o">=</span> <span class="n">SLURM</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$JOB_NAME1$&quot;</span><span class="p">,</span> <span class="n">job_name</span><span class="p">)</span>
         <span class="n">SLURM</span> <span class="o">=</span> <span class="n">SLURM</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$JOB_NAME2$&quot;</span><span class="p">,</span> <span class="n">job_name</span><span class="p">)</span>
         <span class="n">SLURM</span> <span class="o">=</span> <span class="n">SLURM</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$NPROCS$&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">nprocs</span><span class="p">))</span>
+        <span class="n">SLURM</span> <span class="o">=</span> <span class="n">SLURM</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$NTASKS$&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">ntasks</span><span class="p">))</span>
         <span class="n">SLURM</span> <span class="o">=</span> <span class="n">SLURM</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$QUEUE$&quot;</span><span class="p">,</span> <span class="n">queue</span><span class="p">)</span>
         <span class="n">SLURM</span> <span class="o">=</span> <span class="n">SLURM</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$WALLTIME$&quot;</span><span class="p">,</span> <span class="n">walltime</span><span class="p">)</span>
         <span class="n">SLURM</span> <span class="o">=</span> <span class="n">SLURM</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$PY_NAME1$&quot;</span><span class="p">,</span> <span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">job_name</span><span class="p">)</span>
@@ -790,14 +909,89 @@
         <span class="n">SLURM_fptr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">SLURM</span><span class="p">)</span>
         <span class="n">SLURM_fptr</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
+        <span class="n">job_exists</span> <span class="o">=</span> <span class="n">job_name</span> <span class="ow">in</span> <span class="n">get_all_jobs</span><span class="p">(</span><span class="n">detail</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">redundancy</span> <span class="ow">and</span> <span class="n">job_exists</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">job_info</span> <span class="o">=</span> <span class="n">_get_job</span><span class="p">(</span><span class="n">job_name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                <span class="c1"># Job finished in process of submitting and redundancy call</span>
+                <span class="n">job_to_return</span> <span class="o">=</span> <span class="n">Job</span><span class="p">(</span><span class="n">job_name</span><span class="p">)</span>
+                <span class="c1"># Attach the redundancy flag</span>
+                <span class="n">job_to_return</span><span class="o">.</span><span class="n">redundancy</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">return</span> <span class="n">job_to_return</span>
+            <span class="n">job_to_return</span> <span class="o">=</span> <span class="n">Job</span><span class="p">(</span><span class="n">job_info</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">job_id</span><span class="o">=</span><span class="n">job_info</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">job_to_return</span><span class="o">.</span><span class="n">redundancy</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">return</span> <span class="n">job_to_return</span>
+        <span class="k">elif</span> <span class="n">job_exists</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Job with name </span><span class="si">%s</span><span class="s2"> already exists in the queue!&quot;</span> <span class="o">%</span> <span class="n">job_name</span><span class="p">)</span>
+
         <span class="c1"># Submit job</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;sbatch &#39;</span> <span class="o">+</span> <span class="n">job_name</span> <span class="o">+</span> <span class="s1">&#39;.slurm&#39;</span><span class="p">)</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;sbatch &#39;</span> <span class="o">+</span> <span class="n">job_name</span> <span class="o">+</span> <span class="s1">&#39;.slurm&#39;</span>
+        <span class="n">job_pipe</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="n">shell</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+
+        <span class="c1"># Get the error message</span>
+        <span class="n">job_err</span> <span class="o">=</span> <span class="n">job_pipe</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+        <span class="c1"># If we figure out redundancy, add it here</span>
+        <span class="c1"># CODE FORE REDUNDANCY IN SLURM</span>
+        <span class="n">job_id</span> <span class="o">=</span> <span class="n">job_pipe</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="s2">&quot;Submitted batch job&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">job_id</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Failed to submit the job!&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--------------- JOB OUTPUT ---------------&quot;</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="n">job_id</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---------------- JOB ERROR ---------------&quot;</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="n">job_err</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---------------------------------&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">()</span>
+
+        <span class="n">job_id</span> <span class="o">=</span> <span class="n">job_id</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">remove_sub_script</span><span class="p">:</span>
             <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;rm &#39;</span> <span class="o">+</span> <span class="n">job_name</span> <span class="o">+</span> <span class="s1">&#39;.slurm&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Job</span><span class="p">(</span><span class="n">job_name</span><span class="p">,</span> <span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unknown queueing system passed to pysub. </span><span class="se">\</span>
 <span class="s2">Please choose NBS or PBS for now.&quot;</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">get_nbs_queues</span><span class="p">():</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">run_nbs_cmd</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/qlist&quot;</span> <span class="o">%</span> <span class="n">sysconst</span><span class="o">.</span><span class="n">nbs_bin_path</span><span class="p">)</span>
+    <span class="n">all_queues</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">all_queues</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">all_queues</span><span class="p">]</span>
+    <span class="n">all_queues</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">all_queues</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">all_queues</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;queue&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]]</span>
+
+
+<span class="k">def</span> <span class="nf">get_slurm_queues</span><span class="p">():</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s2">&quot;sinfo&quot;</span><span class="p">],</span> <span class="n">shell</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+    <span class="n">all_queues</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">all_queues</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    <span class="n">all_queues</span> <span class="o">=</span> <span class="n">all_queues</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">all_queues</span> <span class="o">=</span> <span class="p">[</span><span class="n">q</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">all_queues</span> <span class="k">if</span> <span class="n">q</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;up&#39;</span><span class="p">]</span>
+    <span class="n">all_queues</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">all_queues</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">q</span> <span class="k">if</span> <span class="s2">&quot;*&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">q</span> <span class="k">else</span> <span class="n">q</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">all_queues</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_test_jlist</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s1">&#39;jlist&#39;</span><span class="p">],</span> <span class="n">shell</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">def</span> <span class="nf">run_nbs_cmd</span><span class="p">(</span><span class="n">cmd</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_test_jlist</span><span class="p">()</span> <span class="ow">and</span> <span class="n">sysconst</span><span class="o">.</span><span class="n">nbs_ssh</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;cd </span><span class="si">%s</span><span class="s2">; </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">cmd</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s1">&#39;ssh&#39;</span><span class="p">,</span> <span class="n">sysconst</span><span class="o">.</span><span class="n">nbs_ssh</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">cmd</span><span class="p">],</span> <span class="n">shell</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="n">shell</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">p</span>
+
 </pre></div>
 
           </div>
@@ -832,6 +1026,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
       </ul>
