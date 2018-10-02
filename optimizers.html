@@ -45,14 +45,477 @@
             
   <p>The files module contains various functions aiding in file input and output.</p>
 <ul class="simple">
-<li><code class="xref py py-func docutils literal"><span class="pre">steepest_descent()</span></code></li>
-<li><code class="xref py py-func docutils literal"><span class="pre">bfgs()</span></code></li>
-<li><code class="xref py py-func docutils literal"><span class="pre">lbfgs()</span></code></li>
-<li><code class="xref py py-func docutils literal"><span class="pre">quick_min()</span></code></li>
-<li><code class="xref py py-func docutils literal"><span class="pre">fire()</span></code></li>
-<li><code class="xref py py-func docutils literal"><span class="pre">conjugate_gradient()</span></code></li>
+<li><a class="reference internal" href="#module-steepest_descent" title="steepest_descent"><code class="xref py py-func docutils literal"><span class="pre">steepest_descent()</span></code></a></li>
+<li><a class="reference internal" href="#module-bfgs" title="bfgs"><code class="xref py py-func docutils literal"><span class="pre">bfgs()</span></code></a></li>
+<li><a class="reference internal" href="#module-lbfgs" title="lbfgs"><code class="xref py py-func docutils literal"><span class="pre">lbfgs()</span></code></a></li>
+<li><a class="reference internal" href="#module-quick_min" title="quick_min"><code class="xref py py-func docutils literal"><span class="pre">quick_min()</span></code></a></li>
+<li><a class="reference internal" href="#module-fire" title="fire"><code class="xref py py-func docutils literal"><span class="pre">fire()</span></code></a></li>
+<li><a class="reference internal" href="#module-conjugate_gradient" title="conjugate_gradient"><code class="xref py py-func docutils literal"><span class="pre">conjugate_gradient()</span></code></a></li>
 </ul>
 <hr class="docutils" />
+<span class="target" id="module-steepest_descent"></span><dl class="function">
+<dt id="steepest_descent.steepest_descent">
+<code class="descclassname">steepest_descent.</code><code class="descname">steepest_descent</code><span class="sig-paren">(</span><em>params</em>, <em>gradient</em>, <em>NEB_obj=None</em>, <em>new_opt_params={}</em>, <em>extra_args_gradient=None</em>, <em>extra_args_target=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/steepest_descent.html#steepest_descent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#steepest_descent.steepest_descent" title="Permalink to this definition">¶</a></dt>
+<dd><p>A steepest descent optimizer, overloaded for NEB use.</p>
+<p><em>Parameters</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of parameters to be optimized.</dd>
+<dt>gradient: <em>func</em></dt>
+<dd>A function that, given params, returns the gradient.</dd>
+<dt>NEB_obj: <a class="reference internal" href="codebase.html#neb.NEB" title="neb.NEB"><code class="xref py py-class docutils literal"><span class="pre">neb.NEB</span></code></a></dt>
+<dd>An NEB object to use.</dd>
+<dt>new_opt_params: <em>dict</em></dt>
+<dd><p class="first">A dictionary holding any changes to the optimization algorithm’s
+parameters.  This includes the following -</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>step_size: <em>float</em></dt>
+<dd>Step size to take.</dd>
+<dt>step_size_adjustment: <em>float</em></dt>
+<dd>A factor to adjust step_size when a bad step is made.</dd>
+<dt>max_step: <em>float</em></dt>
+<dd>A maximum allowable step length. If 0, any step is ok.</dd>
+<dt>target_function: <em>func</em></dt>
+<dd>A function that will help decide if backtracking is needed
+or not.  This function will be used to verify BFGS is
+minimizing.  If nothing is passed, but NEB_obj is not None,
+the NEB_obj.get_error function will be called.</dd>
+<dt>armijo_line_search_factor: <em>float</em></dt>
+<dd>A factor for the armijo line search.</dd>
+<dt>linesearch: <em>str</em></dt>
+<dd>Whether to use the <em>armijo</em> or <em>backtrack</em> linesearch
+method.  If None is passed, a static step_size is used.</dd>
+<dt>reset_when_in_trouble: <em>bool</em></dt>
+<dd>Whether to reset the Hessian to Identity when bad steps
+have been taken.</dd>
+<dt>reset_step_size: <em>int</em></dt>
+<dd>How many iterations of ‘good’ steps to take before
+resetting step_size to its initial value.</dd>
+<dt>accelerate: <em>bool</em></dt>
+<dd>Whether to accelerate via increasing step_size by
+1/step_size_adjustment when no bad steps are taken after
+<em>reset_step_size</em> iterations.</dd>
+<dt>maxiter: <em>int</em></dt>
+<dd>Maximum number of iterations for the optimizer to run.
+If None, then the code runs indefinitely.</dd>
+<dt>g_rms: <em>float</em></dt>
+<dd>The RMS value for which to optimize the gradient to.</dd>
+<dt>g_max: <em>float</em></dt>
+<dd>The maximum gradient value to be allowed.</dd>
+<dt>fit_rigid: <em>bool</em></dt>
+<dd>Remove erroneous rotation and translations during NEB.</dd>
+<dt>dimensions: <em>int</em></dt>
+<dd>The number of dimensions for the optimizer to run in.
+By default this is 3 (for NEB atomic coordinates.)</dd>
+<dt>callback: <em>func, optional</em></dt>
+<dd>A function to be run after each optimization loop.</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+<p><em>Returns</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of the optimized parameters.</dd>
+<dt>code: <em>int</em></dt>
+<dd>An integer describing how the algorithm converged.  This can be
+identified in the constants file.</dd>
+<dt>iters: <em>int</em></dt>
+<dd>The number of iterations the optimizer ran for.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<span class="target" id="module-bfgs"></span><dl class="function">
+<dt id="bfgs.bfgs">
+<code class="descclassname">bfgs.</code><code class="descname">bfgs</code><span class="sig-paren">(</span><em>params</em>, <em>gradient</em>, <em>NEB_obj=None</em>, <em>new_opt_params={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bfgs.html#bfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bfgs.bfgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Broyden-Fletcher-Goldfarb-Shanno optimizer, overloaded for NEB use.</p>
+<p><em>Parameters</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of parameters to be optimized.</dd>
+<dt>gradient: <em>func</em></dt>
+<dd>A function that, given params, returns the gradient.</dd>
+<dt>NEB_obj: <a class="reference internal" href="codebase.html#neb.NEB" title="neb.NEB"><code class="xref py py-class docutils literal"><span class="pre">neb.NEB</span></code></a></dt>
+<dd>An NEB object to use.</dd>
+<dt>new_opt_params: <em>dict</em></dt>
+<dd><p class="first">A dictionary holding any changes to the optimization algorithm’s
+parameters.  This includes the following -</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>step_size: <em>float</em></dt>
+<dd>Step size to take.</dd>
+<dt>step_size_adjustment: <em>float</em></dt>
+<dd>A factor to adjust step_size when a bad step is made.</dd>
+<dt>max_step: <em>float</em></dt>
+<dd>A maximum allowable step length. If 0, any step is ok.</dd>
+<dt>target_function: <em>func</em></dt>
+<dd>A function that will help decide if backtracking is needed
+or not.  This function will be used to verify BFGS is
+minimizing.  If nothing is passed, but NEB_obj is not None,
+the NEB_obj.get_error function will be called.</dd>
+<dt>armijo_line_search_factor: <em>float</em></dt>
+<dd>A factor for the armijo line search.</dd>
+<dt>linesearch: <em>str</em></dt>
+<dd>Whether to use the <em>armijo</em> or <em>backtrack</em> linesearch
+method.  If None is passed, a static step_size is used.</dd>
+<dt>reset_when_in_trouble: <em>bool</em></dt>
+<dd>Whether to reset the Hessian to Identity when bad steps
+have been taken.</dd>
+<dt>reset_step_size: <em>int</em></dt>
+<dd>How many iterations of ‘good’ steps to take before
+resetting step_size to its initial value.</dd>
+<dt>N_reset_hess: <em>int</em></dt>
+<dd>A hard reset to the hessian to be applied every N
+iterations.</dd>
+<dt>start_hess: <em>int, float, or matrix</em></dt>
+<dd>A starting matrix to use instead of the identity.  If an
+integer or float is passed, then the starting hessian is
+a scaled identity matrix.</dd>
+<dt>use_numopt_start: <em>bool</em></dt>
+<dd>Whether to use the starting hessian guess laid out by
+Nocedal and Wright in the Numerical Operations textbook,
+page 178.  H0 = (&lt;y|s&gt;) / (&lt;y|y&gt;) * I.  If chosen,
+start_hess is set to the identity matrix.</dd>
+<dt>accelerate: <em>bool</em></dt>
+<dd>Whether to accelerate via increasing step_size by
+1/step_size_adjustment when no bad steps are taken after
+<em>reset_step_size</em> iterations.</dd>
+<dt>maxiter: <em>int</em></dt>
+<dd>Maximum number of iterations for the optimizer to run.
+If None, then the code runs indefinitely.</dd>
+<dt>g_rms: <em>float</em></dt>
+<dd>The RMS value for which to optimize the gradient to.</dd>
+<dt>g_max: <em>float</em></dt>
+<dd>The maximum gradient value to be allowed.</dd>
+<dt>fit_rigid: <em>bool</em></dt>
+<dd>Remove erroneous rotation and translations during NEB.</dd>
+<dt>dimensions: <em>int</em></dt>
+<dd>The number of dimensions for the optimizer to run in.
+By default this is 3 (for NEB atomic coordinates.)</dd>
+<dt>callback: <em>func, optional</em></dt>
+<dd>A function to be run after each optimization loop.</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+<p><em>Returns</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of the optimized parameters.</dd>
+<dt>code: <em>int</em></dt>
+<dd>An integer describing how the algorithm converged.  This can be
+identified in the constants file.</dd>
+<dt>iters: <em>int</em></dt>
+<dd>The number of iterations the optimizer ran for.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<span class="target" id="module-lbfgs"></span><dl class="function">
+<dt id="lbfgs.lbfgs">
+<code class="descclassname">lbfgs.</code><code class="descname">lbfgs</code><span class="sig-paren">(</span><em>params</em>, <em>gradient</em>, <em>NEB_obj=None</em>, <em>new_opt_params={}</em>, <em>extra_args_gradient=None</em>, <em>extra_args_target=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lbfgs.html#lbfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lbfgs.lbfgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Limited Memory Broyden-Fletcher-Goldfarb-Shanno optimizer, overloaded
+for NEB use.</p>
+<p><em>Parameters</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of parameters to be optimized.</dd>
+<dt>gradient: <em>func</em></dt>
+<dd>A function that, given params, returns the gradient.</dd>
+<dt>NEB_obj: <a class="reference internal" href="codebase.html#neb.NEB" title="neb.NEB"><code class="xref py py-class docutils literal"><span class="pre">neb.NEB</span></code></a></dt>
+<dd>An NEB object to use.</dd>
+<dt>new_opt_params: <em>dict</em></dt>
+<dd><p class="first">A dictionary holding any changes to the optimization algorithm’s
+parameters.  This includes the following -</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>step_size: <em>float</em></dt>
+<dd>Step size to take.</dd>
+<dt>step_size_adjustment: <em>float</em></dt>
+<dd>A factor to adjust step_size when a bad step is made.</dd>
+<dt>max_step: <em>float</em></dt>
+<dd>A maximum allowable step length. If 0, any step is ok.</dd>
+<dt>max_steps_remembered: <em>int</em></dt>
+<dd>The maximum number of previous iterations to save.</dd>
+<dt>target_function: <em>func</em></dt>
+<dd>A function that will help decide if backtracking is needed
+or not.  This function will be used to verify LBFGS is
+minimizing.  If nothing is passed, but NEB_obj is not None,
+the NEB_obj.get_error function will be called.</dd>
+<dt>armijo_line_search_factor: <em>float</em></dt>
+<dd>A factor for the armijo line search.</dd>
+<dt>linesearch: <em>str</em></dt>
+<dd>Whether to use the <em>armijo</em> or <em>backtrack</em> linesearch
+method.  If None is passed, a static step_size is used.</dd>
+<dt>reset_when_in_trouble: <em>bool</em></dt>
+<dd>Whether to reset the stored parameters and gradients when a
+bad step has been taken.</dd>
+<dt>reset_step_size: <em>int</em></dt>
+<dd>How many iterations of ‘good’ steps to take before
+resetting step_size to its initial value.</dd>
+<dt>N_reset_hess: <em>int</em></dt>
+<dd>A hard reset to the hessian to be applied every N
+iterations.</dd>
+<dt>start_hess: <em>int, float, or matrix</em></dt>
+<dd>A starting integer or float to scale the starting hessian.</dd>
+<dt>use_numopt_start: <em>bool</em></dt>
+<dd>Whether to use the starting hessian guess laid out by
+Nocedal and Wright in the Numerical Operations textbook,
+page 178.  H0 = (&lt;y|s&gt;) / (&lt;y|y&gt;) * I.  If chosen,
+start_hess is set to the identity matrix.</dd>
+<dt>accelerate: <em>bool</em></dt>
+<dd>Whether to accelerate via increasing step_size by
+1/step_size_adjustment when no bad steps are taken after
+<em>reset_step_size</em> iterations.</dd>
+<dt>maxiter: <em>int</em></dt>
+<dd>Maximum number of iterations for the optimizer to run.
+If None, then the code runs indefinitely.</dd>
+<dt>g_rms: <em>float</em></dt>
+<dd>The RMS value for which to optimize the gradient to.</dd>
+<dt>g_max: <em>float</em></dt>
+<dd>The maximum gradient value to be allowed.</dd>
+<dt>fit_rigid: <em>bool</em></dt>
+<dd>Remove erroneous rotation and translations during NEB.</dd>
+<dt>dimensions: <em>int</em></dt>
+<dd>The number of dimensions for the optimizer to run in.
+By default this is 3 (for NEB atomic coordinates.)</dd>
+<dt>callback: <em>func, optional</em></dt>
+<dd>A function to be run after each optimization loop.</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+<p><em>Returns</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of the optimized parameters.</dd>
+<dt>code: <em>int</em></dt>
+<dd>An integer describing how the algorithm converged.  This can be
+identified in the constants file.</dd>
+<dt>iters: <em>int</em></dt>
+<dd>The number of iterations the optimizer ran for.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<span class="target" id="module-quick_min"></span><dl class="function">
+<dt id="quick_min.quick_min">
+<code class="descclassname">quick_min.</code><code class="descname">quick_min</code><span class="sig-paren">(</span><em>params</em>, <em>gradient</em>, <em>NEB_obj=None</em>, <em>new_opt_params={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/quick_min.html#quick_min"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#quick_min.quick_min" title="Permalink to this definition">¶</a></dt>
+<dd><p>A quick min optimizer, overloaded for NEB use.
+Note, this will ONLY work for use within the NEB code.</p>
+<p><em>Parameters</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of parameters to be optimized.</dd>
+<dt>gradient: <em>func</em></dt>
+<dd>A function that, given params, returns the gradient.</dd>
+<dt>NEB_obj: <a class="reference internal" href="codebase.html#neb.NEB" title="neb.NEB"><code class="xref py py-class docutils literal"><span class="pre">neb.NEB</span></code></a></dt>
+<dd>An NEB object to use.</dd>
+<dt>new_opt_params: <em>dict</em></dt>
+<dd><p class="first">A dictionary holding any changes to the optimization algorithm’s
+parameters.  This includes the following -</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>dt: <em>float</em></dt>
+<dd>Time step size to take.</dd>
+<dt>max_step: <em>float</em></dt>
+<dd>The maximum step size to take.</dd>
+<dt>viscosity: <em>float</em></dt>
+<dd>The viscosity within a verlet step (used if euler is
+False).</dd>
+<dt>euler: <em>bool</em></dt>
+<dd>Whether to make an euler step or not.</dd>
+<dt>maxiter: <em>int</em></dt>
+<dd>Maximum number of iterations for the optimizer to run.
+If None, then the code runs indefinitely.</dd>
+<dt>g_rms: <em>float</em></dt>
+<dd>The RMS value for which to optimize the gradient to.</dd>
+<dt>g_max: <em>float</em></dt>
+<dd>The maximum gradient value to be allowed.</dd>
+<dt>fit_rigid: <em>bool</em></dt>
+<dd>Remove erroneous rotation and translations during NEB.</dd>
+<dt>verbose: <em>bool</em></dt>
+<dd>Whether to have additional output.</dd>
+<dt>callback: <em>func, optional</em></dt>
+<dd>A function to be run after each optimization loop.</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+<p><em>Returns</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of the optimized parameters.</dd>
+<dt>code: <em>int</em></dt>
+<dd>An integer describing how the algorithm converged.  This can be
+identified in the constants file.</dd>
+<dt>iters: <em>int</em></dt>
+<dd>The number of iterations the optimizer ran for.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<span class="target" id="module-fire"></span><dl class="function">
+<dt id="fire.fire">
+<code class="descclassname">fire.</code><code class="descname">fire</code><span class="sig-paren">(</span><em>params</em>, <em>gradient</em>, <em>NEB_obj=None</em>, <em>new_opt_params={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fire.html#fire"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fire.fire" title="Permalink to this definition">¶</a></dt>
+<dd><p>A FIRE optimizer, overloaded for NEB use.</p>
+<p><em>Parameters</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of parameters to be optimized.</dd>
+<dt>gradient: <em>func</em></dt>
+<dd>A function that, given params, returns the gradient.</dd>
+<dt>NEB_obj: <a class="reference internal" href="codebase.html#neb.NEB" title="neb.NEB"><code class="xref py py-class docutils literal"><span class="pre">neb.NEB</span></code></a></dt>
+<dd>An NEB object to use.</dd>
+<dt>new_opt_params: <em>dict</em></dt>
+<dd><p class="first">A dictionary holding any changes to the optimization algorithm’s
+parameters.  This includes the following -</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>dt: <em>float</em></dt>
+<dd>Time step size to take.</dd>
+<dt>dtmax: <em>float, optional</em></dt>
+<dd>The maximum dt allowed.</dd>
+<dt>max_step: <em>float</em></dt>
+<dd>The maximum step size to take.</dd>
+<dt>Nmin: <em>int, optional</em></dt>
+<dd>The minimum number of steps before acceleration occurs.</dd>
+<dt>finc: <em>float, optional</em></dt>
+<dd>The factor by which dt increases.</dd>
+<dt>fdec: <em>float, optional</em></dt>
+<dd>The factor by which dt decreases.</dd>
+<dt>astart: <em>float, optional</em></dt>
+<dd>The starting acceleration.</dd>
+<dt>fa: <em>float, optional</em></dt>
+<dd>The factor by which the acceleration is scaled.</dd>
+<dt>viscosity: <em>float</em></dt>
+<dd>The viscosity within a verlet step (used if euler is
+False).</dd>
+<dt>euler: <em>bool</em></dt>
+<dd>Whether to make an euler step or not.</dd>
+<dt>maxiter: <em>int</em></dt>
+<dd>Maximum number of iterations for the optimizer to run.
+If None, then the code runs indefinitely.</dd>
+<dt>g_rms: <em>float</em></dt>
+<dd>The RMS value for which to optimize the gradient to.</dd>
+<dt>g_max: <em>float</em></dt>
+<dd>The maximum gradient value to be allowed.</dd>
+<dt>fit_rigid: <em>bool</em></dt>
+<dd>Remove erroneous rotation and translations during NEB.</dd>
+<dt>callback: <em>func, optional</em></dt>
+<dd>A function to be run after each optimization loop.</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+<p><em>Returns</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of the optimized parameters.</dd>
+<dt>code: <em>int</em></dt>
+<dd>An integer describing how the algorithm converged.  This can be
+identified in the constants file.</dd>
+<dt>iters: <em>int</em></dt>
+<dd>The number of iterations the optimizer ran for.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<span class="target" id="module-conjugate_gradient"></span><dl class="function">
+<dt id="conjugate_gradient.conjugate_gradient">
+<code class="descclassname">conjugate_gradient.</code><code class="descname">conjugate_gradient</code><span class="sig-paren">(</span><em>params</em>, <em>gradient</em>, <em>NEB_obj=None</em>, <em>new_opt_params={}</em>, <em>extra_args_gradient=None</em>, <em>extra_args_target=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/conjugate_gradient.html#conjugate_gradient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#conjugate_gradient.conjugate_gradient" title="Permalink to this definition">¶</a></dt>
+<dd><p>A conjugate gradient optimizer, overloaded for NEB use.</p>
+<p><em>Parameters</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of parameters to be optimized.</dd>
+<dt>gradient: <em>func</em></dt>
+<dd>A function that, given params and an abstract list of extra
+arguments, returns the gradient.</dd>
+<dt>NEB_obj: <a class="reference internal" href="codebase.html#neb.NEB" title="neb.NEB"><code class="xref py py-class docutils literal"><span class="pre">neb.NEB</span></code></a></dt>
+<dd>An NEB object to use.</dd>
+<dt>new_opt_params: <em>dict</em></dt>
+<dd><p class="first">A dictionary holding any changes to the optimization algorithm’s
+parameters.  This includes the following -</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>step_size: <em>float</em></dt>
+<dd>Step size to take.</dd>
+<dt>step_size_adjustment: <em>float</em></dt>
+<dd>A factor to adjust step_size when a bad step is made.</dd>
+<dt>method: <em>str</em></dt>
+<dd>Whether to use the Fletcher-Reeves (FR) method of
+calculating beta, or the Polak-Ribiere (PR) method.</dd>
+<dt>max_step: <em>float</em></dt>
+<dd>A maximum allowable step length. If 0, any step is ok.</dd>
+<dt>target_function: <em>func</em></dt>
+<dd>A function that will help decide if backtracking is needed
+or not.  This function will be used to verify BFGS is
+minimizing.  If nothing is passed, but NEB_obj is not None,
+the NEB_obj.get_error function will be called.</dd>
+<dt>armijo_line_search_factor: <em>float</em></dt>
+<dd>A factor for the armijo line search.</dd>
+<dt>linesearch: <em>str</em></dt>
+<dd>Whether to use the <em>armijo</em> or <em>backtrack</em> linesearch
+method.  If None is passed, a static step_size is used.</dd>
+<dt>reset_step_size: <em>int</em></dt>
+<dd>How many iterations of ‘good’ steps to take before
+resetting step_size to its initial value.</dd>
+<dt>accelerate: <em>bool</em></dt>
+<dd>Whether to accelerate via increasing step_size by
+1/step_size_adjustment when no bad steps are taken after
+<em>reset_step_size</em> iterations.</dd>
+<dt>maxiter: <em>int</em></dt>
+<dd>Maximum number of iterations for the optimizer to run.
+If None, then the code runs indefinitely.</dd>
+<dt>g_rms: <em>float</em></dt>
+<dd>The RMS value for which to optimize the gradient to.</dd>
+<dt>g_max: <em>float</em></dt>
+<dd>The maximum gradient value to be allowed.</dd>
+<dt>fit_rigid: <em>bool</em></dt>
+<dd>Remove erroneous rotation and translations during NEB.</dd>
+<dt>dimensions: <em>int</em></dt>
+<dd>The number of dimensions for the optimizer to run in.
+By default this is 3 (for NEB atomic coordinates.)</dd>
+<dt>callback: <em>func, optional</em></dt>
+<dd>A function to be run after each optimization loop.</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+<p><em>Returns</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of the optimized parameters.</dd>
+<dt>code: <em>int</em></dt>
+<dd>An integer describing how the algorithm converged.  This can be
+identified in the constants file.</dd>
+<dt>iters: <em>int</em></dt>
+<dd>The number of iterations the optimizer ran for.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
 
 
           </div>

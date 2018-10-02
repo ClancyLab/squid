@@ -47,14 +47,14 @@
   <h1>Source code for quick_min</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">import</span> <span class="nn">units</span>
-<span class="kn">from</span> <span class="nn">constants</span> <span class="k">import</span> <span class="n">FAIL_CONVERGENCE</span>
-<span class="kn">from</span> <span class="nn">constants</span> <span class="k">import</span> <span class="n">MAXITER_CONVERGENCE</span>
-<span class="kn">from</span> <span class="nn">constants</span> <span class="k">import</span> <span class="n">G_MAX_CONVERGENCE</span>
-<span class="kn">from</span> <span class="nn">constants</span> <span class="k">import</span> <span class="n">G_RMS_CONVERGENCE</span>
+<span class="kn">from</span> <span class="nn">squid</span> <span class="k">import</span> <span class="n">units</span>
+<span class="kn">from</span> <span class="nn">squid.constants</span> <span class="k">import</span> <span class="n">FAIL_CONVERGENCE</span>
+<span class="kn">from</span> <span class="nn">squid.constants</span> <span class="k">import</span> <span class="n">MAXITER_CONVERGENCE</span>
+<span class="kn">from</span> <span class="nn">squid.constants</span> <span class="k">import</span> <span class="n">G_MAX_CONVERGENCE</span>
+<span class="kn">from</span> <span class="nn">squid.constants</span> <span class="k">import</span> <span class="n">G_RMS_CONVERGENCE</span>
 
 
-<div class="viewcode-block" id="quick_min"><a class="viewcode-back" href="../optimizers.html#quick_min.quick_min">[docs]</a><span class="k">def</span> <span class="nf">quick_min</span><span class="p">(</span><span class="n">params</span><span class="p">,</span>
+<div class="viewcode-block" id="quick_min"><a class="viewcode-back" href="../codebase.html#quick_min.quick_min">[docs]</a><span class="k">def</span> <span class="nf">quick_min</span><span class="p">(</span><span class="n">params</span><span class="p">,</span>
               <span class="n">gradient</span><span class="p">,</span>
               <span class="n">NEB_obj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
               <span class="n">new_opt_params</span><span class="o">=</span><span class="p">{}):</span>

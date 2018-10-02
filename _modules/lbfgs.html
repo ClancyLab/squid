@@ -48,16 +48,16 @@
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 
-<span class="kn">import</span> <span class="nn">units</span>
-<span class="kn">from</span> <span class="nn">backtrack</span> <span class="k">import</span> <span class="n">backtrack</span>
-<span class="kn">from</span> <span class="nn">constants</span> <span class="k">import</span> <span class="n">FAIL_CONVERGENCE</span>
-<span class="kn">from</span> <span class="nn">constants</span> <span class="k">import</span> <span class="n">STEP_SIZE_TOO_SMALL</span>
-<span class="kn">from</span> <span class="nn">constants</span> <span class="k">import</span> <span class="n">MAXITER_CONVERGENCE</span>
-<span class="kn">from</span> <span class="nn">constants</span> <span class="k">import</span> <span class="n">G_MAX_CONVERGENCE</span>
-<span class="kn">from</span> <span class="nn">constants</span> <span class="k">import</span> <span class="n">G_RMS_CONVERGENCE</span>
+<span class="kn">from</span> <span class="nn">squid</span> <span class="k">import</span> <span class="n">units</span>
+<span class="kn">from</span> <span class="nn">squid.optimizers.backtrack</span> <span class="k">import</span> <span class="n">backtrack</span>
+<span class="kn">from</span> <span class="nn">squid.constants</span> <span class="k">import</span> <span class="n">FAIL_CONVERGENCE</span>
+<span class="kn">from</span> <span class="nn">squid.constants</span> <span class="k">import</span> <span class="n">STEP_SIZE_TOO_SMALL</span>
+<span class="kn">from</span> <span class="nn">squid.constants</span> <span class="k">import</span> <span class="n">MAXITER_CONVERGENCE</span>
+<span class="kn">from</span> <span class="nn">squid.constants</span> <span class="k">import</span> <span class="n">G_MAX_CONVERGENCE</span>
+<span class="kn">from</span> <span class="nn">squid.constants</span> <span class="k">import</span> <span class="n">G_RMS_CONVERGENCE</span>
 
 
-<div class="viewcode-block" id="lbfgs"><a class="viewcode-back" href="../optimizers.html#lbfgs.lbfgs">[docs]</a><span class="k">def</span> <span class="nf">lbfgs</span><span class="p">(</span><span class="n">params</span><span class="p">,</span>
+<div class="viewcode-block" id="lbfgs"><a class="viewcode-back" href="../codebase.html#lbfgs.lbfgs">[docs]</a><span class="k">def</span> <span class="nf">lbfgs</span><span class="p">(</span><span class="n">params</span><span class="p">,</span>
           <span class="n">gradient</span><span class="p">,</span>
           <span class="n">NEB_obj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
           <span class="n">new_opt_params</span><span class="o">=</span><span class="p">{},</span>

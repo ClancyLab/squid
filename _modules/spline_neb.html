@@ -62,7 +62,7 @@
 <span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="k">import</span> <span class="n">block_diag</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">copy</span>
-<span class="c1"># Clancelot imports</span>
+<span class="c1"># Squid imports</span>
 <span class="kn">import</span> <span class="nn">geometry</span>
 <span class="kn">import</span> <span class="nn">print_helper</span>
 <span class="kn">import</span> <span class="nn">orca</span>
@@ -70,12 +70,12 @@
 <span class="kn">import</span> <span class="nn">units</span>
 <span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="n">exp</span>
 
-<span class="kn">from</span> <span class="nn">steepest_descent</span> <span class="k">import</span> <span class="n">steepest_descent</span>
-<span class="kn">from</span> <span class="nn">bfgs</span> <span class="k">import</span> <span class="n">bfgs</span>
-<span class="kn">from</span> <span class="nn">lbfgs</span> <span class="k">import</span> <span class="n">lbfgs</span>
-<span class="kn">from</span> <span class="nn">quick_min</span> <span class="k">import</span> <span class="n">quick_min</span>
-<span class="kn">from</span> <span class="nn">fire</span> <span class="k">import</span> <span class="n">fire</span>
-<span class="kn">from</span> <span class="nn">conjugate_gradient</span> <span class="k">import</span> <span class="n">conjugate_gradient</span>
+<span class="kn">from</span> <span class="nn">optimizers.steepest_descent</span> <span class="k">import</span> <span class="n">steepest_descent</span>
+<span class="kn">from</span> <span class="nn">optimizers.bfgs</span> <span class="k">import</span> <span class="n">bfgs</span>
+<span class="kn">from</span> <span class="nn">optimizers.lbfgs</span> <span class="k">import</span> <span class="n">lbfgs</span>
+<span class="kn">from</span> <span class="nn">optimizers.quick_min</span> <span class="k">import</span> <span class="n">quick_min</span>
+<span class="kn">from</span> <span class="nn">optimizers.fire</span> <span class="k">import</span> <span class="n">fire</span>
+<span class="kn">from</span> <span class="nn">optimizers.conjugate_gradient</span> <span class="k">import</span> <span class="n">conjugate_gradient</span>
 
 <span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="k">import</span> <span class="n">minimize</span>
 
@@ -85,7 +85,7 @@
 <span class="kn">from</span> <span class="nn">constants</span> <span class="k">import</span> <span class="n">G_MAX_CONVERGENCE</span>
 <span class="kn">from</span> <span class="nn">constants</span> <span class="k">import</span> <span class="n">G_RMS_CONVERGENCE</span>
 
-<span class="c1"># Clancelot curve smooting method using the Nudged Elastic Band package</span>
+<span class="c1"># Squid curve smooting method using the Nudged Elastic Band package</span>
 <span class="c1"># Currently supports g09</span>
 <span class="c1"># Cite NEB:</span>
 <span class="c1">#     http://scitation.aip.org/content/aip/journal/jcp/113/22/10.1063/1.1323224</span>

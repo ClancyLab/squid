@@ -1809,6 +1809,7 @@
 <span class="sd">    A function to ensure that consecutive frames of an xyz file are in the</span>
 <span class="sd">    same order.  This is done by minimizing the frobenious norm between</span>
 <span class="sd">    consecutive frames with the application of a perterbation matrix P.</span>
+
 <span class="sd">                      minimize ||PR_{i+1} - R_{i}||^2.</span>
 
 <span class="sd">    This problem boils down to maximizing Tr[P R_{i + 1} R_{i}^T].  We solve</span>
@@ -1817,7 +1818,9 @@
 
 <span class="sd">    NOTE! This only works when we have the problem in which atom order only is</span>
 <span class="sd">    mixed up.  If we also have rotations, then the problem actually becomes:</span>
+
 <span class="sd">                      minimize ||PAR_{i+1} - R_{i}||^2</span>
+
 <span class="sd">    Which is, unfortunately, harder as we now have two unknown</span>
 <span class="sd">    matrices (P and A)!</span>
 

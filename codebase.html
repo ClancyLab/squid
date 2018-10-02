@@ -3555,14 +3555,477 @@ hessian.</dd>
 <h2>optimizers<a class="headerlink" href="#optimizers" title="Permalink to this headline">¶</a></h2>
 <p>The files module contains various functions aiding in file input and output.</p>
 <ul class="simple">
-<li><code class="xref py py-func docutils literal"><span class="pre">steepest_descent()</span></code></li>
-<li><code class="xref py py-func docutils literal"><span class="pre">bfgs()</span></code></li>
-<li><code class="xref py py-func docutils literal"><span class="pre">lbfgs()</span></code></li>
-<li><code class="xref py py-func docutils literal"><span class="pre">quick_min()</span></code></li>
-<li><code class="xref py py-func docutils literal"><span class="pre">fire()</span></code></li>
-<li><code class="xref py py-func docutils literal"><span class="pre">conjugate_gradient()</span></code></li>
+<li><a class="reference internal" href="#module-steepest_descent" title="steepest_descent"><code class="xref py py-func docutils literal"><span class="pre">steepest_descent()</span></code></a></li>
+<li><a class="reference internal" href="#module-bfgs" title="bfgs"><code class="xref py py-func docutils literal"><span class="pre">bfgs()</span></code></a></li>
+<li><a class="reference internal" href="#module-lbfgs" title="lbfgs"><code class="xref py py-func docutils literal"><span class="pre">lbfgs()</span></code></a></li>
+<li><a class="reference internal" href="#module-quick_min" title="quick_min"><code class="xref py py-func docutils literal"><span class="pre">quick_min()</span></code></a></li>
+<li><a class="reference internal" href="#module-fire" title="fire"><code class="xref py py-func docutils literal"><span class="pre">fire()</span></code></a></li>
+<li><a class="reference internal" href="#module-conjugate_gradient" title="conjugate_gradient"><code class="xref py py-func docutils literal"><span class="pre">conjugate_gradient()</span></code></a></li>
 </ul>
 <hr class="docutils" />
+<span class="target" id="module-steepest_descent"></span><dl class="function">
+<dt id="steepest_descent.steepest_descent">
+<code class="descclassname">steepest_descent.</code><code class="descname">steepest_descent</code><span class="sig-paren">(</span><em>params</em>, <em>gradient</em>, <em>NEB_obj=None</em>, <em>new_opt_params={}</em>, <em>extra_args_gradient=None</em>, <em>extra_args_target=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/steepest_descent.html#steepest_descent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#steepest_descent.steepest_descent" title="Permalink to this definition">¶</a></dt>
+<dd><p>A steepest descent optimizer, overloaded for NEB use.</p>
+<p><em>Parameters</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of parameters to be optimized.</dd>
+<dt>gradient: <em>func</em></dt>
+<dd>A function that, given params, returns the gradient.</dd>
+<dt>NEB_obj: <a class="reference internal" href="#neb.NEB" title="neb.NEB"><code class="xref py py-class docutils literal"><span class="pre">neb.NEB</span></code></a></dt>
+<dd>An NEB object to use.</dd>
+<dt>new_opt_params: <em>dict</em></dt>
+<dd><p class="first">A dictionary holding any changes to the optimization algorithm’s
+parameters.  This includes the following -</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>step_size: <em>float</em></dt>
+<dd>Step size to take.</dd>
+<dt>step_size_adjustment: <em>float</em></dt>
+<dd>A factor to adjust step_size when a bad step is made.</dd>
+<dt>max_step: <em>float</em></dt>
+<dd>A maximum allowable step length. If 0, any step is ok.</dd>
+<dt>target_function: <em>func</em></dt>
+<dd>A function that will help decide if backtracking is needed
+or not.  This function will be used to verify BFGS is
+minimizing.  If nothing is passed, but NEB_obj is not None,
+the NEB_obj.get_error function will be called.</dd>
+<dt>armijo_line_search_factor: <em>float</em></dt>
+<dd>A factor for the armijo line search.</dd>
+<dt>linesearch: <em>str</em></dt>
+<dd>Whether to use the <em>armijo</em> or <em>backtrack</em> linesearch
+method.  If None is passed, a static step_size is used.</dd>
+<dt>reset_when_in_trouble: <em>bool</em></dt>
+<dd>Whether to reset the Hessian to Identity when bad steps
+have been taken.</dd>
+<dt>reset_step_size: <em>int</em></dt>
+<dd>How many iterations of ‘good’ steps to take before
+resetting step_size to its initial value.</dd>
+<dt>accelerate: <em>bool</em></dt>
+<dd>Whether to accelerate via increasing step_size by
+1/step_size_adjustment when no bad steps are taken after
+<em>reset_step_size</em> iterations.</dd>
+<dt>maxiter: <em>int</em></dt>
+<dd>Maximum number of iterations for the optimizer to run.
+If None, then the code runs indefinitely.</dd>
+<dt>g_rms: <em>float</em></dt>
+<dd>The RMS value for which to optimize the gradient to.</dd>
+<dt>g_max: <em>float</em></dt>
+<dd>The maximum gradient value to be allowed.</dd>
+<dt>fit_rigid: <em>bool</em></dt>
+<dd>Remove erroneous rotation and translations during NEB.</dd>
+<dt>dimensions: <em>int</em></dt>
+<dd>The number of dimensions for the optimizer to run in.
+By default this is 3 (for NEB atomic coordinates.)</dd>
+<dt>callback: <em>func, optional</em></dt>
+<dd>A function to be run after each optimization loop.</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+<p><em>Returns</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of the optimized parameters.</dd>
+<dt>code: <em>int</em></dt>
+<dd>An integer describing how the algorithm converged.  This can be
+identified in the constants file.</dd>
+<dt>iters: <em>int</em></dt>
+<dd>The number of iterations the optimizer ran for.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<span class="target" id="module-bfgs"></span><dl class="function">
+<dt id="bfgs.bfgs">
+<code class="descclassname">bfgs.</code><code class="descname">bfgs</code><span class="sig-paren">(</span><em>params</em>, <em>gradient</em>, <em>NEB_obj=None</em>, <em>new_opt_params={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bfgs.html#bfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bfgs.bfgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Broyden-Fletcher-Goldfarb-Shanno optimizer, overloaded for NEB use.</p>
+<p><em>Parameters</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of parameters to be optimized.</dd>
+<dt>gradient: <em>func</em></dt>
+<dd>A function that, given params, returns the gradient.</dd>
+<dt>NEB_obj: <a class="reference internal" href="#neb.NEB" title="neb.NEB"><code class="xref py py-class docutils literal"><span class="pre">neb.NEB</span></code></a></dt>
+<dd>An NEB object to use.</dd>
+<dt>new_opt_params: <em>dict</em></dt>
+<dd><p class="first">A dictionary holding any changes to the optimization algorithm’s
+parameters.  This includes the following -</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>step_size: <em>float</em></dt>
+<dd>Step size to take.</dd>
+<dt>step_size_adjustment: <em>float</em></dt>
+<dd>A factor to adjust step_size when a bad step is made.</dd>
+<dt>max_step: <em>float</em></dt>
+<dd>A maximum allowable step length. If 0, any step is ok.</dd>
+<dt>target_function: <em>func</em></dt>
+<dd>A function that will help decide if backtracking is needed
+or not.  This function will be used to verify BFGS is
+minimizing.  If nothing is passed, but NEB_obj is not None,
+the NEB_obj.get_error function will be called.</dd>
+<dt>armijo_line_search_factor: <em>float</em></dt>
+<dd>A factor for the armijo line search.</dd>
+<dt>linesearch: <em>str</em></dt>
+<dd>Whether to use the <em>armijo</em> or <em>backtrack</em> linesearch
+method.  If None is passed, a static step_size is used.</dd>
+<dt>reset_when_in_trouble: <em>bool</em></dt>
+<dd>Whether to reset the Hessian to Identity when bad steps
+have been taken.</dd>
+<dt>reset_step_size: <em>int</em></dt>
+<dd>How many iterations of ‘good’ steps to take before
+resetting step_size to its initial value.</dd>
+<dt>N_reset_hess: <em>int</em></dt>
+<dd>A hard reset to the hessian to be applied every N
+iterations.</dd>
+<dt>start_hess: <em>int, float, or matrix</em></dt>
+<dd>A starting matrix to use instead of the identity.  If an
+integer or float is passed, then the starting hessian is
+a scaled identity matrix.</dd>
+<dt>use_numopt_start: <em>bool</em></dt>
+<dd>Whether to use the starting hessian guess laid out by
+Nocedal and Wright in the Numerical Operations textbook,
+page 178.  H0 = (&lt;y|s&gt;) / (&lt;y|y&gt;) * I.  If chosen,
+start_hess is set to the identity matrix.</dd>
+<dt>accelerate: <em>bool</em></dt>
+<dd>Whether to accelerate via increasing step_size by
+1/step_size_adjustment when no bad steps are taken after
+<em>reset_step_size</em> iterations.</dd>
+<dt>maxiter: <em>int</em></dt>
+<dd>Maximum number of iterations for the optimizer to run.
+If None, then the code runs indefinitely.</dd>
+<dt>g_rms: <em>float</em></dt>
+<dd>The RMS value for which to optimize the gradient to.</dd>
+<dt>g_max: <em>float</em></dt>
+<dd>The maximum gradient value to be allowed.</dd>
+<dt>fit_rigid: <em>bool</em></dt>
+<dd>Remove erroneous rotation and translations during NEB.</dd>
+<dt>dimensions: <em>int</em></dt>
+<dd>The number of dimensions for the optimizer to run in.
+By default this is 3 (for NEB atomic coordinates.)</dd>
+<dt>callback: <em>func, optional</em></dt>
+<dd>A function to be run after each optimization loop.</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+<p><em>Returns</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of the optimized parameters.</dd>
+<dt>code: <em>int</em></dt>
+<dd>An integer describing how the algorithm converged.  This can be
+identified in the constants file.</dd>
+<dt>iters: <em>int</em></dt>
+<dd>The number of iterations the optimizer ran for.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<span class="target" id="module-lbfgs"></span><dl class="function">
+<dt id="lbfgs.lbfgs">
+<code class="descclassname">lbfgs.</code><code class="descname">lbfgs</code><span class="sig-paren">(</span><em>params</em>, <em>gradient</em>, <em>NEB_obj=None</em>, <em>new_opt_params={}</em>, <em>extra_args_gradient=None</em>, <em>extra_args_target=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lbfgs.html#lbfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lbfgs.lbfgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Limited Memory Broyden-Fletcher-Goldfarb-Shanno optimizer, overloaded
+for NEB use.</p>
+<p><em>Parameters</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of parameters to be optimized.</dd>
+<dt>gradient: <em>func</em></dt>
+<dd>A function that, given params, returns the gradient.</dd>
+<dt>NEB_obj: <a class="reference internal" href="#neb.NEB" title="neb.NEB"><code class="xref py py-class docutils literal"><span class="pre">neb.NEB</span></code></a></dt>
+<dd>An NEB object to use.</dd>
+<dt>new_opt_params: <em>dict</em></dt>
+<dd><p class="first">A dictionary holding any changes to the optimization algorithm’s
+parameters.  This includes the following -</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>step_size: <em>float</em></dt>
+<dd>Step size to take.</dd>
+<dt>step_size_adjustment: <em>float</em></dt>
+<dd>A factor to adjust step_size when a bad step is made.</dd>
+<dt>max_step: <em>float</em></dt>
+<dd>A maximum allowable step length. If 0, any step is ok.</dd>
+<dt>max_steps_remembered: <em>int</em></dt>
+<dd>The maximum number of previous iterations to save.</dd>
+<dt>target_function: <em>func</em></dt>
+<dd>A function that will help decide if backtracking is needed
+or not.  This function will be used to verify LBFGS is
+minimizing.  If nothing is passed, but NEB_obj is not None,
+the NEB_obj.get_error function will be called.</dd>
+<dt>armijo_line_search_factor: <em>float</em></dt>
+<dd>A factor for the armijo line search.</dd>
+<dt>linesearch: <em>str</em></dt>
+<dd>Whether to use the <em>armijo</em> or <em>backtrack</em> linesearch
+method.  If None is passed, a static step_size is used.</dd>
+<dt>reset_when_in_trouble: <em>bool</em></dt>
+<dd>Whether to reset the stored parameters and gradients when a
+bad step has been taken.</dd>
+<dt>reset_step_size: <em>int</em></dt>
+<dd>How many iterations of ‘good’ steps to take before
+resetting step_size to its initial value.</dd>
+<dt>N_reset_hess: <em>int</em></dt>
+<dd>A hard reset to the hessian to be applied every N
+iterations.</dd>
+<dt>start_hess: <em>int, float, or matrix</em></dt>
+<dd>A starting integer or float to scale the starting hessian.</dd>
+<dt>use_numopt_start: <em>bool</em></dt>
+<dd>Whether to use the starting hessian guess laid out by
+Nocedal and Wright in the Numerical Operations textbook,
+page 178.  H0 = (&lt;y|s&gt;) / (&lt;y|y&gt;) * I.  If chosen,
+start_hess is set to the identity matrix.</dd>
+<dt>accelerate: <em>bool</em></dt>
+<dd>Whether to accelerate via increasing step_size by
+1/step_size_adjustment when no bad steps are taken after
+<em>reset_step_size</em> iterations.</dd>
+<dt>maxiter: <em>int</em></dt>
+<dd>Maximum number of iterations for the optimizer to run.
+If None, then the code runs indefinitely.</dd>
+<dt>g_rms: <em>float</em></dt>
+<dd>The RMS value for which to optimize the gradient to.</dd>
+<dt>g_max: <em>float</em></dt>
+<dd>The maximum gradient value to be allowed.</dd>
+<dt>fit_rigid: <em>bool</em></dt>
+<dd>Remove erroneous rotation and translations during NEB.</dd>
+<dt>dimensions: <em>int</em></dt>
+<dd>The number of dimensions for the optimizer to run in.
+By default this is 3 (for NEB atomic coordinates.)</dd>
+<dt>callback: <em>func, optional</em></dt>
+<dd>A function to be run after each optimization loop.</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+<p><em>Returns</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of the optimized parameters.</dd>
+<dt>code: <em>int</em></dt>
+<dd>An integer describing how the algorithm converged.  This can be
+identified in the constants file.</dd>
+<dt>iters: <em>int</em></dt>
+<dd>The number of iterations the optimizer ran for.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<span class="target" id="module-quick_min"></span><dl class="function">
+<dt id="quick_min.quick_min">
+<code class="descclassname">quick_min.</code><code class="descname">quick_min</code><span class="sig-paren">(</span><em>params</em>, <em>gradient</em>, <em>NEB_obj=None</em>, <em>new_opt_params={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/quick_min.html#quick_min"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#quick_min.quick_min" title="Permalink to this definition">¶</a></dt>
+<dd><p>A quick min optimizer, overloaded for NEB use.
+Note, this will ONLY work for use within the NEB code.</p>
+<p><em>Parameters</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of parameters to be optimized.</dd>
+<dt>gradient: <em>func</em></dt>
+<dd>A function that, given params, returns the gradient.</dd>
+<dt>NEB_obj: <a class="reference internal" href="#neb.NEB" title="neb.NEB"><code class="xref py py-class docutils literal"><span class="pre">neb.NEB</span></code></a></dt>
+<dd>An NEB object to use.</dd>
+<dt>new_opt_params: <em>dict</em></dt>
+<dd><p class="first">A dictionary holding any changes to the optimization algorithm’s
+parameters.  This includes the following -</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>dt: <em>float</em></dt>
+<dd>Time step size to take.</dd>
+<dt>max_step: <em>float</em></dt>
+<dd>The maximum step size to take.</dd>
+<dt>viscosity: <em>float</em></dt>
+<dd>The viscosity within a verlet step (used if euler is
+False).</dd>
+<dt>euler: <em>bool</em></dt>
+<dd>Whether to make an euler step or not.</dd>
+<dt>maxiter: <em>int</em></dt>
+<dd>Maximum number of iterations for the optimizer to run.
+If None, then the code runs indefinitely.</dd>
+<dt>g_rms: <em>float</em></dt>
+<dd>The RMS value for which to optimize the gradient to.</dd>
+<dt>g_max: <em>float</em></dt>
+<dd>The maximum gradient value to be allowed.</dd>
+<dt>fit_rigid: <em>bool</em></dt>
+<dd>Remove erroneous rotation and translations during NEB.</dd>
+<dt>verbose: <em>bool</em></dt>
+<dd>Whether to have additional output.</dd>
+<dt>callback: <em>func, optional</em></dt>
+<dd>A function to be run after each optimization loop.</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+<p><em>Returns</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of the optimized parameters.</dd>
+<dt>code: <em>int</em></dt>
+<dd>An integer describing how the algorithm converged.  This can be
+identified in the constants file.</dd>
+<dt>iters: <em>int</em></dt>
+<dd>The number of iterations the optimizer ran for.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<span class="target" id="module-fire"></span><dl class="function">
+<dt id="fire.fire">
+<code class="descclassname">fire.</code><code class="descname">fire</code><span class="sig-paren">(</span><em>params</em>, <em>gradient</em>, <em>NEB_obj=None</em>, <em>new_opt_params={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fire.html#fire"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fire.fire" title="Permalink to this definition">¶</a></dt>
+<dd><p>A FIRE optimizer, overloaded for NEB use.</p>
+<p><em>Parameters</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of parameters to be optimized.</dd>
+<dt>gradient: <em>func</em></dt>
+<dd>A function that, given params, returns the gradient.</dd>
+<dt>NEB_obj: <a class="reference internal" href="#neb.NEB" title="neb.NEB"><code class="xref py py-class docutils literal"><span class="pre">neb.NEB</span></code></a></dt>
+<dd>An NEB object to use.</dd>
+<dt>new_opt_params: <em>dict</em></dt>
+<dd><p class="first">A dictionary holding any changes to the optimization algorithm’s
+parameters.  This includes the following -</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>dt: <em>float</em></dt>
+<dd>Time step size to take.</dd>
+<dt>dtmax: <em>float, optional</em></dt>
+<dd>The maximum dt allowed.</dd>
+<dt>max_step: <em>float</em></dt>
+<dd>The maximum step size to take.</dd>
+<dt>Nmin: <em>int, optional</em></dt>
+<dd>The minimum number of steps before acceleration occurs.</dd>
+<dt>finc: <em>float, optional</em></dt>
+<dd>The factor by which dt increases.</dd>
+<dt>fdec: <em>float, optional</em></dt>
+<dd>The factor by which dt decreases.</dd>
+<dt>astart: <em>float, optional</em></dt>
+<dd>The starting acceleration.</dd>
+<dt>fa: <em>float, optional</em></dt>
+<dd>The factor by which the acceleration is scaled.</dd>
+<dt>viscosity: <em>float</em></dt>
+<dd>The viscosity within a verlet step (used if euler is
+False).</dd>
+<dt>euler: <em>bool</em></dt>
+<dd>Whether to make an euler step or not.</dd>
+<dt>maxiter: <em>int</em></dt>
+<dd>Maximum number of iterations for the optimizer to run.
+If None, then the code runs indefinitely.</dd>
+<dt>g_rms: <em>float</em></dt>
+<dd>The RMS value for which to optimize the gradient to.</dd>
+<dt>g_max: <em>float</em></dt>
+<dd>The maximum gradient value to be allowed.</dd>
+<dt>fit_rigid: <em>bool</em></dt>
+<dd>Remove erroneous rotation and translations during NEB.</dd>
+<dt>callback: <em>func, optional</em></dt>
+<dd>A function to be run after each optimization loop.</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+<p><em>Returns</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of the optimized parameters.</dd>
+<dt>code: <em>int</em></dt>
+<dd>An integer describing how the algorithm converged.  This can be
+identified in the constants file.</dd>
+<dt>iters: <em>int</em></dt>
+<dd>The number of iterations the optimizer ran for.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<span class="target" id="module-conjugate_gradient"></span><dl class="function">
+<dt id="conjugate_gradient.conjugate_gradient">
+<code class="descclassname">conjugate_gradient.</code><code class="descname">conjugate_gradient</code><span class="sig-paren">(</span><em>params</em>, <em>gradient</em>, <em>NEB_obj=None</em>, <em>new_opt_params={}</em>, <em>extra_args_gradient=None</em>, <em>extra_args_target=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/conjugate_gradient.html#conjugate_gradient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#conjugate_gradient.conjugate_gradient" title="Permalink to this definition">¶</a></dt>
+<dd><p>A conjugate gradient optimizer, overloaded for NEB use.</p>
+<p><em>Parameters</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of parameters to be optimized.</dd>
+<dt>gradient: <em>func</em></dt>
+<dd>A function that, given params and an abstract list of extra
+arguments, returns the gradient.</dd>
+<dt>NEB_obj: <a class="reference internal" href="#neb.NEB" title="neb.NEB"><code class="xref py py-class docutils literal"><span class="pre">neb.NEB</span></code></a></dt>
+<dd>An NEB object to use.</dd>
+<dt>new_opt_params: <em>dict</em></dt>
+<dd><p class="first">A dictionary holding any changes to the optimization algorithm’s
+parameters.  This includes the following -</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>step_size: <em>float</em></dt>
+<dd>Step size to take.</dd>
+<dt>step_size_adjustment: <em>float</em></dt>
+<dd>A factor to adjust step_size when a bad step is made.</dd>
+<dt>method: <em>str</em></dt>
+<dd>Whether to use the Fletcher-Reeves (FR) method of
+calculating beta, or the Polak-Ribiere (PR) method.</dd>
+<dt>max_step: <em>float</em></dt>
+<dd>A maximum allowable step length. If 0, any step is ok.</dd>
+<dt>target_function: <em>func</em></dt>
+<dd>A function that will help decide if backtracking is needed
+or not.  This function will be used to verify BFGS is
+minimizing.  If nothing is passed, but NEB_obj is not None,
+the NEB_obj.get_error function will be called.</dd>
+<dt>armijo_line_search_factor: <em>float</em></dt>
+<dd>A factor for the armijo line search.</dd>
+<dt>linesearch: <em>str</em></dt>
+<dd>Whether to use the <em>armijo</em> or <em>backtrack</em> linesearch
+method.  If None is passed, a static step_size is used.</dd>
+<dt>reset_step_size: <em>int</em></dt>
+<dd>How many iterations of ‘good’ steps to take before
+resetting step_size to its initial value.</dd>
+<dt>accelerate: <em>bool</em></dt>
+<dd>Whether to accelerate via increasing step_size by
+1/step_size_adjustment when no bad steps are taken after
+<em>reset_step_size</em> iterations.</dd>
+<dt>maxiter: <em>int</em></dt>
+<dd>Maximum number of iterations for the optimizer to run.
+If None, then the code runs indefinitely.</dd>
+<dt>g_rms: <em>float</em></dt>
+<dd>The RMS value for which to optimize the gradient to.</dd>
+<dt>g_max: <em>float</em></dt>
+<dd>The maximum gradient value to be allowed.</dd>
+<dt>fit_rigid: <em>bool</em></dt>
+<dd>Remove erroneous rotation and translations during NEB.</dd>
+<dt>dimensions: <em>int</em></dt>
+<dd>The number of dimensions for the optimizer to run in.
+By default this is 3 (for NEB atomic coordinates.)</dd>
+<dt>callback: <em>func, optional</em></dt>
+<dd>A function to be run after each optimization loop.</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+<p><em>Returns</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of the optimized parameters.</dd>
+<dt>code: <em>int</em></dt>
+<dd>An integer describing how the algorithm converged.  This can be
+identified in the constants file.</dd>
+<dt>iters: <em>int</em></dt>
+<dd>The number of iterations the optimizer ran for.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
 </div>
 <div class="section" id="module-orca">
 <span id="orca"></span><h2>orca<a class="headerlink" href="#module-orca" title="Permalink to this headline">¶</a></h2>
@@ -4259,8 +4722,289 @@ files.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="spline-neb">
-<h2>spline_neb<a class="headerlink" href="#spline-neb" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-spline_neb">
+<span id="spline-neb"></span><h2>spline_neb<a class="headerlink" href="#module-spline_neb" title="Permalink to this headline">¶</a></h2>
+<p>The spline_NEB module simplifies the submission of Nudged Elastic Band based, curve smoothing simulations.</p>
+<ul class="simple">
+<li><a class="reference internal" href="#spline_neb.g09_start_job" title="spline_neb.g09_start_job"><code class="xref py py-func docutils literal"><span class="pre">g09_start_job()</span></code></a></li>
+<li><a class="reference internal" href="#spline_neb.g09_results" title="spline_neb.g09_results"><code class="xref py py-func docutils literal"><span class="pre">g09_results()</span></code></a></li>
+<li><a class="reference internal" href="#spline_neb.orca_start_job" title="spline_neb.orca_start_job"><code class="xref py py-func docutils literal"><span class="pre">orca_start_job()</span></code></a></li>
+<li><a class="reference internal" href="#spline_neb.orca_results" title="spline_neb.orca_results"><code class="xref py py-func docutils literal"><span class="pre">orca_results()</span></code></a></li>
+<li><a class="reference internal" href="#spline_neb.spline_NEB" title="spline_neb.spline_NEB"><code class="xref py py-class docutils literal"><span class="pre">spline_NEB</span></code></a></li>
+</ul>
+<hr class="docutils" />
+<dl class="function">
+<dt id="spline_neb.g09_results">
+<code class="descclassname">spline_neb.</code><code class="descname">g09_results</code><span class="sig-paren">(</span><em>spline_NEB</em>, <em>step_to_use</em>, <em>i</em>, <em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spline_neb.html#g09_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spline_neb.g09_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method for reading in the output of Gaussian09 single point calculations
+for spline_NEB calculations. This will both (a) assign forces to the atoms stored
+in state and (b) return the energy and atoms.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>spline_NEB: <a class="reference internal" href="#spline_neb.spline_NEB" title="spline_neb.spline_NEB"><code class="xref py py-class docutils literal"><span class="pre">spline_NEB</span></code></a></dt>
+<dd>A spline_NEB container holding the main spline_NEB simulation</dd>
+<dt>step_to_use: <em>int</em></dt>
+<dd>Which iteration in the spline_NEB sequence the output to be read in is on.</dd>
+<dt>i: <em>int</em></dt>
+<dd>The index corresponding to which image on the frame is to be
+simulated.</dd>
+<dt>state: <em>list,</em> <a class="reference internal" href="#structures.Atom" title="structures.Atom"><code class="xref py py-class docutils literal"><span class="pre">structures.Atom</span></code></a></dt>
+<dd>A list of atoms describing the image on the frame associated with
+index <em>i</em>.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>new_energy: <em>float</em></dt>
+<dd>The energy of the system in Hartree (Ha).</dd>
+<dt>new_atoms: <em>list,</em> <a class="reference internal" href="#structures.Atom" title="structures.Atom"><code class="xref py py-class docutils literal"><span class="pre">structures.Atom</span></code></a></dt>
+<dd>A list of atoms with the forces attached in units of Hartree per
+Angstrom (Ha/Ang).</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="spline_neb.g09_start_job">
+<code class="descclassname">spline_neb.</code><code class="descname">g09_start_job</code><span class="sig-paren">(</span><em>spline_NEB</em>, <em>i</em>, <em>state</em>, <em>charge</em>, <em>procs</em>, <em>queue</em>, <em>initial_guess</em>, <em>extra_section</em>, <em>mem</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spline_neb.html#g09_start_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spline_neb.g09_start_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method for submitting a single point calculation using Gaussian09 for
+spline_NEB calculations.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>spline_NEB: <a class="reference internal" href="#spline_neb.spline_NEB" title="spline_neb.spline_NEB"><code class="xref py py-class docutils literal"><span class="pre">spline_NEB</span></code></a></dt>
+<dd>A spline_NEB container holding the main spline_NEB simulation</dd>
+<dt>i: <em>int</em></dt>
+<dd>The index corresponding to which image on the frame is to be
+simulated.</dd>
+<dt>state: <em>list,</em> <a class="reference internal" href="#structures.Atom" title="structures.Atom"><code class="xref py py-class docutils literal"><span class="pre">structures.Atom</span></code></a></dt>
+<dd>A list of atoms describing the image on the frame associated
+with index <em>i</em>.</dd>
+<dt>charge: <em>int</em></dt>
+<dd>Charge of the system.</dd>
+<dt>procs: <em>int</em></dt>
+<dd>The number of processors to use during calculations.</dd>
+<dt>queue: <em>str</em></dt>
+<dd>Which queue to submit the simulation to (this is queueing system
+dependent).</dd>
+<dt>initial_guess: <em>str</em></dt>
+<dd>The name of a previous simulation for which we can read in a
+hessian.</dd>
+<dt>extra_section: <em>str</em></dt>
+<dd>Extra settings for this DFT method.</dd>
+<dt>mem: <em>int</em></dt>
+<dd>How many Mega Words (MW) you wish to have as dynamic memory.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>g09_job: <a class="reference internal" href="#jobs.Job" title="jobs.Job"><code class="xref py py-class docutils literal"><span class="pre">jobs.Job</span></code></a></dt>
+<dd>A job container holding the g09 simulation.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="spline_neb.orca_results">
+<code class="descclassname">spline_neb.</code><code class="descname">orca_results</code><span class="sig-paren">(</span><em>spline_NEB</em>, <em>step_to_use</em>, <em>i</em>, <em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spline_neb.html#orca_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spline_neb.orca_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method for reading in the output of Orca single point calculations for
+spline_NEB calculations. This will both (a) assign forces to the atoms stored
+in state and (b) return the energy and atoms.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>spline_NEB: <a class="reference internal" href="#spline_neb.spline_NEB" title="spline_neb.spline_NEB"><code class="xref py py-class docutils literal"><span class="pre">spline_NEB</span></code></a></dt>
+<dd>A spline_NEB container holding the main spline_NEB simulation</dd>
+<dt>step_to_use: <em>int</em></dt>
+<dd>Which iteration in the spline_NEB sequence the output to be read in is on.</dd>
+<dt>i: <em>int</em></dt>
+<dd>The index corresponding to which image on the frame is to be
+simulated.</dd>
+<dt>state: <em>list,</em> <a class="reference internal" href="#structures.Atom" title="structures.Atom"><code class="xref py py-class docutils literal"><span class="pre">structures.Atom</span></code></a></dt>
+<dd>A list of atoms describing the image on the frame associated with
+index <em>i</em>.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>new_energy: <em>float</em></dt>
+<dd>The energy of the system in Hartree (Ha).</dd>
+<dt>new_atoms: <em>list,</em> <a class="reference internal" href="#structures.Atom" title="structures.Atom"><code class="xref py py-class docutils literal"><span class="pre">structures.Atom</span></code></a></dt>
+<dd>A list of atoms with the forces attached in units of Hartree per
+Angstrom (Ha/Ang).</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="spline_neb.orca_start_job">
+<code class="descclassname">spline_neb.</code><code class="descname">orca_start_job</code><span class="sig-paren">(</span><em>spline_NEB</em>, <em>i</em>, <em>state</em>, <em>charge</em>, <em>procs</em>, <em>queue</em>, <em>initial_guess</em>, <em>extra_section</em>, <em>mem</em>, <em>priority</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spline_neb.html#orca_start_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spline_neb.orca_start_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method for submitting a single point calculation using Orca for spline_NEB
+calculations.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>spline_NEB: <a class="reference internal" href="#spline_neb.spline_NEB" title="spline_neb.spline_NEB"><code class="xref py py-class docutils literal"><span class="pre">spline_NEB</span></code></a></dt>
+<dd>A spline_NEB container holding the main spline_NEB simulation</dd>
+<dt>i: <em>int</em></dt>
+<dd>The index corresponding to which image on the frame is to be
+simulated.</dd>
+<dt>state: <em>list,</em> <a class="reference internal" href="#structures.Atom" title="structures.Atom"><code class="xref py py-class docutils literal"><span class="pre">structures.Atom</span></code></a></dt>
+<dd>A list of atoms describing the image on the frame associated with
+index <em>i</em>.</dd>
+<dt>charge: <em>int</em></dt>
+<dd>Charge of the system.</dd>
+<dt>procs: <em>int</em></dt>
+<dd>The number of processors to use during calculations.</dd>
+<dt>queue: <em>str</em></dt>
+<dd>Which queue to submit the simulation to (this is queueing system
+dependent).</dd>
+<dt>initial_guess: <em>str</em></dt>
+<dd>The name of a previous simulation for which we can read in a
+hessian.</dd>
+<dt>extra_section: <em>str</em></dt>
+<dd>Extra settings for this DFT method.</dd>
+<dt>mem: <em>int</em></dt>
+<dd>How many MegaBytes (MB) of memory you have available per core.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>orca_job: <a class="reference internal" href="#jobs.Job" title="jobs.Job"><code class="xref py py-class docutils literal"><span class="pre">jobs.Job</span></code></a></dt>
+<dd>A job container holding the orca simulation.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="class">
+<dt id="spline_neb.spline_NEB">
+<em class="property">class </em><code class="descclassname">spline_neb.</code><code class="descname">spline_NEB</code><span class="sig-paren">(</span><em>name</em>, <em>states</em>, <em>theory</em>, <em>extra_section=''</em>, <em>charge=0</em>, <em>initial_guess=None</em>, <em>spring_atoms=None</em>, <em>procs=1</em>, <em>queue=None</em>, <em>mem=2000</em>, <em>priority=None</em>, <em>disp=0</em>, <em>k_max=0.1837</em>, <em>gamma=0.2</em>, <em>fit_rigid=True</em>, <em>DFT='orca'</em>, <em>opt='LBFGS'</em>, <em>start_job=None</em>, <em>get_results=None</em>, <em>new_opt_params={}</em>, <em>callback=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spline_neb.html#spline_NEB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spline_neb.spline_NEB" title="Permalink to this definition">¶</a></dt>
+<dd><p>A post-processing method for taking a converged minimum energy pathway of a reaction using
+DFT and smoothing the curve to a more Gaussian-like shape. Note, this method was written for atomic orbital DFT codes; however,
+is potentially generalizable to other programs.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>name: <em>str</em></dt>
+<dd>The name of the spline_NEB simulation to be run.</dd>
+<dt>states: <em>list, list,</em> <a class="reference internal" href="#structures.Atom" title="structures.Atom"><code class="xref py py-class docutils literal"><span class="pre">structures.Atom</span></code></a></dt>
+<dd>A list of frames, each frame being a list of atom structures.
+These frames represent your reaction coordinate.</dd>
+<dt>theory: <em>str</em></dt>
+<dd>The route line for your DFT simulation.</dd>
+<dt>extra_section: <em>str, optional</em></dt>
+<dd>Additional parameters for your DFT simulation.</dd>
+<dt>charge: <em>int</em></dt>
+<dd>Charge of the system.</dd>
+<dt>initial_guess: <em>list, str, optional</em></dt>
+<dd>TODO - List of strings specifying a previously run NEB simulation,
+allowing restart capabilities.</dd>
+<dt>spring_atoms: <em>list, int, optional</em></dt>
+<dd>Specify which atoms will be represented by virutal springs in the
+spline_NEB calculations. Default includes all.</dd>
+<dt>procs: <em>int, optional</em></dt>
+<dd>The number of processors for your simulation.</dd>
+<dt>queue: <em>str, optional</em></dt>
+<dd>Which queue you wish your simulation to run on (queueing system
+dependent). When None, spline_NEB is run locally.</dd>
+<dt>mem: <em>float, optional</em></dt>
+<dd>Specify memory constraints (specific to your X_start_job method).</dd>
+<dt>disp: <em>int, optional</em></dt>
+<dd>Specify for additional stdout information.</dd>
+<dt>k_max: <em>float, optional</em></dt>
+<dd>The maximum spring constant for your spline_NEB simulation.</dd>
+<dt>gamma: <em>float, optional</em></dt>
+<dd>The percent of the magnitude of k_max at either end of the reaction coordinate</dd>
+<dt>fit_rigid: <em>bool, optional</em></dt>
+<dd>Whether you want to use procrustes to minimize motion between
+adjacent frames (thus minimizing error due to excessive virtal
+spring forces).</dd>
+<dt>DFT: <em>str, optional</em></dt>
+<dd>Specify if you wish to use the default X_start_job and X_results
+functions where X is either g09 or orca.</dd>
+<dt>opt: <em>str, optional</em></dt>
+<dd>Select which optimization method you wish to use from the
+following: BFGS, LBFGS, SD, FIRE, QM, CG, scipy_X. Note, if using
+scipy_X, change X to be a valid scipy minimize method.</dd>
+<dt>start_job: <em>func, optional</em></dt>
+<dd>A function specifying how to submit your NEB single point
+calculations.  Needed if DFT is neither orca nor g09.</dd>
+<dt>get_results: <em>func, optional</em></dt>
+<dd>A function specifying how to read your NEB single point
+calculations.  Needed if DFT is neither orca nor g09.</dd>
+<dt>new_opt_params: <em>dict, optional</em></dt>
+<dd>Pass any additional parameters to the optimization algorithm.</dd>
+<dt>callback: <em>func, optional</em></dt>
+<dd>A function to be run after each each to calculate().</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>This <a class="reference internal" href="#spline_neb.spline_NEB" title="spline_neb.spline_NEB"><code class="xref py py-class docutils literal"><span class="pre">spline_NEB</span></code></a> object.</div></blockquote>
+<p><strong>References</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li>Henkelman, G.; Jonsson, H. The Journal of Chemical Physics 2000,
+113, 9978-9985.</li>
+<li>Jonsson, H.; Mills, G.; Jacobson, K. W. In Classical and Quantum
+Dynamics in Condensed Phase Simulations;</li>
+<li>Berne, B. J., Ciccotti, G., Coker, D. F., Eds.; World Scientific,
+1998; Chapter 16, pp 385-404.</li>
+<li>Armijo, L. Pacific Journal of Mathematics 1966, 16.</li>
+<li>Sheppard, D.; Terrell, R.; Henkelman, G. The Journal of Chemical
+Physics 2008, 128.</li>
+<li>Henkelman, G.; Uberuaga, B. P.; Jonsson, H. Journal of Chemical
+Physics 2000, 113.</li>
+<li>Atomic Simulation Environment - <a class="reference external" href="https://wiki.fysik.dtu.dk/ase/">https://wiki.fysik.dtu.dk/ase/</a></li>
+<li>Kolsbjerg, E. L.; Groves, M. N.; Hammer, B. The Journal of 
+Chemical Physics 2016, 145.</li>
+</ul>
+</div></blockquote>
+<dl class="method">
+<dt id="spline_neb.spline_NEB.align_coordinates">
+<code class="descname">align_coordinates</code><span class="sig-paren">(</span><em>r</em>, <em>B=None</em>, <em>H=None</em>, <em>return_matrix=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spline_neb.html#spline_NEB.align_coordinates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spline_neb.spline_NEB.align_coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a rotation matrix A that will remove rigid rotation from the
+new coordinates r.  Further, if another vector needs rotating by the
+same matrix A, it should be passed in B and will be rotated.  If
+a matrix also needs rotating, it can be passed as H and also be
+rotated.</p>
+<p><em>Parameters</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>r: <em>list, float</em></dt>
+<dd>1D array of atomic coordinates to be rotated by procrustes
+matrix A.</dd>
+<dt>B: <em>list, list, float, optional</em></dt>
+<dd>A list of vectors that may also be rotated by the same matrix
+as <em>r</em>.</dd>
+<dt>H: <em>list, list, float, optional</em></dt>
+<dd><dl class="first last docutils">
+<dt>A matrix that should also be rotated via:</dt>
+<dd>H = R * H * R.T</dd>
+</dl>
+</dd>
+<dt>return_matrix: <em>bool, optional</em></dt>
+<dd>Whether to also return the rotation matrix used or not.</dd>
+</dl>
+</div></blockquote>
+<p><em>Returns</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>rotations: <em>dict</em></dt>
+<dd>A dictionary holding ‘A’, the rotation matrix, ‘r’, the
+rotated new coordinates, ‘B’, a list of all other vectors that
+were rotated, and ‘H’, a rotated matrix.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-structures">
 <span id="structures"></span><h2>structures<a class="headerlink" href="#module-structures" title="Permalink to this headline">¶</a></h2>
@@ -4283,7 +5027,7 @@ comprised of <em>Atom</em>, <em>Bond</em>, <em>Angle</em>, <em>Dihedral</em>, an
 <p>General atom manipulation functions that can adapted by the object classes</p>
 <ul class="simple">
 <li><code class="xref py py-func docutils literal"><span class="pre">_remove_atom_index()</span></code></li>
-<li>:func:<a href="#id1"><span class="problematic" id="id2">`</span></a>_remove_atom_type’</li>
+<li><code class="xref py py-func docutils literal"><span class="pre">_remove_atom_type()</span></code></li>
 </ul>
 <hr class="docutils" />
 <dl class="class">
@@ -5438,7 +6182,7 @@ orbitals.</dd>
 <li class="toctree-l2"><a class="reference internal" href="#module-print_helper">print_helper</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-rate_calc">rate_calc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-results">results</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#spline-neb">spline_neb</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-spline_neb">spline_neb</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-structures">structures</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-units">units</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#utils">utils</a></li>
