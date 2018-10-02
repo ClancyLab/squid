@@ -23,12 +23,12 @@ import g09
 import units
 from math import exp
 
-from optimize.steepest_descent import steepest_descent
-from optimize.bfgs import bfgs
-from optimize.lbfgs import lbfgs
-from optimize.quick_min import quick_min
-from optimize.fire import fire
-from optimize.conjugate_gradient import conjugate_gradient
+from optimizers.steepest_descent import steepest_descent
+from optimizers.bfgs import bfgs
+from optimizers.lbfgs import lbfgs
+from optimizers.quick_min import quick_min
+from optimizers.fire import fire
+from optimizers.conjugate_gradient import conjugate_gradient
 
 from scipy.optimize import minimize
 

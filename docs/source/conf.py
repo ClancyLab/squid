@@ -18,7 +18,9 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../../pys/'))
+sys.path.insert(0, os.path.abspath('../../squid/'))
+sys.path.insert(0, os.path.abspath('../../squid/forcefields/'))
+sys.path.insert(0, os.path.abspath('../../squid/optimizers/'))
 
 # -- General configuration ------------------------------------------------
 
