@@ -49,6 +49,7 @@ def read_cml(name, new_method=False,
     Note - When using the new_method, the following keywords are ignored:
         test_charges, allow_errors, pair_style, default_angles,
         and test_consistency.
+
     Further, a parameter object as well as the molecule objects are returned.
 
     **Parameters**

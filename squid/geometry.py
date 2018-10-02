@@ -1762,6 +1762,7 @@ def reorder_atoms_in_frames(frames):
     A function to ensure that consecutive frames of an xyz file are in the
     same order.  This is done by minimizing the frobenious norm between
     consecutive frames with the application of a perterbation matrix P.
+
                       minimize ||PR_{i+1} - R_{i}||^2.
 
     This problem boils down to maximizing Tr[P R_{i + 1} R_{i}^T].  We solve
@@ -1770,7 +1771,9 @@ def reorder_atoms_in_frames(frames):
 
     NOTE! This only works when we have the problem in which atom order only is
     mixed up.  If we also have rotations, then the problem actually becomes:
+
                       minimize ||PAR_{i+1} - R_{i}||^2
+
     Which is, unfortunately, harder as we now have two unknown
     matrices (P and A)!
 

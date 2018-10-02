@@ -18,7 +18,7 @@ There also exists a dynamic data structure object *Struct*.
 General atom manipulation functions that can adapted by the object classes
 
 - :func:`_remove_atom_index`
-- :func:`_remove_atom_type'
+- :func:`_remove_atom_type`
 
 ------------
 
