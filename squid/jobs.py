@@ -539,8 +539,8 @@ equates to %d nodes on marcc; however, you only requested %d nodes." % (procs, n
 #SBATCH -J  ''' + name + '''
 #SBATCH -o  ''' + name + '''.o%j
 #SBATCH -N ''' + str(nodes) + '''
-#SBATCH -n ''' + str(ntasks) + '''
-#SBATCH -c ''' + str(procs) + '''
+#SBATCH -n ''' + str(ntasks) + ('''
+#SBATCH -c ''' + str(procs) if procs > 1 else "") + '''
 #SBATCH -p ''' + queue + '''
 #SBATCH -t ''' + walltime + '''
 
@@ -856,8 +856,7 @@ strings, or None")
 #SBATCH -J "$JOB_NAME1$"
 #SBATCH -o $JOB_NAME2$.o%j
 #SBATCH -N $NODES$
-#SBATCH -n $NTASKS$
-#SBATCH -c $NPROCS$
+#SBATCH -n $NTASKS$''' + ("\n#SBATCH -c $NPROCS$" if nprocs > 1 else "") + '''
 #SBATCH -p $QUEUE$
 #SBATCH -t $WALLTIME$
 
@@ -878,7 +877,8 @@ $PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$> $PY_NAME2$.log 2>&1
         SLURM = SLURM.replace("$JOB_NAME1$", job_name)
         SLURM = SLURM.replace("$JOB_NAME2$", job_name)
         SLURM = SLURM.replace("$NODES$", str(nodes))
-        SLURM = SLURM.replace("$NPROCS$", str(nprocs))
+        if nprocs > 1:
+            SLURM = SLURM.replace("$NPROCS$", str(nprocs))
         SLURM = SLURM.replace("$NTASKS$", str(ntasks))
         SLURM = SLURM.replace("$QUEUE$", queue)
         SLURM = SLURM.replace("$WALLTIME$", walltime)
