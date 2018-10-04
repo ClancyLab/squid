@@ -69,7 +69,7 @@ def read_vpot(vpot):
 def electrostatic_potential_cubegen(fname, npoints=80, orca4=sysconst.use_orca4):
     '''
     '''
-
+    os.chdir("orca/%s" % fname)
     # First we ensure the density matrix file (scfp) was generated
     cmds = [1, 2, 'y', 5, 7, 10, 11]
     fptr = open("tmp.plt", 'w')
@@ -81,21 +81,29 @@ def electrostatic_potential_cubegen(fname, npoints=80, orca4=sysconst.use_orca4)
     if orca4:
         orcaPath = sysconst.orca4_path
 
-    os.system("%s_plot orca/%s/%s.orca.gbw -i < tmp.plt"
-              % (orcaPath, fname, fname))
+    print("GENERATING CUBE FILE...\n")
+
+    #os.system("%s_plot orca/%s/%s.orca.gbw -i < tmp.plt"
+    #          % (orcaPath, fname, fname))
+    
+    os.system("%s_plot %s.orca.gbw -i < tmp.plt"
+              % (orcaPath, fname))
     os.system("rm tmp.plt")
 
+    print("DONE")
+
     pot_name = "%s.orca.scfp" % fname
-    shutil.move(pot_name, "orca/%s/%s" % (fname, pot_name))
+    #shutil.move(pot_name, "orca/%s/%s" % (fname, pot_name))
 
     rho_name = "%s.orca.eldens.cube" % fname
-    shutil.move(rho_name, "orca/%s/%s" % (fname, rho_name))
+    #shutil.move(rho_name, "orca/%s/%s" % (fname, rho_name))
 
     # Shorten command for unit conversion
     conv = lambda x: units.convert_dist("Ang", "Bohr", x)
 
     # Read in atoms and set units to bohr
-    atoms = files.read_xyz("orca/%s/%s.orca.xyz" % (fname, fname))
+    atoms = files.read_xyz("%s.orca.xyz" % fname)
+    #atoms = files.read_xyz("orca/%s/%s.orca.xyz" % (fname, fname))
     for a in atoms:
         a.x = conv(a.x)
         a.y = conv(a.y)
@@ -108,7 +116,8 @@ def electrostatic_potential_cubegen(fname, npoints=80, orca4=sysconst.use_orca4)
     z_range = [conv(min([a.z for a in atoms]) - buf), conv(max([a.z for a in atoms]) + buf)]
 
     # Open file for electrostatic potential
-    pot = open("orca/%s/%s_pot.inp" % (fname, fname), 'w')
+    pot = open("%s_pot.inp" % fname, 'w')
+    #pot = open("orca/%s/%s_pot.inp" % (fname, fname), 'w')
     pot.write("{0:d}\n".format(npoints**3))
     for ix in np.linspace(x_range[0], x_range[1], npoints, True):
         for iy in np.linspace(y_range[0], y_range[1], npoints, True):
@@ -117,15 +126,18 @@ def electrostatic_potential_cubegen(fname, npoints=80, orca4=sysconst.use_orca4)
     pot.close()
 
     # Use built in orca command to generate potential output from gbw file
-    cmd = "%s_vpot orca/%s/%s.orca.gbw orca/%s/%s.orca.scfp orca/%s/%s_pot.inp orca/%s/%s_pot.out"\
-          % (orcaPath, fname, fname, fname, fname, fname, fname, fname, fname)
+    #cmd = "%s_vpot orca/%s/%s.orca.gbw orca/%s/%s.orca.scfp orca/%s/%s_pot.inp orca/%s/%s_pot.out"\
+    cmd = "%s_vpot %s.orca.gbw %s.orca.scfp %s_pot.inp %s_pot.out"\
+          % (orcaPath, fname, fname, fname, fname)
     os.system(cmd)
 
     # Read in the electrostatic potential
-    vpot = read_vpot("orca/%s/%s_pot.out" % (fname, fname))
+    vpot = read_vpot("%s_pot.out" % fname)
+    #vpot = read_vpot("orca/%s/%s_pot.out" % (fname, fname))
 
     # Start generating the cube file
-    cube = open("orca/%s/%s.orca.pot.cube" % (fname, fname), 'w')
+    cube = open("%s.orca.pot.cube" % fname, 'w')
+    #cube = open("orca/%s/%s.orca.pot.cube" % (fname, fname), 'w')
     cube.write("Generated with ORCA\n")
     cube.write("Electrostatic potential for " + fname + "\n")
     cube.write("{0:5d}{1:12.6f}{2:12.6f}{3:12.6f}\n".format(
@@ -156,3 +168,6 @@ def electrostatic_potential_cubegen(fname, npoints=80, orca4=sysconst.use_orca4)
                 cube.write("\n")
                 n = 0
     cube.close()
+
+    os.chdir("../../")
+

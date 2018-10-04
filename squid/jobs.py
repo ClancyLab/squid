@@ -313,6 +313,8 @@ def submit_job(name,
                job_to_submit,
                procs=1,
                ntasks=1,
+               nodes=1,
+               adjust_nodes=True,
                queue=sysconst.default_queue,
                mem=1000,
                priority=None,
@@ -342,6 +344,13 @@ def submit_job(name,
         ntasks: *int, optional*
             (For SLURM) The number of tasks this job will run, each task uses
             procs number of cores.
+        nodes: *int, optional*
+            (For SLURM) The number of nodes this job requires.  If requesting
+            ntasks * procs < 24 * nodes, a warning is printed, as on MARCC
+            each node has only 24 cores.
+        adjust_nodes: *bool, optional*
+            Whether to automatically calculate how many nodes is necessary
+            when the user underspecifies nodes.
         queue: *str, optional*
             Queue you are submitting to (queueing system dependent).
         mem: *float, optional*
@@ -391,6 +400,14 @@ def submit_job(name,
 
     if unique_name and queueing_system.strip().lower() not in ["slurm", "nbs"]:
         print("Warning - unique_name not implemented for non-NBS queueing systems.")
+
+    procs, ntasks, nodes = int(procs), int(ntasks), int(nodes)
+    if procs * ntasks > 24 * nodes:
+        print("Warning - You requested %d tasks and %d cpus-per-task.  This \
+equates to %d nodes on marcc; however, you only requested %d nodes." % (procs, ntasks, procs * ntasks // 24 + 1, nodes))
+        if adjust_nodes:
+            print("\tWill adjust nodes accordingly...")
+            nodes = procs * ntasks // 24 + 1
 
     if queue is "debug":
         print("\nWould have submitted job %s\n" % name)
@@ -521,8 +538,9 @@ def submit_job(name,
         generic_script = '''#!/bin/sh
 #SBATCH -J  ''' + name + '''
 #SBATCH -o  ''' + name + '''.o%j
-#SBATCH -n ''' + str(ntasks) + '''
-#SBATCH -c ''' + str(procs) + '''
+#SBATCH -N ''' + str(nodes) + '''
+#SBATCH -n ''' + str(ntasks) + ('''
+#SBATCH -c ''' + str(procs) if procs > 1 else "") + '''
 #SBATCH -p ''' + queue + '''
 #SBATCH -t ''' + walltime + '''
 
@@ -598,8 +616,10 @@ Please choose NBS or PBS for now.")
 
 
 def pysub(job_name,
-          nprocs="1",
-          ntasks="1",
+          nprocs=1,
+          ntasks=1,
+          nodes=1,
+          adjust_nodes=True,
           omp=None,
           queue=sysconst.default_queue,
           walltime="00:30:00",
@@ -620,11 +640,18 @@ def pysub(job_name,
 
         job_name: *str*
             Name of the python script (with or without the .py extension).
-        nprocs: *str, optional*
+        nprocs: *int, optional*
             Number of processors to run your script on.
         ntasks: *int, optional*
             (For SLURM) The number of tasks this job will run, each task uses
             procs number of cores.
+        nodes: *int, optional*
+            (For SLURM) The number of nodes this job requires.  If requesting
+            ntasks * procs < 24 * nodes, a warning is printed, as on MARCC
+            each node has only 24 cores.
+        adjust_nodes: *bool, optional*
+            Whether to automatically calculate how many nodes is necessary
+            when the user underspecifies nodes.
         use_mpi: *bool, optional*
             Whether to run python via mpirun or not.
         omp: *int, None*
@@ -677,6 +704,14 @@ def pysub(job_name,
     if queueing_system.lower() == "slurm" and queue.lower() not in get_slurm_queues():
         if queue.lower() != "none":
             raise Exception("SLURM queue %s does not exist!" % queue)
+
+    nprocs, ntasks, nodes = int(nprocs), int(ntasks), int(nodes)
+    if nprocs * ntasks > 24 * nodes:
+        print("Warning - You requested %d tasks and %d cpus-per-task.  This \
+equates to %d nodes on marcc; however, you only requested %d nodes." % (nprocs, ntasks, nprocs * ntasks // 24 + 1, nodes))
+        if adjust_nodes:
+            print("\tWill adjust nodes accordingly...")
+            nodes = nprocs * ntasks // 24 + 1
 
     if queue is None:
         queue = "none"
@@ -732,6 +767,7 @@ $PRIORITY$
 $XHOST$
 $OMP$
 source /fs/home/$USER/.zshrc
+
 '''
 
         if nprocs > 1 and use_mpi:
@@ -819,8 +855,8 @@ strings, or None")
         SLURM = '''#!/bin/sh
 #SBATCH -J "$JOB_NAME1$"
 #SBATCH -o $JOB_NAME2$.o%j
-#SBATCH -n $NTASKS$
-#SBATCH -c $NPROCS$
+#SBATCH -N $NODES$
+#SBATCH -n $NTASKS$''' + ("\n#SBATCH -c $NPROCS$" if nprocs > 1 else "") + '''
 #SBATCH -p $QUEUE$
 #SBATCH -t $WALLTIME$
 
@@ -837,11 +873,12 @@ $MPIRUN$ -np $NPROCS$ $PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$> $PY_NAME2$.log 2>&1
 $PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$> $PY_NAME2$.log 2>&1
 '''
 
-
         SLURM = SLURM.replace("$PYTHON_PATH$", py_path)
         SLURM = SLURM.replace("$JOB_NAME1$", job_name)
         SLURM = SLURM.replace("$JOB_NAME2$", job_name)
-        SLURM = SLURM.replace("$NPROCS$", str(nprocs))
+        SLURM = SLURM.replace("$NODES$", str(nodes))
+        if nprocs > 1:
+            SLURM = SLURM.replace("$NPROCS$", str(nprocs))
         SLURM = SLURM.replace("$NTASKS$", str(ntasks))
         SLURM = SLURM.replace("$QUEUE$", queue)
         SLURM = SLURM.replace("$WALLTIME$", walltime)

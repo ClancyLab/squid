@@ -403,7 +403,8 @@ Please run simulation with grad=True." % (input_file, os.getcwd()))
 
 # A function to run an Orca DFT Simulation
 def job(run_name, route, atoms=[], extra_section='', grad=False,
-        queue=None, walltime="00:30:00", sandbox=sysconst.sandbox_orca, procs=1, ntasks=1,
+        queue=None, walltime="00:30:00", sandbox=sysconst.sandbox_orca,
+        procs=1, ntasks=1, nodes=1, adjust_nodes=True,
         charge=None, multiplicity=None, charge_and_multiplicity='0 1',
         redundancy=False, use_NBS_sandbox=False, unique_name=True,
         previous=None, mem=2000, priority=None, xhost=None, orca4=sysconst.use_orca4):
@@ -434,10 +435,19 @@ def job(run_name, route, atoms=[], extra_section='', grad=False,
             Whether to use the NBS sandboxing headers (True), or manually copy
             files (False).
         procs: *int, optional*
-            How many processors to run the simulation on.
+            How many processors to run the simulation on.  Note, the actual
+            number requested by orca will be procs * ntasks.
         ntasks: *int, optional*
             (For SLURM) The number of tasks this job will run, each task uses
-            procs number of cores.
+            procs number of cores.  Note, the actual number requested by orca
+            will be procs * ntasks.
+        nodes: *int, optional*
+            (For SLURM) The number of nodes this job requires.  If requesting
+            ntasks * procs < 24 * nodes, a warning is printed, as on MARCC
+            each node has only 24 cores.
+        adjust_nodes: *bool, optional*
+            Whether to automatically calculate how many nodes is necessary
+            when the user underspecifies nodes.
         charge: *float, optional*
             Charge of the system.  If this is used, then
             charge_and_multiplicity is ignored. If multiplicity is used,
@@ -509,6 +519,13 @@ Switching to Single Point.")
         orca_path = sysconst.orca_path
         orca_env = sysconst.orca_env_vars
 
+    procs, ntasks, nodes = int(procs), int(ntasks), int(nodes)
+    cores_to_use = procs * ntasks
+
+    if sysconst.queueing_system.lower() == "slurm" and cores_to_use > ntasks:
+        # This is an issue due to "Slots" being allocated whenever ntasks is specified, but not when cpu-per-task is specified.  Orca apparently requests N slots, so we need to call for ntasks, not procs.
+        raise Exception("Error - When using slurm, you must specify ntasks instead of procs for number of cores to use.")
+
     # Generate the orca input file
     os.system('mkdir -p orca/%s' % run_name)
     os.chdir('orca/%s' % run_name)
@@ -534,8 +551,8 @@ than 2 atoms. Auto-swapped Opt for SP.")
 less than 2 atoms!")
 
     # If running on system with more than one core, tell orca
-    if procs > 1:
-        add_to_extra = '%pal nprocs ' + str(procs) + ' end\n'
+    if cores_to_use > 1:
+        add_to_extra = '%pal nprocs ' + str(cores_to_use) + ' end\n'
         extra_section = add_to_extra + extra_section.strip()
 
     # If desiring .orca.engrad output, tell orca
@@ -673,8 +690,8 @@ less than 2 atoms!")
             sandbox = None
         job_obj = jobs.submit_job(
             run_name, job_to_submit,
-            ntasks=ntasks, procs=procs, queue=queue,
-            mem=mem, priority=priority,
+            ntasks=ntasks, procs=procs, nodes=nodes, adjust_nodes=adjust_nodes,
+            queue=queue, mem=mem, priority=priority,
             walltime=walltime, xhosts=xhost,
             unique_name=unique_name, redundancy=redundancy,
             sandbox=sandbox, use_NBS_sandbox=use_NBS_sandbox,
