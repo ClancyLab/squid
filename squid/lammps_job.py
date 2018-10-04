@@ -263,6 +263,9 @@ def job(run_name,
         system=None,
         queue=sysconst.default_queue,
         procs=1,
+        ntasks=1,
+        nodes=1,
+        adjust_nodes=True,
         email=None,
         write_data_file=True,
         pair_coeffs_included=True,
@@ -287,7 +290,19 @@ def job(run_name,
         queue: *str, optional*
             What queue to run the simulation on (queueing system dependent).
         procs: *int, optional*
-            How many processors to run the simulation on.
+            How many processors to run the simulation on.  Note, the actual
+            number of cores mpirun will use is procs * ntasks.
+        ntasks: *int, optional*
+            (For SLURM) The number of tasks this job will run, each task uses
+            procs number of cores.  Note, the actual number of cores mpirun
+            will use is procs * ntasks.
+        nodes: *int, optional*
+            (For SLURM) The number of nodes this job requires.  If requesting
+            ntasks * procs < 24 * nodes, a warning is printed, as on MARCC
+            each node has only 24 cores.
+        adjust_nodes: *bool, optional*
+            Whether to automatically calculate how many nodes is necessary
+            when the user underspecifies nodes.
         email: *str, optional*
             An email address for sending job information to.
         pair_coeffs_included: *bool, optional*
@@ -351,31 +366,31 @@ length is 31." % len(run_name))
     f.close()
 
     # Run the simulation
+    cmd_to_run = sysconst.lmp_env_vars + "\n"
+
+    procs, ntasks, nodes = int(procs), int(ntasks), int(nodes)
+
+    cores_to_use = procs * ntasks
+    if cores_to_use > 1:
+        try:
+            cmd_to_run += "%s -np %d " % (sysconst.mpirun_path, cores_to_use)
+        except AttributeError:
+            print("Warning - Trying to run LAMMPs in parallel without specifying mpirun_path in sysconst.")
+    cmd_to_run = cmd_to_run + "%s -in %s.in -echo log -log %s.log"\
+        % (lmp_path, os.getcwd() + "/" + run_name, os.getcwd() + "/" + run_name)
+    if no_echo:
+        cmd_to_run += " > " + os.getcwd() + "/" + run_name + ".term.log"
+
     if queue is None:
-        cmd_to_run = sysconst.lmp_env_vars + "\n"
-        if procs > 1:
-            try:
-                cmd_to_run += "%s -np %d " % (sysconst.mpirun_path, procs)
-            except AttributeError:
-                print("Warning - Trying to run LAMMPs in parallel locally without specifying mpirun_path in sysconst.")
-        cmd_to_run = cmd_to_run + "%s -in %s.in -log %s.log"\
-            % (lmp_path, run_name, run_name)
-
-        if no_echo:
-            cmd_to_run += " > " + run_name + ".term.log"
-
         process_handle = subprocess.Popen(cmd_to_run, shell=True)
         job_handle = jobs.Job(run_name, process_handle)
     else:
-        cmd_to_run = lmp_path +\
-            " -in " +\
-            (os.getcwd() + '/' + run_name) +\
-            ".in -echo log -log " +\
-            (os.getcwd() + '/' + run_name) +\
-            ".log"
         job_handle = jobs.submit_job(run_name,
                                      cmd_to_run,
                                      procs=procs,
+                                     ntasks=ntasks,
+                                     nodes=nodes,
+                                     adjust_nodes=adjust_nodes,
                                      queue=queue,
                                      additional_env_vars=sysconst.lmp_env_vars,
                                      email=email,
