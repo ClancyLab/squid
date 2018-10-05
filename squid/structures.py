@@ -1337,7 +1337,7 @@ class System(_Physical):
 
         return '\n'.join(lammps_command)
 
-    def packmol(self, molecules, new_method=False, molecule_ratio=(1,),
+    def packmol(self, molecules, molecule_ratio=(1,), new_method=False,
                 density=1.0, seed=1, persist=True, number=None,
                 custom=None):
         """
