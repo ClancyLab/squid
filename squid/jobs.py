@@ -131,7 +131,7 @@ def _get_job(s_flag, queueing_system=sysconst.queueing_system, detail=1):
                     j[INDICES["jobname"]],
                     j[INDICES["time"]],
                     j[INDICES["state"]],
-                    j[INDICES["jobid"]]),
+                    j[INDICES["jobid"]],
                     j[INDICES["queue"]],
                     j[INDICES["nprocs"]]
                 )
@@ -143,7 +143,7 @@ def _get_job(s_flag, queueing_system=sysconst.queueing_system, detail=1):
                     j[INDICES["jobname"]],
                     j[INDICES["time"]],
                     j[INDICES["state"]],
-                    j[INDICES["jobid"]])
+                    j[INDICES["jobid"]]
                 )
                 for j in all_jobs if s_flag == j[INDICES["state"]].strip()
             ]
@@ -279,7 +279,7 @@ def get_all_jobs(queueing_system=sysconst.queueing_system, detail=0):
                     j[INDICES["jobname"]],
                     j[INDICES["time"]],
                     j[INDICES["state"]],
-                    j[INDICES["jobid"]]),
+                    j[INDICES["jobid"]],
                     j[INDICES["queue"]],
                     j[INDICES["nprocs"]]
                 )
@@ -291,7 +291,7 @@ def get_all_jobs(queueing_system=sysconst.queueing_system, detail=0):
                     j[INDICES["jobname"]],
                     j[INDICES["time"]],
                     j[INDICES["state"]],
-                    j[INDICES["jobid"]])
+                    j[INDICES["jobid"]]
                 )
                 for j in all_jobs
             ]
