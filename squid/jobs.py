@@ -502,6 +502,13 @@ equates to %d nodes on marcc; however, you only requested %d nodes." % (procs, n
     if queue is "debug":
         print("\nWould have submitted job %s\n" % name)
     elif queueing_system.strip().lower() == "nbs":
+
+        # In the case of NBS, we only have procs, not ntasks, so figure
+        # things out accordingly
+        if ntasks > 1:
+            procs = procs * ntasks
+            print("Warning - NBS uses procs.  Will assume procs = procs * ntasks = %d." % procs)
+
         # Deal with variables accordingly
         if xhosts is not None:
             if type(xhosts) is str:
@@ -844,6 +851,12 @@ strings, or None")
             fptr.write(cmd)
             fptr.close()
     elif queueing_system.strip().lower() == "nbs":
+        # In the case of NBS, we only have procs, not ntasks, so figure
+        # things out accordingly
+        if ntasks > 1:
+            nprocs = nprocs * ntasks
+            print("Warning - NBS uses nprocs.  Will assume nprocs = nprocs * ntasks = %d." % nprocs)
+
         xhosts = ""
         if xhost is not None:
             xhosts = "##NBS-xhost: " +\
