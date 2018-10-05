@@ -106,6 +106,54 @@ def _get_job(s_flag, queueing_system=sysconst.queueing_system, detail=1):
         # Do This
         raise Exception("THIS CODE NOT WRITTEN YET.")
     elif queueing_system.strip().lower() == "slurm":
+        cmd = 'sacct --format=User%30,JobName%50,JobID,State,Partition,NCPUS,Elapsed --state=PD,R'
+        INDICES = {
+            "user": 0,
+            "jobname": 1,
+            "jobid": 2,
+            "state": 3,
+            "queue": 4,
+            "nprocs": 5,
+            "time": 6
+        }
+        p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+        output = p.stdout.read().split('\n')
+        all_jobs = [job.strip().split() for job in output
+                    if getpass.getuser() in job]
+        if detail == 3:
+            all_jobs = [
+                j[INDICES["jobid"]]
+                for j in all_jobs if s_flag == j[INDICES["state"]].strip()
+            ]
+        if detail == 2:
+            all_jobs = [
+                (
+                    j[INDICES["jobname"]],
+                    j[INDICES["time"]],
+                    j[INDICES["state"]],
+                    j[INDICES["jobid"]]),
+                    j[INDICES["queue"]],
+                    j[INDICES["nprocs"]]
+                )
+                for j in all_jobs if s_flag == j[INDICES["state"]].strip()
+            ]
+        elif detail == 1:
+            all_jobs = [
+                (
+                    j[INDICES["jobname"]],
+                    j[INDICES["time"]],
+                    j[INDICES["state"]],
+                    j[INDICES["jobid"]])
+                )
+                for j in all_jobs if s_flag == j[INDICES["state"]].strip()
+            ]
+        else:
+            all_jobs = [
+                j[INDICES["jobname"]]
+                for j in all_jobs if s_flag == j[INDICES["state"]].strip()
+            ]
+        return all_jobs
+    elif queueing_system.strip().lower() == "slurm-xsede":
         p = subprocess.Popen(['showq'], stdout=subprocess.PIPE)
         output = p.stdout.read().split('\n')
         all_jobs = [job.strip().split() for job in output
@@ -123,6 +171,8 @@ def _get_job(s_flag, queueing_system=sysconst.queueing_system, detail=1):
         raise Exception("Unknown queueing system passed to _get_job. \
 Please choose NBS, PBS, or SLURM for now.")
 
+def public_get_job(s_flag, detail):
+    return _get_job(s_flag, detail=detail)
 
 def get_all_jobs(queueing_system=sysconst.queueing_system, detail=0):
     """
@@ -204,16 +254,52 @@ def get_all_jobs(queueing_system=sysconst.queueing_system, detail=0):
         # Do This
         raise Exception("THIS CODE NOT WRITTEN YET.")
     elif queueing_system.strip().lower() == "slurm":
-        p = subprocess.Popen(['squeue'], stdout=subprocess.PIPE)
+        cmd = 'sacct --format=User%30,JobName%50,JobID,State,Partition,NCPUS,Elapsed --state=PD,R'
+        INDICES = {
+            "user": 0,
+            "jobname": 1,
+            "jobid": 2,
+            "state": 3,
+            "queue": 4,
+            "nprocs": 5,
+            "time": 6
+        }
+        p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
         output = p.stdout.read().split('\n')
-        all_jobs = [job.strip().split()
-                    for job in output if getpass.getuser() in job]
+        all_jobs = [job.strip().split() for job in output
+                    if getpass.getuser() in job]
+        if detail == 3:
+            all_jobs = [
+                j[INDICES["jobid"]]
+                for j in all_jobs
+            ]
         if detail == 2:
-            all_jobs = [(j[2], j[5], j[4], j[1], j[6]) for j in all_jobs]
+            all_jobs = [
+                (
+                    j[INDICES["jobname"]],
+                    j[INDICES["time"]],
+                    j[INDICES["state"]],
+                    j[INDICES["jobid"]]),
+                    j[INDICES["queue"]],
+                    j[INDICES["nprocs"]]
+                )
+                for j in all_jobs
+            ]
         elif detail == 1:
-            all_jobs = [(j[2], j[5], j[4]) for j in all_jobs]
+            all_jobs = [
+                (
+                    j[INDICES["jobname"]],
+                    j[INDICES["time"]],
+                    j[INDICES["state"]],
+                    j[INDICES["jobid"]])
+                )
+                for j in all_jobs
+            ]
         else:
-            all_jobs = [j[2] for j in all_jobs]
+            all_jobs = [
+                j[INDICES["jobname"]]
+                for j in all_jobs
+            ]
         return all_jobs
     else:
         raise Exception("Unknown queueing system passed to get_all_jobs. \
@@ -258,6 +344,8 @@ def get_running_jobs(queueing_system=sysconst.queueing_system, detail=1):
         # Do This
         raise Exception("THIS CODE NOT WRITTEN YET.")
     elif queueing_system.strip().lower() == "slurm":
+        return _get_job("RUNNING", queueing_system, detail)
+    elif queueing_system.strip().lower() == "slurm-xsede":
         return _get_job("Running", queueing_system, detail)
     else:
         raise Exception("Unknown queueing system passed to get_running_jobs. \
@@ -303,6 +391,8 @@ def get_pending_jobs(queueing_system=sysconst.queueing_system, detail=0):
         # Do This
         raise Exception("THIS CODE NOT WRITTEN YET.")
     elif queueing_system.strip().lower() == "slurm":
+        return _get_job("PENDING", queueing_system, detail)
+    elif queueing_system.strip().lower() == "slurm-xsede":
         return _get_job("Waiting", queueing_system, detail)
     else:
         raise Exception("Unknown queueing system passed to get_pending_jobs. \
@@ -570,6 +660,7 @@ source ~/.bashrc
         f.write(generic_script)
         f.close()
 
+        # Get a list of all jobs
         job_exists = name in get_all_jobs(detail=0)
         if redundancy and job_exists:
             try:
