@@ -80,7 +80,7 @@ class LJ(object):
             index = str(other)
         else:
             index = str(other.index)
-        return str(self.index) == index
+        return index == "*" or str(self.index) == index
 
     def __hash__(self):
         return hash(tuple(self.unpack(with_indices=True)))

@@ -49,9 +49,9 @@ class HarmonicConnector(object):
 
     def __eq__(self, other):
         if isinstance(other, tuple) or isinstance(other, list):
-            indices = other
+            indices = [str(o) if str(o) != "*" else str(i) for o, i in zip(other, self.indices)]
         else:
-            indices = other.indices
+            indices = [str(o) if str(o) != "*" else str(i) for o, i in zip(other.indices, self.indices)]
         return (all([str(x) == str(y) for x, y in zip(self.indices, indices)]) or
                 all([str(x) == str(y) for x, y in zip(self.indices, indices[::-1])]))
 

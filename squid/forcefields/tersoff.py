@@ -205,9 +205,9 @@ class Tersoff(object):
     def __eq__(self, other):
 
         if isinstance(other, tuple) or isinstance(other, list):
-            indices = [str(o) for o in other]
+            indices = [str(o) if str(o) != "*" else str(i) for o, i in zip(other, self.indices)]
         elif hasattr(other, indices):
-            indices = [str(o) for o in other.indices]
+            indices = [str(o) if str(o) != "*" else str(i) for o, i in zip(other.indices, self.indices)]
         else:
             return False
 
