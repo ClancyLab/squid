@@ -424,7 +424,8 @@ def job(run_name, route, atoms=[], extra_section='', grad=False,
             previous is used, then the last set of atomic coordinates from
             the previous simulation will be used.
         extra_section: *str, optional*
-            Additional DFT simulation parameters.
+            Additional DFT simulation parameters.  If None and previous is
+            not None, then previous extra section is used.
         grad: *bool, optional*
             Whether to force RunTyp Gradient.
         queue: *str, optional*
@@ -494,6 +495,9 @@ def job(run_name, route, atoms=[], extra_section='', grad=False,
         raise Exception("Job name \"%s\" too long (%d) for NBS. \
 Max character length is 31." % (run_name, len(run_name)))
 
+    # Generate the orca input file
+    os.system('mkdir -p orca/%s' % run_name)
+
     if atoms is None and previous is not None:
         atoms = []
 
@@ -526,46 +530,20 @@ Switching to Single Point.")
         # This is an issue due to "Slots" being allocated whenever ntasks is specified, but not when cpu-per-task is specified.  Orca apparently requests N slots, so we need to call for ntasks, not procs.
         raise Exception("Error - When using slurm, you must specify ntasks instead of procs for number of cores to use.")
 
-    # Generate the orca input file
-    os.system('mkdir -p orca/%s' % run_name)
-    os.chdir('orca/%s' % run_name)
-
     if route is None and previous is not None:
         route = read(previous).route.strip()
+    if extra_section is None and previous is not None:
+        extra_section = read(previous).extra_section.strip()
+        # If we read in the previous extra_section, remove the number of cores
+        if "%pal nprocs" in extra_section:
+            tmp = extra_section.split("%pal")
+            tmp[0] = tmp[0].strip()
+            tmp[1] = "end".join(tmp[1].split("end")[1:]).strip()
+            extra_section = ' '.join(tmp)
 
     # orca requires route line to start with "!"
     if route.strip()[0] != "!":
         route = '! ' + route
-
-    # If trying to run "Opt" on one atom, this would crash orca
-    if len(atoms) < 2 and "opt" in route.lower() and previous is None:
-        # In the case of a simple switch, run it with warning
-        if " opt " in route.lower():
-            print("Warning - Attempted OPT in Orca for system of less \
-than 2 atoms. Auto-swapped Opt for SP.")
-            for opt in [" opt ", " Opt ", " OPT "]:
-                while opt in route:
-                    route = route.replace(opt, " SP ")
-        else:
-            raise Exception("Attempting Orca optimization of system with \
-less than 2 atoms!")
-
-    # If running on system with more than one core, tell orca
-    if cores_to_use > 1:
-        add_to_extra = '%pal nprocs ' + str(cores_to_use) + ' end\n'
-        extra_section = add_to_extra + extra_section.strip()
-
-    # If desiring .orca.engrad output, tell orca
-    if grad:
-        if "RunTyp Gradient" not in extra_section:
-            extra_section = extra_section.strip() + '''\n%method
- RunTyp Gradient
- end'''
-
-    # One can specify how much memory they want (in MB) per core
-    if mem is not None:
-        extra_section = extra_section.strip()
-        extra_section += '\n%maxcore ' + str(mem).strip()
 
     # Add moread if a previous orca job was provided
     if previous is not None:
@@ -576,18 +554,24 @@ less than 2 atoms!")
         if previous.startswith('/'):
             previous_path = previous
         else:
-            previous_path = current_dir + '/../' + previous
+            previous_path = current_dir + '/orca/' + previous
             previous_path += '/' + previous + '.orca.gbw'
             if not os.path.isfile(previous_path):
-                test_path = current_dir + '/../' + previous
+                test_path = current_dir + '/orca/' + previous
                 test_path += '/' + previous + '.orca.proc0.gbw'
                 if os.path.isfile(test_path):
                     previous_path = test_path
         if not os.path.isfile(previous_path):
             raise Exception("Previous run does not have a .gbw file at %s."
                             % (previous_path))
-        shutil.copyfile(previous_path, 'previous.gbw')
-        extra_section = extra_section.strip() + '\n%moinp "previous.gbw"'
+        shutil.copyfile(previous_path, 'orca/%s/previous.gbw' % run_name)
+
+        # First, if moinp is already in extra_section, remove it
+        if '%moinp "previous.gbw"' not in extra_section:
+            extra_section = extra_section.strip() + '\n%moinp "previous.gbw"'
+        elif '%moinp' in extra_section:
+            # TODO - Just remove %moinp "whatever.gbw" from the extra_section
+            raise Exception("Error - moinp encountered, but not as previous.gbw")
 
         # If no atoms were specified, get the atoms from the previous job
         if atoms == []:
@@ -610,9 +594,42 @@ than 2 atoms. Auto-swapped Opt for SP.")
                 raise Exception("Attempting Orca optimization of system with \
 less than 2 atoms!")
 
+    # If running on system with more than one core, tell orca
+    if cores_to_use > 1:
+        add_to_extra = '%pal nprocs ' + str(cores_to_use) + ' end\n'
+        extra_section = add_to_extra + extra_section.strip()
+
+    # If desiring .orca.engrad output, tell orca
+    if grad:
+        if "RunTyp Gradient" not in extra_section:
+            extra_section = extra_section.strip() + '''\n%method
+ RunTyp Gradient
+ end'''
+
+    # One can specify how much memory they want (in MB) per core
+    if mem is not None:
+        extra_section = extra_section.strip()
+        extra_section += '\n%maxcore ' + str(mem).strip()
+
+    # If trying to run "Opt" on one atom, this would crash orca
+    if len(atoms) < 2 and "opt" in route.lower() and previous is None:
+        # In the case of a simple switch, run it with warning
+        if " opt " in route.lower():
+            print("Warning - Attempted OPT in Orca for system of less \
+than 2 atoms. Auto-swapped Opt for SP.")
+            for opt in [" opt ", " Opt ", " OPT "]:
+                while opt in route:
+                    route = route.replace(opt, " SP ")
+        else:
+            raise Exception("Attempting Orca optimization of system with \
+less than 2 atoms!")
+
     # -------------------------------------------------------------------------
     # NO MORE CHANGES TO EXTRA_SECTION AFTER THIS!-----------------------------
     # -------------------------------------------------------------------------
+
+    # Change directory
+    os.chdir('orca/%s' % run_name)
 
     # If either charge or multiplicity are specified, use that
     if charge is not None or multiplicity is not None:
