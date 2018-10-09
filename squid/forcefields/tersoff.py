@@ -602,7 +602,6 @@ class Tersoff(object):
                     assert len(value) == 1, "Error - Tried fixing R in Tersoff with %s." % str(value)
                     value = value[0]
                 self.R = float(value)
-                print("Fixed %s R = %.2f" % (str(self.indices), self.R))
             self.R_bounds = (self.R, self.R)
         elif params == "D":
             if value is not None:

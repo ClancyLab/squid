@@ -967,16 +967,24 @@ class Parameters(object):
 
         if style.startswith("coul"):
             assert label in self.coul_params, "Label %s does not exist in coulomb list!" % label
-            self.coul_params[self.coul_params.index(label)].fix(params=params, value=value)
+            indices = [i for i, p in enumerate(self.coul_params) if p == label]
+            for i in indices:
+                self.coul_params[i].fix(params=params, value=value)
         elif style == "lj":
             assert label in self.lj_params, "Label %s does not exist in lj list!" % label
-            self.lj_params[self.lj_params.index(label)].fix(params=params, value=value)
+            indices = [i for i, p in enumerate(self.lj_params) if p == label]
+            for i in indices:
+                self.lj_params[i].fix(params=params, value=value)
         elif style == "morse":
             assert label in self.morse_params, "Label %s does not exist in morse list!" % str(label)
-            self.morse_params[self.morse_params.index(label)].fix(params=params, value=value)
+            indices = [i for i, p in enumerate(self.morse_params) if p == label]
+            for i in indices:
+                self.morse_params[i].fix(params=params, value=value)
         elif style.startswith("ters"):
             assert label in self.tersoff_params, "Label %s does not exist in tersoff list!" % str(label)
-            self.tersoff_params[self.tersoff_params.index(label)].fix(params=params, value=value)
+            indices = [i for i, p in enumerate(self.tersoff_params) if p == label]
+            for i in indices:
+                self.tersoff_params[i].fix(params=params, value=value)
         else:
             raise Exception("Cannot handle the style %s." % style)
 
