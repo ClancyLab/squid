@@ -528,7 +528,15 @@ Switching to Single Point.")
 
     if sysconst.queueing_system.lower() == "slurm" and cores_to_use > ntasks:
         # This is an issue due to "Slots" being allocated whenever ntasks is specified, but not when cpu-per-task is specified.  Orca apparently requests N slots, so we need to call for ntasks, not procs.
-        raise Exception("Error - When using slurm, you must specify ntasks instead of procs for number of cores to use.")
+        # raise Exception("Error - When using slurm, you must specify ntasks instead of procs for number of cores to use.")
+
+        # Instead of the above throwing an error, we fix it manually here
+        if procs > ntasks:
+            ntasks, procs = procs, ntasks
+
+        # If we find that we still have to many requested, then throw the error
+        if cores_to_use > ntasks:
+            raise Exception("Error - When using slurm, you must specify ntasks instead of procs for number of cores to use.")
 
     if route is None and previous is not None:
         route = read(previous).route.strip()
