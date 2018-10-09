@@ -503,11 +503,15 @@ class Tersoff(object):
         if validate:
             self.validate()
 
-    def fix(self, params='all'):
+    def fix(self, params='all', value=None):
         '''
         This will fix these parameters by assigning bounds to the values themselves.
         '''
         if params == 'all':
+            if value is not None:
+                assert isinstance(value, list) or isinstance(value, tuple), "Error - Neither a list or tuple was passed when fixing all tersoff params (passed %s)." % str(value)
+                assert len(value) == 14, "Error - Needed 14 values in fix tersoff, but %s was passed instead." % str(value)
+                self.m, self.gamma, self.lambda3, self.c, self.d, self.costheta0, self.n, self.beta, self.lambda2, self.B, self.R, self.D, self.lambda1, self.A = value
             self.m_bounds = (self.m, self.m)
             self.gamma_bounds = (self.gamma, self.gamma)
             self.lambda3_bounds = (self.lambda3, self.lambda3)
@@ -523,32 +527,103 @@ class Tersoff(object):
             self.lambda1_bounds = (self.lambda1, self.lambda1)
             self.A_bounds = (self.A, self.A)
         elif params == 'm':
+            if value is not None:
+                if isinstance(value, list) or isinstance(value, tuple):
+                    assert len(value) == 1, "Error - Tried fixing m in Tersoff with %s." % str(value)
+                    value = value[0]
+                self.m = float(value)
             self.m_bounds = (self.m, self.m)
         elif params == 'gamma':
+            if value is not None:
+                if isinstance(value, list) or isinstance(value, tuple):
+                    assert len(value) == 1, "Error - Tried fixing gamma in Tersoff with %s." % str(value)
+                    value = value[0]
+                self.gamma = float(value)
             self.gamma_bounds = (self.gamma, self.gamma)
         elif params == "lambda3":
+            if value is not None:
+                if isinstance(value, list) or isinstance(value, tuple):
+                    assert len(value) == 1, "Error - Tried fixing lambda3 in Tersoff with %s." % str(value)
+                    value = value[0]
+                self.lambda3 = float(value)
             self.lambda3_bounds = (self.lambda3, self.lambda3)
         elif params == "c":
+            if value is not None:
+                if isinstance(value, list) or isinstance(value, tuple):
+                    assert len(value) == 1, "Error - Tried fixing c in Tersoff with %s." % str(value)
+                    value = value[0]
+                self.c = float(value)
             self.c_bounds = (self.c, self.c)
         elif params == "d":
+            if value is not None:
+                if isinstance(value, list) or isinstance(value, tuple):
+                    assert len(value) == 1, "Error - Tried fixing d in Tersoff with %s." % str(value)
+                    value = value[0]
+                self.d = float(value)
             self.d_bounds = (self.d, self.d)
         elif params == "costheta0":
+            if value is not None:
+                if isinstance(value, list) or isinstance(value, tuple):
+                    assert len(value) == 1, "Error - Tried fixing costheta0 in Tersoff with %s." % str(value)
+                    value = value[0]
+                self.costheta0 = float(value)
             self.costheta0_bounds = (self.costheta0, self.costheta0)
         elif params == "n":
+            if value is not None:
+                if isinstance(value, list) or isinstance(value, tuple):
+                    assert len(value) == 1, "Error - Tried fixing n in Tersoff with %s." % str(value)
+                    value = value[0]
+                self.n = float(value)
             self.n_bounds = (self.n, self.n)
         elif params == "beta":
+            if value is not None:
+                if isinstance(value, list) or isinstance(value, tuple):
+                    assert len(value) == 1, "Error - Tried fixing beta in Tersoff with %s." % str(value)
+                    value = value[0]
+                self.beta = float(value)
             self.beta_bounds = (self.beta, self.beta)
         elif params == "lambda2":
+            if value is not None:
+                if isinstance(value, list) or isinstance(value, tuple):
+                    assert len(value) == 1, "Error - Tried fixing lambda2 in Tersoff with %s." % str(value)
+                    value = value[0]
+                self.lambda2 = float(value)
             self.lambda2_bounds = (self.lambda2, self.lambda2)
         elif params == "B":
+            if value is not None:
+                if isinstance(value, list) or isinstance(value, tuple):
+                    assert len(value) == 1, "Error - Tried fixing B in Tersoff with %s." % str(value)
+                    value = value[0]
+                self.B = float(value)
             self.B_bounds = (self.B, self.B)
         elif params == "R":
+            if value is not None:
+                if isinstance(value, list) or isinstance(value, tuple):
+                    assert len(value) == 1, "Error - Tried fixing R in Tersoff with %s." % str(value)
+                    value = value[0]
+                self.R = float(value)
+                print("Fixed %s R = %.2f" % (str(self.indices), self.R))
             self.R_bounds = (self.R, self.R)
         elif params == "D":
+            if value is not None:
+                if isinstance(value, list) or isinstance(value, tuple):
+                    assert len(value) == 1, "Error - Tried fixing D in Tersoff with %s." % str(value)
+                    value = value[0]
+                self.D = float(value)
             self.D_bounds = (self.D, self.D)
         elif params == "lambda1":
+            if value is not None:
+                if isinstance(value, list) or isinstance(value, tuple):
+                    assert len(value) == 1, "Error - Tried fixing lambda1 in Tersoff with %s." % str(value)
+                    value = value[0]
+                self.lambda1 = float(value)
             self.lambda1_bounds = (self.lambda1, self.lambda1)
         elif params == "A":
+            if value is not None:
+                if isinstance(value, list) or isinstance(value, tuple):
+                    assert len(value) == 1, "Error - Tried fixing A in Tersoff with %s." % str(value)
+                    value = value[0]
+                self.A = float(value)
             self.A_bounds = (self.A, self.A)
         else:
             raise Exception("In Tersoff, tried fixing %s parameter (does not exist)!" % params)

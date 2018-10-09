@@ -208,16 +208,30 @@ class LJ(object):
         self.index, self.sigma, self.epsilon = self.parse_line(line)
         self.validate()
 
-    def fix(self, params='all'):
+    def fix(self, params='all', value=None):
         '''
         This will fix these parameters by assigning bounds to the values themselves.
         '''
         if params == 'all':
+            if value is not None:
+                assert isinstance(value, list) or isinstance(value, tuple), "Error - Passed %s when fixing all LJ params." % str(value)
+                assert len(value) == 2, "Error - Not enough/too many parameters passed for fix lj (passed %s)." % str(value)
+                self.sigma, self.epsilon = value
             self.sigma_bounds = (self.sigma, self.sigma)
             self.epsilon_bounds = (self.epsilon, self.epsilon)
         elif params == 'sigma':
+            if value is not None:
+                if isinstance(value, list) or isinstance(value, tuple):
+                    assert len(value) == 1, "Error - fixing only sigma in lj but passed %s." % str(value)
+                    value = value[0]
+                self.sigma = float(value)
             self.sigma_bounds = (self.sigma, self.sigma)
         elif params == 'epsilon':
+            if value is not None:
+                if isinstance(value, list) or isinstance(value, tuple):
+                    assert len(value) == 1, "Error - fixing only epsilon in lj but passed %s." % str(value)
+                    value = value[0]
+                self.epsilon = float(value)
             self.epsilon_bounds = (self.epsilon, self.epsilon)
         else:
             raise Exception("In LJ, tried fixing %s parameter (does not exist)!" % params)

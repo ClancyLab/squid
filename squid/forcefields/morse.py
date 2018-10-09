@@ -251,22 +251,46 @@ class Morse(object):
         self.indices, self.D0, self.alpha, self.r0, self.rc = self.parse_line(line)
         self.validate()
 
-    def fix(self, params='all'):
+    def fix(self, params='all', value=None):
         '''
         This will fix these parameters by assigning bounds to the values themselves.
         '''
         if params == 'all':
+            if value is not None:
+                assert isinstance(value, list) or isinstance(value, tuple), "Error - Trying to set all Morse params without passing list/tuple (passed %s)." % str(value)
+                assert len(value) == 4, "Error - Not the right number of parameters (4) passed to fix all in Morse (passed %s)." % str(value)
+                self.D0, self.alpha, self.r0, self.rc = [float(f) for f in value]
             self.D0_bounds = (self.D0, self.D0)
             self.alpha_bounds = (self.alpha, self.alpha)
             self.r0_bounds = (self.r0, self.r0)
             self.rc_bounds = (self.rc, self.rc)
         elif params == 'D0':
+            if value is not None:
+                if isinstance(value, list) or isinstance(value, tuple):
+                    assert len(value) == 1, "Error - passed more than one value when fixing D0 in Morse (passed %s)." % str(value)
+                    value = value[0]
+                self.D0 = float(value)
             self.D0_bounds = (self.D0, self.D0)
         elif params == 'alpha':
+            if value is not None:
+                if isinstance(value, list) or isinstance(value, tuple):
+                    assert len(value) == 1, "Error - passed more than one value when fixing alpha in Morse (passed %s)." % str(value)
+                    value = value[0]
+                self.alpha = float(value)
             self.alpha_bounds = (self.alpha, self.alpha)
         elif params == "r0":
+            if value is not None:
+                if isinstance(value, list) or isinstance(value, tuple):
+                    assert len(value) == 1, "Error - passed more than one value when fixing r0 in Morse (passed %s)." % str(value)
+                    value = value[0]
+                self.r0 = float(value)
             self.r0_bounds = (self.r0, self.r0)
         elif params == "rc":
+            if value is not None:
+                if isinstance(value, list) or isinstance(value, tuple):
+                    assert len(value) == 1, "Error - passed more than one value when fixing rc in Morse (passed %s)." % str(value)
+                    value = value[0]
+                self.rc = float(value)
             self.rc_bounds = (self.rc, self.rc)
         else:
             raise Exception("In Morse, tried fixing %s parameter (does not exist)!" % params)

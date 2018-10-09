@@ -185,11 +185,16 @@ class Coul(object):
         self.index, self.charge, self.element, self.mass = self.parse_line(line)
         self.validate()
 
-    def fix(self, params='all'):
+    def fix(self, params='all', value=None):
         '''
         This will fix these parameters by assigning bounds to the values themselves.
         '''
         if params in ['all', 'charge']:
+            if value is not None:
+                if isinstance(value, list) or isinstance(value, tuple):
+                    assert len(value) == 1, "Error - tried setting charge to some odd list %s" % str(value)
+                    value = value[0]
+                self.charge = float(value)
             self.charge_bounds = (self.charge, self.charge)
         else:
             raise Exception("In Coulomb, tried fixing %s parameter (does not exist)!" % params)
