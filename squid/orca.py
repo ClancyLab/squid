@@ -575,9 +575,10 @@ Switching to Single Point.")
         shutil.copyfile(previous_path, 'orca/%s/previous.gbw' % run_name)
 
         # First, if moinp is already in extra_section, remove it
-        if '%moinp "previous.gbw"' not in extra_section:
+        check_str = '%moinp "previous.gbw"'
+        if check_str not in extra_section:
             extra_section = extra_section.strip() + '\n%moinp "previous.gbw"'
-        elif '%moinp' in extra_section:
+        elif '%moinp' in extra_section and check_str not in extra_section:
             # TODO - Just remove %moinp "whatever.gbw" from the extra_section
             raise Exception("Error - moinp encountered, but not as previous.gbw")
 
