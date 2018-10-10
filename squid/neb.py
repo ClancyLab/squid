@@ -15,6 +15,7 @@ import sys
 from scipy.linalg import block_diag
 import numpy as np
 import copy
+import time
 # Squid imports
 import geometry
 import print_helper
@@ -455,6 +456,7 @@ class NEB:
 
         self.callback = callback
 
+        self.job_hang_time = None
         self.DFT = DFT.lower().strip()
         if self.DFT == 'orca':
             self.start_job = orca_start_job
@@ -527,6 +529,9 @@ g09.  If not, you need to manually specify start_job and get_results.")
         # Wait for jobs to finish
         for j in running_jobs:
             j.wait()
+
+        if self.job_hang_time is not None:
+            time.sleep(self.job_hang_time)
 
         # Get forces and energies from DFT calculations
         if not self.no_energy:
