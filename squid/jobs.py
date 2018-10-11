@@ -273,7 +273,7 @@ def get_all_jobs(queueing_system=sysconst.queueing_system, detail=0):
                 j[INDICES["jobid"]]
                 for j in all_jobs
             ]
-        if detail == 2:
+        elif detail == 2:
             all_jobs = [
                 (
                     j[INDICES["jobname"]],
