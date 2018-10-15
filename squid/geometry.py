@@ -1141,6 +1141,7 @@ def rotate_frames(frame,
                   dt=1,
                   axis=[0, 0, 1],
                   cog=True,
+                  origin=(0, 0, 0),
                   last=False):
     """
     Given a list of atoms, generate a sequential list of rotated atomic
@@ -1161,6 +1162,8 @@ def rotate_frames(frame,
         cog: *bool, optional*
             Whether to rotate around the center of geometry (True) or
             not (False).
+        origin: *tuple, float*
+            The origin for which we will rotate around.
         last: *bool, optional*
             Whether to only return the final rotation (True) or not (False).
 
@@ -1174,11 +1177,15 @@ def rotate_frames(frame,
     elements = [a.element for a in frame]
     natoms = len(frame)
 
+    origin = np.array(origin)
+
+    image = image.reshape((-1, 3))
     if cog:
-        image = image.reshape((-1, 3))
         translate = image.sum(axis=0) / float(natoms)
-        image -= translate
-        image = image.flatten()
+    else:
+        translate = origin
+    image -= translate
+    image = image.flatten()
 
     theta = theta_n if last else theta_0
     while theta <= theta_n:
@@ -1187,6 +1194,8 @@ def rotate_frames(frame,
         rotated = np.dot(R, image).reshape((-1, 3))
         if cog:
             rotated += translate
+        else:
+            rotated += origin
         frames.append([structures.Atom(e, a[0], a[1], a[2])
                        for e, a in zip(elements, rotated)])
         theta += dt
