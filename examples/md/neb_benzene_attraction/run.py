@@ -10,6 +10,50 @@ from squid import structures
 from squid import lammps_job
 
 
+def minimize_benzene():
+    '''
+    This function will use LAMMPs minimize to ensure that our endpoints
+    are minimized.
+    '''
+
+    P, mol1 = files.read_cml("benzene.cml", new_method=True)
+    box = structures.System(name="benz", box_size=(20, 20, 20), periodic=True)
+    mol1 = mol1[0]
+    box.add(mol1)
+    box.set_types(P)
+
+    input_script = """units real
+atom_style full
+pair_style lj/cut/coul/cut 10.0
+bond_style harmonic
+angle_style harmonic
+dihedral_style opls
+
+boundary p p p
+read_data benz.data
+
+pair_modify mix geometric
+
+""" + box.dump_pair_coeffs() + """
+
+dump 1 all xyz 1 benzene.xyz
+dump_modify 1 element """ + ' '.join(box.get_elements(P)) + """
+
+minimize 1.0e-4 1.0e-6 1000 10000
+"""
+    input_script = input_script.strip()
+    j = lammps_job.job("benz", input_script, system=box, procs=1, queue=None,
+                   hybrid_angle=False, params=P, pair_coeffs_included=False,
+                   no_echo=True)
+    j.wait(1)
+
+    new_atoms = files.read_xyz("lammps/benz/benzene.xyz")[-1]
+    for a, b in zip(mol1.atoms, new_atoms):
+        a.x, a.y, a.z = b.x, b.y, b.z
+
+    files.write_cml(mol1, name="benzene_opt")
+
+
 def generate_frames():
     '''
     This function generates the NEB pathway we want to study.
@@ -23,8 +67,10 @@ def generate_frames():
     DELTA = 0.5
     NFRAMES = 10
 
-    mol1 = files.read_cml("benzene.cml", return_molecules=True)[0]
-    mol2 = files.read_cml("benzene.cml", return_molecules=True)[0]
+    minimize_benzene()
+
+    mol1 = files.read_cml("benzene_opt.cml", return_molecules=True)[0]
+    mol2 = files.read_cml("benzene_opt.cml", return_molecules=True)[0]
     mol1.set_center((0.0, 0.0, 0.0))
     mol1.rotate(geometry.rotation_matrix((0, 0, 1), 30))
     mol2.set_center((0.0, 0.0, PROXIMITY))
@@ -212,13 +258,13 @@ def read_simulation(NEB, step_to_use, i, state):
 
 
 frames = generate_frames()
-
-files.write_xyz(frames, "test.xyz")
+files.write_xyz(frames, "neb_initial_configuration.xyz")
 
 sim = neb.NEB(
     'benzene',
     frames,
-    ('CH3OH.cml', 0.8),
+    ('water.cml', 1.0),
+    #('CH3OH.cml', 0.8),
     DFT="None",
     opt="LBFGS",
     queue="long",
