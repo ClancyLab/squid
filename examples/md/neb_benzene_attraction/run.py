@@ -4,6 +4,7 @@ import numpy as np
 
 from squid import neb
 from squid import files
+from squid import units
 from squid import geometry
 from squid import structures
 from squid import lammps_job
@@ -146,7 +147,7 @@ velocity all create 300.0 23123 rot yes dist gaussian
 velocity neb set 0.0 0.0 0.0
 timestep 1.0
 
-fix energy all ave/time 100 5 1000 c_thermo_pe file energy.profile
+fix energy neb ave/time 100 5 1000 c_thermo_pe file energy.profile
 fix motion_npt all npt temp 300.0 300.0 100.0 iso 0.0 0.0 100.0 dilate solvent
 run 20000
 unfix motion_npt
@@ -196,9 +197,9 @@ def read_simulation(NEB, step_to_use, i, state):
     '''
     new_atoms = lammps_job.read_dump("lammps/solv_box-%d-%d/forces.dump" % (step_to_use, i), extras=['fx', 'fy', 'fz'])[0]
     for atom in new_atoms:
-        atom.fx = float(atom.extras['fx'])
-        atom.fy = float(atom.extras['fy'])
-        atom.fz = float(atom.extras['fz'])
+        atom.fx = units.convert("kcal/ang", "Ha/ang", float(atom.extras['fx']))
+        atom.fy = units.convert("kcal/ang", "Ha/ang", float(atom.extras['fy']))
+        atom.fz = units.convert("kcal/ang", "Ha/ang", float(atom.extras['fz']))
 
     energy = open("lammps/solv_box-%d-%d/energy.profile" % (step_to_use, i), 'r').read().strip().split("\n")[-1]
     new_energy = float(energy.strip().split()[-1].strip())
@@ -207,7 +208,7 @@ def read_simulation(NEB, step_to_use, i, state):
     for a, b in zip(state, new_atoms):
         a.fx, a.fy, a.fz = b.fx, b.fy, b.fz
 
-    return new_energy, new_atoms
+    return units.convert_energy("kcal/mol", "Ha", new_energy), new_atoms
 
 
 frames = generate_frames()
