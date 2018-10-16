@@ -196,9 +196,9 @@ def read_simulation(NEB, step_to_use, i, state):
     '''
     new_atoms = lammps_job.read_dump("lammps/solv_box-%d-%d/forces.dump" % (step_to_use, i), extras=['fx', 'fy', 'fz'])[0]
     for atom in new_atoms:
-        atom.fx = atom.extras['fx']
-        atom.fy = atom.extras['fy']
-        atom.fz = atom.extras['fz']
+        atom.fx = float(atom.extras['fx'])
+        atom.fy = float(atom.extras['fy'])
+        atom.fz = float(atom.extras['fz'])
 
     energy = open("lammps/solv_box-%d-%d/energy.profile" % (step_to_use, i), 'r').read().strip().split("\n")[-1]
     new_energy = float(energy.strip().split()[-1].strip())
@@ -223,7 +223,8 @@ sim = neb.NEB(
     queue="long",
     procs=2,
     start_job=run_simulation,
-    get_results=read_simulation
+    get_results=read_simulation,
+    no_energy=False
 )
 
 sim.optimize()

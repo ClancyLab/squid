@@ -355,9 +355,10 @@ class NEB:
             A function specifying how to read your NEB single point
             calculations.  Needed if DFT is neither orca nor g09.  Note, this
             function returns two things: list of energies, list of atoms.
-            Further, the forces are contained within each atom object.  Finally,
-            if using no_energy=True, then return None (or an empty list) for the
-            energies.
+            Further, the forces are contained within each atom object.  It also
+            requires that the forces on the state object be updated within said
+            function (for more info see example codes).  Finally, if using
+            no_energy=True, then return None (or an empty list) for the energies.
         new_opt_params: *dict, optional*
             Pass any additional parameters to the optimization algorithm.
         callback: *func, optional*
