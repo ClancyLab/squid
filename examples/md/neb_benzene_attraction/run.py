@@ -19,7 +19,7 @@ def generate_frames():
             MEP reaction coordinate.
     '''
     PROXIMITY = 3.0
-    DELTA = 0.3
+    DELTA = 0.5
     NFRAMES = 10
 
     mol1 = files.read_cml("benzene.cml", return_molecules=True)[0]
@@ -130,8 +130,8 @@ pair_modify mix geometric
 group neb id <= """ + str(len(state)) + """
 group solvent subtract all neb
 
-dump 1 all xyz 1000 solv_box_""" + str(i) + """.xyz
-dump_modify 1 element """ + ' '.join(box.get_elements(P)) + """
+#dump 1 all xyz 1000 solv_box_""" + str(i) + """.xyz
+#dump_modify 1 element """ + ' '.join(box.get_elements(P)) + """
 #dump 2 neb xyz 100 neb.xyz
 
 thermo_style custom ke pe temp press
@@ -192,13 +192,13 @@ def read_simulation(NEB, step_to_use, i, state):
             A list of atoms with the forces attached in units of Hartree per
             Angstrom (Ha/Ang).            
     '''
-    new_atoms = lammps_job.read_dump("lammps/solv_box-%d-%d/forces.dump" % (step, i), extras=['fx', 'fy', 'fz'])[0]
+    new_atoms = lammps_job.read_dump("lammps/solv_box-%d-%d/forces.dump" % (step_to_use, i), extras=['fx', 'fy', 'fz'])[0]
     for atom in new_atoms:
         atom.fx = atom.extras['fx']
         atom.fy = atom.extras['fy']
         atom.fz = atom.extras['fz']
 
-    energy = open("lammps/solv_box-%d-%d/energy.profile" % (step, i), 'r').read().strip().split("\n")[-1]
+    energy = open("lammps/solv_box-%d-%d/energy.profile" % (step_to_use, i), 'r').read().strip().split("\n")[-1]
     new_energy = float(energy.strip().split()[-1].strip())
 
     return new_energy, new_atoms

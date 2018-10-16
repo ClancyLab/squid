@@ -1412,14 +1412,14 @@ seed ''' + str(seed) + '''
 
             # If the system already has atoms, then set them
             if self.atoms is not None and len(self.atoms) > 0:
-                files.write_xyz(self.atoms, "fixed_system.xyz")
+                files.write_xyz(self.atoms, "%s_fixed.xyz" % self.name)
                 f.write('''
-structure fixed_system.xyz
+structure %s_fixed.xyz
     number 1
     fixed 0. 0. 0. 0. 0. 0.
     centerofmass
 end structure
-''')
+''' % self.name)
  
             # convert density to amu/angstrom^3. 1 g/mL = 0.6022 amu/angstrom^3
             density *= 0.6022
@@ -1444,7 +1444,7 @@ end structure
             lower = tuple([-x / 2.0 for x in self.box_size])
             upper = tuple([x / 2.0 for x in self.box_size])
             for i, m in enumerate(molecules):
-                xyz_file = open('%d.xyz' % i, 'w')
+                xyz_file = open('%s_%d.xyz' % (self.name, i), 'w')
                 xyz_file.write(str(len(m.atoms)) + '\nAtoms\n')
                 for a in m.atoms:
                     xyz_file.write('%s%d %f %f %f\n'
@@ -1452,9 +1452,9 @@ end structure
                 xyz_file.close()
     
                 f.write('''
-structure %d.xyz
+structure %s_%d.xyz
   number %d
-  inside box %f %f %f %f %f %f''' % ((i, molecule_counts[i]) + lower + upper) + '''
+  inside box %f %f %f %f %f %f''' % ((self.name, i, molecule_counts[i]) + lower + upper) + '''
 ''' + additional + '''
 end structure
 ''' )
