@@ -173,13 +173,16 @@ def read_dump(fptr, ext=".dump", coordinates=["x", "y", "z"], extras=[]):
             A list of lists, each holding atom structures.
     """
     # Check if file exists. If not, try subfolder
-    if not os.path.exists(fptr + ext):
+    if not os.path.exists(fptr + ext) and not os.path.exists(fptr):
         fptr = "lammps/%s/%s" % (fptr, fptr)
         if not os.path.exists(fptr + ext):
             raise Exception("File %s nor %s exists"
                             % (fptr.split("/")[-1], fptr))
     # Read in the file
-    raw_out = open(fptr + ext, "r").read()
+    if os.path.exists(fptr):
+        raw_out = open(fptr, 'r').read()
+    else:
+        raw_out = open(fptr + ext, "r").read()
 
     # Read in box bounds here
     s_find = "ITEM: BOX BOUNDS"

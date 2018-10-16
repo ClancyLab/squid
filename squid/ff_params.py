@@ -128,7 +128,59 @@ class Parameters(object):
                     self.load_opls(path)
 
     def __add__(self, other):
-        raise Exception("NEED TO DO THIS!")
+        self.lj_mask = self.lj_mask or other.lj_mask
+        self.coul_mask = self.coul_mask or other.coul_mask
+        self.tersoff_mask = self.tersoff_mask or other.tersoff_mask
+        self.bond_mask = self.bond_mask or other.bond_mask
+        self.angle_mask = self.angle_mask or other.angle_mask
+        self.dihedral_mask = self.dihedral_mask or other.dihedral_mask
+        self.smooth_mask = self.smooth_mask or other.smooth_mask
+
+        if other.sr_cut is not None:
+            if self.sr_cut is None:
+                self.sr_cut = other.sr_cut
+            else:
+                self.sr_cut = max(self.sr_cut, other.sr_cut)
+        if other.lr_cut is not None:
+            if self.lr_cut is None:
+                self.lr_cut = other.lr_cut
+            else:
+                self.lr_cut = max(self.lr_cut, other.lr_cut)
+
+        if other.smrff_types is not None:
+            if self.smrff_types is None:
+                self.smrff_types = copy.deepcopy(other.smrff_types)
+            else:
+                self.smrff_types += other.smrff_types
+        if other.opls_types is not None:
+            if self.opls_types is None:
+                self.opls_types = copy.deepcopy(other.opls_types)
+            else:
+                self.opls_types += other.opls_types
+ 
+        self.lj_params += [o for o in other.lj_params if o not in self.lj_params]
+        self.coul_params += [o for o in other.coul_params if o not in self.coul_params]
+        self.tersoff_params += [o for o in other.tersoff_params if o not in self.tersoff_params]
+        self.morse_params += [o for o in other.morse_params if o not in self.morse_params]
+
+        self.bond_params += [o for o in other.bond_params if o not in self.bond_params]
+        self.angle_params += [o for o in other.angle_params if o not in self.angle_params]
+        self.dihedral_params += [o for o in other.dihedral_params if o not in self.dihedral_params]
+
+        self.SR_SMOOTHS += [o for o in other.SR_SMOOTHS if o not in self.SR_SMOOTHS]
+        self.LR_SMOOTHS += [o for o in other.LR_SMOOTHS if o not in self.LR_SMOOTHS]
+
+        # Force restrict to be that of strings
+        if other.restrict is not None:
+            if self.restrict is None:
+                self.restrict = other.restrict
+            else:
+                self.restrict += other.restrict
+
+        self.opls_structure_dict.update(other.opls_structure_dict)
+
+        return self
+
 
     def __repr__(self):
         '''
