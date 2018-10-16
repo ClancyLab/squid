@@ -195,7 +195,7 @@ timestep 1.0
 
 fix energy neb ave/time 100 5 1000 c_thermo_pe file energy.profile
 fix motion_npt all npt temp 300.0 300.0 100.0 iso 0.0 0.0 100.0 dilate solvent
-run 20000
+run 50000
 unfix motion_npt
 
 compute pe neb pe/atom
@@ -267,8 +267,8 @@ sim = neb.NEB(
     #('CH3OH.cml', 0.8),
     DFT="None",
     opt="LBFGS",
-    queue="long",
-    procs=2,
+    queue="short",
+    procs=4,
     start_job=run_simulation,
     get_results=read_simulation,
     no_energy=False
