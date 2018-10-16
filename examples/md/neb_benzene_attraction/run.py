@@ -153,6 +153,8 @@ unfix motion_npt
 
 compute pe neb pe/atom
 dump forces neb custom 1 forces.dump id element x y z fx fy fz c_pe
+dump glance all xyz 1 solv_box_""" + str(i) + """.xyz
+dump_modify glance element """ + ' '.join(box.get_elements(P)) + """
 unfix freeze
 run 0
 """
@@ -200,6 +202,10 @@ def read_simulation(NEB, step_to_use, i, state):
 
     energy = open("lammps/solv_box-%d-%d/energy.profile" % (step_to_use, i), 'r').read().strip().split("\n")[-1]
     new_energy = float(energy.strip().split()[-1].strip())
+
+    # Add the forces onto our state
+    for a, b in zip(state, new_atoms):
+        a.fx, a.fy, a.fz = b.fx, b.fy, b.fz
 
     return new_energy, new_atoms
 
