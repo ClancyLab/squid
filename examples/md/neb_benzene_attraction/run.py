@@ -151,7 +151,7 @@ def run_simulation(NEB, i, state, charge, multiplicity,
     benz2.set_positions(new_benz_2)
 
     # Generate our system
-    BOX_SIZE = (20.0, 20.0, 20.0)
+    BOX_SIZE = (10.0, 10.0, 15.0)
     box = structures.System("solv_box-%d-%d" % (step, i), box_size=BOX_SIZE, periodic=True)
     box.add(benz1)
     box.add(benz2)
@@ -194,8 +194,8 @@ velocity neb set 0.0 0.0 0.0
 timestep 1.0
 
 fix energy neb ave/time 100 5 1000 c_thermo_pe file energy.profile
-fix motion_npt all npt temp 300.0 300.0 100.0 iso 0.0 0.0 100.0 dilate solvent
-run 50000
+fix motion_npt all npt temp 300.0 300.0 100.0 iso 0.0 0.0 1000.0 dilate solvent
+run 1000000
 unfix motion_npt
 
 compute pe neb pe/atom

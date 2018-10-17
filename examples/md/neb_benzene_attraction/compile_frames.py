@@ -43,6 +43,7 @@ def compile(name, index, only=None):
     return frames
 
 
-for i in [8]:
-    files.write_xyz(compile("solv_box", i, only=range(24)), "%d_chk.xyz" % i)
+for i in [3]:
+    files.write_xyz(compile("solv_box", i), "%d_chk.xyz" % i)
+    #files.write_xyz(compile("solv_box", i, only=range(24)), "%d_chk.xyz" % i)
 
