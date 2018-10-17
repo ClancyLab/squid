@@ -497,7 +497,7 @@ def submit_job(name,
 equates to %d nodes on marcc; however, you only requested %d nodes." % (procs, ntasks, procs * ntasks // 24 + 1, nodes))
         if adjust_nodes:
             print("\tWill adjust nodes accordingly...")
-            nodes = procs * ntasks // 24 + 1
+            nodes = (procs * ntasks - 1) // 24 + 1
 
     if queue is "debug":
         print("\nWould have submitted job %s\n" % name)
@@ -809,7 +809,7 @@ def pysub(job_name,
 equates to %d nodes on marcc; however, you only requested %d nodes." % (nprocs, ntasks, nprocs * ntasks // 24 + 1, nodes))
         if adjust_nodes:
             print("\tWill adjust nodes accordingly...")
-            nodes = nprocs * ntasks // 24 + 1
+            nodes = (nprocs * ntasks - 1) // 24 + 1
 
     if queue is None:
         queue = "none"
