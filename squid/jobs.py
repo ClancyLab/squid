@@ -483,7 +483,7 @@ def submit_job(name,
 
     if queueing_system.lower() == "slurm" and queue.lower() not in get_slurm_queues():
         if queue.lower() != "none":
-            raise Exception("SLURM queue %s does not exist!" % queue)
+            raise Exception("SLURM queue %s does not exist (options are %s)!" % (queue, str(get_slurm_queues())))
 
     if redundancy and queueing_system.strip().lower() not in ["slurm", "nbs"]:
         print("Warning - redundancy not implemented for non-NBS queueing systems.")
@@ -801,7 +801,7 @@ def pysub(job_name,
 
     if queueing_system.lower() == "slurm" and queue.lower() not in get_slurm_queues():
         if queue.lower() != "none":
-            raise Exception("SLURM queue %s does not exist!" % queue)
+            raise Exception("SLURM queue %s does not exist (options are %s)!" % (queue, str(get_slurm_queues())))
 
     nprocs, ntasks, nodes = int(nprocs), int(ntasks), int(nodes)
     if nprocs * ntasks > 24 * nodes:
