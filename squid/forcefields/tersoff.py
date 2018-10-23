@@ -396,7 +396,7 @@ class Tersoff(object):
         self.B = float(self.B)
         self.R = float(self.R)
         self.D = float(self.D)
-        assert self.R > self.D and self.D > 0, "In Tersoff %s, R = %.2f and D = %.2f; however, they should be positive such that R > D!" % (str(self.indices), self.R, self.D)
+        assert self.R >= self.D and self.D > 0, "In Tersoff %s, R = %.2f and D = %.2f; however, they should be positive such that R >= D!" % (str(self.indices), self.R, self.D)
         self.lambda1 = float(self.lambda1)
         self.A = float(self.A)
 
