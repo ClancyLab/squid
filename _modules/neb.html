@@ -62,6 +62,7 @@
 <span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="k">import</span> <span class="n">block_diag</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">time</span>
 <span class="c1"># Squid imports</span>
 <span class="kn">import</span> <span class="nn">geometry</span>
 <span class="kn">import</span> <span class="nn">print_helper</span>
@@ -401,9 +402,10 @@
 <span class="sd">            A function specifying how to read your NEB single point</span>
 <span class="sd">            calculations.  Needed if DFT is neither orca nor g09.  Note, this</span>
 <span class="sd">            function returns two things: list of energies, list of atoms.</span>
-<span class="sd">            Further, the forces are contained within each atom object.  Finally,</span>
-<span class="sd">            if using no_energy=True, then return None (or an empty list) for the</span>
-<span class="sd">            energies.</span>
+<span class="sd">            Further, the forces are contained within each atom object.  It also</span>
+<span class="sd">            requires that the forces on the state object be updated within said</span>
+<span class="sd">            function (for more info see example codes).  Finally, if using</span>
+<span class="sd">            no_energy=True, then return None (or an empty list) for the energies.</span>
 <span class="sd">        new_opt_params: *dict, optional*</span>
 <span class="sd">            Pass any additional parameters to the optimization algorithm.</span>
 <span class="sd">        callback: *func, optional*</span>
@@ -502,6 +504,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">callback</span> <span class="o">=</span> <span class="n">callback</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">job_hang_time</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">DFT</span> <span class="o">=</span> <span class="n">DFT</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">DFT</span> <span class="o">==</span> <span class="s1">&#39;orca&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">start_job</span> <span class="o">=</span> <span class="n">orca_start_job</span>
@@ -572,8 +575,12 @@
                                    <span class="bp">self</span><span class="o">.</span><span class="n">priority</span><span class="p">)</span>
                 <span class="p">)</span>
         <span class="c1"># Wait for jobs to finish</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_hang_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">job_hang_time</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">running_jobs</span><span class="p">:</span>
             <span class="n">j</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_hang_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">job_hang_time</span><span class="p">)</span>
 
         <span class="c1"># Get forces and energies from DFT calculations</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_energy</span><span class="p">:</span>

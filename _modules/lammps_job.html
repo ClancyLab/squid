@@ -220,13 +220,16 @@
 <span class="sd">            A list of lists, each holding atom structures.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Check if file exists. If not, try subfolder</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fptr</span> <span class="o">+</span> <span class="n">ext</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fptr</span> <span class="o">+</span> <span class="n">ext</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fptr</span><span class="p">):</span>
         <span class="n">fptr</span> <span class="o">=</span> <span class="s2">&quot;lammps/</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">fptr</span><span class="p">,</span> <span class="n">fptr</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fptr</span> <span class="o">+</span> <span class="n">ext</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;File </span><span class="si">%s</span><span class="s2"> nor </span><span class="si">%s</span><span class="s2"> exists&quot;</span>
                             <span class="o">%</span> <span class="p">(</span><span class="n">fptr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">fptr</span><span class="p">))</span>
     <span class="c1"># Read in the file</span>
-    <span class="n">raw_out</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fptr</span> <span class="o">+</span> <span class="n">ext</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fptr</span><span class="p">):</span>
+        <span class="n">raw_out</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fptr</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">raw_out</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fptr</span> <span class="o">+</span> <span class="n">ext</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
     <span class="c1"># Read in box bounds here</span>
     <span class="n">s_find</span> <span class="o">=</span> <span class="s2">&quot;ITEM: BOX BOUNDS&quot;</span>
@@ -310,6 +313,9 @@
         <span class="n">system</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">queue</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">default_queue</span><span class="p">,</span>
         <span class="n">procs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">ntasks</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">nodes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">adjust_nodes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">email</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">write_data_file</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">pair_coeffs_included</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -334,7 +340,19 @@
 <span class="sd">        queue: *str, optional*</span>
 <span class="sd">            What queue to run the simulation on (queueing system dependent).</span>
 <span class="sd">        procs: *int, optional*</span>
-<span class="sd">            How many processors to run the simulation on.</span>
+<span class="sd">            How many processors to run the simulation on.  Note, the actual</span>
+<span class="sd">            number of cores mpirun will use is procs * ntasks.</span>
+<span class="sd">        ntasks: *int, optional*</span>
+<span class="sd">            (For SLURM) The number of tasks this job will run, each task uses</span>
+<span class="sd">            procs number of cores.  Note, the actual number of cores mpirun</span>
+<span class="sd">            will use is procs * ntasks.</span>
+<span class="sd">        nodes: *int, optional*</span>
+<span class="sd">            (For SLURM) The number of nodes this job requires.  If requesting</span>
+<span class="sd">            ntasks * procs &lt; 24 * nodes, a warning is printed, as on MARCC</span>
+<span class="sd">            each node has only 24 cores.</span>
+<span class="sd">        adjust_nodes: *bool, optional*</span>
+<span class="sd">            Whether to automatically calculate how many nodes is necessary</span>
+<span class="sd">            when the user underspecifies nodes.</span>
 <span class="sd">        email: *str, optional*</span>
 <span class="sd">            An email address for sending job information to.</span>
 <span class="sd">        pair_coeffs_included: *bool, optional*</span>
@@ -398,31 +416,31 @@
     <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="c1"># Run the simulation</span>
+    <span class="n">cmd_to_run</span> <span class="o">=</span> <span class="n">sysconst</span><span class="o">.</span><span class="n">lmp_env_vars</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+    <span class="n">procs</span><span class="p">,</span> <span class="n">ntasks</span><span class="p">,</span> <span class="n">nodes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">procs</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">ntasks</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
+
+    <span class="n">cores_to_use</span> <span class="o">=</span> <span class="n">procs</span> <span class="o">*</span> <span class="n">ntasks</span>
+    <span class="k">if</span> <span class="n">cores_to_use</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cmd_to_run</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> -np </span><span class="si">%d</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sysconst</span><span class="o">.</span><span class="n">mpirun_path</span><span class="p">,</span> <span class="n">cores_to_use</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning - Trying to run LAMMPs in parallel without specifying mpirun_path in sysconst.&quot;</span><span class="p">)</span>
+    <span class="n">cmd_to_run</span> <span class="o">=</span> <span class="n">cmd_to_run</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> -in </span><span class="si">%s</span><span class="s2">.in -echo log -log </span><span class="si">%s</span><span class="s2">.log&quot;</span>\
+        <span class="o">%</span> <span class="p">(</span><span class="n">lmp_path</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">run_name</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">run_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">no_echo</span><span class="p">:</span>
+        <span class="n">cmd_to_run</span> <span class="o">+=</span> <span class="s2">&quot; &gt; &quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">run_name</span> <span class="o">+</span> <span class="s2">&quot;.term.log&quot;</span>
+
     <span class="k">if</span> <span class="n">queue</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">cmd_to_run</span> <span class="o">=</span> <span class="n">sysconst</span><span class="o">.</span><span class="n">lmp_env_vars</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="k">if</span> <span class="n">procs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">cmd_to_run</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> -np </span><span class="si">%d</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sysconst</span><span class="o">.</span><span class="n">mpirun_path</span><span class="p">,</span> <span class="n">procs</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning - Trying to run LAMMPs in parallel locally without specifying mpirun_path in sysconst.&quot;</span><span class="p">)</span>
-        <span class="n">cmd_to_run</span> <span class="o">=</span> <span class="n">cmd_to_run</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> -in </span><span class="si">%s</span><span class="s2">.in -log </span><span class="si">%s</span><span class="s2">.log&quot;</span>\
-            <span class="o">%</span> <span class="p">(</span><span class="n">lmp_path</span><span class="p">,</span> <span class="n">run_name</span><span class="p">,</span> <span class="n">run_name</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">no_echo</span><span class="p">:</span>
-            <span class="n">cmd_to_run</span> <span class="o">+=</span> <span class="s2">&quot; &gt; &quot;</span> <span class="o">+</span> <span class="n">run_name</span> <span class="o">+</span> <span class="s2">&quot;.term.log&quot;</span>
-
         <span class="n">process_handle</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd_to_run</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">job_handle</span> <span class="o">=</span> <span class="n">jobs</span><span class="o">.</span><span class="n">Job</span><span class="p">(</span><span class="n">run_name</span><span class="p">,</span> <span class="n">process_handle</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">cmd_to_run</span> <span class="o">=</span> <span class="n">lmp_path</span> <span class="o">+</span>\
-            <span class="s2">&quot; -in &quot;</span> <span class="o">+</span>\
-            <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">run_name</span><span class="p">)</span> <span class="o">+</span>\
-            <span class="s2">&quot;.in -echo log -log &quot;</span> <span class="o">+</span>\
-            <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">run_name</span><span class="p">)</span> <span class="o">+</span>\
-            <span class="s2">&quot;.log&quot;</span>
         <span class="n">job_handle</span> <span class="o">=</span> <span class="n">jobs</span><span class="o">.</span><span class="n">submit_job</span><span class="p">(</span><span class="n">run_name</span><span class="p">,</span>
                                      <span class="n">cmd_to_run</span><span class="p">,</span>
                                      <span class="n">procs</span><span class="o">=</span><span class="n">procs</span><span class="p">,</span>
+                                     <span class="n">ntasks</span><span class="o">=</span><span class="n">ntasks</span><span class="p">,</span>
+                                     <span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span>
+                                     <span class="n">adjust_nodes</span><span class="o">=</span><span class="n">adjust_nodes</span><span class="p">,</span>
                                      <span class="n">queue</span><span class="o">=</span><span class="n">queue</span><span class="p">,</span>
                                      <span class="n">additional_env_vars</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">lmp_env_vars</span><span class="p">,</span>
                                      <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>

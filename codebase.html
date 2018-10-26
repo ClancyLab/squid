@@ -828,13 +828,27 @@ frame, then only a <em>list</em> of <a class="reference internal" href="#structu
 
 <dl class="function">
 <dt id="files.read_xyz">
-<code class="descclassname">files.</code><code class="descname">read_xyz</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/files.html#read_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#files.read_xyz" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read in a file written in the XYZ file format.</p>
+<code class="descclassname">files.</code><code class="descname">read_xyz</code><span class="sig-paren">(</span><em>name, cols=['element', 'x', 'y', 'z'], cast_elem_to_sym=True, fast=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/files.html#read_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#files.read_xyz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in a file written in the XYZ file format.  This is an improved
+version, accounting for xyz files of varying atom numbers.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
 <dt>name: <em>str</em></dt>
 <dd>File name with or without .xyz file extension.</dd>
+<dt>cols: <em>list, str, optional</em></dt>
+<dd>The specific columns in this xyz file.  Note - we may not support
+all possibilities, and order matters!</dd>
+<dt>cast_elem_to_sym: <em>bool, optional</em></dt>
+<dd>Whether to cast the element into the symbol (ex. 2 becomes He).</dd>
+<dt>fast: <em>bool, optional</em></dt>
+<dd><dl class="first docutils">
+<dt>If specified, you are promising that this xyz file has the columns</dt>
+<dd>element x y z</dd>
+</dl>
+<p class="last">Further, if speed truly matters and you do not want to foce cast
+element into symbols, we recommend setting cast_elem_to_sym=False.</p>
+</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
@@ -848,23 +862,34 @@ frame, then only a <em>list</em> of <a class="reference internal" href="#structu
 </dd></dl>
 
 <dl class="function">
-<dt id="files.read_xyz_2">
-<code class="descclassname">files.</code><code class="descname">read_xyz_2</code><span class="sig-paren">(</span><em>name, cols=['element', 'x', 'y', 'z']</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/files.html#read_xyz_2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#files.read_xyz_2" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read in a file written in the XYZ file format.  This is an improved
-version, accounting for xyz files of varying atom numbers.</p>
+<dt id="files.read_xyz_gen">
+<code class="descclassname">files.</code><code class="descname">read_xyz_gen</code><span class="sig-paren">(</span><em>name, cols=['element', 'x', 'y', 'z'], cast_elem_to_sym=True, fast=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/files.html#read_xyz_gen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#files.read_xyz_gen" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will yield a frame from an xyz file.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
 <dt>name: <em>str</em></dt>
 <dd>File name with or without .xyz file extension.</dd>
+<dt>cols: <em>list, str, optional</em></dt>
+<dd>The specific columns in this xyz file.  Note - we may not support
+all possibilities, and order matters!</dd>
+<dt>cast_elem_to_sym: <em>bool, optional</em></dt>
+<dd>Whether to cast the element into the symbol (ex. 2 becomes He).</dd>
+<dt>fast: <em>bool, optional</em></dt>
+<dd><dl class="first docutils">
+<dt>If specified, you are promising that this xyz file has the columns</dt>
+<dd>element x y z</dd>
+</dl>
+<p class="last">Further, if speed truly matters and you do not want to foce cast
+element into symbols, we recommend setting cast_elem_to_sym=False.</p>
+</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>frames: <em>list, list,</em> <a class="reference internal" href="#structures.Atom" title="structures.Atom"><code class="xref py py-class docutils literal"><span class="pre">structures.Atom</span></code></a></dt>
-<dd>A list of atoms read in from the xyz file.  If there is only one
-frame, then only a <em>list</em> of <a class="reference internal" href="#structures.Atom" title="structures.Atom"><code class="xref py py-class docutils literal"><span class="pre">structures.Atom</span></code></a> is returned.</dd>
+<dt>yield: <em>list,</em> <a class="reference internal" href="#structures.Atom" title="structures.Atom"><code class="xref py py-class docutils literal"><span class="pre">structures.Atom</span></code></a></dt>
+<dd>A frame from an xyz file.</dd>
 </dl>
 </div></blockquote>
 </dd></dl>
@@ -1941,7 +1966,7 @@ matrices (P and A)!</p>
 
 <dl class="function">
 <dt id="geometry.rotate_frames">
-<code class="descclassname">geometry.</code><code class="descname">rotate_frames</code><span class="sig-paren">(</span><em>frame, theta_0=0, theta_n=360, dt=1, axis=[0, 0, 1], cog=True, last=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/geometry.html#rotate_frames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#geometry.rotate_frames" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">geometry.</code><code class="descname">rotate_frames</code><span class="sig-paren">(</span><em>frame, theta_0=0, theta_n=360, dt=1, axis=[0, 0, 1], cog=True, origin=(0, 0, 0), last=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/geometry.html#rotate_frames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#geometry.rotate_frames" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a list of atoms, generate a sequential list of rotated atomic
 instances.</p>
 <p><strong>Parameters</strong></p>
@@ -1960,6 +1985,8 @@ instances.</p>
 <dt>cog: <em>bool, optional</em></dt>
 <dd>Whether to rotate around the center of geometry (True) or
 not (False).</dd>
+<dt>origin: <em>tuple, float</em></dt>
+<dd>The origin for which we will rotate around.</dd>
 <dt>last: <em>bool, optional</em></dt>
 <dd>Whether to only return the final rotation (True) or not (False).</dd>
 </dl>
@@ -2534,18 +2561,25 @@ number of processors)</dd>
 
 <dl class="function">
 <dt id="jobs.pysub">
-<code class="descclassname">jobs.</code><code class="descname">pysub</code><span class="sig-paren">(</span><em>job_name</em>, <em>nprocs='1'</em>, <em>ntasks='1'</em>, <em>omp=None</em>, <em>queue='short'</em>, <em>walltime='00:30:00'</em>, <em>xhost=None</em>, <em>path='/fs/home/hch54/squid/docs'</em>, <em>priority=None</em>, <em>args=None</em>, <em>remove_sub_script=True</em>, <em>unique_name=False</em>, <em>redundancy=False</em>, <em>py3=False</em>, <em>use_mpi=False</em>, <em>queueing_system='nbs'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs.html#pysub"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jobs.pysub" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jobs.</code><code class="descname">pysub</code><span class="sig-paren">(</span><em>job_name</em>, <em>nprocs=1</em>, <em>ntasks=1</em>, <em>nodes=1</em>, <em>adjust_nodes=True</em>, <em>omp=None</em>, <em>queue='long'</em>, <em>walltime='00:30:00'</em>, <em>xhost=None</em>, <em>path='/fs/home/hch54/squid/docs'</em>, <em>priority=None</em>, <em>args=None</em>, <em>remove_sub_script=True</em>, <em>unique_name=False</em>, <em>redundancy=False</em>, <em>py3=False</em>, <em>use_mpi=False</em>, <em>queueing_system='nbs'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs.html#pysub"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jobs.pysub" title="Permalink to this definition">¶</a></dt>
 <dd><p>Submission of python scripts to run on your queue.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
 <dt>job_name: <em>str</em></dt>
 <dd>Name of the python script (with or without the .py extension).</dd>
-<dt>nprocs: <em>str, optional</em></dt>
+<dt>nprocs: <em>int, optional</em></dt>
 <dd>Number of processors to run your script on.</dd>
 <dt>ntasks: <em>int, optional</em></dt>
 <dd>(For SLURM) The number of tasks this job will run, each task uses
 procs number of cores.</dd>
+<dt>nodes: <em>int, optional</em></dt>
+<dd>(For SLURM) The number of nodes this job requires.  If requesting
+ntasks * procs &lt; 24 * nodes, a warning is printed, as on MARCC
+each node has only 24 cores.</dd>
+<dt>adjust_nodes: <em>bool, optional</em></dt>
+<dd>Whether to automatically calculate how many nodes is necessary
+when the user underspecifies nodes.</dd>
 <dt>use_mpi: <em>bool, optional</em></dt>
 <dd>Whether to run python via mpirun or not.</dd>
 <dt>omp: <em>int, None</em></dt>
@@ -2588,7 +2622,7 @@ ONLY work if you have defined python3_path in your sysconst file.</dd>
 
 <dl class="function">
 <dt id="jobs.submit_job">
-<code class="descclassname">jobs.</code><code class="descname">submit_job</code><span class="sig-paren">(</span><em>name</em>, <em>job_to_submit</em>, <em>procs=1</em>, <em>ntasks=1</em>, <em>queue='short'</em>, <em>mem=1000</em>, <em>priority=None</em>, <em>walltime='00:30:00'</em>, <em>xhosts=None</em>, <em>additional_env_vars=''</em>, <em>sandbox=None</em>, <em>use_NBS_sandbox=False</em>, <em>sub_flag=''</em>, <em>email=None</em>, <em>preface=None</em>, <em>redundancy=False</em>, <em>unique_name=True</em>, <em>queueing_system='nbs'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs.html#submit_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jobs.submit_job" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jobs.</code><code class="descname">submit_job</code><span class="sig-paren">(</span><em>name</em>, <em>job_to_submit</em>, <em>procs=1</em>, <em>ntasks=1</em>, <em>nodes=1</em>, <em>adjust_nodes=True</em>, <em>queue='long'</em>, <em>mem=1000</em>, <em>priority=None</em>, <em>walltime='00:30:00'</em>, <em>xhosts=None</em>, <em>additional_env_vars=''</em>, <em>sandbox=None</em>, <em>use_NBS_sandbox=False</em>, <em>sub_flag=''</em>, <em>email=None</em>, <em>preface=None</em>, <em>redundancy=False</em>, <em>unique_name=True</em>, <em>queueing_system='nbs'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs.html#submit_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jobs.submit_job" title="Permalink to this definition">¶</a></dt>
 <dd><p>Code to submit a simulation to the specified queue and queueing system.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
@@ -2603,6 +2637,13 @@ it must be without the suffix.  Ex. ‘job’ works but ‘job.nbs’ fails.</dd
 <dt>ntasks: <em>int, optional</em></dt>
 <dd>(For SLURM) The number of tasks this job will run, each task uses
 procs number of cores.</dd>
+<dt>nodes: <em>int, optional</em></dt>
+<dd>(For SLURM) The number of nodes this job requires.  If requesting
+ntasks * procs &lt; 24 * nodes, a warning is printed, as on MARCC
+each node has only 24 cores.</dd>
+<dt>adjust_nodes: <em>bool, optional</em></dt>
+<dd>Whether to automatically calculate how many nodes is necessary
+when the user underspecifies nodes.</dd>
 <dt>queue: <em>str, optional</em></dt>
 <dd>Queue you are submitting to (queueing system dependent).</dd>
 <dt>mem: <em>float, optional</em></dt>
@@ -2790,13 +2831,13 @@ the queue.</dd>
 
 <dl class="function">
 <dt id="lammps_job.PotEngSurfaceJob">
-<code class="descclassname">lammps_job.</code><code class="descname">PotEngSurfaceJob</code><span class="sig-paren">(</span><em>run_name, input_script, system, domain, spanMolecule, resolution=0.1, queue='short', procs=1, email='', pair_coeffs_included=True, hybrid_pair=False, split=0, floor=[0.0, 0.0, 0.0]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lammps_job.html#PotEngSurfaceJob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lammps_job.PotEngSurfaceJob" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">lammps_job.</code><code class="descname">PotEngSurfaceJob</code><span class="sig-paren">(</span><em>run_name, input_script, system, domain, spanMolecule, resolution=0.1, queue='long', procs=1, email='', pair_coeffs_included=True, hybrid_pair=False, split=0, floor=[0.0, 0.0, 0.0]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lammps_job.html#PotEngSurfaceJob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lammps_job.PotEngSurfaceJob" title="Permalink to this definition">¶</a></dt>
 <dd><p>TO BE ADDED AGAIN</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="lammps_job.job">
-<code class="descclassname">lammps_job.</code><code class="descname">job</code><span class="sig-paren">(</span><em>run_name</em>, <em>input_script</em>, <em>system=None</em>, <em>queue='short'</em>, <em>procs=1</em>, <em>email=None</em>, <em>write_data_file=True</em>, <em>pair_coeffs_included=True</em>, <em>hybrid_pair=False</em>, <em>hybrid_angle=False</em>, <em>TIP4P=False</em>, <em>no_echo=False</em>, <em>redundancy=False</em>, <em>params=None</em>, <em>lmp_path='/fs/europa/g_pc/lmp_serial'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lammps_job.html#job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lammps_job.job" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">lammps_job.</code><code class="descname">job</code><span class="sig-paren">(</span><em>run_name</em>, <em>input_script</em>, <em>system=None</em>, <em>queue='long'</em>, <em>procs=1</em>, <em>ntasks=1</em>, <em>nodes=1</em>, <em>adjust_nodes=True</em>, <em>email=None</em>, <em>write_data_file=True</em>, <em>pair_coeffs_included=True</em>, <em>hybrid_pair=False</em>, <em>hybrid_angle=False</em>, <em>TIP4P=False</em>, <em>no_echo=False</em>, <em>redundancy=False</em>, <em>params=None</em>, <em>lmp_path='/fs/europa/g_pc/lmp_serial'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lammps_job.html#job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lammps_job.job" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper to submitting a LAMMPs simulation.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
@@ -2810,7 +2851,19 @@ the queue.</dd>
 <dt>queue: <em>str, optional</em></dt>
 <dd>What queue to run the simulation on (queueing system dependent).</dd>
 <dt>procs: <em>int, optional</em></dt>
-<dd>How many processors to run the simulation on.</dd>
+<dd>How many processors to run the simulation on.  Note, the actual
+number of cores mpirun will use is procs * ntasks.</dd>
+<dt>ntasks: <em>int, optional</em></dt>
+<dd>(For SLURM) The number of tasks this job will run, each task uses
+procs number of cores.  Note, the actual number of cores mpirun
+will use is procs * ntasks.</dd>
+<dt>nodes: <em>int, optional</em></dt>
+<dd>(For SLURM) The number of nodes this job requires.  If requesting
+ntasks * procs &lt; 24 * nodes, a warning is printed, as on MARCC
+each node has only 24 cores.</dd>
+<dt>adjust_nodes: <em>bool, optional</em></dt>
+<dd>Whether to automatically calculate how many nodes is necessary
+when the user underspecifies nodes.</dd>
 <dt>email: <em>str, optional</em></dt>
 <dd>An email address for sending job information to.</dd>
 <dt>pair_coeffs_included: <em>bool, optional</em></dt>
@@ -3314,9 +3367,10 @@ calculations.  Needed if DFT is neither orca nor g09.</dd>
 <dd>A function specifying how to read your NEB single point
 calculations.  Needed if DFT is neither orca nor g09.  Note, this
 function returns two things: list of energies, list of atoms.
-Further, the forces are contained within each atom object.  Finally,
-if using no_energy=True, then return None (or an empty list) for the
-energies.</dd>
+Further, the forces are contained within each atom object.  It also
+requires that the forces on the state object be updated within said
+function (for more info see example codes).  Finally, if using
+no_energy=True, then return None (or an empty list) for the energies.</dd>
 <dt>new_opt_params: <em>dict, optional</em></dt>
 <dd>Pass any additional parameters to the optimization algorithm.</dd>
 <dt>callback: <em>func, optional</em></dt>
@@ -4101,7 +4155,7 @@ this is 0 indexed.</dd>
 
 <dl class="function">
 <dt id="orca.job">
-<code class="descclassname">orca.</code><code class="descname">job</code><span class="sig-paren">(</span><em>run_name</em>, <em>route</em>, <em>atoms=[]</em>, <em>extra_section=''</em>, <em>grad=False</em>, <em>queue=None</em>, <em>walltime='00:30:00'</em>, <em>sandbox=True</em>, <em>procs=1</em>, <em>ntasks=1</em>, <em>charge=None</em>, <em>multiplicity=None</em>, <em>charge_and_multiplicity='0 1'</em>, <em>redundancy=False</em>, <em>use_NBS_sandbox=False</em>, <em>unique_name=True</em>, <em>previous=None</em>, <em>mem=2000</em>, <em>priority=None</em>, <em>xhost=None</em>, <em>orca4=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/orca.html#job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orca.job" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">orca.</code><code class="descname">job</code><span class="sig-paren">(</span><em>run_name</em>, <em>route</em>, <em>atoms=[]</em>, <em>extra_section=''</em>, <em>grad=False</em>, <em>queue=None</em>, <em>walltime='00:30:00'</em>, <em>sandbox=True</em>, <em>procs=1</em>, <em>ntasks=1</em>, <em>nodes=1</em>, <em>adjust_nodes=True</em>, <em>charge=None</em>, <em>multiplicity=None</em>, <em>charge_and_multiplicity='0 1'</em>, <em>redundancy=False</em>, <em>use_NBS_sandbox=False</em>, <em>unique_name=True</em>, <em>previous=None</em>, <em>mem=2000</em>, <em>priority=None</em>, <em>xhost=None</em>, <em>orca4=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/orca.html#job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orca.job" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper to submitting an Orca simulation.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
@@ -4117,7 +4171,8 @@ the previous simulation will be used instead.</dd>
 previous is used, then the last set of atomic coordinates from
 the previous simulation will be used.</dd>
 <dt>extra_section: <em>str, optional</em></dt>
-<dd>Additional DFT simulation parameters.</dd>
+<dd>Additional DFT simulation parameters.  If None and previous is
+not None, then previous extra section is used.</dd>
 <dt>grad: <em>bool, optional</em></dt>
 <dd>Whether to force RunTyp Gradient.</dd>
 <dt>queue: <em>str, optional</em></dt>
@@ -4128,10 +4183,19 @@ the previous simulation will be used.</dd>
 <dd>Whether to use the NBS sandboxing headers (True), or manually copy
 files (False).</dd>
 <dt>procs: <em>int, optional</em></dt>
-<dd>How many processors to run the simulation on.</dd>
+<dd>How many processors to run the simulation on.  Note, the actual
+number requested by orca will be procs * ntasks.</dd>
 <dt>ntasks: <em>int, optional</em></dt>
 <dd>(For SLURM) The number of tasks this job will run, each task uses
-procs number of cores.</dd>
+procs number of cores.  Note, the actual number requested by orca
+will be procs * ntasks.</dd>
+<dt>nodes: <em>int, optional</em></dt>
+<dd>(For SLURM) The number of nodes this job requires.  If requesting
+ntasks * procs &lt; 24 * nodes, a warning is printed, as on MARCC
+each node has only 24 cores.</dd>
+<dt>adjust_nodes: <em>bool, optional</em></dt>
+<dd>Whether to automatically calculate how many nodes is necessary
+when the user underspecifies nodes.</dd>
 <dt>charge: <em>float, optional</em></dt>
 <dd>Charge of the system.  If this is used, then
 charge_and_multiplicity is ignored. If multiplicity is used,
@@ -5637,8 +5701,15 @@ like dump_modify.</dd>
 
 <dl class="method">
 <dt id="structures.System.packmol">
-<code class="descname">packmol</code><span class="sig-paren">(</span><em>molecules</em>, <em>new_method=False</em>, <em>molecule_ratio=(1</em>, <em>)</em>, <em>density=1.0</em>, <em>seed=1</em>, <em>persist=True</em>, <em>number=None</em>, <em>custom=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/structures.html#System.packmol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#structures.System.packmol" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a list of molecules, pack this system appropriately.</p>
+<code class="descname">packmol</code><span class="sig-paren">(</span><em>molecules</em>, <em>molecule_ratio=(1</em>, <em>)</em>, <em>new_method=False</em>, <em>density=1.0</em>, <em>seed=1</em>, <em>persist=True</em>, <em>number=None</em>, <em>additional=''</em>, <em>custom=None</em>, <em>extra_block_at_end=''</em>, <em>extra_block_at_beginning=''</em>, <em>tolerance=2.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/structures.html#System.packmol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#structures.System.packmol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of molecules, pack this system appropriately.  Note,
+we now will pack around what is already within the system!  This is
+done by first generating a packmol block for the system at hand,
+followed by a block for the solvent.</p>
+<p>A custom script is also allowed; however, if this path is chosen, then
+ensure all file paths for packmol exist.  We change directories within
+this function to a sys_packmol folder, where all files are expected to
+reside.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
@@ -5660,7 +5731,17 @@ pack. When using a list of molecules, you must specify each
 in order within a list.</dd>
 <dt>custom: <em>str, optional</em></dt>
 <dd>A custom packmol script to run for the given input molecules.
-NOT YET IMPLEMENTED!</dd>
+Note, you should ensure all necessary files are within the
+sys_packmol folder if using this option.</dd>
+<dt>additional: <em>str, optional</em></dt>
+<dd>Whether to add additional constraints to the standard packmol
+setup.</dd>
+<dt>extra_block_at_beginning: <em>str, optional</em></dt>
+<dd>An additional block to put prior to the standard block.</dd>
+<dt>extra_block_at_end: <em>str, optional</em></dt>
+<dd>An additional block to put after the standard block.</dd>
+<dt>tolerance: <em>float, optional</em></dt>
+<dd>The tolerance around which we allow atomic overlap/proximity.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>

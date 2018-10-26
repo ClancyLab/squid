@@ -1077,67 +1077,33 @@
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="read_xyz"><a class="viewcode-back" href="../codebase.html#files.read_xyz">[docs]</a><span class="k">def</span> <span class="nf">read_xyz</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="read_xyz_gen"><a class="viewcode-back" href="../codebase.html#files.read_xyz_gen">[docs]</a><span class="k">def</span> <span class="nf">read_xyz_gen</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;element&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">],</span> <span class="n">cast_elem_to_sym</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Read in a file written in the XYZ file format.</span>
+<span class="sd">    This will yield a frame from an xyz file.</span>
 
 <span class="sd">    **Parameters**</span>
 
 <span class="sd">        name: *str*</span>
 <span class="sd">            File name with or without .xyz file extension.</span>
+<span class="sd">        cols: *list, str, optional*</span>
+<span class="sd">            The specific columns in this xyz file.  Note - we may not support</span>
+<span class="sd">            all possibilities, and order matters!</span>
+<span class="sd">        cast_elem_to_sym: *bool, optional*</span>
+<span class="sd">            Whether to cast the element into the symbol (ex. 2 becomes He).</span>
+<span class="sd">        fast: *bool, optional*</span>
+<span class="sd">            If specified, you are promising that this xyz file has the columns</span>
+<span class="sd">                element x y z</span>
+<span class="sd">            Further, if speed truly matters and you do not want to foce cast</span>
+<span class="sd">            element into symbols, we recommend setting cast_elem_to_sym=False.</span>
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        frames: *list, list,* :class:`structures.Atom`</span>
-<span class="sd">            A list of atoms read in from the xyz file.  If there is only one</span>
-<span class="sd">            frame, then only a *list* of :class:`structures.Atom` is returned.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.xyz&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;.&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
-        <span class="n">name</span> <span class="o">+=</span> <span class="s1">&#39;.xyz&#39;</span>
-    <span class="n">lines</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
-    <span class="n">atom_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">lines_by_frame</span> <span class="o">=</span> <span class="p">[</span><span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">atom_count</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span>
-                      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">),</span> <span class="n">atom_count</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)]</span>
-
-    <span class="n">frames</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">lines_by_frame</span><span class="p">:</span>
-        <span class="n">atoms</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">[</span><span class="mi">2</span><span class="p">:]:</span>
-            <span class="n">columns</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
-                <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]]</span>
-                <span class="n">atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">structures</span><span class="o">.</span><span class="n">Atom</span><span class="p">(</span><span class="n">element</span><span class="o">=</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                                             <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">,</span>
-                                             <span class="n">index</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">frames</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">frames</span></div>
-
-
-<div class="viewcode-block" id="read_xyz_2"><a class="viewcode-back" href="../codebase.html#files.read_xyz_2">[docs]</a><span class="k">def</span> <span class="nf">read_xyz_2</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;element&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Read in a file written in the XYZ file format.  This is an improved</span>
-<span class="sd">    version, accounting for xyz files of varying atom numbers.</span>
-
-<span class="sd">    **Parameters**</span>
-
-<span class="sd">        name: *str*</span>
-<span class="sd">            File name with or without .xyz file extension.</span>
-
-<span class="sd">    **Returns**</span>
-
-<span class="sd">        frames: *list, list,* :class:`structures.Atom`</span>
-<span class="sd">            A list of atoms read in from the xyz file.  If there is only one</span>
-<span class="sd">            frame, then only a *list* of :class:`structures.Atom` is returned.</span>
+<span class="sd">        yield: *list,* :class:`structures.Atom`</span>
+<span class="sd">            A frame from an xyz file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.xyz&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;.&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
         <span class="n">name</span> <span class="o">+=</span> <span class="s1">&#39;.xyz&#39;</span>
 
-    <span class="n">frames</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">frame</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">index</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">N</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1151,24 +1117,72 @@
             <span class="n">N</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="n">skip_comment</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
-                <span class="n">frame</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">yield</span> <span class="n">frame</span>
+                <span class="n">frame</span> <span class="o">=</span> <span class="p">[</span><span class="n">structures</span><span class="o">.</span><span class="n">Atom</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
                 <span class="n">index</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">continue</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="p">[</span><span class="n">structures</span><span class="o">.</span><span class="n">Atom</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
             <span class="k">continue</span>
 
-        <span class="n">element</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
-        <span class="k">if</span> <span class="s2">&quot;element&quot;</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
-            <span class="n">element</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">elem_i2s</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;element&quot;</span><span class="p">)])</span>
-        <span class="k">if</span> <span class="s2">&quot;x&quot;</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)])</span>
-        <span class="k">if</span> <span class="s2">&quot;y&quot;</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
-            <span class="n">y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">)])</span>
-        <span class="k">if</span> <span class="s2">&quot;z&quot;</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
-            <span class="n">z</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;z&quot;</span><span class="p">)])</span>
-        <span class="n">frame</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">structures</span><span class="o">.</span><span class="n">Atom</span><span class="p">(</span><span class="n">element</span><span class="o">=</span><span class="n">element</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">fast</span><span class="p">:</span>
+            <span class="n">element</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">line</span>
+            <span class="k">if</span> <span class="n">cast_elem_to_sym</span><span class="p">:</span>
+                <span class="n">frame</span><span class="p">[</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">element</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">elem_i2s</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">frame</span><span class="p">[</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">element</span> <span class="o">=</span> <span class="n">element</span>
+            <span class="n">frame</span><span class="p">[</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">frame</span><span class="p">[</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="n">frame</span><span class="p">[</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">element</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="s2">&quot;element&quot;</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">cast_elem_to_sym</span><span class="p">:</span>
+                    <span class="n">element</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">elem_i2s</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;element&quot;</span><span class="p">)])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">element</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;element&quot;</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="s2">&quot;x&quot;</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)])</span>
+            <span class="k">if</span> <span class="s2">&quot;y&quot;</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">)])</span>
+            <span class="k">if</span> <span class="s2">&quot;z&quot;</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
+                <span class="n">z</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;z&quot;</span><span class="p">)])</span>
+            <span class="n">frame</span><span class="p">[</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">element</span> <span class="o">=</span> <span class="n">element</span>
+            <span class="n">frame</span><span class="p">[</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">frame</span><span class="p">[</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="n">frame</span><span class="p">[</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
         <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="n">N</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="n">N</span> <span class="o">-=</span> <span class="mi">1</span></div>
 
+
+<div class="viewcode-block" id="read_xyz"><a class="viewcode-back" href="../codebase.html#files.read_xyz">[docs]</a><span class="k">def</span> <span class="nf">read_xyz</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;element&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">],</span> <span class="n">cast_elem_to_sym</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read in a file written in the XYZ file format.  This is an improved</span>
+<span class="sd">    version, accounting for xyz files of varying atom numbers.</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">        name: *str*</span>
+<span class="sd">            File name with or without .xyz file extension.</span>
+<span class="sd">        cols: *list, str, optional*</span>
+<span class="sd">            The specific columns in this xyz file.  Note - we may not support</span>
+<span class="sd">            all possibilities, and order matters!</span>
+<span class="sd">        cast_elem_to_sym: *bool, optional*</span>
+<span class="sd">            Whether to cast the element into the symbol (ex. 2 becomes He).</span>
+<span class="sd">        fast: *bool, optional*</span>
+<span class="sd">            If specified, you are promising that this xyz file has the columns</span>
+<span class="sd">                element x y z</span>
+<span class="sd">            Further, if speed truly matters and you do not want to foce cast</span>
+<span class="sd">            element into symbols, we recommend setting cast_elem_to_sym=False.</span>
+
+<span class="sd">    **Returns**</span>
+
+<span class="sd">        frames: *list, list,* :class:`structures.Atom`</span>
+<span class="sd">            A list of atoms read in from the xyz file.  If there is only one</span>
+<span class="sd">            frame, then only a *list* of :class:`structures.Atom` is returned.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">read_xyz_gen</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">cast_elem_to_sym</span><span class="o">=</span><span class="n">cast_elem_to_sym</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">frames</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">frames</span></div>
 
 
