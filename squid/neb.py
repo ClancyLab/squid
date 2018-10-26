@@ -528,9 +528,10 @@ g09.  If not, you need to manually specify start_job and get_results.")
                                    self.priority)
                 )
         # Wait for jobs to finish
+        if self.job_hang_time is not None:
+            time.sleep(self.job_hang_time)
         for j in running_jobs:
             j.wait()
-
         if self.job_hang_time is not None:
             time.sleep(self.job_hang_time)
 
