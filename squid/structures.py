@@ -609,7 +609,7 @@ class Molecule(_Physical):
             for a,b in zip(self.atoms, positions):
                 a.x, a.y, a.z = b[0], b[1], b[2]
 
-    def get_center_of_geometry(self, skip_H=True):
+    def get_center_of_geometry(self, skip_H=False):
         """
         Calculate the center of geometry of the molecule.
 
