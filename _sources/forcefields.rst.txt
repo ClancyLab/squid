@@ -4,14 +4,14 @@ as well as several functions to parse forcefield files.
 - :func:`opls.parse_pfile`
 - :func:`smrff.parse_pfile`
 
-- :class:`HarmonicConnector`
-- :class:`Bond`
-- :class:`Angle`
-- :class:`Dihedral`
-- :class:`Coul`
-- :class:`LJ`
-- :class:`Morse`
-- :class:`Tersoff`
+- :class:`connectors.HarmonicConnector`
+- :class:`connectors.Bond`
+- :class:`connectors.Angle`
+- :class:`connectors.Dihedral`
+- :class:`coul.Coul`
+- :class:`lj.LJ`
+- :class:`morse.Morse`
+- :class:`tersoff.Tersoff`
 
 ------------
 
