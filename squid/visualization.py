@@ -28,6 +28,7 @@ def ovito_xyz_to_image(
         camera_pos=(10, 0, 0), camera_dir=(-1, 0, 0),
         size=(800, 600),
         renderer="OpenGLRenderer",
+        display_cell=False,
         renderer_settings={}):
     """
     This function will, using the ovito python api, generate a png image of an
@@ -51,6 +52,8 @@ def ovito_xyz_to_image(
             In the event of a gif, how long it should play for.
         renderer: *str, optional*
             What kind of renderer you wish to use: OpenGL or Tachyon.
+        display_cell: *bool, optional*
+            Whether to display the box around the system or not.
         renderer_settings: *dict, optional*
             Here you can change specific renderer settings.
 
@@ -88,7 +91,10 @@ vp.camera_dir = $CAMERA_DIR
 settings = $SETTINGS
 rs = RenderSettings(size=$SIZE, filename="$SCRATCH$FNAME.png", renderer=$RENDERER(**settings))
 
-import_file("$XYZ", columns=["Particle Type", "Position.X", "Position.Y", "Position.Z"])
+node = import_file("$XYZ", columns=["Particle Type", "Position.X", "Position.Y", "Position.Z"])
+
+cell = node.source.cell
+cell.display.enabled = $DISPLAY_CELL
 
 vp.render(rs)
 '''
@@ -115,7 +121,8 @@ vp.render(rs)
         ("$SCRATCH", str(scratch)),
         ("$FNAME", str(fname)),
         ("$SETTINGS", str(settings)),
-        ("$RENDERER", renderer)
+        ("$RENDERER", renderer),
+        ("$DISPLAY_CELL", str(display_cell))
     ]
     for s_id, val in holders:
         script = script.replace(s_id, val)
@@ -136,6 +143,7 @@ def ovito_xyz_to_gif(
         camera_pos=(10, 0, 0), camera_dir=(-1, 0, 0),
         size=(800, 600),
         delay=10,
+        display_cell=False,
         renderer="OpenGLRenderer",
         renderer_settings={},
         overwrite=False):
@@ -161,6 +169,8 @@ def ovito_xyz_to_gif(
             Image size (width, height).
         delay: *int, optional*
             In the event of a gif, how long it should play for.
+        display_cell: *bool, optional*
+            Whether to display the box around the system or not.
         renderer: *str, optional*
             What kind of renderer you wish to use: OpenGL or Tachyon.
         renderer_settings: *dict, optional*
@@ -193,7 +203,15 @@ def ovito_xyz_to_gif(
     # For each frame, generate an image
     for i, frame in enumerate(frames):
         files.write_xyz(frame, "tmp.xyz")
-        ovito_xyz_to_image("tmp.xyz", scratch, "%04d" % i, camera_pos, camera_dir, size, renderer, renderer_settings)
+        ovito_xyz_to_image("tmp.xyz", scratch,
+            fname="%04d" % i,
+            camera_pos=camera_pos,
+            camera_dir=camera_dir,
+            size=size,
+            renderer=renderer,
+            renderer_settings=renderer_settings,
+            display_cell=display_cell
+        )
         os.system("rm tmp.xyz")
 
     # If more than one frame exists, compile to gif
