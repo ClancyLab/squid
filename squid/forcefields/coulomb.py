@@ -1,19 +1,6 @@
 """
 The coulomb object.  This stores the index and charge.
 
-The Coul class contains: 
-- :func:`__init__`
-- :func:`print_lower`
-- :func:`print_upper`
-- :func:`unpack`
-- :func:`pack`
-- :func:`validate`
-- :func:`assign_line`
-- :func:`fix`
-- :classmethod:`load_smrff`
-
-------------
-
 """
 
 import numpy as np
