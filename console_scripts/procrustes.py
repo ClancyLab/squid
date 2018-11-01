@@ -91,6 +91,9 @@ elif "-between" in argv[2:]:
     b_start = int(argv[argv.index('-between') + 1])
     b_stop = int(argv[argv.index('-between') + 2])
 
+    assert b_start >= 0, "b_start must be >= 0."
+    assert b_stop >= 2 + b_start, "b_stop must be >= 2 + b_start."
+
 if "-rmax" in argv[2:]:
     rmax = float(argv[argv.index('-rmax') + 1])
 
@@ -100,7 +103,7 @@ if "-fmax" in argv[2:]:
 frames = files.read_xyz(path + file_name + ".xyz")
 
 if interpolate:
-    frames_hold = copy.deepcopy(frames)
+    frames_hold = [copy.deepcopy(f) for f in frames]
     if b_start is not None:
         frames = frames[b_start:b_stop]
     frames = geometry.smooth_xyz(frames, R_MAX=rmax, F_MAX=fmax,
@@ -108,7 +111,7 @@ if interpolate:
     if b_start is not None:
         a = frames_hold[:b_start]
         b = frames
-        c = frames_hold[b_stop:]
+        c = frames_hold[b_stop - 1:]
         if not isinstance(a[0], list):
             a = [a]
         if not isinstance(b[0], list):
