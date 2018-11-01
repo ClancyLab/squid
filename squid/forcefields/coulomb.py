@@ -1,21 +1,6 @@
-'''
-The coulomb object.  This stores the index and charge.
-'''
-import numpy as np
-
-from squid.units import elem_i2s, elem_weight
-from squid.forcefields.helper import check_restriction
-
-# These are the identifiers in the parameter file that we seek out
-# NOTE! THEY ARE CASE SENSITIVE!
-COUL_PFILE_ID = "COULOMB"
-END_ID = "END"
-CHARGE_LOWER = 0.5
-CHARGE_UPPER = 3.0
-CHARGE_UPPER_LIMIT = 4.0
-CHARGE_LOWER_LIMIT = 0.01
-
 """
+The coulomb object.  This stores the index and charge.
+
 The Coul class contains: 
 - :func:`__init__`
 - :func:`__repr__`
@@ -30,8 +15,25 @@ The Coul class contains:
 - :func:`assign_line`
 - :func:`fix`
 - :classmethod:`load_smrff`
+
 ------------
+
 """
+
+import numpy as np
+
+from squid.units import elem_i2s, elem_weight
+from squid.forcefields.helper import check_restriction
+
+# These are the identifiers in the parameter file that we seek out
+# NOTE! THEY ARE CASE SENSITIVE!
+COUL_PFILE_ID = "COULOMB"
+END_ID = "END"
+CHARGE_LOWER = 0.5
+CHARGE_UPPER = 3.0
+CHARGE_UPPER_LIMIT = 4.0
+CHARGE_LOWER_LIMIT = 0.01
+
 class Coul(object):
     def __init__(self, index=None, charge=None, mass=None, element=None, line=None):
         '''
