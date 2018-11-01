@@ -1,0 +1,360 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>&lt;no title&gt; &#8212; Squid 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Squid 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p>The forcefields module contains various functions aiding in parsing of forcefields.</p>
+<ul class="simple">
+<li><a class="reference internal" href="#module-connectors" title="connectors"><code class="xref py py-mod docutils literal"><span class="pre">connectors</span></code></a></li>
+<li><a class="reference internal" href="#module-coulomb" title="coulomb"><code class="xref py py-mod docutils literal"><span class="pre">coulomb</span></code></a></li>
+<li><a class="reference internal" href="#module-helper" title="helper"><code class="xref py py-mod docutils literal"><span class="pre">helper</span></code></a></li>
+<li><a class="reference internal" href="#module-lj" title="lj"><code class="xref py py-mod docutils literal"><span class="pre">lj</span></code></a></li>
+<li><a class="reference internal" href="#module-morse" title="morse"><code class="xref py py-mod docutils literal"><span class="pre">morse</span></code></a></li>
+<li><a class="reference internal" href="#module-opls" title="opls"><code class="xref py py-mod docutils literal"><span class="pre">opls</span></code></a></li>
+<li><a class="reference internal" href="#module-smooth_sin" title="smooth_sin"><code class="xref py py-mod docutils literal"><span class="pre">smooth_sin</span></code></a></li>
+<li><a class="reference internal" href="#module-smrff" title="smrff"><code class="xref py py-mod docutils literal"><span class="pre">smrff</span></code></a></li>
+<li><a class="reference internal" href="#module-tersoff" title="tersoff"><code class="xref py py-mod docutils literal"><span class="pre">tersoff</span></code></a></li>
+</ul>
+<hr class="docutils" />
+<span class="target" id="module-connectors"></span><p>The general connectors object.  This handles bonds/angles/dihedrals.</p>
+<span class="target" id="module-coulomb"></span><p>The coulomb object.  This stores the index and charge.</p>
+<dl class="data">
+<dt id="coulomb.CHARGE_LOWER_LIMIT">
+<code class="descclassname">coulomb.</code><code class="descname">CHARGE_LOWER_LIMIT</code><em class="property"> = 0.01</em><a class="headerlink" href="#coulomb.CHARGE_LOWER_LIMIT" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Coul class contains:
+- <code class="xref py py-func docutils literal"><span class="pre">__init__()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">__repr__()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">__eq__()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">__hash__()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">_printer()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">print_lower()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">print_upper()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">unpack()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">pack()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">validate()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">assign_line()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">fix()</span></code>
+- <a href="#id1"><span class="problematic" id="id2">:classmethod:`load_smrff`</span></a>
+————</p>
+</dd></dl>
+
+<span class="target" id="module-helper"></span><dl class="function">
+<dt id="helper.check_restriction">
+<code class="descclassname">helper.</code><code class="descname">check_restriction</code><span class="sig-paren">(</span><em>p</em>, <em>restrict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helper.html#check_restriction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#helper.check_restriction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if p is within the restricted set.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>p: <em>obj</em></dt>
+<dd>Some parameter object, such as Coulomb, Morse, etc.</dd>
+<dt>restrict: <em>list, int</em></dt>
+<dd>A list of indices that we want to use.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>contained: <em>bool</em></dt>
+<dd>Whether p is completely in restrict (True) or not (False).</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="helper.is_struct">
+<code class="descclassname">helper.</code><code class="descname">is_struct</code><span class="sig-paren">(</span><em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helper.html#is_struct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#helper.is_struct" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function essentially does isinstance(p, struct) without needing
+to import squid.structures.  Currently there is a cyclic import that would
+make the later annoying to deal with.  NOTE - HOT FIX - REMOVE ASAP.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>p: <em>obj</em></dt>
+<dd>Some parameter object, such as Coulomb, Morse, etc.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>isStruct: <em>bool</em></dt>
+<dd>Whether p is a Struct (True) or not (False).</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="helper.random_in_range">
+<code class="descclassname">helper.</code><code class="descname">random_in_range</code><span class="sig-paren">(</span><em>bounds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helper.html#random_in_range"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#helper.random_in_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a random number in the given bounds: [lower, upper).</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>bounds: <em>list, float</em></dt>
+<dd>A lower and upper bound.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>rand: <em>float</em></dt>
+<dd>A random number in the specified range.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<span class="target" id="module-lj"></span><p>The Lennard-Jones object.  This stores the index and LJ parameters.</p>
+<dl class="data">
+<dt id="lj.END_ID">
+<code class="descclassname">lj.</code><code class="descname">END_ID</code><em class="property"> = 'END'</em><a class="headerlink" href="#lj.END_ID" title="Permalink to this definition">¶</a></dt>
+<dd><p>The LJ class contains:
+- <code class="xref py py-func docutils literal"><span class="pre">__init__()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">__repr__()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">__eq__()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">__hash__()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">_printer()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">print_lower()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">print_upper()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">unpack()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">pack()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">validate()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">assign_line()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">fix()</span></code>
+- <a href="#id3"><span class="problematic" id="id4">:classmethod:`load_smrff`</span></a>
+————</p>
+</dd></dl>
+
+<span class="target" id="module-morse"></span><p>The Morse object. This stores the indices and MORSE parameters.</p>
+<dl class="data">
+<dt id="morse.END_ID">
+<code class="descclassname">morse.</code><code class="descname">END_ID</code><em class="property"> = 'END'</em><a class="headerlink" href="#morse.END_ID" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Morse class contains:
+- <code class="xref py py-func docutils literal"><span class="pre">__init__()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">__repr__()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">__eq__()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">__hash__()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">_printer()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">print_lower()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">print_upper()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">unpack()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">pack()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">validate()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">assign_line()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">fix()</span></code>
+- <a href="#id5"><span class="problematic" id="id6">:classmethod:`load_smrff`</span></a>
+————</p>
+</dd></dl>
+
+<span class="target" id="module-opls"></span><p>The OPLS Forcefield module contains functionality for parsing the OPLS
+forcefield and typing appropriately.  Note, you must first import
+files before ever importing frc_opls.</p>
+<ul class="simple">
+<li><code class="xref py py-func docutils literal"><span class="pre">read_opls_parameters()</span></code></li>
+<li><code class="xref py py-func docutils literal"><span class="pre">set_forcefield_parameters()</span></code></li>
+<li><code class="xref py py-func docutils literal"><span class="pre">check_net_charge()</span></code></li>
+<li><code class="xref py py-func docutils literal"><span class="pre">check_consistency()</span></code></li>
+</ul>
+<hr class="docutils" />
+<dl class="function">
+<dt id="opls.parse_pfile">
+<code class="descclassname">opls.</code><code class="descname">parse_pfile</code><span class="sig-paren">(</span><em>parameter_file='/fs/europa/g_pc/Forcefields/OPLS/oplsaa.prm'</em>, <em>pair_style='lj/cut'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opls.html#parse_pfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#opls.parse_pfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads an opls parameter file written in the Tinker file format.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>parameter_file: <em>str, optional</em></dt>
+<dd>Relative or absolute path to an opls parameter file, written in
+the Tinker file format.</dd>
+<dt>pair_style: <em>str, optional</em></dt>
+<dd>The pair style to be assigned.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>atom_types: <em>list,</em> <a class="reference internal" href="codebase.html#structures.Struct" title="structures.Struct"><code class="xref py py-class docutils literal"><span class="pre">structures.Struct</span></code></a></dt>
+<dd>A list of the forcefield types for atoms, stored as
+<a class="reference internal" href="codebase.html#structures.Struct" title="structures.Struct"><code class="xref py py-class docutils literal"><span class="pre">structures.Struct</span></code></a>.</dd>
+<dt>bond_types: <em>list,</em> <a class="reference internal" href="codebase.html#structures.Struct" title="structures.Struct"><code class="xref py py-class docutils literal"><span class="pre">structures.Struct</span></code></a></dt>
+<dd>A list of the forcefield types for bonds, stored as
+<a class="reference internal" href="codebase.html#structures.Struct" title="structures.Struct"><code class="xref py py-class docutils literal"><span class="pre">structures.Struct</span></code></a>.</dd>
+<dt>angle_types: <em>list,</em> <a class="reference internal" href="codebase.html#structures.Struct" title="structures.Struct"><code class="xref py py-class docutils literal"><span class="pre">structures.Struct</span></code></a></dt>
+<dd>A list of the forcefield types for angles, stored as
+<a class="reference internal" href="codebase.html#structures.Struct" title="structures.Struct"><code class="xref py py-class docutils literal"><span class="pre">structures.Struct</span></code></a>.</dd>
+<dt>dihedral_types: <em>list,</em> <a class="reference internal" href="codebase.html#structures.Struct" title="structures.Struct"><code class="xref py py-class docutils literal"><span class="pre">structures.Struct</span></code></a></dt>
+<dd>A list of the forcefield types for dihedrals, stored as
+<a class="reference internal" href="codebase.html#structures.Struct" title="structures.Struct"><code class="xref py py-class docutils literal"><span class="pre">structures.Struct</span></code></a>.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<span class="target" id="module-smooth_sin"></span><p>Class object for the sin_l/sin_r/sin_inout smooths.</p>
+<dl class="data">
+<dt id="smooth_sin.END_ID">
+<code class="descclassname">smooth_sin.</code><code class="descname">END_ID</code><em class="property"> = 'END'</em><a class="headerlink" href="#smooth_sin.END_ID" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Smooth class contains:</p>
+</dd></dl>
+
+<span class="target" id="module-smrff"></span><p>This file will contain functions pertaining solely to the SMRFF force field
+and any associated files.</p>
+<ul class="simple">
+<li><a class="reference internal" href="#smrff.remove_comments" title="smrff.remove_comments"><code class="xref py py-func docutils literal"><span class="pre">remove_comments()</span></code></a></li>
+<li><a class="reference internal" href="#smrff.parse_pfile" title="smrff.parse_pfile"><code class="xref py py-func docutils literal"><span class="pre">parse_pfile()</span></code></a></li>
+</ul>
+<dl class="function">
+<dt id="smrff.parse_pfile">
+<code class="descclassname">smrff.</code><code class="descname">parse_pfile</code><span class="sig-paren">(</span><em>fname</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smrff.html#parse_pfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smrff.parse_pfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will, given a smrff parameter file, will parse it by
+removing comments, trailing whitespaces, and empty lines.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>fname: <em>str</em></dt>
+<dd>The name of the parameter file to be parsed.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>parsed: <em>str</em></dt>
+<dd>A parsed string of said parameter file.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="smrff.remove_comments">
+<code class="descclassname">smrff.</code><code class="descname">remove_comments</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smrff.html#remove_comments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smrff.remove_comments" title="Permalink to this definition">¶</a></dt>
+<dd><p>A simple function to remove comments in a string.  Note, we don’t care
+about whitespace, so it also removes that.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>s: <em>str</em></dt>
+<dd>A string to remove comments from.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>s_no_comments: <em>str</em></dt>
+<dd>A string without comments.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<span class="target" id="module-tersoff"></span><p>The Tersoff object.  This stores the indices and TERSOFF parameters.</p>
+<dl class="data">
+<dt id="tersoff.END_ID">
+<code class="descclassname">tersoff.</code><code class="descname">END_ID</code><em class="property"> = 'END'</em><a class="headerlink" href="#tersoff.END_ID" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Tersoff class contains:
+- <code class="xref py py-func docutils literal"><span class="pre">__init__()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">__repr__()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">__eq__()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">__hash__()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">_printer()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">print_lower()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">print_upper()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">unpack()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">pack()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">validate()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">turn_off()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">turn_off_3body()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">assign_line()</span></code>
+- <code class="xref py py-func docutils literal"><span class="pre">fix()</span></code>
+- <a href="#id7"><span class="problematic" id="id8">:classmethod:`load_smrff`</span></a>
+————</p>
+</dd></dl>
+
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table Of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="squid.html">Squid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codebase.html">Codebase</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/forcefields.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Squid 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Henry Herbol.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+The forcefields module contains various functions aiding in parsing of forcefields.
+
+- :mod:`connectors`
+- :mod:`coulomb`
+- :mod:`helper`
+- :mod:`lj`
+- :mod:`morse`
+- :mod:`opls`
+- :mod:`smooth_sin`
+- :mod:`smrff`
+- :mod:`tersoff`
+
+------------
+
+.. automodule:: connectors
+    :members:
+
+.. automodule:: coulomb
+    :members:
+
+.. automodule:: helper
+    :members:
+
+.. automodule:: lj
+    :members:
+
+.. automodule:: morse
+    :members:
+
+.. automodule:: opls
+    :members:
+
+.. automodule:: smooth_sin
+    :members:
+
+.. automodule:: smrff
+    :members:
+
+.. automodule:: tersoff
+    :members:
+
