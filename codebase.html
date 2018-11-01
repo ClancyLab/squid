@@ -1048,32 +1048,23 @@ file buffer to write the xyz file.</dd>
 <hr class="docutils" />
 <div class="section" id="forcefields">
 <h2>forcefields<a class="headerlink" href="#forcefields" title="Permalink to this headline">¶</a></h2>
-<p>The forcefields module contains various functions aiding in parsing of forcefields.</p>
+<p>The forcefields module contains various objects to define forcefields,
+as well as several functions to parse forcefield files.</p>
 <ul class="simple">
-<li><a class="reference internal" href="forcefields.html#module-connectors" title="connectors"><code class="xref py py-mod docutils literal"><span class="pre">connectors</span></code></a></li>
-<li><a class="reference internal" href="forcefields.html#module-coulomb" title="coulomb"><code class="xref py py-mod docutils literal"><span class="pre">coulomb</span></code></a></li>
-<li><a class="reference internal" href="forcefields.html#module-helper" title="helper"><code class="xref py py-mod docutils literal"><span class="pre">helper</span></code></a></li>
-<li><a class="reference internal" href="forcefields.html#module-lj" title="lj"><code class="xref py py-mod docutils literal"><span class="pre">lj</span></code></a></li>
-<li><a class="reference internal" href="forcefields.html#module-morse" title="morse"><code class="xref py py-mod docutils literal"><span class="pre">morse</span></code></a></li>
-<li><a class="reference internal" href="forcefields.html#module-opls" title="opls"><code class="xref py py-mod docutils literal"><span class="pre">opls</span></code></a></li>
-<li><a class="reference internal" href="forcefields.html#module-smooth_sin" title="smooth_sin"><code class="xref py py-mod docutils literal"><span class="pre">smooth_sin</span></code></a></li>
-<li><a class="reference internal" href="forcefields.html#module-smrff" title="smrff"><code class="xref py py-mod docutils literal"><span class="pre">smrff</span></code></a></li>
-<li><a class="reference internal" href="forcefields.html#module-tersoff" title="tersoff"><code class="xref py py-mod docutils literal"><span class="pre">tersoff</span></code></a></li>
+<li><a class="reference internal" href="forcefields.html#opls.parse_pfile" title="opls.parse_pfile"><code class="xref py py-func docutils literal"><span class="pre">opls.parse_pfile()</span></code></a></li>
+<li><a class="reference internal" href="forcefields.html#smrff.parse_pfile" title="smrff.parse_pfile"><code class="xref py py-func docutils literal"><span class="pre">smrff.parse_pfile()</span></code></a></li>
+<li><code class="xref py py-class docutils literal"><span class="pre">HarmonicConnector</span></code></li>
+<li><code class="xref py py-class docutils literal"><span class="pre">Bond</span></code></li>
+<li><code class="xref py py-class docutils literal"><span class="pre">Angle</span></code></li>
+<li><code class="xref py py-class docutils literal"><span class="pre">Dihedral</span></code></li>
+<li><code class="xref py py-class docutils literal"><span class="pre">Coul</span></code></li>
+<li><code class="xref py py-class docutils literal"><span class="pre">LJ</span></code></li>
+<li><code class="xref py py-class docutils literal"><span class="pre">Morse</span></code></li>
+<li><code class="xref py py-class docutils literal"><span class="pre">Tersoff</span></code></li>
 </ul>
 <hr class="docutils" />
 <span class="target" id="module-connectors"></span><p>The general connectors object.  This handles bonds/angles/dihedrals.</p>
 <span class="target" id="module-coulomb"></span><p>The coulomb object.  This stores the index and charge.</p>
-<p>The Coul class contains: 
-- <code class="xref py py-func docutils literal"><span class="pre">__init__()</span></code>
-- <code class="xref py py-func docutils literal"><span class="pre">print_lower()</span></code>
-- <code class="xref py py-func docutils literal"><span class="pre">print_upper()</span></code>
-- <code class="xref py py-func docutils literal"><span class="pre">unpack()</span></code>
-- <code class="xref py py-func docutils literal"><span class="pre">pack()</span></code>
-- <code class="xref py py-func docutils literal"><span class="pre">validate()</span></code>
-- <code class="xref py py-func docutils literal"><span class="pre">assign_line()</span></code>
-- <code class="xref py py-func docutils literal"><span class="pre">fix()</span></code>
-- <a href="#id1"><span class="problematic" id="id2">:classmethod:`load_smrff`</span></a></p>
-<hr class="docutils" />
 <span class="target" id="module-helper"></span><dl class="function">
 <dt id="helper.check_restriction">
 <code class="descclassname">helper.</code><code class="descname">check_restriction</code><span class="sig-paren">(</span><em>p</em>, <em>restrict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helper.html#check_restriction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#helper.check_restriction" title="Permalink to this definition">¶</a></dt>
@@ -1155,7 +1146,7 @@ make the later annoying to deal with.  NOTE - HOT FIX - REMOVE ASAP.</p>
 - <code class="xref py py-func docutils literal"><span class="pre">validate()</span></code>
 - <code class="xref py py-func docutils literal"><span class="pre">assign_line()</span></code>
 - <code class="xref py py-func docutils literal"><span class="pre">fix()</span></code>
-- <a href="#id3"><span class="problematic" id="id4">:classmethod:`load_smrff`</span></a>
+- <a href="#id1"><span class="problematic" id="id2">:classmethod:`load_smrff`</span></a>
 ————</p>
 </dd></dl>
 
@@ -1176,7 +1167,7 @@ make the later annoying to deal with.  NOTE - HOT FIX - REMOVE ASAP.</p>
 - <code class="xref py py-func docutils literal"><span class="pre">validate()</span></code>
 - <code class="xref py py-func docutils literal"><span class="pre">assign_line()</span></code>
 - <code class="xref py py-func docutils literal"><span class="pre">fix()</span></code>
-- <a href="#id5"><span class="problematic" id="id6">:classmethod:`load_smrff`</span></a>
+- <a href="#id3"><span class="problematic" id="id4">:classmethod:`load_smrff`</span></a>
 ————</p>
 </dd></dl>
 
@@ -1297,7 +1288,7 @@ about whitespace, so it also removes that.</p>
 - <code class="xref py py-func docutils literal"><span class="pre">turn_off_3body()</span></code>
 - <code class="xref py py-func docutils literal"><span class="pre">assign_line()</span></code>
 - <code class="xref py py-func docutils literal"><span class="pre">fix()</span></code>
-- <a href="#id7"><span class="problematic" id="id8">:classmethod:`load_smrff`</span></a>
+- <a href="#id5"><span class="problematic" id="id6">:classmethod:`load_smrff`</span></a>
 ————</p>
 </dd></dl>
 

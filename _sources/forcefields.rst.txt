@@ -1,14 +1,17 @@
-The forcefields module contains various functions aiding in parsing of forcefields.
+The forcefields module contains various objects to define forcefields,
+as well as several functions to parse forcefield files.
 
-- :mod:`connectors`
-- :mod:`coulomb`
-- :mod:`helper`
-- :mod:`lj`
-- :mod:`morse`
-- :mod:`opls`
-- :mod:`smooth_sin`
-- :mod:`smrff`
-- :mod:`tersoff`
+- :func:`opls.parse_pfile`
+- :func:`smrff.parse_pfile`
+
+- :class:`HarmonicConnector`
+- :class:`Bond`
+- :class:`Angle`
+- :class:`Dihedral`
+- :class:`Coul`
+- :class:`LJ`
+- :class:`Morse`
+- :class:`Tersoff`
 
 ------------
 
