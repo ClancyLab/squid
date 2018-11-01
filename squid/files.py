@@ -1105,6 +1105,7 @@ def read_xyz_gen(name, cols=["element", "x", "y", "z"], cast_elem_to_sym=True, f
             frame[index - 1].z = float(z)
         index += 1
         N -= 1
+    yield frame
 
 
 def read_xyz(name, cols=["element", "x", "y", "z"], cast_elem_to_sym=True, fast=True):

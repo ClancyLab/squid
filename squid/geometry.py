@@ -1665,6 +1665,8 @@ xyz file or a list: %s" % sys.exc_info()[0])
         # If len(frames) > N_FRAMES, break out of while and trim
         if len(frames) > N_FRAMES:
             break
+        if len(frames) == 1:
+            raise Exception("You cannot interpolate with only 1 frame!")
 
         # Find largest motion_per_frame
         if PROCRUSTES:

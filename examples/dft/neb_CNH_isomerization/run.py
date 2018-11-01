@@ -32,7 +32,7 @@ def lbfgs(frames=files.read_xyz("CNH_HCN.xyz"), maxiter=1000):
                    frames, 
                    "! HF-3c",
                    opt="LBFGS",
-                   queue="shared",
+                   queue=None,
                    procs=1,
                    new_opt_params=new_opt_params,
                    ci_neb=True,
