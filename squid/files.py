@@ -1030,67 +1030,33 @@ def write_lammpstrj(frames_or_system, name_or_file=None, timesteps=None,
         f.close()
 
 
-def read_xyz(name):
+def read_xyz_gen(name, cols=["element", "x", "y", "z"], cast_elem_to_sym=True, fast=False):
     """
-    Read in a file written in the XYZ file format.
+    This will yield a frame from an xyz file.
 
     **Parameters**
 
         name: *str*
             File name with or without .xyz file extension.
+        cols: *list, str, optional*
+            The specific columns in this xyz file.  Note - we may not support
+            all possibilities, and order matters!
+        cast_elem_to_sym: *bool, optional*
+            Whether to cast the element into the symbol (ex. 2 becomes He).
+        fast: *bool, optional*
+            If specified, you are promising that this xyz file has the columns
+                element x y z
+            Further, if speed truly matters and you do not want to foce cast
+            element into symbols, we recommend setting cast_elem_to_sym=False.
 
     **Returns**
 
-        frames: *list, list,* :class:`structures.Atom`
-            A list of atoms read in from the xyz file.  If there is only one
-            frame, then only a *list* of :class:`structures.Atom` is returned.
-    """
-    if not name.endswith('.xyz') and '.' not in name:
-        name += '.xyz'
-    lines = open(name).readlines()
-    atom_count = int(lines[0].split()[0])
-    lines_by_frame = [lines[i:i + atom_count + 2]
-                      for i in range(0, len(lines), atom_count + 2)]
-
-    frames = []
-    for frame in lines_by_frame:
-        atoms = []
-        for line in frame[2:]:
-            columns = line.split()
-            if len(columns) >= 4:
-                x, y, z = [float(s) for s in columns[1:4]]
-                atoms.append(structures.Atom(element=columns[0],
-                                             x=x, y=y, z=z,
-                                             index=len(atoms) + 1))
-        if len(atoms) > 0:
-            frames.append(atoms)
-
-    if len(frames) == 1:
-        return frames[0]
-    else:
-        return frames
-
-
-def read_xyz_2(name, cols=["element", "x", "y", "z"]):
-    """
-    Read in a file written in the XYZ file format.  This is an improved
-    version, accounting for xyz files of varying atom numbers.
-
-    **Parameters**
-
-        name: *str*
-            File name with or without .xyz file extension.
-
-    **Returns**
-
-        frames: *list, list,* :class:`structures.Atom`
-            A list of atoms read in from the xyz file.  If there is only one
-            frame, then only a *list* of :class:`structures.Atom` is returned.
+        yield: *list,* :class:`structures.Atom`
+            A frame from an xyz file.
     """
     if not name.endswith('.xyz') and '.' not in name:
         name += '.xyz'
 
-    frames = []
     frame = []
     index = 1
     N = 0
@@ -1104,24 +1070,73 @@ def read_xyz_2(name, cols=["element", "x", "y", "z"]):
             N = int(line[0])
             skip_comment = True
             if len(frame) > 0:
-                frames.append(frame)
-                frame = []
+                yield frame
+                frame = [structures.Atom("Z", 0, 0, 0, index=i + 1) for i in range(N)]
                 index = 1
+                continue
+            frame = [structures.Atom("Z", 0, 0, 0, index=i + 1) for i in range(N)]
             continue
 
-        element, x, y, z = [None for i in range(4)]
-        if "element" in cols:
-            element = units.elem_i2s(line[cols.index("element")])
-        if "x" in cols:
-            x = float(line[cols.index("x")])
-        if "y" in cols:
-            y = float(line[cols.index("y")])
-        if "z" in cols:
-            z = float(line[cols.index("z")])
-        frame.append(structures.Atom(element=element, x=x, y=y, z=z, index=index))
+        if fast:
+            element, x, y, z = line
+            if cast_elem_to_sym:
+                frame[index - 1].element = units.elem_i2s(element)
+            else:
+                frame[index - 1].element = element
+            frame[index - 1].x = float(x)
+            frame[index - 1].y = float(y)
+            frame[index - 1].z = float(z)
+        else:
+            element, x, y, z = [None for i in range(4)]
+            if "element" in cols:
+                if cast_elem_to_sym:
+                    element = units.elem_i2s(line[cols.index("element")])
+                else:
+                    element = line[cols.index("element")]
+            if "x" in cols:
+                x = float(line[cols.index("x")])
+            if "y" in cols:
+                y = float(line[cols.index("y")])
+            if "z" in cols:
+                z = float(line[cols.index("z")])
+            frame[index - 1].element = element
+            frame[index - 1].x = float(x)
+            frame[index - 1].y = float(y)
+            frame[index - 1].z = float(z)
         index += 1
         N -= 1
+    yield frame
 
+
+def read_xyz(name, cols=["element", "x", "y", "z"], cast_elem_to_sym=True, fast=True):
+    """
+    Read in a file written in the XYZ file format.  This is an improved
+    version, accounting for xyz files of varying atom numbers.
+
+    **Parameters**
+
+        name: *str*
+            File name with or without .xyz file extension.
+        cols: *list, str, optional*
+            The specific columns in this xyz file.  Note - we may not support
+            all possibilities, and order matters!
+        cast_elem_to_sym: *bool, optional*
+            Whether to cast the element into the symbol (ex. 2 becomes He).
+        fast: *bool, optional*
+            If specified, you are promising that this xyz file has the columns
+                element x y z
+            Further, if speed truly matters and you do not want to foce cast
+            element into symbols, we recommend setting cast_elem_to_sym=False.
+
+    **Returns**
+
+        frames: *list, list,* :class:`structures.Atom`
+            A list of atoms read in from the xyz file.  If there is only one
+            frame, then only a *list* of :class:`structures.Atom` is returned.
+    """
+    frames = [f for f in read_xyz_gen(name, cols=cols, cast_elem_to_sym=cast_elem_to_sym, fast=fast)]
+    if len(frames) == 1:
+        return frames[0]
     return frames
 
 

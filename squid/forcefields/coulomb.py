@@ -1,6 +1,8 @@
-'''
+"""
 The coulomb object.  This stores the index and charge.
-'''
+
+"""
+
 import numpy as np
 
 from squid.units import elem_i2s, elem_weight
@@ -15,26 +17,9 @@ CHARGE_UPPER = 3.0
 CHARGE_UPPER_LIMIT = 4.0
 CHARGE_LOWER_LIMIT = 0.01
 
-"""
-The Coul class contains: 
-- :func:`__init__`
-- :func:`__repr__`
-- :func:`__eq__`
-- :func:`__hash__`
-- :func:`_printer`
-- :func:`print_lower`
-- :func:`print_upper`
-- :func:`unpack`
-- :func:`pack`
-- :func:`validate`
-- :func:`assign_line`
-- :func:`fix`
-- :classmethod:`load_smrff`
-------------
-"""
 class Coul(object):
     def __init__(self, index=None, charge=None, mass=None, element=None, line=None):
-        '''
+        """
         Initialize the coulomb object.
         **Parameters**
             index: *str or int*
@@ -46,7 +31,7 @@ class Coul(object):
         **Returns**
             coulomb: :class:`Coul`
                 A Coul object.
-        '''
+        """
         # How many parameters exist in this potential
         self.N_params = 1
 
@@ -66,14 +51,14 @@ class Coul(object):
         self.validate()
 
     def __repr__(self):
-        '''
+        """
         This prints out a representation of this coulomb object, in the format
         that is output to the smrff parameter file.
         **Returns**
             coul: *str*
                 A string representation of Coul.  The index and the charge (to
                 2 decimal places), separated by a space.
-        '''
+        """
         return self._printer(bounds=None)
 
     def __eq__(self, other):
@@ -88,7 +73,7 @@ class Coul(object):
         return hash(tuple(self.unpack(with_indices=True)))
 
     def _printer(self, bounds=None):
-        '''
+        """
         This prints out a representation of this Coul object, in the format
         that is output to the smrff parameter file.
         **Parameters**
@@ -99,7 +84,7 @@ class Coul(object):
             Coul: *str*
                 A string representation of Coul.  The index and the charge (to
                 2 decimal places), separated by a space.
-        '''
+        """
         self.validate()
         if bounds is not None:
             return "%s %.2f %s %.4f" % (self.index, self.charge_bounds[bounds], self.element, self.mass)
@@ -113,7 +98,7 @@ class Coul(object):
         return self._printer(bounds=1)
 
     def unpack(self, with_indices=True, with_bounds=False):
-        '''
+        """
         This function unpacks the coulomb object into a list.
         **Parameters**
             with_indices: *bool, optional*
@@ -121,7 +106,7 @@ class Coul(object):
         **Returns**
             coul: *list, str/float*
                 A list, holding the string of the index and the float of the charge.
-        '''
+        """
         self.validate()
 
         pkg = []
@@ -139,7 +124,7 @@ class Coul(object):
         return pkg[0]
 
     def pack(self, params):
-        '''
+        """
         This function packs the coulomb object from a list.
         **Parameters**
             params: *list*
@@ -147,7 +132,7 @@ class Coul(object):
                 only assign charge, then do so manually.
         **Returns**
             None
-        '''
+        """
         assert len(params) in [1, 2], "In Coul, tried packing %d parameters.  Should be either 1 or 2!" % len(params)
         if len(params) > 1:
             self.index, self.charge = params
@@ -156,10 +141,10 @@ class Coul(object):
         self.validate()
 
     def validate(self):
-        '''
+        """
         This function will validate data integrity.  
         In this case, we simply ensure data types are appropriate.
-        '''
+        """
         self.index, self.charge = str(self.index), float(self.charge)
         assert abs(self.charge) <= CHARGE_UPPER_LIMIT, "In Coul, tried assigning an unreasonably large charge! (Q = %.2f)" % self.charge
         assert abs(self.charge) >= CHARGE_LOWER_LIMIT, "In Coul, tried assigning an unreasonably small charge! (Q = %.2f)" % self.charge
@@ -186,9 +171,9 @@ class Coul(object):
         self.validate()
 
     def fix(self, params='all', value=None):
-        '''
+        """
         This will fix these parameters by assigning bounds to the values themselves.
-        '''
+        """
         if params in ['all', 'charge']:
             if value is not None:
                 if isinstance(value, list) or isinstance(value, tuple):
@@ -201,7 +186,7 @@ class Coul(object):
 
     @classmethod
     def load_smrff(cls, pfile, pfptr=None, restrict=None):
-        '''
+        """
         Given a parameter file, inport the coulomb parameters if possible.
         **Parameters**
             pfile: *str*
@@ -213,7 +198,7 @@ class Coul(object):
         **Returns**
             coul_objs: *list, Coul*, or *None*
                 Returns a list of Coul objects if possible, else None.
-        '''
+        """
         import squid.forcefields.smrff as smrff_utils
 
         # Ensure correct pfile format, and that we even need to parse it.
@@ -234,7 +219,7 @@ class Coul(object):
 
     @classmethod
     def load_opls(cls, atom_types, pfptr=None, restrict=None):
-        '''
+        """
         Given a parameter file, importthe Coulomb parameters if possible.
         **Parameters**
             atom_types: *list,* :class:`structures.Struct`
@@ -245,7 +230,7 @@ class Coul(object):
         **Returns**
             coul_objs: *list, Coul*, or *None*
                 Returns a list of Coul objects if possible, else None.
-        '''
+        """
         import squid.forcefields.opls as opls_utils
 
         # Ensure correct pfile format, and that we even need to parse it.
@@ -260,7 +245,7 @@ class Coul(object):
 
     @classmethod
     def generate(cls, atom_types, elems, signs):
-        '''
+        """
         Randomly generate parameters for coulomb.
 
         **Parameters**
@@ -276,7 +261,7 @@ class Coul(object):
 
             coul_objs: *list, Coul*
                 Returns a list of Coul objects.
-        '''
+        """
         from helper import random_in_range
 
         coul_objs = []

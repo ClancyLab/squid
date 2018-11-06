@@ -1,4 +1,6 @@
-The files module contains various functions aiding in file input and output.
+The optimizers module contains various functions aiding in optimization.
+Several of these approaches are founded on methods within scipy with
+minor alterations made.
 
 - :func:`steepest_descent`
 - :func:`bfgs`

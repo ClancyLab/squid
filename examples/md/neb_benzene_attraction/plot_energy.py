@@ -48,7 +48,7 @@ def get_energy_path(name, index, unit_to_use="kcal/mol"):
 
 
 unit_to_use = "kcal/mol"
-for i in range(20, 24):
+for i in range(15, 21):
     plt.plot(get_energy_path("solv_box", i, unit_to_use=unit_to_use), label=str(i))
 
 plt.xlabel("Reaction Coordinate")

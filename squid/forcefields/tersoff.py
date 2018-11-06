@@ -172,16 +172,16 @@ class Tersoff(object):
             raise Exception("Either specify all Tersoff parameters, or the line to be parsed, but not both.")
 
         # Assign default bounds
-        self.lambda3_bounds = (0.1, 10.0)
-        self.c_bounds = (0.1, 20000.0)
+        self.lambda3_bounds = (0.0, 10.0)
+        self.c_bounds = (0.1, 150000.0)
         self.d_bounds = (0.1, 50.0)
         self.costheta0_bounds = (-1.0, 1.0)
-        self.n_bounds = (0.1, 50.0)
-        self.lambda2_bounds = (0.1, 10.0)
+        self.n_bounds = (0, 50.0)
+        self.lambda2_bounds = (0, 10.0)
         self.B_bounds = (0.0, 100000.0)
         self.R_bounds = (1.1, 5.0)
         self.D_bounds = (0.1, 1.1)
-        self.lambda1_bounds = (0.1, 10.0)
+        self.lambda1_bounds = (0, 10.0)
         self.A_bounds = (0.0, 100000.0)
 
 
@@ -396,7 +396,7 @@ class Tersoff(object):
         self.B = float(self.B)
         self.R = float(self.R)
         self.D = float(self.D)
-        assert self.R > self.D and self.D > 0, "In Tersoff %s, R = %.2f and D = %.2f; however, they should be positive such that R > D!" % (str(self.indices), self.R, self.D)
+        assert self.R >= self.D and self.D > 0, "In Tersoff %s, R = %.2f and D = %.2f; however, they should be positive such that R >= D!" % (str(self.indices), self.R, self.D)
         self.lambda1 = float(self.lambda1)
         self.A = float(self.A)
 
@@ -709,16 +709,16 @@ class Tersoff(object):
                 beta = 1
                 gamma = random_in_range((0.0, 1.0))
 
-            lambda3 = random_in_range((0.1, 10.0))
-            c = random_in_range((0.1, 20000.0))
+            lambda3 = random_in_range((0, 10.0))
+            c = random_in_range((0.1, 150000.0))
             d = random_in_range((0.1, 50.0))
             costheta0 = random_in_range((-1.0, 1.0))
-            n = random_in_range((0.1, 50.0))
-            lambda2 = random_in_range((0.1, 10.0))
+            n = random_in_range((0, 50.0))
+            lambda2 = random_in_range((0, 10.0))
             B = random_in_range((100.0, 100000.0))
             R = random_in_range((1.1, 3.0))
             D = random_in_range((0.1, 1.0))
-            lambda1 = random_in_range((0.1, 10.0))
+            lambda1 = random_in_range((0, 10.0))
             A = random_in_range((100.0, 100000.0))
 
             Tersoff_Objs.append(

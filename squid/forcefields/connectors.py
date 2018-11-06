@@ -1,12 +1,12 @@
-'''
+"""
 The general connectors object.  This handles bonds/angles/dihedrals.
-'''
+"""
 from squid.forcefields.helper import check_restriction
 
 
 class HarmonicConnector(object):
     def __init__(self, indices=None, energies=None, equilibs=None, line=None):
-        '''
+        """
         Initialize the LJ object.  Either pass indices + energies + equilibs,
         or pass line.  If all are passed, then an error will be thrown.
         **Parameters**
@@ -21,7 +21,7 @@ class HarmonicConnector(object):
         **Returns**
             HarmonicConnector: :class:`HarmonicConnector`
                 A HarmonicConnector object.
-        '''
+        """
 
         if all([x is None for x in [indices, energies, equilibs]]) and line is not None:
             self.assign_line(line)
@@ -36,7 +36,7 @@ class HarmonicConnector(object):
         self.N_params = len(energies) + len(equilibs)
 
     def __repr__(self):
-        '''
+        """
         This prints out a representation of this LJ object, in the format
         that is output to the smrff parameter file.
         **Returns**
@@ -44,7 +44,7 @@ class HarmonicConnector(object):
                 A string representation of LJ.  The indices, sigma, and epsilon
                 are printed, in that precise order.  Note, numbers are printed
                 to exactly 2 decimal places.
-        '''
+        """
         return self.printer(bounds=None, with_indices=True)
 
     def __eq__(self, other):
@@ -59,7 +59,7 @@ class HarmonicConnector(object):
         return hash(tuple(self.unpack(with_indices=True)))
 
     def printer(self, bounds=None, with_indices=False, map_indices=None):
-        '''
+        """
         This prints out a representation of this LJ object, in the format
         that is output to the smrff parameter file.
         **Parameters**
@@ -71,7 +71,7 @@ class HarmonicConnector(object):
                 A string representation of LJ.  The indices, sigma, and epsilon
                 are printed, in that precise order.  Note, numbers are printed
                 to exactly 2 decimal places.
-        '''
+        """
         self.validate()
         indices = self.indices
         if map_indices is not None:
@@ -84,7 +84,7 @@ class HarmonicConnector(object):
         return s
 
     def unpack(self, with_indices=False, bounds=None):
-        '''
+        """
         This function unpacks the LJ object into a list.
         **Parameters**
             with_indices: *bool, optional*
@@ -93,19 +93,19 @@ class HarmonicConnector(object):
             coul: *list, str/float*
                 A list, holding the string of the indices and the float of the
                 charge.
-        '''
+        """
         self.validate()
         return ([self.indices] if with_indices else []) + self.energies + self.equilibs
 
     def pack(self, params, with_indices=False):
-        '''
+        """
         This function packs the LJ object from a list.
         **Parameters**
             params: *list*
                 A list holding the indices, sigma, and epsilon (IN THAT ORDER).
         **Returns**
             None
-        '''
+        """
         if with_indices:
             self.indices = params[0]
 
@@ -115,10 +115,10 @@ class HarmonicConnector(object):
         self.validate()
 
     def validate(self):
-        '''
+        """
         This function will validate data integrity.  In this case, we simply
         ensure data types are appropriate.
-        '''
+        """
 
         if not isinstance(self.energies, list):
             if isinstance(self.energies, tuple):
@@ -160,14 +160,14 @@ class HarmonicConnector(object):
         raise Exception("Error - Function has not been done yet.")
 
     def fix(self, params='all'):
-        '''
+        """
         This will fix these parameters by assigning bounds to the values themselves.
-        '''
+        """
         raise Exception("Error - Function has not been done yet.")
 
     @classmethod
     def load_smrff(cls, pfile, pfptr=None):
-        '''
+        """
         Given a parameter file, inport the LJ parameters if possible.
         **Parameters**
             pfile: *str*
@@ -179,13 +179,13 @@ class HarmonicConnector(object):
         **Returns**
             lj_objs: *list, LJ*, or *None*
                 Returns a list of LJ objects if possible, else None.
-        '''
+        """
 
         raise Exception("Error - load_smrff in Connector currently doesn't make sense!")
 
     @classmethod
     def load_opls(cls, info, pfptr=None, restrict=None):
-        '''
+        """
         Given a parameter file, inport the LJ parameters if possible.
         **Parameters**
             pfile: *str*
@@ -197,7 +197,7 @@ class HarmonicConnector(object):
         **Returns**
             lj_objs: *list, LJ*, or *None*
                 Returns a list of LJ objects if possible, else None.
-        '''
+        """
 
         raise Exception("Error - load_opls is not implemented for general Connector object.")
 
@@ -206,7 +206,7 @@ class Bond(HarmonicConnector):
 
     @classmethod
     def load_opls(cls, bond_types, pfptr=None, restrict=None):
-        '''
+        """
         Given a parameter file, inport the Bond parameters if possible.
         **Parameters**
             bond_types: *list,* :class:`structures.Struct`
@@ -217,7 +217,7 @@ class Bond(HarmonicConnector):
         **Returns**
             bond_objs: *list, Bond*, or *None*
                 Returns a list of Bond objects if possible, else None.
-        '''
+        """
         import squid.forcefields.opls as opls_utils
         if pfptr is not None:
             _, bond_types, _, _ = opls_utils.parse_pfile(pfptr)
@@ -232,7 +232,7 @@ class Angle(HarmonicConnector):
 
     @classmethod
     def load_opls(cls, angle_types, pfptr=None, restrict=None):
-        '''
+        """
         Given a parameter file, inport the Angle parameters if possible.
         **Parameters**
             angle_types: *list,* :class:`structures.Struct`
@@ -243,7 +243,7 @@ class Angle(HarmonicConnector):
         **Returns**
             angle_objs: *list, Angle*, or *None*
                 Returns a list of Angle objects if possible, else None.
-        '''
+        """
         import squid.forcefields.opls as opls_utils
         if pfptr is not None:
             _, _, angle_types, _ = opls_utils.parse_pfile(pfptr)
@@ -258,7 +258,7 @@ class Dihedral(HarmonicConnector):
 
     @classmethod
     def load_opls(cls, dihedral_types, pfptr=None, restrict=None):
-        '''
+        """
         Given a parameter file, inport the Dihedral parameters if possible.
         **Parameters**
             dihedral_types: *list,* :class:`structures.Struct`
@@ -269,7 +269,7 @@ class Dihedral(HarmonicConnector):
         **Returns**
             dihedral_objs: *list, Dihedral*, or *None*
                 Returns a list of Dihedral objects if possible, else None.
-        '''
+        """
         import squid.forcefields.opls as opls_utils
         if pfptr is not None:
             _, _, _, dihedral_types = opls_utils.parse_pfile(pfptr)
