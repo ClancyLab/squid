@@ -502,7 +502,7 @@ def submit_job(name,
     procs, ntasks, nodes = int(procs), int(ntasks), int(nodes)
     if procs * ntasks > 24 * nodes:
         print("Warning - You requested %d tasks and %d cpus-per-task.  This \
-equates to %d nodes on marcc; however, you only requested %d nodes." % (procs, ntasks, procs * ntasks // 24 + 1, nodes))
+equates to %d nodes on marcc; however, you only requested %d nodes." % (procs, ntasks, (procs * ntasks - 1) // 24 + 1, nodes))
         if adjust_nodes:
             print("\tWill adjust nodes accordingly...")
             nodes = (procs * ntasks - 1) // 24 + 1
@@ -824,7 +824,7 @@ def pysub(job_name,
     nprocs, ntasks, nodes = int(nprocs), int(ntasks), int(nodes)
     if nprocs * ntasks > 24 * nodes:
         print("Warning - You requested %d tasks and %d cpus-per-task.  This \
-equates to %d nodes on marcc; however, you only requested %d nodes." % (nprocs, ntasks, nprocs * ntasks // 24 + 1, nodes))
+equates to %d nodes on marcc; however, you only requested %d nodes." % (nprocs, ntasks, (nprocs * ntasks - 1) // 24 + 1, nodes))
         if adjust_nodes:
             print("\tWill adjust nodes accordingly...")
             nodes = (nprocs * ntasks - 1) // 24 + 1
@@ -990,10 +990,10 @@ $OMP$
 source ~/.bashrc
 '''
 
-        if nprocs > 1 and use_mpi:
+        if nprocs * ntasks > 1 and use_mpi:
             SLURM += '''
 $MPIRUN$ -np $NPROCS$ $PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$> $PY_NAME2$.log 2>&1
-'''.replace("$MPIRUN$", sysconst.mpirun_path).replace("$NPROCS$", str(nprocs))
+'''.replace("$MPIRUN$", sysconst.mpirun_path).replace("$NPROCS$", str(nprocs * ntasks))
         else:
             SLURM += '''
 $PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$> $PY_NAME2$.log 2>&1
