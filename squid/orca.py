@@ -692,7 +692,7 @@ less than 2 atoms!")
             job_to_submit += "thisdir=" + os.getcwd() + "\n"
         else:
             job_to_submit = ""
-        job_to_submit += orca_path + " " + run_name + ".orca > "
+        job_to_submit += orca_path + " " + os.getcwd() + '/' + run_name + ".orca > "
         job_to_submit += (os.getcwd() + '/' + run_name) + ".out\n\n"
         job_to_submit = job_to_submit + "touch " + run_name + ".orca.xyz\n"
         job_to_submit = job_to_submit + "touch " + run_name + ".orca.gbw\n"

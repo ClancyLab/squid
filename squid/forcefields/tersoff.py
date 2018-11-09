@@ -130,7 +130,7 @@ class Tersoff(object):
             if form == "original":
                 self.m_bounds = (3, 3)
                 self.gamma_bounds = (1, 1)
-                self.beta_bounds = (1E-8, 1.0)
+                self.beta_bounds = (0.0, 1.0)
             elif form == "albe":
                 self.m_bounds = (1, 1)
                 self.beta_bounds = (1, 1)
@@ -144,7 +144,7 @@ class Tersoff(object):
                 assert gamma == 1, "Error - In original form, gamma must be 1."
                 self.m_bounds = (3, 3)
                 self.gamma_bounds = (1, 1)
-                self.beta_bounds = (1E-8, 1.0)
+                self.beta_bounds = (0.0, 1.0)
             elif form == "albe":
                 assert m == 1, "Error - In Albe et al. form, m must be 1."
                 assert beta == 1, "Error - In Albe et al. form, beta must be 1."
@@ -703,7 +703,7 @@ class Tersoff(object):
             if form == "original":
                 m = 3
                 gamma = 1
-                beta = random_in_range((1E-8, 1.0))
+                beta = random_in_range((0.0, 1.0))
             elif form == "albe":
                 m = 1
                 beta = 1

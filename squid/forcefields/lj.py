@@ -61,7 +61,7 @@ class LJ(object):
         # self.sigma_bounds = tuple(sorted([self.sigma * 0.5, self.sigma * 1.5]))
         # self.epsilon_bounds = tuple(sorted([self.epsilon * 0.5, self.epsilon * 1.5]))
         self.sigma_bounds = (0.01, 6.5)
-        self.epsilon_bounds = (0.0001, 1.0)
+        self.epsilon_bounds = (0.0001, 3.0)
 
     def __repr__(self):
         '''
@@ -314,7 +314,7 @@ class LJ(object):
         LJ_objs = []
 
         for atype in atom_types:
-            eps = random_in_range((0, 1.0))
+            eps = random_in_range((0, 3.0))
             sig = random_in_range((0.01, 5.0))
             LJ_objs.append(cls(atype, sig, eps))
 
