@@ -32,6 +32,14 @@ def _isFloat(x):
     return True
 
 
+def _close_pipes(p):
+    if p is not None:
+        if p.stdout is not None:
+            p.stdout.close()
+        if p.stderr is not None:
+            p.stderr.close()
+
+
 class Job(object):
     """
     Job class to wrap simulations for queue submission.
@@ -229,8 +237,7 @@ def get_all_jobs(queueing_system=sysconst.queueing_system, detail=0):
 
         # If user wants more information
         if detail == 3:
-            p.stdout.close()
-            p.stderr.close()
+            _close_pipes(p)
             return [i[-1] for i in info]
         if detail == 2:
             for i, a in enumerate(info):
@@ -244,13 +251,11 @@ def get_all_jobs(queueing_system=sysconst.queueing_system, detail=0):
                 except:
                     threads = 1
                 info[i] = info[i] + (serv, threads,)
-            p.stdout.close()
-            p.stderr.close()
+            _close_pipes(p)
             return info
 
         # Return appropriate information
-        p.stdout.close()
-        p.stderr.close()
+        _close_pipes(p)
         if detail == 1:
             return info
         else:
@@ -306,8 +311,7 @@ def get_all_jobs(queueing_system=sysconst.queueing_system, detail=0):
                 j[INDICES["jobname"]]
                 for j in all_jobs
             ]
-        p.stdout.close()
-        p.stderr.close()
+        _close_pipes(p)
         return all_jobs
     else:
         raise Exception("Unknown queueing system passed to get_all_jobs. \
@@ -610,8 +614,7 @@ equates to %d nodes on marcc; however, you only requested %d nodes." % (procs, n
                 return job_to_return
             job_to_return = Job(job_info[0], job_id=job_info[-1])
             job_to_return.redundancy = True
-            job_pipe.stdout.close()
-            job_pipe.stderr.close()
+            _close_pipes(job_pipe)
             return job_to_return
         elif "+notunique:" in job_err:
             raise Exception("Job with name %s already exists in the queue!" % name)
@@ -635,8 +638,7 @@ equates to %d nodes on marcc; however, you only requested %d nodes." % (procs, n
             print job_id_str
             print "Defaulting to None, should still work... FIX!"
             job_id = None
-        job_pipe.stdout.close()
-        job_pipe.stderr.close()
+        _close_pipes(job_pipe)
         return Job(name, job_id=job_id)
 
     elif queueing_system.strip().lower() == "pbs":
@@ -689,13 +691,11 @@ source ~/.bashrc
                 job_to_return = Job(name)
                 # Attach the redundancy flag
                 job_to_return.redundancy = True
-                job_pipe.stdout.close()
-                job_pipe.stderr.close()
+                _close_pipes(job_pipe)
                 return job_to_return
             job_to_return = Job(job_info[0], job_id=job_info[-1])
             job_to_return.redundancy = True
-            job_pipe.stdout.close()
-            job_pipe.stderr.close()
+            _close_pipes(job_pipe)
             return job_to_return
         elif job_exists:
             raise Exception("Job with name %s already exists in the queue!" % name)
@@ -723,8 +723,7 @@ source ~/.bashrc
 
         job_id = job_id.split()[-1].strip()
 
-        job_pipe.stdout.close()
-        job_pipe.stderr.close()
+        _close_pipes(job_pipe)
         return Job(name, job_id=job_id)
     else:
         raise Exception("Unknown queueing system passed to submit_job. \
@@ -947,8 +946,7 @@ strings, or None")
                 return job_to_return  # Job finished in process of submitting and redundancy call
             job_to_return = Job(job_info[0], job_id=job_info[-1])
             job_to_return.redundancy = True
-            job_pipe.stdout.close()
-            job_pipe.stderr.close()
+            _close_pipes(job_pipe)
             return job_to_return
         elif "+notunique:" in job_err:
             raise Exception("Job with name %s already exists in the queue!" % job_name)
@@ -969,9 +967,7 @@ strings, or None")
 
         if remove_sub_script:
             os.system('rm ' + job_name + '.nbs')
-
-        job_pipe.stdout.close()
-        job_pipe.stderr.close()
+        _close_pipes(job_pipe)
         return Job(job_name, job_id=job_id)
     elif queueing_system.strip().lower() == "pbs":
         # Do This
@@ -1067,8 +1063,7 @@ strings, or None")
         if remove_sub_script:
             os.system('rm ' + job_name + '.slurm')
 
-        job_pipe.stdout.close()
-        job_pipe.stderr.close()
+        _close_pipes(job_pipe)
         return Job(job_name, job_id=job_id)
     else:
         raise Exception("Unknown queueing system passed to pysub. \
@@ -1080,8 +1075,7 @@ def get_nbs_queues():
     all_queues = p.stdout.read().strip().split('\n')[:-1]
     all_queues = [a.split() for a in all_queues]
     all_queues = [a[0] for a in all_queues if len(a) > 1]
-    p.stdout.close()
-    p.stderr.close()
+    _close_pipes(p)
     return [a.lower() for a in all_queues if a.lower() not in ["queue", "name", ""]]
 
 
@@ -1089,22 +1083,19 @@ def get_slurm_queues():
     p = subprocess.Popen(["sinfo"], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     all_queues = p.stdout.read().strip()
     if all_queues == '':
-        p.stdout.close()
-        p.stderr.close()
+        _close_pipes(p)
         return []
     all_queues = all_queues.split("\n")[1:]
     all_queues = [q.split()[0] for q in all_queues if q.split()[1] == 'up']
     all_queues = list(set(all_queues))
-    p.stdout.close()
-    p.stderr.close()
+    _close_pipes(p)
     return [q if "*" not in q else q.replace("*", "") for q in all_queues]
 
 
 def _test_jlist():
     try:
         p = subprocess.Popen(['jlist'], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        p.stdout.close()
-        p.stderr.close()
+        _close_pipes(p)
         return True
     except OSError:
         return False
