@@ -460,6 +460,8 @@ class Molecule(_Physical):
         '''
 
         for a in self.atoms:
+            if a.label is None:
+                raise Exception("No label assigned to the atom.  Likely an error in typing within your CML files.")
             index = [P.coul_params.index(str(a.label)), P.lj_params.index(str(a.label))]
             a.coul_type = P.coul_params[index[0]]
             a.lj_type = P.lj_params[index[1]]
