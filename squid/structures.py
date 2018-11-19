@@ -674,7 +674,15 @@ class Molecule(_Physical):
             None
         """
         # Check if mass information available
-        if self.atoms[0].type and self.atoms[0].type.mass:
+        mass_check = True
+        for a in self.atoms:
+            if a.type and a.type.mass:
+                continue
+            else:
+                mass_check = False
+                break
+
+        if mass_check:
             center = self.get_center_of_mass()
         else:
             center = self.get_center_of_geometry()
