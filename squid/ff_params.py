@@ -656,7 +656,7 @@ class Parameters(object):
                     p.pack(params[offset: offset + p.N_params + int(with_indices)])
                 offset += p.N_params + int(with_indices)
 
-    def dump_style(self, style=None, tfile_name=None, tstyle_smrff=False):
+    def dump_style(self, style=None, tfile_name=None, tstyle_smrff=False, write_file=False):
         '''
         This function will dump LAMMPS commands "pair_coeff" for chosen styles.
 
@@ -668,8 +668,9 @@ class Parameters(object):
                 The name of the tersoff file.
             tstyle_smrff: *bool, optional*
                 Whether to output for SMRFF style (one line allocates memory,
-                the rest overwrites the parameters) or not.  If True, this
-                will NOT generate a tersoff file.
+                the rest overwrites the parameters) or not.
+            write_file: *bool, optional*
+                Whether to write any files (ex. tersoff files) or not.
 
         **Returns**
             lammps_command: *str*
@@ -678,7 +679,7 @@ class Parameters(object):
 
         script = []
 
-        self.write_tfile = tstyle_smrff
+        self.write_tfile = write_file
 
         if style in ["lj/cut/coul/cut", 'all'] and all([self.lj_mask, self.coul_mask]):
             script.append(self.dump_lj_cut_coul_cut())
