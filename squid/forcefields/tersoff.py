@@ -171,18 +171,7 @@ class Tersoff(object):
         else:
             raise Exception("Either specify all Tersoff parameters, or the line to be parsed, but not both.")
 
-        # Assign default bounds
-        self.lambda3_bounds = (0.0, 10.0)
-        self.c_bounds = (0.1, 150000.0)
-        self.d_bounds = (0.1, 50.0)
-        self.costheta0_bounds = (-1.0, 1.0)
-        self.n_bounds = (0, 50.0)
-        self.lambda2_bounds = (0, 10.0)
-        self.B_bounds = (0.0, 100000.0)
-        self.R_bounds = (1.1, 5.0)
-        self.D_bounds = (0.1, 1.1)
-        self.lambda1_bounds = (0, 10.0)
-        self.A_bounds = (0.0, 100000.0)
+        self.set_default_bounds()
 
 
         self.validate()
@@ -277,6 +266,41 @@ class Tersoff(object):
                             n beta  lambda2 B R     D     lambda1   A
         '''
         return self._printer(with_indices=True, bounds=1)
+
+    def set_default_bounds(self):
+        '''
+        Assign default bounds.  Further, if this is the case of A-B-B vs A-B-C
+        we can simplify the bounds as only in the case of A-B-B are two body
+        parameters n, Beta, lambda2, lambda1, and A read in.
+        '''
+        self.lambda3_bounds = (0.0, 10.0)
+        self.c_bounds = (0.1, 150000.0)
+        self.d_bounds = (0.1, 50.0)
+        self.costheta0_bounds = (-1.0, 1.0)
+        self.R_bounds = (1.1, 5.0)
+        self.D_bounds = (0.1, 1.1)
+        if self.indices is None or self.indices[-1] == self.indices[-2]:
+            self.n_bounds = (0, 50.0)
+            self.lambda2_bounds = (0, 10.0)
+            self.B_bounds = (0.0, 100000.0)
+            self.lambda1_bounds = (0, 10.0)
+            self.A_bounds = (0.0, 100000.0)
+        elif self.indices[-1] != self.indices[-2]:
+            self.n_bounds = (1.0, 1.0)
+            self.lambda2_bounds = (1.0, 1.0)
+            self.B_bounds = (1.0, 1.0)
+            self.lambda1_bounds = (1.0, 1.0)
+            self.A_bounds = (1.0, 1.0)
+            self.beta_bounds = (1.0, 1.0)
+            self.n = 1.0
+            self.lambda2 = 1.0
+            self.B = 1.0
+            self.lambda1 = 1.0
+            self.A = 1.0
+            self.beta = 1.0
+        else:
+            raise Exception("This should never happen!")
+
 
     def unpack(self, with_indices=True, bounds=None, with_bounds=False):
         '''
