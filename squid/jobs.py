@@ -697,7 +697,7 @@ source ~/.bashrc
             job_to_return.redundancy = True
             _close_pipes(job_pipe)
             return job_to_return
-        elif job_exists:
+        elif unique_name and job_exists:
             raise Exception("Job with name %s already exists in the queue!" % name)
 
         # Submit job
