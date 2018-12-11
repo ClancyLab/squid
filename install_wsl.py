@@ -34,6 +34,9 @@ install_nlopt = True
 lmp_path = None
 packmol_path = None
 
+# This is only used in SLURM right now
+default_pysub_modules = ["squid"]
+
 # If opls_path is None, we use default ones in squid
 opls_path = None
 
@@ -346,7 +349,7 @@ if install_necessary_openmpi:
             link = "https://download.open-mpi.org/release/open-mpi/v1.6/openmpi-1.6.5.tar.gz"
             download_file(cwd, link, "") 
             os.system("tar -xzf openmpi-1.6.5.tar.gz -C openmpi/openmpi-1.6.5")
-            os.system("mv openmpi/openmpi-1.6.5/openmpi-2.0.2 openmpi/openmpi-1.6.5/src")
+            os.system("mv openmpi/openmpi-1.6.5/openmpi-1.6.5 openmpi/openmpi-1.6.5/src")
             os.chdir("openmpi/openmpi-1.6.5/src")
             os.system("./configure --prefix=%s/openmpi/openmpi-1.6.5/build" % cwd)
             os.system("make -j 4")
@@ -457,6 +460,8 @@ queueing_system = "$QUEUEING_SYSTEM" # nbs, pbs, slurm
 default_queue = "$DEFAULT_QUEUE"
 nbs_ssh = $NBS_SSH
 nbs_bin_path = "$NBS_BIN_PATH"
+
+default_pysub_modules = """ + str(default_pysub_modules) + """
 
 # Submission flags for queueing system
 orca_sub_flag = "$ORCA_SUB_FLAG"

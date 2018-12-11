@@ -747,6 +747,7 @@ def pysub(job_name,
           redundancy=False,
           py3=False,
           use_mpi=False,
+          modules=None,
           queueing_system=sysconst.queueing_system):
     """
     Submission of python scripts to run on your queue.
@@ -786,6 +787,9 @@ def pysub(job_name,
             have a trailing /.
         args: *list, str, optional*
             A list of arguments to pass to the python script on the queue.
+        modules: *list, str, optional*
+            A list of modules to load prior to running this python script.
+            Requires an installed version of lmod.
         remove_sub_script: *bool, optional*
             Whether to remove the script used to submit the job (True), or
             leave it (False).
@@ -983,7 +987,10 @@ strings, or None")
 #SBATCH -t $WALLTIME$
 
 $OMP$
-source ~/.bashrc
+
+module reset
+$MODULES$
+
 '''
 
         if nprocs * ntasks > 1 and use_mpi:
@@ -999,6 +1006,7 @@ $PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$> $PY_NAME2$.log 2>&1
         SLURM = SLURM.replace("$JOB_NAME1$", job_name)
         SLURM = SLURM.replace("$JOB_NAME2$", job_name)
         SLURM = SLURM.replace("$NODES$", str(nodes))
+        SLURM = SLURM.replace("$MODULES$", '\n'.join(['module load ' + m for m in modules]))
         if nprocs > 1:
             SLURM = SLURM.replace("$NPROCS$", str(nprocs))
         SLURM = SLURM.replace("$NTASKS$", str(ntasks))

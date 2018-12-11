@@ -26,6 +26,10 @@ pysub [script.py] [Options]
 
 -xhost, -x    :            :  If needed, specify computer
 -args, -a     :            :  A list of arguments for the python code
+-mods, -m     :            :  Specify the modules you wish to use here.  This
+                              appends to the ones in sysconst that you set
+                              as defaults.
+-mo           :   False    :  Whether to override the default modules.
 -keep, -k     :            :  Whether to keep the submission file
 
 -py3          :            :  Whether to use python 3, or 2 (2 is default).
@@ -48,6 +52,7 @@ if '-h' in argv or '-help' in argv or len(argv) < 3:
     exit()
 
 # Parse Arguments
+mo = False
 nprocs = '1'
 queue = sysconst.default_queue
 xhost = None
@@ -63,6 +68,10 @@ omp = None
 py3 = False
 use_mpi = False
 tasks = 1
+if not hasattr(sysconst, "default_pysub_modules"):
+    use_these_mods = []
+else:
+    use_these_mods = sysconst.default_pysub_modules
 
 if ".py" in job_name:
     job_name = job_name.split(".py")[0]
@@ -103,6 +112,13 @@ if "-k" in argv[2:]:
     rss = False
 elif "-keep" in argv[2:]:
     rss = False
+if "-mo" in argv[2:]:
+    mo = True
+    use_these_mods = []
+if "-mods" in argv[2:]:
+    use_these_mods = use_these_mods + argv[argv.index("-mods") + 1:]
+elif "-m" in argv[2:]:
+    use_these_mods = use_these_mods + argv[argv.index("-m") + 1:]
 if "-py3" in argv[2:]:
     py3 = True
 if "-t" in argv[2:]:
@@ -112,4 +128,5 @@ if "-walltime" in argv[2:]:
 
 pysub(job_name, nprocs=nprocs, ntasks=tasks, omp=omp, queue=queue, xhost=xhost,
       path=getcwd(), remove_sub_script=rss, priority=priority,
-      walltime=walltime, unique_name=unique, py3=py3, use_mpi=use_mpi)
+      walltime=walltime, unique_name=unique, py3=py3, use_mpi=use_mpi,
+      modules=use_these_mods)
