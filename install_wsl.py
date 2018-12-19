@@ -1,4 +1,4 @@
-from installers.install_squid import run_full_install
+from squid.installers.install_squid import run_full_install
 ##############################################################################
 # Settings to be changed
 ##############################################################################
@@ -43,7 +43,7 @@ mpi_preface = ""
 ##############################################################################
 # ORCA INPUTS (Note - path MUST point to the executable!)
 orca_path = ""
-orca4_path = "/mnt/c/Users/ClancyLab/Documents/subsystem/programs/orca/4.1.0/orca"
+orca4_path = "/home/hherbol/programs/orca/4.1.0/orca"
 use_orca4 = True
 sandbox_orca = False
 install_necessary_openmpi = True
@@ -59,8 +59,8 @@ g09_formchk = ""
 g09_cubegen = ""
 ##############################################################################
 # LAMMPS INPUTS
-smrff_path = None
-lammps_sffx = 'wsl'
+smrff_path = "/home/hherbol/smrff"
+lammps_sffx = 'smrff'
 lammps_version = "16Mar18"
 extra_lammps_packages = [
     "python",

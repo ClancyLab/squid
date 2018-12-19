@@ -1,4 +1,4 @@
-from installers.install_squid import run_full_install
+from squid.installers.install_squid import run_full_install
 ##############################################################################
 # Settings to be changed
 ##############################################################################
