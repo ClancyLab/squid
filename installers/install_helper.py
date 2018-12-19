@@ -3,6 +3,14 @@ import sys
 import md5
 import time
 
+
+def isvalid(x):
+    '''
+    Checks if x is a string (True) or None/"None"/"" (False).
+    '''
+    return isinstance(x, str) and x.strip().lower() not in ["", "none"]
+
+
 def save_module(modfile, filename):
     # Step 1 - Ensure user modules folder exists
     HOMEDIR = os.path.expanduser("~")
@@ -21,6 +29,7 @@ def save_module(modfile, filename):
     fptr.write(modfile)
     fptr.close()
 
+
 def download_file(loc, link, md5sum):
     '''
     Checks if the file is already downloaded, with the correct md5sum.  If so,
@@ -33,14 +42,8 @@ def download_file(loc, link, md5sum):
     if os.path.exists(fpath) and md5.new(open(fpath, 'r').read()).hexdigest() == md5sum:
         print("%s already is downloaded and exists.  No need to re-download." % fname)
     else:
-        download_successful = False
-        for i in range(10):
-            os.system("wget -P %s/ %s" % (loc, link))
-            time.sleep(0.1)
-            if os.path.exists("%s" % fpath):
-                download_successful = True
-                break
+        os.system("wget --continue --tries=20 -P %s/ %s" % (loc, link))
+        download_successful = os.path.exists("%s" % fpath)
         if not download_successful:
             print("FAILURE TO DOWNLOAD %s! Verify your internet connection and try again." % fname)
             sys.exit()
-

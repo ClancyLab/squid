@@ -41,9 +41,9 @@ env_vars = '''
 # Mpi preface for job submission
 mpi_preface = ""
 ##############################################################################
-# ORCA INPUTS (Note - path MUST point to the executable!)
+# ORCA INPUTS
 orca_path = ""
-orca4_path = "/mnt/c/Users/ClancyLab/Documents/subsystem/programs/orca/4.1.0/orca"
+orca4_path = ""
 use_orca4 = True
 sandbox_orca = False
 install_necessary_openmpi = True

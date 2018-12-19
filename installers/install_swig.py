@@ -3,7 +3,7 @@ import sys
 from install_helper import save_module, download_file
 
 
-def run_install(location, python_path):
+def run_install(location):
 
     NAME = "swig"
     FOLDER = "swig-3.0.12"
@@ -63,5 +63,4 @@ prepend_path("PATH",               "$CWD$/$FOLDER$/build/bin")
 
 
 if __name__ == "__main__":
-    run_install("../", sys.executable)
-
+    run_install("../")
