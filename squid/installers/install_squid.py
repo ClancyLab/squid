@@ -272,9 +272,26 @@ def run_full_install(install_packmol=True,
 
     # This will be appended to the shell
     shell_append = """
-    # Add a new folder for personal modules
-    export MODULEPATH=""" + HOMEDIR + """/.modules:$MODULEPATH
-    """
+# Add a new folder for personal modules
+export MODULEPATH=""" + HOMEDIR + """/.modules:$MODULEPATH
+"""
+
+    if install_target != "marcc":
+        shell_append = """
+# Add default reset file
+if [ -z "$__Init_Default_Modules" ]; then
+    export __Init_Default_Modules=1;
+
+    ## ability to predefine elsewhere the default list
+    LMOD_SYSTEM_DEFAULT_MODULES=${LMOD_SYSTEM_DEFAULT_MODULES:-"StdEnv"}
+    export LMOD_SYSTEM_DEFAULT_MODULES
+    module --initial_load --no_redirect restore
+else
+    module refresh
+fi
+"""
+        os.system("touch ~/.modules/StdEnv.lua")
+
     # If the shell_append is not already in the shell then add it
     if not os.path.exists("%s/%s" % (HOMEDIR, shell)):
         os.system("touch %s/%s" % (HOMEDIR, shell))
@@ -339,3 +356,5 @@ def run_full_install(install_packmol=True,
     )
 
     print("Install is complete! Please source %s or simply restart your terminal." % shell)
+    if install_target != "marcc":
+        print("You may change your default module setup in ~/.modules/StdEnv.lua")
