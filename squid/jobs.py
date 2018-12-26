@@ -815,6 +815,17 @@ def pysub(job_name,
     if ".py" in job_name:
         job_name = job_name.split(".py")[0]
 
+    if not hasattr(sysconst, "default_pysub_modules"):
+        use_these_mods = []
+    else:
+        use_these_mods = sysconst.default_pysub_modules
+    if modules is not None:
+        if isinstance(modules, str):
+            modules = [modules]
+        use_these_mods = use_these_mods + modules
+
+    modules = use_these_mods
+
     # Throw an error if we request nbs queueing with unknown queue
     if queueing_system.lower() == "nbs" and queue.lower() not in get_nbs_queues():
         if queue.lower() != "none":
