@@ -1,17 +1,17 @@
 import os
 import sys
-from install_helper import save_module, download_file
+from squid.installers.install_helper import save_module, download_file
 
 
 def run_install(location, python_path):
 
-    NAME = "swig"
-    FOLDER = "swig-3.0.12"
-    TARFILE = "swig-3.0.12.tar.gz"
-    URL = "http://prdownloads.sourceforge.net/swig/swig-3.0.12.tar.gz"
-    HASH = "82133dfa7bba75ff9ad98a7046be687c"
-    HELPURL = "https://www.swig.org"
-    VERSION = "3.0.12"
+    NAME = "NLOpt"
+    FOLDER = "nlopt-2.5.0"
+    TARFILE = "v2.5.0.tar.gz"
+    URL = "https://github.com/stevengj/nlopt/archive/v2.5.0.tar.gz"
+    HASH = "ada08c648bf9b52faf8729412ff6dd6d"
+    HELPURL = "https://nlopt.readthedocs.io/en/latest/"
+    VERSION = "2.5.0"
 
     os.chdir(location)
     cwd = os.getcwd()
@@ -21,18 +21,17 @@ def run_install(location, python_path):
         os.system("mkdir %s" % FOLDER)
         os.system("mkdir %s/build" % FOLDER)
         download_file(cwd, URL, HASH)
-        # Untar the folder and make it into the build src ideal
         os.system("tar -C %s/ -xzf %s" % (FOLDER, TARFILE))
         os.system("mv %s/%s %s/src" % (FOLDER, FOLDER, FOLDER))
-        # Go into the src directory
-        os.chdir("%s/src" % FOLDER)
+        os.mkdir("%s/src/build" % FOLDER)
+        os.chdir("%s/src/build" % FOLDER)
 
         # Specific Install Instructions
-        os.system("./configure --prefix=%s/%s/build" % (cwd, FOLDER))
+        os.system("cmake .. -DCMAKE_INSTALL_PREFIX=%s/nlopt-2.5.0/build -DPYTHON_EXECUTABLE=%s" % (cwd, python_path))
         os.system("make; make install")
         ###############################
 
-        os.chdir("../../")
+        os.chdir("../../../")
     else:
         print("%s folder already exists, so will not re-install." % NAME)
     
@@ -47,6 +46,9 @@ whatis("URL: $HELPURL$")
 whatis("Description: $NAME$")
 
 prepend_path("PATH",               "$CWD$/$FOLDER$/build/bin")
+prepend_path("LD_LIBRARY_PATH",    "$CWD$/$FOLDER$/build/lib")
+prepend_path("PYTHONPATH",         "$CWD$/$FOLDER$/build/lib/python2.7/site-packages")
+prepend_path("PYTHONPATH",         "$CWD$/$FOLDER$/build/lib64/python2.7/site-packages")
 '''
     rep = {
         "$CWD$": cwd,

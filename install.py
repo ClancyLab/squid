@@ -10,7 +10,7 @@ $USER, it is recommended that you change this to the actual username, as
 at times this is not properly expanded.
 '''
 # Targets are "wsl" or "marcc"
-install_target = "marcc"
+install_target = "wsl"
 # Select what shell's resource file path relative to the home dir
 # Typically this will be either .zshrc or .bashrc
 shell = '.bashrc'
@@ -25,8 +25,8 @@ install_nlopt = True
 # Note - we advise simply changing this post install in the sysconst.py file
 mpirun_path = "/usr/bin/mpirun"
 
-queueing_system = "slurm"  # nbs, pbs, slurm
-default_queue = 'shared'
+queueing_system = None  # nbs, pbs, slurm
+default_queue = 'None'
 # If no anaconda is installed, then install one
 anaconda_path = None
 # These are paths to available programs
