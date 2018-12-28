@@ -374,7 +374,10 @@ length is 31." % len(run_name))
     procs, ntasks, nodes = int(procs), int(ntasks), int(nodes)
 
     cores_to_use = procs * ntasks
-    if cores_to_use > 1:
+    # On MARCC (uses slurm) we NEED to call the mpiexec for
+    # lammps to run.  As such, a temporary fix is to just auto
+    # use mpiexec if queueing_system is slurm
+    if cores_to_use > 1 or sysconst.queueing_system == "slurm":
         try:
             cmd_to_run += "%s -np %d " % (sysconst.mpirun_path, cores_to_use)
         except AttributeError:
