@@ -227,34 +227,48 @@ def run_full_install(install_packmol=True,
 
     # Print pre-requisite warning
     print('''Before you can install squid locally, it is recommended that the
-    following be installed (NOTE - if you are on MARCC, this should already be done):
+following be installed (NOTE - if you are on MARCC, this should already be done):
 
-        - update apt-get appropriate ('sudo apt-get update' and then 'sudo apt-get upgrade')
-        - build-essential (can be installed via 'sudo apt-get install build-essential')
-        - make, cmake, g++, git, and swig (can be installed via 'sudo apt-get install make cmake g++ git swig')
-        - mpich (can be installed via 'sudo apt-get install mpich')
-        - lmod (can be installed via 'sudo apt-get install lmod')
+    - update apt-get appropriate ('sudo apt-get update' and then 'sudo apt-get upgrade')
+    - build-essential (can be installed via 'sudo apt-get install build-essential')
+    - make, cmake, g++, git, and swig (can be installed via 'sudo apt-get install make cmake g++ git swig')
+    - mpich (can be installed via 'sudo apt-get install mpich')
+    - lmod (can be installed via 'sudo apt-get install lmod')
 
-        -> This is in total the following command:
-            sudo apt-get update; sudo apt-get upgrade; sudo apt-get install build-essential make cmake g++ git swig mpich lmod
+    -> This is in total the following command:
+        sudo apt-get update; sudo apt-get upgrade; sudo apt-get install build-essential make cmake g++ git swig mpich lmod
 
-    NOTE! After install lmod, close and reopen the bash shell.  If you find that you
-    are getting a weird error about posix not existing, this is a bug in lua install.
-    Simply put, take the path it wants and make a simlink to point to posix_c.so.  An
-    example of how to do this is as follows (note, your lua version may or may not be 5.2).
+NOTE! After install lmod, close and reopen the bash shell.  If you find that you
+are getting a weird error about posix not existing, this is a bug in lua install.
+Simply put, take the path it wants and make a simlink to point to posix_c.so.  An
+example of how to do this is as follows (note, your lua version may or may not be 5.2).
 
-        sudo ln -s /usr/lib/x86_64-linux-gnu/lua/5.2/posix_c.so /usr/lib/x86_64-linux-gnu/lua/5.2/posix.so
+    sudo ln -s /usr/lib/x86_64-linux-gnu/lua/5.2/posix_c.so /usr/lib/x86_64-linux-gnu/lua/5.2/posix.so
 
-    If you wish for ORCA to be installed, then you will need to manually download
-    whichever version you so choose (or both if desired):
+If you wish for ORCA to be installed, then you will need to manually download
+whichever version you so choose (or both if desired):
 
-        - orca shared library install for linux (https://orcaforum.cec.mpg.de/)
-        - orca4 shared library install for linux (https://orcaforum.cec.mpg.de/)
+    - orca shared library install for linux (https://orcaforum.cec.mpg.de/)
+    - orca4 shared library install for linux (https://orcaforum.cec.mpg.de/)
 
-    Note, if you install this, then you MUST specify "install necessary openmpi"
-    in the user settings section of this install script.  If you do not, then you
-    better hope that you have adequately setup your paths.
-    ''')
+Note, if you install this, then you MUST specify "install necessary openmpi"
+in the user settings section of this install script.  If you do not, then you
+better hope that you have adequately setup your paths.
+
+FINAL NOTE! IF YOU ARE INSTALLING ON MARCC, THEN DO THE FOLLOWING PRIOR TO RUNNING INSTALL:
+
+    unload("openmpi/3.1")
+    load("intelmpi")
+    load("python/2.7-anaconda")
+''')
+
+    # Bind raw_input to input so we can have either python2 or python3 work
+    # on install
+    try:
+        input = raw_input
+    except NameError:
+        pass
+
     ans = input("Use settings currently in the install file (y/N): ")
     ans = ans.strip().lower()
     if len(ans) > 1:
@@ -308,9 +322,11 @@ fi
 
     default_modules = []
 
+    on_marcc = False
     if install_target == "marcc":
         anaconda_path = "/software/apps/anaconda/5.2/python/2.7"
         default_modules.append('load("python/2.7-anaconda")')
+        on_marcc = True
     elif install_target == "wsl":
         anaconda_path = run_install_anaconda(anaconda_install_dir)
         default_modules.append('load("anaconda-2.7")')
@@ -330,7 +346,7 @@ fi
         lmp_path = run_install_lammps(
             "./", python_path, lammps_version, lammps_sffx,
             extra_lammps_packages=extra_lammps_packages,
-            smrff_path=smrff_path
+            smrff_path=smrff_path, on_marcc=on_marcc
         )
         default_modules.append('load("lammps/%s")' % lammps_version)
     if install_necessary_openmpi:
