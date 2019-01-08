@@ -5,7 +5,7 @@ from squid.installers.install_helper import save_module, download_file
 
 def run_install(location, python_path, VERSION, SFFX,
                 extra_lammps_packages=[],
-                smrff_path=None):
+                smrff_path=None, on_marcc=False):
 
     LAMMPS_MAKEFILE = '''
 # mpi = MPI with its default compiler
@@ -158,6 +158,14 @@ sinclude .depend
     if cwd.endswith("/"):
         cwd = cwd[:-1]
 
+    MODULE_LOADERS = ""
+    if on_marcc:
+        MODULE_LOADERS = '''
+unload("openmpi/3.1")
+load("intelmpi")
+load("python/2.7-anaconda")
+'''
+
     if not os.path.exists(FOLDER):
         os.system("mkdir -p %s" % FOLDER)
         download_file(cwd, URL, HASH)
@@ -204,13 +212,16 @@ whatis("Description: $NAME$")
 prepend_path("PATH",               "$CWD$/$FOLDER$/src")
 prepend_path("PYTHONPATH",         "$CWD$/$FOLDER$/python")
 prepend_path("LD_LIBRARY_PATH",    "$CWD$/$FOLDER$/src")
+
+$MODULE_LOADERS$
 '''
     rep = {
         "$CWD$": cwd,
         "$FOLDER$": FOLDER,
         "$NAME$": NAME,
         "$VERSION$": VERSION,
-        "$HELPURL$": HELPURL
+        "$HELPURL$": HELPURL,
+        "$MODULE_LOADERS$": MODULE_LOADERS,
     }
     for identifier, word in rep.items():
         while identifier in mod_file:
