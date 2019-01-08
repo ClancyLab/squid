@@ -23,7 +23,7 @@ install_nlopt = True
 # SYSTEM INPUTS
 # The default mpi to use when calling pysub -mpi
 # Note - we advise simply changing this post install in the sysconst.py file
-mpirun_path = "/usr/bin/mpirun"
+mpirun_path = "/software/apps/compilers/intel/impi/2018/bin64/mpiexec"
 
 queueing_system = "slurm"  # nbs, pbs, slurm
 default_queue = 'shared'
@@ -42,14 +42,18 @@ env_vars = '''
 mpi_preface = ""
 ##############################################################################
 # ORCA INPUTS
-orca_path = ""
-orca4_path = ""
+orca_path = "/software/apps/orca/3.0.3/bin/orca"
+orca4_path = "/software/apps/orca/4.0.1.2/bin/orca"
 use_orca4 = True
 sandbox_orca = False
 install_necessary_openmpi = True
 orca_env_vars = '''
+module load orca/3.0.3
+module list
 '''
 orca4_env_vars = '''
+module load orca/4.0.1.2
+module list
 '''
 # Submission flags for queueing system
 orca_sub_flag = ""
@@ -68,6 +72,8 @@ extra_lammps_packages = [
     "replica"
 ]
 lmp_env_vars = '''
+module load lammps/''' + lammps_version + ''' 
+module list
 '''
 ##############################################################################
 # DO NOT CHANGE ANY SETTINGS BELOW THIS POINT!

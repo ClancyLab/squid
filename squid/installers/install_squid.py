@@ -127,6 +127,9 @@ default_queue = "$DEFAULT_QUEUE"
 nbs_ssh = None
 nbs_bin_path = ""
 
+# Default modules to load in pysub submission.
+default_pysub_modules = ["squid"]
+
 # Submission flags for queueing system
 orca_sub_flag = "$ORCA_SUB_FLAG"
 
