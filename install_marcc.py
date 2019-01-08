@@ -60,7 +60,7 @@ g09_cubegen = ""
 ##############################################################################
 # LAMMPS INPUTS
 smrff_path = None
-lammps_sffx = 'wsl'
+lammps_sffx = 'marcc'
 lammps_version = "16Mar18"
 extra_lammps_packages = [
     "python",
