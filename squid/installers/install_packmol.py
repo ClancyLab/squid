@@ -30,7 +30,7 @@ whatis("Description: Packmol")
 
 prepend_path("PATH",    "$CWD/packmol")
 '''
-    while "$CWD$" in packmol_mod_file:
+    while "$CWD" in packmol_mod_file:
         packmol_mod_file = packmol_mod_file.replace("$CWD", cwd)
     save_module(packmol_mod_file, "packmol")
 
