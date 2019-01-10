@@ -22,7 +22,7 @@ import getpass
 import subprocess
 # Squid Imports
 from squid import sysconst
-
+from squid.geometry import reduce_list
 
 def _isFloat(x):
     try:
@@ -824,7 +824,7 @@ def pysub(job_name,
             modules = [modules]
         use_these_mods = use_these_mods + modules
 
-    modules = use_these_mods
+    modules = reduce_list(use_these_mods)
 
     # Throw an error if we request nbs queueing with unknown queue
     if queueing_system.lower() == "nbs" and queue.lower() not in get_nbs_queues():
