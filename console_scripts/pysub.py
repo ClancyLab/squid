@@ -33,6 +33,7 @@ pysub [script.py] [Options]
 -keep, -k     :            :  Whether to keep the submission file
 
 -py3          :            :  Whether to use python 3, or 2 (2 is default).
+-alloc, -A    :   None     :  Whether to specify a SLURM Allocation.
 
 Default behaviour is to generate a job with the same name
 as the python script and to generate a .log file with the
@@ -68,6 +69,8 @@ omp = None
 py3 = False
 use_mpi = False
 tasks = 1
+slurm_allocation = None
+
 if not hasattr(sysconst, "default_pysub_modules"):
     use_these_mods = []
 else:
@@ -86,6 +89,12 @@ elif "-omp" in argv[2:]:
     omp = argv[argv.index('-omp') + 1]
 if "-q" in argv[2:]:
     queue = argv[argv.index('-q') + 1]
+
+if "-A" in argv[2:]:
+    slurm_allocation = argv[argv.index('-A') + 1]
+elif "-alloc" in argv[2:]:
+    slurm_allocation = argv[argv.index('-alloc') + 1]
+
 if "-x" in argv[2:]:
     xhost = argv[argv.index('-x') + 1:]
 elif "-xhost" in argv[2:]:
@@ -129,4 +138,4 @@ if "-walltime" in argv[2:]:
 pysub(job_name, nprocs=nprocs, ntasks=tasks, omp=omp, queue=queue, xhost=xhost,
       path=getcwd(), remove_sub_script=rss, priority=priority,
       walltime=walltime, unique_name=unique, py3=py3, use_mpi=use_mpi,
-      modules=use_these_mods)
+      modules=use_these_mods, slurm_allocation=slurm_allocation)
