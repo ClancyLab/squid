@@ -369,7 +369,7 @@ include $$NAME$$.ionpos'''
                         walltime=walltime,
                         xhosts=xhost,
                         redundancy=redundancy,
-                        unique_name=True
+                        unique_name=True,
                         slurm_allocation=slurm_allocation)
         time.sleep(0.5)
     # Copy run script
