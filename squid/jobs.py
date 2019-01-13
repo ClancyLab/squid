@@ -430,6 +430,7 @@ def submit_job(name,
                preface=None,
                redundancy=False,
                unique_name=True,
+               slurm_allocation=None,
                queueing_system=sysconst.queueing_system):
     """
     Code to submit a simulation to the specified queue and queueing system.
@@ -480,6 +481,8 @@ def submit_job(name,
             instead be returned.
         unique_name: *bool, optional*
             Whether the simulation should have a unique name.  By default, no.
+        slurm_allocation: *str, optional*
+            Whether to use a slurm allocation for this job or not.  If so, specify the name.
         queueing_system: *str, optional*
             Which queueing system you are using (NBS, PBS, or SLURM).
 
@@ -510,6 +513,17 @@ equates to %d nodes on marcc; however, you only requested %d nodes." % (procs, n
         if adjust_nodes:
             print("\tWill adjust nodes accordingly...")
             nodes = (procs * ntasks - 1) // 24 + 1
+
+    # Grab a default allocation if necessary
+    if slurm_allocation is None:
+        if not hasattr(sysconst, "slurm_default_allocation"):
+            slurm_allocation = None
+        else:
+            slurm_allocation = sysconst.slurm_default_allocation
+    if slurm_allocation is None:
+        slurm_allocation = ""
+    else:
+        slurm_allocation = "#SBATCH -A " + slurm_allocation
 
     if queue is "debug":
         print("\nWould have submitted job %s\n" % name)
@@ -654,6 +668,7 @@ equates to %d nodes on marcc; however, you only requested %d nodes." % (procs, n
 #SBATCH -c ''' + str(procs) if procs > 1 else "") + '''
 #SBATCH -p ''' + queue + '''
 #SBATCH -t ''' + walltime + '''
+''' + slurm_allocation + '''
 
 source ~/.bashrc
 '''
@@ -748,6 +763,7 @@ def pysub(job_name,
           py3=False,
           use_mpi=False,
           modules=None,
+          slurm_allocation=None,
           queueing_system=sysconst.queueing_system):
     """
     Submission of python scripts to run on your queue.
@@ -802,6 +818,8 @@ def pysub(job_name,
         py3: *bool, optional*
             Whether to run with python3 or python2 (2 is default). NOTE! This will
             ONLY work if you have defined python3_path in your sysconst file.
+        slurm_allocation: *str, optional*
+            Whether to use a slurm allocation for this job or not.  If so, specify the name.
         queueing_system: *str, optional*
             Which queueing system you are using (NBS or PBS).
 
@@ -814,6 +832,17 @@ def pysub(job_name,
         xhost = [xhost]
     if ".py" in job_name:
         job_name = job_name.split(".py")[0]
+
+    # Grab a default allocation if necessary
+    if slurm_allocation is None:
+        if not hasattr(sysconst, "slurm_default_allocation"):
+            slurm_allocation = None
+        else:
+            slurm_allocation = sysconst.slurm_default_allocation
+    if slurm_allocation is None:
+        slurm_allocation = ""
+    else:
+        slurm_allocation = "#SBATCH -A " + slurm_allocation
 
     if not hasattr(sysconst, "default_pysub_modules"):
         use_these_mods = []
@@ -996,6 +1025,7 @@ strings, or None")
 #SBATCH -n $NTASKS$''' + ("\n#SBATCH -c $NPROCS$" if nprocs > 1 else "") + '''
 #SBATCH -p $QUEUE$
 #SBATCH -t $WALLTIME$
+''' + slurm_allocation + '''
 
 $OMP$
 
