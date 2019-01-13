@@ -278,7 +278,8 @@ def job(run_name,
         no_echo=False,
         redundancy=False,
         params=None,
-        lmp_path=sysconst.lmp_path):
+        lmp_path=sysconst.lmp_path,
+        slurm_allocation=None):
     """
     Wrapper to submitting a LAMMPs simulation.
 
@@ -329,6 +330,8 @@ def job(run_name,
         lmp_path: *str, optional*
             The path to the lammps executable. Note, by default this is the
             one defined during installation, saved in sysconst.lmp_path.
+        slurm_allocation: *str, optional*
+            Whether to use a slurm allocation for this job or not.  If so, specify the name.
 
     **Returns**
 
@@ -402,7 +405,8 @@ length is 31." % len(run_name))
                                      email=email,
                                      redundancy=redundancy,
                                      unique_name=True,
-                                     preface="mpi")
+                                     preface="mpi",
+                                     slurm_allocation=slurm_allocation)
 
     # Copy run script
     fname = sys.argv[0]

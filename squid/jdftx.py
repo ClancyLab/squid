@@ -159,7 +159,8 @@ def job(run_name, atoms, ecut, ecutrho=None, atom_units="Ang", route=None,
         dumps="dump End Ecomponents ElecDensity",
         queue=None, walltime="00:30:00", procs=1, threads=None,
         redundancy=False,
-        previous=None, mem=2000, priority=None, xhost=None):
+        previous=None, mem=2000, priority=None, xhost=None,
+        slurm_allocation=None):
     """
     Wrapper to submitting a JDFTx simulation.
 
@@ -209,6 +210,8 @@ def job(run_name, atoms, ecut, ecutrho=None, atom_units="Ang", route=None,
         xhost: *list, str or str, optional*
             Which processor to run the simulation on(queueing system
             dependent).
+        slurm_allocation: *str, optional*
+            Whether to use a slurm allocation for this job or not.  If so, specify the name.
 
     **Returns**
 
@@ -366,7 +369,8 @@ include $$NAME$$.ionpos'''
                         walltime=walltime,
                         xhosts=xhost,
                         redundancy=redundancy,
-                        unique_name=True)
+                        unique_name=True
+                        slurm_allocation=slurm_allocation)
         time.sleep(0.5)
     # Copy run script
     fname = sys.argv[0]
