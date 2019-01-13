@@ -407,7 +407,8 @@ def job(run_name, route, atoms=[], extra_section='', grad=False,
         procs=1, ntasks=1, nodes=1, adjust_nodes=True,
         charge=None, multiplicity=None, charge_and_multiplicity='0 1',
         redundancy=False, use_NBS_sandbox=False, unique_name=True,
-        previous=None, mem=2000, priority=None, xhost=None, orca4=sysconst.use_orca4):
+        previous=None, mem=2000, priority=None, xhost=None, orca4=sysconst.use_orca4,
+        slurm_allocation=None):
     """
     Wrapper to submitting an Orca simulation.
 
@@ -485,6 +486,8 @@ def job(run_name, route, atoms=[], extra_section='', grad=False,
             dependent).
         orca4: *bool, optional*
             Whether to use orca 4 (True) or orca 3 (False).
+        slurm_allocation: *str, optional*
+            Whether to use a slurm allocation for this job or not.  If so, specify the name.
 
     **Returns**
 
@@ -722,7 +725,7 @@ less than 2 atoms!")
             unique_name=unique_name, redundancy=redundancy,
             sandbox=sandbox, use_NBS_sandbox=use_NBS_sandbox,
             additional_env_vars=orca_env,
-            sub_flag=sysconst.orca_sub_flag
+            sub_flag=sysconst.orca_sub_flag, slurm_allocation=slurm_allocation
         )
         time.sleep(0.5)
 
