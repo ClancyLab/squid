@@ -319,7 +319,8 @@
         <span class="n">no_echo</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">redundancy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">lmp_path</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">lmp_path</span><span class="p">):</span>
+        <span class="n">lmp_path</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">lmp_path</span><span class="p">,</span>
+        <span class="n">slurm_allocation</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper to submitting a LAMMPs simulation.</span>
 
@@ -370,6 +371,8 @@
 <span class="sd">        lmp_path: *str, optional*</span>
 <span class="sd">            The path to the lammps executable. Note, by default this is the</span>
 <span class="sd">            one defined during installation, saved in sysconst.lmp_path.</span>
+<span class="sd">        slurm_allocation: *str, optional*</span>
+<span class="sd">            Whether to use a slurm allocation for this job or not.  If so, specify the name.</span>
 
 <span class="sd">    **Returns**</span>
 
@@ -443,7 +446,8 @@
                                      <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>
                                      <span class="n">redundancy</span><span class="o">=</span><span class="n">redundancy</span><span class="p">,</span>
                                      <span class="n">unique_name</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                     <span class="n">preface</span><span class="o">=</span><span class="s2">&quot;mpi&quot;</span><span class="p">)</span>
+                                     <span class="n">preface</span><span class="o">=</span><span class="s2">&quot;mpi&quot;</span><span class="p">,</span>
+                                     <span class="n">slurm_allocation</span><span class="o">=</span><span class="n">slurm_allocation</span><span class="p">)</span>
 
     <span class="c1"># Copy run script</span>
     <span class="n">fname</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>

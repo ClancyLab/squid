@@ -2230,99 +2230,8 @@ calculations</dd>
 </dd></dl>
 
 </div>
-<div class="section" id="module-jdftx">
-<span id="jdftx"></span><h2>jdftx<a class="headerlink" href="#module-jdftx" title="Permalink to this headline">¶</a></h2>
-<p>The JDFTx module.  This works as a python wrapper of the JDFTx plane-wave DFT
-code.</p>
-<ul class="simple">
-<li><a class="reference internal" href="#jdftx.job" title="jdftx.job"><code class="xref py py-func docutils literal notranslate"><span class="pre">job()</span></code></a></li>
-<li><a class="reference internal" href="#jdftx.read" title="jdftx.read"><code class="xref py py-func docutils literal notranslate"><span class="pre">read()</span></code></a></li>
-</ul>
-<hr class="docutils" />
-<dl class="function">
-<dt id="jdftx.job">
-<code class="descclassname">jdftx.</code><code class="descname">job</code><span class="sig-paren">(</span><em>run_name</em>, <em>atoms</em>, <em>ecut</em>, <em>ecutrho=None</em>, <em>atom_units='Ang'</em>, <em>route=None</em>, <em>pseudopotentials=None</em>, <em>periodic_distance=15</em>, <em>dumps='dump End Ecomponents ElecDensity'</em>, <em>queue=None</em>, <em>walltime='00:30:00'</em>, <em>procs=1</em>, <em>threads=None</em>, <em>redundancy=False</em>, <em>previous=None</em>, <em>mem=2000</em>, <em>priority=None</em>, <em>xhost=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jdftx.html#job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jdftx.job" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrapper to submitting a JDFTx simulation.</p>
-<p><strong>Parameters</strong></p>
-<blockquote>
-<div><dl class="docutils">
-<dt>run_name: <em>str</em></dt>
-<dd>Name of the simulation to be run.</dd>
-<dt>atoms: <em>list,</em> <a class="reference internal" href="#structures.Atom" title="structures.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></a> <em>, or str</em></dt>
-<dd>A list of atoms for the simulation.  If a string is passed, it is
-assumed to be an xyz file (relative or full path).  If None is passed,
-then it is assumed that previous was specified.</dd>
-<dt>ecut: <em>float</em></dt>
-<dd>The planewave cutoff energy in Hartree.</dd>
-<dt>ecutrho: <em>float, optional</em></dt>
-<dd>The charge density cutoff in Hartree.  By default this is 4 * ecut.</dd>
-<dt>atom_units: <em>str, optional</em></dt>
-<dd>What units your atoms are in.  JDFTx expects bohr; however, typically
-most work in Angstroms.  Whatever units are converted to bohr here.</dd>
-<dt>route: <em>str, optional</em></dt>
-<dd>Any additional script to add to the JDFTx simulation.</dd>
-<dt>pseudopotentials: <em>list, str, optional</em></dt>
-<dd>The pseudopotentials to use in this simulation.  If nothing is passed,
-a default set of ultra-soft pseudo potentials will be chosen.</dd>
-<dt>periodic_distance: <em>float, optional</em></dt>
-<dd>The periodic box distance in Bohr.</dd>
-<dt>dumps: <em>str, optional</em></dt>
-<dd>The outputs for this simulation.</dd>
-<dt>queue: <em>str, optional</em></dt>
-<dd>What queue to run the simulation on (queueing system dependent).</dd>
-<dt>procs: <em>int, optional</em></dt>
-<dd>How many processors to run the simulation on.</dd>
-<dt>threads: <em>int, optional</em></dt>
-<dd>How many threads to run the simulation on.  By default this is procs.</dd>
-<dt>redundancy: <em>bool, optional</em></dt>
-<dd>With redundancy on, if the job is submitted and unique_name is on, then
-if another job of the same name is running, a pointer to that job will
-instead be returned.</dd>
-<dt>previous: <em>str, optional</em></dt>
-<dd>Name of a previous simulation for which to try reading in
-information using the MORead method.</dd>
-<dt>mem: <em>float, optional</em></dt>
-<dd>Amount of memory per processor that is available (in MB).</dd>
-<dt>priority: <em>int, optional</em></dt>
-<dd>Priority of the simulation (queueing system dependent).  Priority
-ranges (in NBS) from a low of 1 (start running whenever) to a
-high of 255 (start running ASAP).</dd>
-<dt>xhost: <em>list, str or str, optional</em></dt>
-<dd>Which processor to run the simulation on(queueing system
-dependent).</dd>
-</dl>
-</div></blockquote>
-<p><strong>Returns</strong></p>
-<blockquote>
-<div><dl class="docutils">
-<dt>job: <a class="reference internal" href="#jobs.Job" title="jobs.Job"><code class="xref py py-class docutils literal notranslate"><span class="pre">jobs.Job</span></code></a></dt>
-<dd>Teturn the job container.</dd>
-</dl>
-</div></blockquote>
-</dd></dl>
-
-<dl class="function">
-<dt id="jdftx.read">
-<code class="descclassname">jdftx.</code><code class="descname">read</code><span class="sig-paren">(</span><em>input_file</em>, <em>atom_units='Ang'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jdftx.html#read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jdftx.read" title="Permalink to this definition">¶</a></dt>
-<dd><p>General read in of all possible data from a JDFTx output file.</p>
-<p><strong>Parameters</strong></p>
-<blockquote>
-<div><dl class="docutils">
-<dt>input_file: <em>str</em></dt>
-<dd>JDFTx output file to be parsed.</dd>
-<dt>atom_units: <em>str, optional</em></dt>
-<dd>What units you want coordinates to be converted to.</dd>
-</dl>
-</div></blockquote>
-<p><strong>Returns</strong></p>
-<blockquote>
-<div><dl class="docutils">
-<dt>data: <a class="reference internal" href="#results.DFT_out" title="results.DFT_out"><code class="xref py py-class docutils literal notranslate"><span class="pre">results.DFT_out</span></code></a></dt>
-<dd>Generic DFT output object containing all parsed results.</dd>
-</dl>
-</div></blockquote>
-</dd></dl>
-
+<div class="section" id="jdftx">
+<h2>jdftx<a class="headerlink" href="#jdftx" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-jobs">
 <span id="jobs"></span><h2>jobs<a class="headerlink" href="#module-jobs" title="Permalink to this headline">¶</a></h2>
@@ -2838,7 +2747,7 @@ the queue.</dd>
 
 <dl class="function">
 <dt id="lammps_job.job">
-<code class="descclassname">lammps_job.</code><code class="descname">job</code><span class="sig-paren">(</span><em>run_name</em>, <em>input_script</em>, <em>system=None</em>, <em>queue='None'</em>, <em>procs=1</em>, <em>ntasks=1</em>, <em>nodes=1</em>, <em>adjust_nodes=True</em>, <em>email=None</em>, <em>write_data_file=True</em>, <em>pair_coeffs_included=True</em>, <em>hybrid_pair=False</em>, <em>hybrid_angle=False</em>, <em>TIP4P=False</em>, <em>no_echo=False</em>, <em>redundancy=False</em>, <em>params=None</em>, <em>lmp_path='/mnt/c/Users/hherb/Documents/subsystem/squid/lammps/16Mar18/src/lmp_wsl'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lammps_job.html#job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lammps_job.job" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">lammps_job.</code><code class="descname">job</code><span class="sig-paren">(</span><em>run_name</em>, <em>input_script</em>, <em>system=None</em>, <em>queue='None'</em>, <em>procs=1</em>, <em>ntasks=1</em>, <em>nodes=1</em>, <em>adjust_nodes=True</em>, <em>email=None</em>, <em>write_data_file=True</em>, <em>pair_coeffs_included=True</em>, <em>hybrid_pair=False</em>, <em>hybrid_angle=False</em>, <em>TIP4P=False</em>, <em>no_echo=False</em>, <em>redundancy=False</em>, <em>params=None</em>, <em>lmp_path='/mnt/c/Users/hherb/Documents/subsystem/squid/lammps/16Mar18/src/lmp_wsl'</em>, <em>slurm_allocation=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lammps_job.html#job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lammps_job.job" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper to submitting a LAMMPs simulation.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
@@ -2888,6 +2797,8 @@ instead be returned.</dd>
 <dt>lmp_path: <em>str, optional</em></dt>
 <dd>The path to the lammps executable. Note, by default this is the
 one defined during installation, saved in sysconst.lmp_path.</dd>
+<dt>slurm_allocation: <em>str, optional</em></dt>
+<dd>Whether to use a slurm allocation for this job or not.  If so, specify the name.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
@@ -3612,12 +3523,12 @@ hessian.</dd>
 Several of these approaches are founded on methods within scipy with
 minor alterations made.</p>
 <ul class="simple">
-<li><a class="reference internal" href="optimizers.html#module-steepest_descent" title="steepest_descent"><code class="xref py py-func docutils literal notranslate"><span class="pre">steepest_descent()</span></code></a></li>
-<li><a class="reference internal" href="optimizers.html#module-bfgs" title="bfgs"><code class="xref py py-func docutils literal notranslate"><span class="pre">bfgs()</span></code></a></li>
-<li><a class="reference internal" href="optimizers.html#module-lbfgs" title="lbfgs"><code class="xref py py-func docutils literal notranslate"><span class="pre">lbfgs()</span></code></a></li>
-<li><a class="reference internal" href="optimizers.html#module-quick_min" title="quick_min"><code class="xref py py-func docutils literal notranslate"><span class="pre">quick_min()</span></code></a></li>
-<li><a class="reference internal" href="optimizers.html#module-fire" title="fire"><code class="xref py py-func docutils literal notranslate"><span class="pre">fire()</span></code></a></li>
-<li><a class="reference internal" href="optimizers.html#module-conjugate_gradient" title="conjugate_gradient"><code class="xref py py-func docutils literal notranslate"><span class="pre">conjugate_gradient()</span></code></a></li>
+<li><a class="reference internal" href="#module-steepest_descent" title="steepest_descent"><code class="xref py py-func docutils literal notranslate"><span class="pre">steepest_descent()</span></code></a></li>
+<li><a class="reference internal" href="#module-bfgs" title="bfgs"><code class="xref py py-func docutils literal notranslate"><span class="pre">bfgs()</span></code></a></li>
+<li><a class="reference internal" href="#module-lbfgs" title="lbfgs"><code class="xref py py-func docutils literal notranslate"><span class="pre">lbfgs()</span></code></a></li>
+<li><a class="reference internal" href="#module-quick_min" title="quick_min"><code class="xref py py-func docutils literal notranslate"><span class="pre">quick_min()</span></code></a></li>
+<li><a class="reference internal" href="#module-fire" title="fire"><code class="xref py py-func docutils literal notranslate"><span class="pre">fire()</span></code></a></li>
+<li><a class="reference internal" href="#module-conjugate_gradient" title="conjugate_gradient"><code class="xref py py-func docutils literal notranslate"><span class="pre">conjugate_gradient()</span></code></a></li>
 </ul>
 <hr class="docutils" />
 <span class="target" id="module-steepest_descent"></span><dl class="function">
@@ -4158,7 +4069,7 @@ this is 0 indexed.</dd>
 
 <dl class="function">
 <dt id="orca.job">
-<code class="descclassname">orca.</code><code class="descname">job</code><span class="sig-paren">(</span><em>run_name</em>, <em>route</em>, <em>atoms=[]</em>, <em>extra_section=''</em>, <em>grad=False</em>, <em>queue=None</em>, <em>walltime='00:30:00'</em>, <em>sandbox=False</em>, <em>procs=1</em>, <em>ntasks=1</em>, <em>nodes=1</em>, <em>adjust_nodes=True</em>, <em>charge=None</em>, <em>multiplicity=None</em>, <em>charge_and_multiplicity='0 1'</em>, <em>redundancy=False</em>, <em>use_NBS_sandbox=False</em>, <em>unique_name=True</em>, <em>previous=None</em>, <em>mem=2000</em>, <em>priority=None</em>, <em>xhost=None</em>, <em>orca4=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/orca.html#job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orca.job" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">orca.</code><code class="descname">job</code><span class="sig-paren">(</span><em>run_name</em>, <em>route</em>, <em>atoms=[]</em>, <em>extra_section=''</em>, <em>grad=False</em>, <em>queue=None</em>, <em>walltime='00:30:00'</em>, <em>sandbox=False</em>, <em>procs=1</em>, <em>ntasks=1</em>, <em>nodes=1</em>, <em>adjust_nodes=True</em>, <em>charge=None</em>, <em>multiplicity=None</em>, <em>charge_and_multiplicity='0 1'</em>, <em>redundancy=False</em>, <em>use_NBS_sandbox=False</em>, <em>unique_name=True</em>, <em>previous=None</em>, <em>mem=2000</em>, <em>priority=None</em>, <em>xhost=None</em>, <em>orca4=True</em>, <em>slurm_allocation=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/orca.html#job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orca.job" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper to submitting an Orca simulation.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
@@ -4235,6 +4146,8 @@ high of 255 (start running ASAP).</dd>
 dependent).</dd>
 <dt>orca4: <em>bool, optional</em></dt>
 <dd>Whether to use orca 4 (True) or orca 3 (False).</dd>
+<dt>slurm_allocation: <em>str, optional</em></dt>
+<dd>Whether to use a slurm allocation for this job or not.  If so, specify the name.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
@@ -6258,7 +6171,7 @@ orbitals.</dd>
 <li class="toctree-l2"><a class="reference internal" href="#module-frc_opls">frc_opls</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-g09">g09</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-geometry">geometry</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-jdftx">jdftx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jdftx">jdftx</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-jobs">jobs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-joust">joust</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-lammps_job">lammps_job</a></li>
