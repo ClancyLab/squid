@@ -200,7 +200,8 @@
         <span class="n">dumps</span><span class="o">=</span><span class="s2">&quot;dump End Ecomponents ElecDensity&quot;</span><span class="p">,</span>
         <span class="n">queue</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">walltime</span><span class="o">=</span><span class="s2">&quot;00:30:00&quot;</span><span class="p">,</span> <span class="n">procs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">redundancy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">previous</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mem</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">priority</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xhost</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">previous</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mem</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">priority</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xhost</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">slurm_allocation</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper to submitting a JDFTx simulation.</span>
 
@@ -250,6 +251,8 @@
 <span class="sd">        xhost: *list, str or str, optional*</span>
 <span class="sd">            Which processor to run the simulation on(queueing system</span>
 <span class="sd">            dependent).</span>
+<span class="sd">        slurm_allocation: *str, optional*</span>
+<span class="sd">            Whether to use a slurm allocation for this job or not.  If so, specify the name.</span>
 
 <span class="sd">    **Returns**</span>
 
@@ -407,7 +410,8 @@
                         <span class="n">walltime</span><span class="o">=</span><span class="n">walltime</span><span class="p">,</span>
                         <span class="n">xhosts</span><span class="o">=</span><span class="n">xhost</span><span class="p">,</span>
                         <span class="n">redundancy</span><span class="o">=</span><span class="n">redundancy</span><span class="p">,</span>
-                        <span class="n">unique_name</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                        <span class="n">unique_name</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="n">slurm_allocation</span><span class="o">=</span><span class="n">slurm_allocation</span><span class="p">)</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
     <span class="c1"># Copy run script</span>
     <span class="n">fname</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
