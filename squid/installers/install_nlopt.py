@@ -46,9 +46,8 @@ whatis("URL: $HELPURL$")
 whatis("Description: $NAME$")
 
 prepend_path("PATH",               "$CWD$/$FOLDER$/build/bin")
-prepend_path("LD_LIBRARY_PATH",    "$CWD$/$FOLDER$/build/lib")
+prepend_path("LD_LIBRARY_PATH",    "$CWD$/$FOLDER$/build/lib64")
 prepend_path("PYTHONPATH",         "$CWD$/$FOLDER$/build/lib/python2.7/site-packages")
-prepend_path("PYTHONPATH",         "$CWD$/$FOLDER$/build/lib64/python2.7/site-packages")
 '''
     rep = {
         "$CWD$": cwd,
