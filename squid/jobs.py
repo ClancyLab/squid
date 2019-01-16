@@ -594,7 +594,7 @@ equates to %d nodes on marcc; however, you only requested %d nodes." % (procs, n
             mpi_s = ""
         else:
             mpi_s = sysconst.mpi_preface.strip() + " "
-        generic_script = generic_script + "\n" + mpi_s + job_to_submit
+        generic_script = generic_script + "\ndate\n" + mpi_s + job_to_submit + "\ndate"
 
         if sandbox is not None and not use_NBS_sandbox:
             generic_script += sandbox_append
@@ -681,7 +681,7 @@ source ~/.bashrc
             mpi_s = ""
         else:
             mpi_s = sysconst.mpi_preface.strip() + " "
-        generic_script = generic_script + "\n" + mpi_s + job_to_submit
+        generic_script = generic_script + "\ndate\n" + mpi_s + job_to_submit + "\ndate"
 
         # NBS requires a blank line at the end
         generic_script = generic_script + "\n\n"
