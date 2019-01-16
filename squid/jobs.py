@@ -921,6 +921,8 @@ $XHOST$
 $OMP$
 source /fs/home/$USER/.zshrc
 
+date
+
 '''
 
         if nprocs > 1 and use_mpi:
@@ -930,6 +932,10 @@ $MPIRUN$ -np $NPROCS$ $PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$> $PY_NAME2$.log 2>&1
         else:
             NBS += '''
 $PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$> $PY_NAME2$.log 2>&1
+'''
+
+        NBS += '''
+date
 '''
 
         NBS = NBS.replace("$UNIQUE$", ["", "##NBS-unique: yes"][int(unique_name)])
@@ -1020,6 +1026,8 @@ $OMP$
 module reset
 $MODULES$
 
+date
+
 '''
 
         if nprocs * ntasks > 1 and use_mpi:
@@ -1029,6 +1037,10 @@ $MPIRUN$ -np $NPROCS$ $PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$> $PY_NAME2$.log 2>&1
         else:
             SLURM += '''
 $PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$> $PY_NAME2$.log 2>&1
+'''
+
+        SLURM += '''
+date
 '''
 
         SLURM = SLURM.replace("$PYTHON_PATH$", py_path)
