@@ -279,7 +279,7 @@ def job(run_name,
         redundancy=False,
         params=None,
         lmp_path=sysconst.lmp_path,
-        slurm_allocation=None):
+        slurm_allocation=sysconst.slurm_default_allocation):
     """
     Wrapper to submitting a LAMMPs simulation.
 

@@ -408,7 +408,7 @@ def job(run_name, route, atoms=[], extra_section='', grad=False,
         charge=None, multiplicity=None, charge_and_multiplicity='0 1',
         redundancy=False, use_NBS_sandbox=False, unique_name=True,
         previous=None, mem=2000, priority=None, xhost=None, orca4=sysconst.use_orca4,
-        slurm_allocation=None):
+        slurm_allocation=sysconst.slurm_default_allocation):
     """
     Wrapper to submitting an Orca simulation.
 

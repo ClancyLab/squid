@@ -430,7 +430,7 @@ def submit_job(name,
                preface=None,
                redundancy=False,
                unique_name=True,
-               slurm_allocation=None,
+               slurm_allocation=sysconst.slurm_default_allocation,
                queueing_system=sysconst.queueing_system):
     """
     Code to submit a simulation to the specified queue and queueing system.
@@ -514,12 +514,6 @@ equates to %d nodes on marcc; however, you only requested %d nodes." % (procs, n
             print("\tWill adjust nodes accordingly...")
             nodes = (procs * ntasks - 1) // 24 + 1
 
-    # Grab a default allocation if necessary
-    if slurm_allocation is None:
-        if not hasattr(sysconst, "slurm_default_allocation"):
-            slurm_allocation = None
-        else:
-            slurm_allocation = sysconst.slurm_default_allocation
     if slurm_allocation is None:
         slurm_allocation = ""
     else:
@@ -763,7 +757,7 @@ def pysub(job_name,
           py3=False,
           use_mpi=False,
           modules=None,
-          slurm_allocation=None,
+          slurm_allocation=sysconst.slurm_default_allocation,
           queueing_system=sysconst.queueing_system):
     """
     Submission of python scripts to run on your queue.
@@ -833,12 +827,6 @@ def pysub(job_name,
     if ".py" in job_name:
         job_name = job_name.split(".py")[0]
 
-    # Grab a default allocation if necessary
-    if slurm_allocation is None:
-        if not hasattr(sysconst, "slurm_default_allocation"):
-            slurm_allocation = None
-        else:
-            slurm_allocation = sysconst.slurm_default_allocation
     if slurm_allocation is None:
         slurm_allocation = ""
     else:

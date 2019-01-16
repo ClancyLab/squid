@@ -160,7 +160,7 @@ def job(run_name, atoms, ecut, ecutrho=None, atom_units="Ang", route=None,
         queue=None, walltime="00:30:00", procs=1, threads=None,
         redundancy=False,
         previous=None, mem=2000, priority=None, xhost=None,
-        slurm_allocation=None):
+        slurm_allocation=sysconst.slurm_default_allocation):
     """
     Wrapper to submitting a JDFTx simulation.
 

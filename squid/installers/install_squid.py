@@ -124,6 +124,7 @@ mpirun_path = "$MPIRUN_PATH"
 
 queueing_system = "$QUEUEING_SYSTEM" # nbs, pbs, slurm
 default_queue = "$DEFAULT_QUEUE"
+slurm_default_allocation = None
 nbs_ssh = None
 nbs_bin_path = ""
 
