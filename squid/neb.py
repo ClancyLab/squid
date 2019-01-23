@@ -58,7 +58,8 @@ def g09_start_job(NEB,
                   initial_guess,
                   extra_section,
                   mem,
-                  priority):
+                  priority,
+                  extra_keywords={}):
     """
     A method for submitting a single point calculation using Gaussian09 for
     NEB calculations.
@@ -92,6 +93,8 @@ def g09_start_job(NEB,
         priority: *int*
             Whether to submit the job with a given priority (NBS). Not setup for
             this function yet.
+        extra_keywords: *dict, optional*
+            Specify extra keywords beyond the defaults.
 
     **Returns**
 
@@ -194,7 +197,8 @@ def orca_start_job(NEB,
                    initial_guess,
                    extra_section,
                    mem,
-                   priority):
+                   priority,
+                   extra_keywords={}):
     """
     A method for submitting a single point calculation using Orca for NEB
     calculations.
@@ -227,12 +231,18 @@ def orca_start_job(NEB,
             How many MegaBytes (MB) of memory you have available per core.
         priority: *int*
             Whether to submit to NBS with a given priority
+        extra_keywords: *dict, optional*
+            Specify extra keywords beyond the defaults.
 
     **Returns**
 
         orca_job: :class:`jobs.Job`
             A job container holding the orca simulation.
     """
+    orca4 = True
+    if "orca4" in extra_keywords:
+        orca4 = extra_keywords["orca4"]
+
     NEB.calls_to_force += 1
     if NEB.step > 0:
         previous = '%s-%d-%d' % (NEB.name, NEB.step - 1, i)
@@ -255,7 +265,8 @@ def orca_start_job(NEB,
                     queue=queue,
                     previous=previous,
                     mem=mem,
-                    priority=NEB.priority)
+                    priority=NEB.priority,
+                    orca4=orca4)
 
 
 def orca_results(NEB, step_to_use, i, state):
@@ -373,6 +384,8 @@ class NEB:
             of the tangent is based on only the force, and not the energy.
             Note, the code still expects the get_results function to return
             two things, so just have it return (None, atoms + forces).
+        orca4: *bool, optional*
+            Whether to use orca4 (True) or 3 (False).
 
     **Returns**
 
@@ -410,7 +423,8 @@ class NEB:
                  callback=None,
                  ci_neb=False,
                  ci_N=5,
-                 no_energy=False):
+                 no_energy=False,
+                 orca4=True):
         self.name = name
         self.states = states
         self.theory = theory
@@ -495,6 +509,12 @@ g09.  If not, you need to manually specify start_job and get_results.")
         if self.ci_neb and self.no_energy:
             raise Exception("\nERROR\nUnable to do climbing image without energy. Let no_energy be False.")
 
+        # Setup extra_keywords variable
+        self.extra_keywords = {
+            "orca4": orca4
+        }
+
+
     def calculate(self, coords):
         self.calls_to_calculate += 1
 
@@ -525,7 +545,8 @@ g09.  If not, you need to manually specify start_job and get_results.")
                                    self.initial_guess,
                                    self.extra_section,
                                    self.mem,
-                                   self.priority)
+                                   self.priority,
+                                   self.extra_keywords)
                 )
         # Wait for jobs to finish
         if self.job_hang_time is not None:
