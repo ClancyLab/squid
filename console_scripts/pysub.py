@@ -16,7 +16,7 @@ pysub [script.py] [Options]
     Flag          Default     Description
 -help, -h     :            :  Print this help menu
 -n            :     1      :  Number of processors to use
--tasks        :     1      :  Number of tasks this job will run
+-nt, -tasks   :     1      :  Number of tasks this job will run
 -o, -omp      :            :  Manually specify what OMP_NUM_THREADS should be.
 -mpi          :            :  Whether to run python with mpirun or not.
 -q            :            :  Which queue to submit to
@@ -83,6 +83,8 @@ if "-n" in argv[2:]:
     nprocs = argv[argv.index('-n') + 1]
 if "-tasks" in argv[2:]:
     tasks = int(argv[argv.index('-tasks') + 1])
+elif "-nt" in argv[2:]:
+    tasks = int(argv[argv.index('-nt') + 1])
 if "-o" in argv[2:]:
     omp = argv[argv.index('-o') + 1]
 elif "-omp" in argv[2:]:

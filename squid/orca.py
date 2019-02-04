@@ -685,7 +685,7 @@ less than 2 atoms!")
             % (run_name, run_name), shell=True, env=my_env
         )
         job_obj = jobs.Job(run_name, process_handle=process_handle)
-    elif queue == 'debug':
+    elif queue == 'debugger':
         print 'Would run', run_name
         job_obj = None
     else:

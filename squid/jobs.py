@@ -519,7 +519,7 @@ equates to %d nodes on marcc; however, you only requested %d nodes." % (procs, n
     else:
         slurm_allocation = "#SBATCH -A " + slurm_allocation
 
-    if queue is "debug":
+    if queue is "debugger":
         print("\nWould have submitted job %s\n" % name)
     elif queueing_system.strip().lower() == "nbs":
 
