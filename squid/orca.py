@@ -289,6 +289,13 @@ Lowest energy orbital is empty.")
 
     finished = 'ORCA TERMINATED NORMALLY' in data
 
+    # Read in Vibrational Frequencies if they exist
+    s1, s2 = 'VIBRATIONAL FREQUENCIES', 'NORMAL MODES'
+    hold, vibfreq = data, None
+    if hold.rfind(s1) != -1 and hold.rfind(s2) != -1:
+        tmp = hold[hold.rfind(s1):hold.rfind(s2)].strip().split("\n")
+        vibfreq = [float(t.split(":")[1].split("cm")[0].strip()) for t in tmp if ":" in t]
+
     warnings = [line for line in data_lines if line.startswith('Warning: ')]
 
     data = results.DFT_out(input_file, 'orca')
@@ -306,6 +313,7 @@ Lowest energy orbital is empty.")
     data.charges_CHELPG = charges_CHELPG
     data.charges = copy.deepcopy(charges_MULLIKEN)
     data.MBO = MBO
+    data.vibfreq = vibfreq
     data.convergence = convergence
     data.converged = converged
     data.time = time

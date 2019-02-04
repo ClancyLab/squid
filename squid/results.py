@@ -51,6 +51,8 @@ class DFT_out(object):
         MBO: *list, list,* :class:`structures.Atom` *, float*
             A list of lists, each list holding (1) a list of atoms in the bond
             and (2) the Mayer Bond Order (MBO) of said bond.
+        vibfreq: *list, float*
+            A list of the vibrational frequencies if available, otherwise None.
         convergence: *list, str* VERIFY
             A list of convergence criteria and matching values.
         converged: *bool*
@@ -89,6 +91,7 @@ class DFT_out(object):
         self.charges_CHELPG = None
         self.charges = None
         self.MBO = None
+        self.vibfreq = None
         self.convergence = None
         self.converged = None
         self.time = None
