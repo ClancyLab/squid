@@ -856,7 +856,7 @@ class orca_task(_jtask):
         self.data = read(self.task_name)
 
 
-def gbw_to_cube(name, mo, spin=0, grid=40, local=False):
+def gbw_to_cube(name, mo, spin=0, grid=40, local=False, orca4=sysconst.use_orca4):
     '''
     Pipe in flags to orca_plot to generate a cube file for the given
     molecular orbital.  Note, this is assumed to be running from the parent
@@ -874,6 +874,8 @@ def gbw_to_cube(name, mo, spin=0, grid=40, local=False):
             Whether to plot the alpha or beta (0 or 1) operator.
         grid: *int, optional*
             The grid resolution, default being 40.
+        orca4: *bool, optional*
+            Whether the simulation was run in orca3 or orca4.
 
     **Returns**
 
@@ -902,11 +904,15 @@ def gbw_to_cube(name, mo, spin=0, grid=40, local=False):
     fptr.write("10\n11\n")
     fptr.close()
 
+    if orca4:
+        orca_path = sysconst.orca4_path
+    else:
+        orca_path = sysconst.orca_path
+
     os.system("%s_plot orca/%s/%s.orca.gbw -i < tmp.plt"
-              % (sysconst.orca_path, name, name))
+              % (orca_path, name, name))
     os.system("rm tmp.plt")
     mo_name = "%s.orca.mo%d%s.cube" % (name, int(mo), ['a', 'b'][int(spin)])
-    shutil.move(mo_name, "orca/%s/%s" % (name, mo_name))
     return mo_name
 
 
@@ -916,7 +922,8 @@ def mo_analysis(name,
                 LUMO=True,
                 wireframe=True,
                 hide=True,
-                iso=0.04):
+                iso=0.04,
+                orca4=sysconst.use_orca4):
     '''
     Post process an orca job using orca_plot and vmd to display molecular
     orbitals and the potential surface.  NOTE! By default Orca does not take
@@ -948,6 +955,8 @@ def mo_analysis(name,
         iso: *float, optional*
             Isosurface magnitude.  Set to 0.04 by default, but 0.01 may be
             better.
+        orca4: *bool, optional*
+            Whether the simulation was run in orca3 or orca4.
 
     **Returns**
 
@@ -963,15 +972,15 @@ def mo_analysis(name,
     MOs = []
 
     if HOMO:
-        MOs.append(gbw_to_cube(name, N_HOMO, spin=0, grid=40, local=False))
+        MOs.append(gbw_to_cube(name, N_HOMO, spin=0, grid=40, local=False, orca4=orca4))
     if LUMO:
-        MOs.append(gbw_to_cube(name, N_LUMO, spin=0, grid=40, local=False))
+        MOs.append(gbw_to_cube(name, N_LUMO, spin=0, grid=40, local=False, orca4=orca4))
 
     if orbital is not None:
         if type(orbital) is int:
             orbital = [orbital]
         for mo in orbital:
-            MOs.append(gbw_to_cube(name, mo, spin=0, grid=40, local=False))
+            MOs.append(gbw_to_cube(name, mo, spin=0, grid=40, local=False, orca4=orca4))
 
     for i, mo in enumerate(MOs):
         MOs[i] = "orca/" + name + "/" + mo
