@@ -356,7 +356,7 @@ include $$NAME$$.ionpos'''
             "%s/jdftx -i %s.in -o %s.out"
             % (path_jdftx, run_name, run_name), shell=True
         )
-    elif queue == 'debug':
+    elif queue == 'debugger':
         print 'Would run', run_name
     else:
         job_to_submit = "source ~/.zshrc\nmpirun -n %d jdftx -c %d -i %s.in -o %s.out" % (procs, threads, run_name, run_name)
