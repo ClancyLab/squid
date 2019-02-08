@@ -442,26 +442,24 @@ class Tersoff(object):
         # Make a small cutoff so the only time tersoff is on is if something
         # weird happens and atoms are essentially overlapping.
         if not leave_two_body_on:
-            self.R = 2E-3
-            self.D = 1E-3
+            self.fix("R", value=2E-3)
+            self.fix("D", value=1E-3)
 
         # Set two-body interaction to insanely large repulsion.  Note, setting
         # B to 0 also removes the three-body interactions.
         if not leave_two_body_on:
-            self.A = 100000.0
-            self.B = 0.0
+            self.fix("A", value=100000.0)
+            self.fix("B", value=0.0)
 
         # Set all other parameters to 1 so we know this is off
-        self.gamma = 1
-        self.lambda3 = 1
-        self.c = 1
-        self.d = 1
-        self.costheta0 = 1
-        self.n = 1
-        self.beta = 0
+        others = ["gamma", "lambda3", "c", "d", "costheta0", "n"]
+        for p in others:
+            self.fix(p, value=1)
+        self.fix("beta", value=0.0)
+
         if not leave_two_body_on:
-            self.lambda2 = 1
-            self.lambda1 = 1
+            self.fix("lambda1", value=1)
+            self.fix("lambda2", value=1)
 
     def turn_off(self):
         '''
