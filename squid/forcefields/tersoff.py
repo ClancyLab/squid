@@ -475,7 +475,7 @@ class Tersoff(object):
             5. Setting all benign (unused) parameters to 1
         '''
 
-        self._turnoff(False)
+        self._turn_off(False)
 
     def turn_off_3body(self):
         '''
@@ -486,7 +486,7 @@ class Tersoff(object):
             2. Setting all benign (unused) parameters to 1
         '''
 
-        self._turnoff(True)
+        self._turn_off(True)
 
     @staticmethod
     def parse_line(line):
