@@ -200,8 +200,9 @@ class Tersoff(object):
         else:
             return False
 
-        return (all([x == y for x, y in zip(self.indices, indices)]) or
-                all([x == y for x, y in zip(self.indices, indices[::-1])]))
+        return all([x == y for x, y in zip(self.indices, indices)])
+#        return (all([x == y for x, y in zip(self.indices, indices)]) or
+#                all([x == y for x, y in zip(self.indices, indices[::-1])]))
 
     def __hash__(self):
         return hash(tuple(self.unpack(with_indices=True) + self.unpack(bounds=0) + self.unpack(bounds=1)))
@@ -435,6 +436,7 @@ class Tersoff(object):
             assert param >= (bound[0] - BOUND_EPS) and param <= (bound[1] + BOUND_EPS), "In Tersoff %s, parameter %s = %.2f is outside of it's range = [%.2f, %.2f]!" % (str(self.indices), name, param, bound[0], bound[1])
 
     def _turn_off(self, leave_two_body_on):
+        print("Turning off %s" % str(self.indices))
         # If this is not a two-body one, then switch to False
         if leave_two_body_on and self.indices[1] != self.indices[2]:
             leave_two_body_on = False
