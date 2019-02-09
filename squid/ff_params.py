@@ -27,6 +27,7 @@ The Parameters class contains:
 - :func:`dump_set_charge`
 - :func:`find_maximum`
 - :func:`get_smrff_style`
+- :func:`num_free_parameters`
 ------------
 
 """
@@ -1040,4 +1041,11 @@ class Parameters(object):
                 self.tersoff_params[i].fix(params=params, value=value)
         else:
             raise Exception("Cannot handle the style %s." % style)
+
+    def num_free_parameters(self):
+        '''
+        This function will return the number of unfixed parameters.
+        '''
+        pkg = self.unpack(with_indices=False, with_bounds=True)
+        return len(pkg[0]) - sum([int(low == val == up) for val, low, up in zip(*pkg)])
 

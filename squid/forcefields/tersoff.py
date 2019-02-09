@@ -282,9 +282,9 @@ class Tersoff(object):
         if self.indices is None or self.indices[-1] == self.indices[-2]:
             self.n_bounds = (0, 50.0)
             self.lambda2_bounds = (0, 10.0)
-            self.B_bounds = (0.0, 100000.0)
+            self.B_bounds = (0.0, 1000000.0)
             self.lambda1_bounds = (0, 10.0)
-            self.A_bounds = (0.0, 100000.0)
+            self.A_bounds = (0.0, 1000000.0)
         elif self.indices[-1] != self.indices[-2]:
             self.n_bounds = (1.0, 1.0)
             self.lambda2_bounds = (1.0, 1.0)
