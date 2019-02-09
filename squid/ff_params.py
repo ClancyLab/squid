@@ -1041,3 +1041,10 @@ class Parameters(object):
         else:
             raise Exception("Cannot handle the style %s." % style)
 
+    def num_free_parameters(self):
+        '''
+        This function will return the number of unfixed parameters.
+        '''
+        pkg = self.unpack(with_indices=False, with_bounds=True)
+        return len(pkg[0]) - sum([int(low == val == up) for val, low, up in zip(*pkg)])
+

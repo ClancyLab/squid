@@ -200,8 +200,7 @@ class Tersoff(object):
         else:
             return False
 
-        return (all([x == y for x, y in zip(self.indices, indices)]) or
-                all([x == y for x, y in zip(self.indices, indices[::-1])]))
+        return all([x == y for x, y in zip(self.indices, indices)])
 
     def __hash__(self):
         return hash(tuple(self.unpack(with_indices=True) + self.unpack(bounds=0) + self.unpack(bounds=1)))
