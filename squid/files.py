@@ -1078,7 +1078,10 @@ def read_xyz_gen(name, cols=["element", "x", "y", "z"], cast_elem_to_sym=True, f
             continue
 
         if fast:
-            element, x, y, z = line
+            try:
+                element, x, y, z = line
+            except ValueError:
+                raise Exception("Unable to read line %s.  We expect element, x, y, z." % str(line))
             if cast_elem_to_sym:
                 frame[index - 1].element = units.elem_i2s(element)
             else:
