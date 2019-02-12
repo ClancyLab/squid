@@ -36,7 +36,7 @@ import sysconst
 from forcefields.lj import LJ
 from forcefields.morse import Morse
 from forcefields.coulomb import Coul
-from forcefields.tersoff import Tersoff, verify_tersoff_2body_symmetry, sorted_force_2body_symmetry, trim_tersoff_of_duplicate_2bodies
+from forcefields.tersoff import Tersoff, verify_tersoff_2body_symmetry, sorted_force_2body_symmetry, tag_tersoff_for_duplicate_2bodies
 from forcefields.connectors import Bond, Angle, Dihedral
 from forcefields.smooth_sin import SmoothSin
 import forcefields.helper as ffh
@@ -443,7 +443,7 @@ class Parameters(object):
         '''
 
         if trim_tersoff_2body:
-            self.tersoff_params = trim_tersoff_of_duplicate_2bodies(self.tersoff_params)
+            self.tersoff_params = tag_tersoff_for_duplicate_2bodies(self.tersoff_params)
 
         param_list = [
             ("COULOMB", self.coul_params, self.coul_mask),
@@ -1058,7 +1058,15 @@ class Parameters(object):
             assert label in self.tersoff_params, "Label %s does not exist in tersoff list!" % str(label)
             indices = [i for i, p in enumerate(self.tersoff_params) if p == label]
             for i in indices:
-                self.tersoff_params[i].fix(params=params, value=value)
+                a, b, c = self.tersoff_params[i].indices
+                if a != b and b == c:
+                    # We must handle symmetry constraints for 2-body parameters!
+                    if params in ["all", "n", "beta", "lambda1", "lambda2", "A", "B"]:
+                        i2 = self.tersoff_params.index((b, a, a))
+                        self.tersoff_params[i].fix(params=params, value=value)
+                        self.tersoff_params[i2].update_2body(self.tersoff_params[i])
+                else:
+                    self.tersoff_params[i].fix(params=params, value=value)
             verify_tersoff_2body_symmetry(self.tersoff_params)
         else:
             raise Exception("Cannot handle the style %s." % style)
