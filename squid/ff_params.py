@@ -36,7 +36,7 @@ import sysconst
 from forcefields.lj import LJ
 from forcefields.morse import Morse
 from forcefields.coulomb import Coul
-from forcefields.tersoff import Tersoff
+from forcefields.tersoff import Tersoff, verify_tersoff_2body_symmetry, sorted_force_2body_symmetry, trim_tersoff_of_duplicate_2bodies
 from forcefields.connectors import Bond, Angle, Dihedral
 from forcefields.smooth_sin import SmoothSin
 import forcefields.helper as ffh
@@ -162,6 +162,8 @@ class Parameters(object):
         self.lj_params += [o for o in other.lj_params if o not in self.lj_params]
         self.coul_params += [o for o in other.coul_params if o not in self.coul_params]
         self.tersoff_params += [o for o in other.tersoff_params if o not in self.tersoff_params]
+        verify_tersoff_2body_symmetry(self.tersoff_params)
+
         self.morse_params += [o for o in other.morse_params if o not in self.morse_params]
 
         self.bond_params += [o for o in other.bond_params if o not in self.bond_params]
@@ -328,6 +330,8 @@ class Parameters(object):
             self.morse_params = Morse.generate(self.smrff_types)
         if self.tersoff_mask:
             self.tersoff_params = Tersoff.generate(self.smrff_types, form=form)
+            self.tersoff_params = sorted_force_2body_symmetry(self.tersoff_params)
+            verify_tersoff_2body_symmetry(self.tersoff_params)
 
 #    def opls_atom_2_struct(self):
 #        '''
@@ -419,14 +423,15 @@ class Parameters(object):
         self.angle_mask = True
         self.dihedral_mask = True
 
-    def _get_param_list(self):
+    def _get_param_list(self, trim_tersoff_2body=False):
         '''
         A unified function to ensure we always read in parameters in the same order
         throughout the code.
 
         **Parameters**
 
-            None
+            trim_tersoff_2body: *bool, optional*
+                Whether to trim the tersoff list to remove the 2-body duplicates.
 
         **Returns**
 
@@ -436,6 +441,10 @@ class Parameters(object):
                 A list of the names that the params list correlates to.  For example, if
                 param_strings[0] is "COULOMB", then params[0] is a list of coulomb objects.
         '''
+
+        if trim_tersoff_2body:
+            self.tersoff_params = trim_tersoff_of_duplicate_2bodies(self.tersoff_params)
+
         param_list = [
             ("COULOMB", self.coul_params, self.coul_mask),
             ("LENNARD-JONES", self.lj_params, self.lj_mask),
@@ -558,6 +567,7 @@ class Parameters(object):
                 self.coul_params[coul_index].pack(coul.unpack())
 
         self.tersoff_params += Tersoff.load_smrff(raw, pfptr=None, restrict=self.restrict)
+        verify_tersoff_2body_symmetry(self.tersoff_params)
         self.morse_params += Morse.load_smrff(raw, pfptr=None, restrict=self.restrict)
         self.SR_SMOOTHS += SmoothSin.load_smrff(raw, pfptr=None, restrict=self.restrict)
 
@@ -611,7 +621,9 @@ class Parameters(object):
                 If with_bounds is specified, then the upper bounds are returned.
         '''
 
-        param_types, param_string_identifiers = self._get_param_list()
+        verify_tersoff_2body_symmetry(self.tersoff_params)
+
+        param_types, param_string_identifiers = self._get_param_list(trim_tersoff_2body=True)
         out, bounds_lower, bounds_upper = [], [], []
         for param_type in param_types:
             for p in param_type:
@@ -637,6 +649,10 @@ class Parameters(object):
         the indices in it.  This can be overridden, however, by specifying the
         with_indices flag.
 
+        Keep in mind, to maintain symmetry requirements in tersoff (where
+        the two-body parameters are the same between A-B B and B-A A), this
+        function will be tied closely to the unpack function.
+
         **Parameters**
 
             params: *list, float/int*
@@ -649,13 +665,16 @@ class Parameters(object):
             None
 
         '''
-        param_types, _ = self._get_param_list()
+        param_types, _ = self._get_param_list(trim_tersoff_2body=True)
         offset = 0
         for param_type in param_types:
             for p in param_type:
                 if ffh.check_restriction(p, self.restrict):
                     p.pack(params[offset: offset + p.N_params + int(with_indices)])
                 offset += p.N_params + int(with_indices)
+
+        self.tersoff_params = sorted_force_2body_symmetry(self.tersoff_params)
+        
 
     def dump_style(self, style=None, tfile_name=None, tstyle_smrff=False, write_file=False):
         '''
@@ -888,6 +907,7 @@ class Parameters(object):
                 tersoff command possible within this parameter set.
         '''
 
+        verify_tersoff_2body_symmetry(self.tersoff_params)
         local_tersoff_params = self.tersoff_params
         if self.restrict is not None:
             local_tersoff_params = [
@@ -1039,6 +1059,7 @@ class Parameters(object):
             indices = [i for i, p in enumerate(self.tersoff_params) if p == label]
             for i in indices:
                 self.tersoff_params[i].fix(params=params, value=value)
+            verify_tersoff_2body_symmetry(self.tersoff_params)
         else:
             raise Exception("Cannot handle the style %s." % style)
 

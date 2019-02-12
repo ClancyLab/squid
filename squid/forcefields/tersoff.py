@@ -125,6 +125,7 @@ class Tersoff(object):
 
         # How many parameters exist in this potential
         self.N_params = 14
+        self.sym_2body_tag = False
 
         if line is not None and all([x is None for x in P]):
             if form == "original":
@@ -327,36 +328,44 @@ class Tersoff(object):
         pkg = []
 
         if bounds is not None:
-            if with_indices:
-                pkg.append([self.indices,
-                        self.m_bounds[bounds], self.gamma_bounds[bounds], self.lambda3_bounds[bounds],
-                        self.c_bounds[bounds], self.d_bounds[bounds], self.costheta0_bounds[bounds],
-                        self.n_bounds[bounds], self.beta_bounds[bounds], self.lambda2_bounds[bounds],
-                        self.B_bounds[bounds], self.R_bounds[bounds], self.D_bounds[bounds],
-                        self.lambda1_bounds[bounds], self.A_bounds[bounds]])
-            else:
-                pkg.append([self.m_bounds[bounds], self.gamma_bounds[bounds], self.lambda3_bounds[bounds],
-                        self.c_bounds[bounds], self.d_bounds[bounds], self.costheta0_bounds[bounds],
-                        self.n_bounds[bounds], self.beta_bounds[bounds], self.lambda2_bounds[bounds],
-                        self.B_bounds[bounds], self.R_bounds[bounds], self.D_bounds[bounds],
-                        self.lambda1_bounds[bounds], self.A_bounds[bounds]])
+            pkg.append([self.indices if with_indices else None,
+                    self.m_bounds[bounds], self.gamma_bounds[bounds], self.lambda3_bounds[bounds],
+                    self.c_bounds[bounds], self.d_bounds[bounds], self.costheta0_bounds[bounds],
+                    self.n_bounds[bounds] if not self.sym_2body_tag else None,
+                    self.beta_bounds[bounds] if not self.sym_2body_tag else None,
+                    self.lambda2_bounds[bounds] if not self.sym_2body_tag else None,
+                    self.B_bounds[bounds] if not self.sym_2body_tag else None,
+                    self.R_bounds[bounds], self.D_bounds[bounds],
+                    self.lambda1_bounds[bounds] if not self.sym_2body_tag else None,
+                    self.A_bounds[bounds] if not self.sym_2body_tag else None])
+            pkg[-1] = [p for p in pkg[-1] if p is not None]
         else:
-            if with_indices:
-                pkg.append([self.indices,
-                        self.m, self.gamma, self.lambda3, self.c, self.d, self.costheta0,
-                        self.n, self.beta, self.lambda2, self.B, self.R, self.D, self.lambda1, self.A])
-            else:
-                pkg.append([self.m, self.gamma, self.lambda3, self.c, self.d, self.costheta0,
-                        self.n, self.beta, self.lambda2, self.B, self.R, self.D, self.lambda1, self.A])
+            pkg.append([self.indices if with_indices else None,
+                    self.m, self.gamma, self.lambda3, self.c, self.d, self.costheta0,
+                    self.n if not self.sym_2body_tag else None,
+                    self.beta if not self.sym_2body_tag else None,
+                    self.lambda2 if not self.sym_2body_tag else None,
+                    self.B if not self.sym_2body_tag else None,
+                    self.R, self.D,
+                    self.lambda1 if not self.sym_2body_tag else None,
+                    self.A if not self.sym_2body_tag else None])
+            pkg[-1] = [p for p in pkg[-1] if p is not None]
 
         if with_bounds:
             # Get all lower and upper bounds added to pkg
             # After this, pkg = [params, lower, upper]
             bnds = [
                 self.m_bounds, self.gamma_bounds, self.lambda3_bounds, self.c_bounds, self.d_bounds,
-                self.costheta0_bounds, self.n_bounds, self.beta_bounds, self.lambda2_bounds,
-                self.B_bounds, self.R_bounds, self.D_bounds, self.lambda1_bounds, self.A_bounds
+                self.costheta0_bounds,
+                self.n_bounds if not self.sym_2body_tag else None,
+                self.beta_bounds if not self.sym_2body_tag else None,
+                self.lambda2_bounds if not self.sym_2body_tag else None,
+                self.B_bounds if not self.sym_2body_tag else None,
+                self.R_bounds, self.D_bounds,
+                self.lambda1_bounds if not self.sym_2body_tag else None,
+                self.A_bounds if not self.sym_2body_tag else None
             ]
+            bnds = [b for b in bnds if b is not None]
             for bnd in zip(zip(*bnds)):
                 pkg.append(*bnd)
 
@@ -378,9 +387,9 @@ class Tersoff(object):
 
             None
         '''
-        assert len(params) in [14, 15], "In Tersoff, tried packing %d parameters.  Should be either 14 or 15!" % len(params)
+        assert len(params) in [8, 9, 14, 15], "In Tersoff, tried packing %d parameters.  Should be either 8, 9, 14, or 15!" % len(params)
 
-        if len(params) == 15:
+        if len(params) in [9, 15]:
             offset = 0
             self.indices = params[0 + offset]
         else:
@@ -391,14 +400,17 @@ class Tersoff(object):
         self.c = params[4 + offset]
         self.d = params[5 + offset]
         self.costheta0 = params[6 + offset]
-        self.n = params[7 + offset]
-        self.beta = params[8 + offset]
-        self.lambda2 = params[9 + offset]
-        self.B = params[10 + offset]
-        self.R = params[11 + offset]
-        self.D = params[12 + offset]
-        self.lambda1 = params[13 + offset]
-        self.A = params[14 + offset]
+
+        self.n = params[7 + offset - int(self.sym_2body_tag) * 1]
+        self.beta = params[8 + offset - int(self.sym_2body_tag) * 2]
+        self.lambda2 = params[9 + offset - int(self.sym_2body_tag) * 3]
+        self.B = params[10 + offset - int(self.sym_2body_tag) * 4]
+
+        self.R = params[11 + offset - int(self.sym_2body_tag) * 4]
+        self.D = params[12 + offset - int(self.sym_2body_tag) * 4]
+
+        self.lambda1 = params[13 + offset - int(self.sym_2body_tag) * 5]
+        self.A = params[14 + offset - int(self.sym_2body_tag) * 6]
 
         self.validate()
 
@@ -753,4 +765,140 @@ class Tersoff(object):
             )
 
         return Tersoff_Objs
+
+    def update_2body(self, other):
+        '''
+        Given a tersoff parameter object, update the current one with
+        the 2-body parameters (n, beta, lambda1, lambda2, A, B).
+
+        **Parameters**
+
+            other: *:class:`Tersoff`*
+                A Tersoff parameter object to get 2-body parameters from.
+
+        **Returns**
+
+            None
+        '''
+
+
+def verify_tersoff_2body_symmetry(tersoff_params):
+    '''
+    Given a list of tersoff parameters, verify that they are such that
+    the two-body parameters are symmetric.  What this means is that when
+    we consider A-B B and B-A A, the two body parameters must be the same.
+    This is necessary as LAMMPs will randomly isolate the two body
+    interaction (A-B or B-A) and use the corresponding parameters.
+
+    **Parameters**
+
+        tersoff_params: *list,* :class:`Tersoff`
+            A list of Tersoff objects.
+
+    **Returns**
+
+        None
+    '''
+    for i, ters_A in enumerate(tersoff_params):
+        for j, ters_B in enumerate(tersoff_params):
+            if i >= j:
+                continue
+            if all([
+                ters_A.indices[0] == ters_B.indices[1],
+                ters_A.indices[1] == ters_B.indices[0],
+                ters_A.indices[1] == ters_A.indices[2],
+                ters_B.indices[1] == ters_B.indices[2]]):
+                assert all([
+                    ters_A.n == ters_B.n,
+                    ters_A.beta == ters_B.beta,
+                    ters_A.lambda1 == ters_B.lambda1,
+                    ters_A.lambda2 == ters_B.lambda2,
+                    ters_A.A == ters_B.A,
+                    ters_A.B == ters_B.B
+                ]), "Error: 2-body symmetry requirements failed for %s" % str(ters_A[:2])
+
+
+def _unique_grab_2body(tersoff_params):
+    '''
+    Given a list of tersoff parameters, we return a consistent, unique list of
+    two bodies.  This is used such that we can consistently remove the inverse
+    list.
+
+    **Parameters**
+
+        tersoff_params: *list,* :class:`Tersoff`
+            A list of Tersoff objects.
+
+    **Returns**
+
+        two_bodies: *list, tuple, str*
+            A list of tuples holding the unique indices for 2-body interactions.
+    '''
+    # Get a sorted list of all atom types to ensure reproducability
+    all_atom_types = sorted(list(set([a for t in tersoff_params for a in t.indices])))
+
+    # Get a list of two-body interactions without symmetry
+    two_body = []
+    for i, a in enumerate(all_atom_types):
+        for j, b in enumerate(all_atom_types):
+            if i == j or (b, a) in two_body:
+                continue
+            two_body.append((a, b))
+
+    return two_body
+
+def sorted_force_2body_symmetry(tersoff_params):
+    '''
+    In the case of randomly generating parameters, we may want to randomly
+    force the 2body symmetry condition.
+
+    **Parameters**
+
+        tersoff_params: *list,* :class:`Tersoff`
+            A list of Tersoff objects.
+
+    **Returns**
+
+        corrected_tersoff_params: *list,* :class:`Tersoff`
+            A list of Tersoff objects with the 2body symmetry condition ensured.
+    '''
+
+    two_body = _unique_grab_2body(tersoff_params)
+
+    # Find all (b, a) and assign to values of (a, b)
+    for a, b in two_body:
+        index1 = tersoff_params.index((a, b, b))
+        index2 = tersoff_params.index((b, a, a))
+        tersoff_params[index2].update_2body(tersoff_params[index1])
+
+    return tersoff_params
+
+
+def tag_tersoff_for_duplicate_2bodies(tersoff_params):
+    '''
+    This function will mimic the sorted_force_2body_symmetry and tag the duplicates
+    that would be set by sorted_force_2body_symmetry.
+
+    **Parameters**
+
+        tersoff_params: *list,* :class:`Tersoff`
+            A list of Tersoff objects.
+
+    **Returns**
+
+        trimmed_tersoff_params: *list,* :class:`Tersoff`
+            A list of the unique Tersoff objects.
+
+    **Returns**
+    '''
+
+    two_body = _unique_grab_2body(tersoff_params)
+
+    for a, b in two_body:
+        index = tersoff_params.index((b, a, a))
+        tersoff_params[index].sym_2body_tag = True
+        self.N_params = 8  # Essentially, we no longer recognize the other params here.
+        
+
+    return tersoff_params
 
