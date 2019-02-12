@@ -330,7 +330,8 @@ class Parameters(object):
             self.morse_params = Morse.generate(self.smrff_types)
         if self.tersoff_mask:
             self.tersoff_params = Tersoff.generate(self.smrff_types, form=form)
-            self.tersoff_params = sorted_force_2body_symmetry(self.tersoff_params)
+            #self.tersoff_params = sorted_force_2body_symmetry(self.tersoff_params)
+            sorted_force_2body_symmetry(self.tersoff_params)
             verify_tersoff_2body_symmetry(self.tersoff_params)
 
 #    def opls_atom_2_struct(self):
@@ -443,7 +444,8 @@ class Parameters(object):
         '''
 
         if trim_tersoff_2body:
-            self.tersoff_params = tag_tersoff_for_duplicate_2bodies(self.tersoff_params)
+            #self.tersoff_params = tag_tersoff_for_duplicate_2bodies(self.tersoff_params)
+            tag_tersoff_for_duplicate_2bodies(self.tersoff_params)
 
         param_list = [
             ("COULOMB", self.coul_params, self.coul_mask),
@@ -673,7 +675,8 @@ class Parameters(object):
                     p.pack(params[offset: offset + p.N_params + int(with_indices)])
                 offset += p.N_params + int(with_indices)
 
-        self.tersoff_params = sorted_force_2body_symmetry(self.tersoff_params)
+        #self.tersoff_params = sorted_force_2body_symmetry(self.tersoff_params)
+        sorted_force_2body_symmetry(self.tersoff_params)
         
 
     def dump_style(self, style=None, tfile_name=None, tstyle_smrff=False, write_file=False):
@@ -1057,16 +1060,14 @@ class Parameters(object):
         elif style.startswith("ters"):
             assert label in self.tersoff_params, "Label %s does not exist in tersoff list!" % str(label)
             indices = [i for i, p in enumerate(self.tersoff_params) if p == label]
+            two_body_strings = ["all", "n", "beta", "lambda1", "lambda2", "A", "B"]
             for i in indices:
                 a, b, c = self.tersoff_params[i].indices
-                if a != b and b == c:
+                self.tersoff_params[i].fix(params=params, value=value)
+                if a != b and b == c and params in two_body_strings:
                     # We must handle symmetry constraints for 2-body parameters!
-                    if params in ["all", "n", "beta", "lambda1", "lambda2", "A", "B"]:
-                        i2 = self.tersoff_params.index((b, a, a))
-                        self.tersoff_params[i].fix(params=params, value=value)
-                        self.tersoff_params[i2].update_2body(self.tersoff_params[i])
-                else:
-                    self.tersoff_params[i].fix(params=params, value=value)
+                    i2 = self.tersoff_params.index((b, a, a))
+                    self.tersoff_params[i2].update_2body(self.tersoff_params[i])
             verify_tersoff_2body_symmetry(self.tersoff_params)
         else:
             raise Exception("Cannot handle the style %s." % style)

@@ -460,7 +460,18 @@ class Tersoff(object):
             assert param >= (bound[0] - BOUND_EPS) and param <= (bound[1] + BOUND_EPS), "In Tersoff %s, parameter %s = %.2f is outside of it's range = [%.2f, %.2f]!" % (str(self.indices), name, param, bound[0], bound[1])
 
     def _turn_off(self, leave_two_body_on):
-        print("Turning off %s" % str(self.indices))
+        '''
+        Two possibilities exist when turning off 3-body only.  First is to
+        set beta to 0, and n to 1.  This would set b_ij = 1, effectively
+        simplifying parameters such that we get Ae^{-lambda1r} - Be^{-lambda2r}.
+        The other is to set gamma to 1, c to 0, and lambda3 to 0.  This would
+        have the effect of leaving beta and n active; however, wouldn't really
+        make much difference as we could simply redefine:
+            B' = B * (1 + beta^n)^{-1/(2n)}
+        Thus, we will go with the simpler version of setting beta=0.  This
+        has the added benefit of reducing parameters.
+        '''
+
         # If this is not a two-body one, then switch to False
         if leave_two_body_on and self.indices[1] != self.indices[2]:
             leave_two_body_on = False
@@ -870,6 +881,8 @@ def _unique_grab_2body(tersoff_params):
                 continue
             two_body.append((a, b))
 
+    del all_atom_types
+
     return two_body
 
 def sorted_force_2body_symmetry(tersoff_params):
@@ -896,7 +909,7 @@ def sorted_force_2body_symmetry(tersoff_params):
         index2 = tersoff_params.index((b, a, a))
         tersoff_params[index2].update_2body(tersoff_params[index1])
 
-    return tersoff_params
+#    return tersoff_params
 
 
 def tag_tersoff_for_duplicate_2bodies(tersoff_params):
@@ -924,5 +937,5 @@ def tag_tersoff_for_duplicate_2bodies(tersoff_params):
         tersoff_params[index].sym_2body_tag = True
         tersoff_params[index].N_params = 8  # Essentially, we no longer recognize the other params here.
 
-    return tersoff_params
+#    return tersoff_params
 
