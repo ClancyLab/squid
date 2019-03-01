@@ -936,6 +936,11 @@ def _read_lammpstrj_big(name,
 # VMD automatically reads this when labelled as .lammpstrj
 def write_lammpstrj(frames_or_system, name_or_file=None, timesteps=None,
                     box_bounds_list=None, attrs='id type x y z'):
+    '''
+    Write a lammps trajectory file from system or from atom frames.
+
+    *NOTE!* MORE DETAILS NEEDED IN THIS DOCSTRING! RAISE AWARENESS.
+    '''
     # Set to default filename if not set (out.lammpstrj)
     if not name_or_file:
         name_or_file = 'out'

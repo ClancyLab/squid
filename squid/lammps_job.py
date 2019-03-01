@@ -5,8 +5,6 @@ The lammps_job module contains .
 - :func:`read_dump`
 - :func:`job`
 - :func:`read_TIP4P_types`
-- :func:`PotEngSurfaceJob`
-- :func:`PotEngSurfaceJob_v2`
 - :func:`OptJob`
 - :func:`thermo_2_text`
 - :func:`read_thermo`
