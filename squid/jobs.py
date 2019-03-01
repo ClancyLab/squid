@@ -785,6 +785,10 @@ def pysub(job_name,
         queue: *str, optional*
             Which queue you want your script to run on (specific to
             your queueing system).
+        walltime: *str, optional*
+            How long to post the job on the queue for in d-h:m:s where d are
+            days, h are hours, m are minutes, and s are seconds.  Default is
+            for 30 minutes (00:30:00).
         priority: *int, optional*
             Priority of the simulation (queueing system dependent).  Priority
             ranges (in NBS) from a low of 1 (start running whenever) to a

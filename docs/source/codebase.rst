@@ -31,16 +31,16 @@ files
 .. automodule:: files
     :members:
 
-.. ff_params
-.. --------------------
-.. 
-.. .. automodule:: ff_params
-..    :members:
+ff_params
+--------------------
 
-.. forcefields
-.. --------------------
-.. 
-.. .. include:: forcefields.rst
+.. automodule:: ff_params
+   :members:
+
+forcefields
+--------------------
+
+.. include:: forcefields.rst
 
 frc_opls
 --------------------

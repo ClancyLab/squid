@@ -268,6 +268,7 @@ def job(run_name,
         procs=1,
         ntasks=1,
         nodes=1,
+        walltime="00:30:00",
         adjust_nodes=True,
         email=None,
         write_data_file=True,
@@ -304,6 +305,10 @@ def job(run_name,
             (For SLURM) The number of nodes this job requires.  If requesting
             ntasks * procs < 24 * nodes, a warning is printed, as on MARCC
             each node has only 24 cores.
+        walltime: *str, optional*
+            How long to post the job on the queue for in d-h:m:s where d are
+            days, h are hours, m are minutes, and s are seconds.  Default is
+            for 30 minutes (00:30:00).
         adjust_nodes: *bool, optional*
             Whether to automatically calculate how many nodes is necessary
             when the user underspecifies nodes.
@@ -401,6 +406,7 @@ length is 31." % len(run_name))
                                      nodes=nodes,
                                      adjust_nodes=adjust_nodes,
                                      queue=queue,
+                                     walltime=walltime,
                                      additional_env_vars=sysconst.lmp_env_vars,
                                      email=email,
                                      redundancy=redundancy,

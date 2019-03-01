@@ -237,17 +237,18 @@ class Atom(_Physical):
     
     def flatten(self):
         """
-        Obtain simplified position output.
+        Obtain simplified position output.  NOTE! This is in a list, not a
+        numpy array, so keep this in mind.
 
         **Returns**
 
             pos: *list, float*
                 A list holding the x, y, and z position of this atom.
         """
-        return [self.x,self.y,self.z]
+        return [self.x, self.y, self.z]
     
     
-    def set_position(self,pos):
+    def set_position(self, pos):
         """
         Manually set the atomic positions by passing a tuple/list.
 

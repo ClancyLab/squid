@@ -66,12 +66,8 @@ def parse_pfile(parameter_file=sysconst.opls_path, pair_style='lj/cut'):
                 atom_type.element = 0  # reject united-atom parameters
             atom_types.append(atom_type)
         elif columns[0] == 'vdw':
-            atom_types[int(columns[1]) - 1].vdw_r = max(float(columns[2]),
-                                                        1.0)
-            # Unknown why we have this, but set to small number.
-            # Legacy code from James Stevenson.
-            atom_types[int(columns[1]) - 1].vdw_e = max(float(columns[3]),
-                                                        1E-5)
+            atom_types[int(columns[1]) - 1].vdw_r = float(columns[2])
+            atom_types[int(columns[1]) - 1].vdw_e = float(columns[3])
         elif columns[0] == 'charge':
             atom_types[int(columns[1]) - 1].charge = float(columns[2])
         elif columns[0] == 'bond':
