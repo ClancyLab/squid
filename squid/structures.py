@@ -604,12 +604,13 @@ class Molecule(_Physical):
 
             None
         """
-        positions = positions.flatten().reshape((-1,3))
+        positions = np.array(positions).flatten().reshape((-1,3))
         if len(positions) != len(self.atoms) and not new_atom_list:
             raise Exception("position list does not hold the same number of atoms as does this molecule. Consider raising new_atom_list flag in set_positions.")
-        if new_atom_list: self.atoms = [Atom("",p[0],p[1],p[2]) for p in positions]
+        if new_atom_list:
+            self.atoms = [Atom("", p[0], p[1], p[2]) for p in positions]
         else:
-            for a,b in zip(self.atoms, positions):
+            for a, b in zip(self.atoms, positions):
                 a.x, a.y, a.z = b[0], b[1], b[2]
 
     def get_center_of_geometry(self, skip_H=False):
