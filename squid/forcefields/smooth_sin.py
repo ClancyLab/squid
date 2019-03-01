@@ -25,46 +25,46 @@ The Smooth class contains:
 
 
 class SmoothSin(object):
+    '''
+    Initialize the smooth object for sin_l/sin_r/sin_inout smooths.
+
+    **Parameters**
+
+        smooth_index: *int*
+            Which smooth function this is applied to (0th, 1st, etc).
+        atom_i: *int*
+            Which atom type this applies to.  Note, using None is the same as *.
+        atom_j: *int*
+            Which atom type this applies to.  Note, using None is the same as *.=
+        r_in: *float*
+            The inner cutoff.
+        d_in: *float*
+            The inner cutoff radius.
+        gcut: *float*
+            The global cutoff, to never be exceeded.
+        r_out: *float, optional*
+            The outer cutoff.
+        d_out: *float, optional*
+            The outer cutoff radius.
+        lr: *str, optional*
+            If r_out and d_out are NOT specified, you MUST specify this. It is either
+            l or r to specify which direction this smooth is.
+        c_r: *float*
+            Coupled cutoff.  Only necessary if inout was used.
+        c_d: *float*
+            Coupled cutoff radius.  Only necessary if inout was used.
+        c_lr: *str*
+            If c_r and c_d are NOT specified, you MUST specify this. It is either
+            l or r to specify which direction this smooth is.
+        c_gcut: *float*
+            Coupled global cutoff, to never be exceeded.  Only necessary if inout is used.
+        c_s_index: *int*
+            Which smooth funciton this applies to (0th, 1st, etc).
+    '''
     def __init__(self, smooth_index, atom_i, atom_j, r_in, d_in, gcut,
                  r_out=None, d_out=None, lr=None,
                  c_r=None, c_d=None, c_lr=None,
                  c_gcut=None, c_s_index=None):
-        '''
-        Initialize the smooth object for sin_l/sin_r/sin_inout smooths.
-
-        **Parameters**
-
-            smooth_index: *int*
-                Which smooth function this is applied to (0th, 1st, etc).
-            atom_i: *int*
-                Which atom type this applies to.  Note, using None is the same as *.
-            atom_j: *int*
-                Which atom type this applies to.  Note, using None is the same as *.=
-            r_in: *float*
-                The inner cutoff.
-            d_in: *float*
-                The inner cutoff radius.
-            gcut: *float*
-                The global cutoff, to never be exceeded.
-            r_out: *float, optional*
-                The outer cutoff.
-            d_out: *float, optional*
-                The outer cutoff radius.
-            lr: *str, optional*
-                If r_out and d_out are NOT specified, you MUST specify this. It is either
-                l or r to specify which direction this smooth is.
-            c_r: *float*
-                Coupled cutoff.  Only necessary if inout was used.
-            c_d: *float*
-                Coupled cutoff radius.  Only necessary if inout was used.
-            c_lr: *str*
-                If c_r and c_d are NOT specified, you MUST specify this. It is either
-                l or r to specify which direction this smooth is.
-            c_gcut: *float*
-                Coupled global cutoff, to never be exceeded.  Only necessary if inout is used.
-            c_s_index: *int*
-                Which smooth funciton this applies to (0th, 1st, etc).
-        '''
         self.smooth_index = smooth_index
         self.atom_i = atom_i
         self.atom_j = atom_j

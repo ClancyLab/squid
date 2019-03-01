@@ -35,87 +35,87 @@ The Tersoff class contains:
 
 
 class Tersoff(object):
+    '''
+    Initialize the Tersoff object.  The potential form can be found on the
+    LAMMPs webpage (http://lammps.sandia.gov/doc/pair_tersoff.html).  Either
+    specify all the parameters, or pass a string to line, but not both.  If
+    both are specified, an error will be thrown.
+
+    **Parameters**
+
+        indices: *list or tuple, str or int*
+            The indices of the atom types in this three-body interaction.
+
+        m: *int*
+            m is an exponential term in the zeta component of the Tersoff
+            potential.  It is either 1 or 3.
+
+        gamma: *float*
+            gamma is a prefactor to g(theta) in the Tersoff potential,
+            and is between 0 (completely off) and 1 (completely on).
+
+        lambda3: *float*
+            lambda3 is the exponential coefficient of the three-body
+            tersoff interaction.
+
+        c: *float*
+            c describes the numerator part of the three-body interaction
+            (found withing the g(theta) term).
+
+        d: *float*
+            d describes the denominator part of the three-body interaction
+            (found withing the g(theta) term).
+
+        costheta0: *float*
+            costheta0 gives an equilibrium angle of sorts for the
+            three-body interaction.  As such, it is restricted between -1
+            and 1.
+
+        n: *float*
+            n is a power that the three-body interaction is taken to (or
+            to some function of n).
+
+        beta: *float*
+            beta is some scaling to the three-body interactions, found in
+            the b_ij term of the Tersoff potential.
+
+        lambda2: *float*
+            lambda2 is the exponential coefficient of the two-body
+            attraction term in the tersoff interaction.
+
+        B: *float*
+            B is the pre-factor to the two-body attraction term in the
+            tersoff interaction.
+
+        R: *float*
+            R is a component of the tersoff potential's cutoff distance.
+
+        D: *float*
+            D is a component of the tersoff potential's cutoff distance.
+
+        lambda1: *float*
+            lambda1 is the exponential coefficient of the two-body
+            repulsion term in the tersoff interaction.
+
+        A: *float*
+            A is the pre-factor to the two-body repulsion term in the
+            tersoff interaction.
+
+        line: *str*
+            A line from a parameter file to be parsed.
+
+        form: *str*
+            Whether to use the original form (m=3, gamma=1) or the
+            Albe et al form (m=1, beta=1).  Must be original or albe.
+
+    **Returns**
+
+        tersoff: :class:`Tersoff`
+            A Tersoff object.
+    '''
     def __init__(self, indices=None, m=None, gamma=None, lambda3=None, c=None, d=None,
                  costheta0=None, n=None, beta=None, lambda2=None, B=None, R=None,
                  D=None, lambda1=None, A=None, line=None, form="original"):
-        '''
-        Initialize the Tersoff object.  The potential form can be found on the
-        LAMMPs webpage (http://lammps.sandia.gov/doc/pair_tersoff.html).  Either
-        specify all the parameters, or pass a string to line, but not both.  If
-        both are specified, an error will be thrown.
-
-        **Parameters**
-
-            indices: *list or tuple, str or int*
-                The indices of the atom types in this three-body interaction.
-
-            m: *int*
-                m is an exponential term in the zeta component of the Tersoff
-                potential.  It is either 1 or 3.
-
-            gamma: *float*
-                gamma is a prefactor to g(theta) in the Tersoff potential,
-                and is between 0 (completely off) and 1 (completely on).
-
-            lambda3: *float*
-                lambda3 is the exponential coefficient of the three-body
-                tersoff interaction.
-
-            c: *float*
-                c describes the numerator part of the three-body interaction
-                (found withing the g(theta) term).
-
-            d: *float*
-                d describes the denominator part of the three-body interaction
-                (found withing the g(theta) term).
-
-            costheta0: *float*
-                costheta0 gives an equilibrium angle of sorts for the
-                three-body interaction.  As such, it is restricted between -1
-                and 1.
-
-            n: *float*
-                n is a power that the three-body interaction is taken to (or
-                to some function of n).
-
-            beta: *float*
-                beta is some scaling to the three-body interactions, found in
-                the b_ij term of the Tersoff potential.
-
-            lambda2: *float*
-                lambda2 is the exponential coefficient of the two-body
-                attraction term in the tersoff interaction.
-
-            B: *float*
-                B is the pre-factor to the two-body attraction term in the
-                tersoff interaction.
-
-            R: *float*
-                R is a component of the tersoff potential's cutoff distance.
-
-            D: *float*
-                D is a component of the tersoff potential's cutoff distance.
-
-            lambda1: *float*
-                lambda1 is the exponential coefficient of the two-body
-                repulsion term in the tersoff interaction.
-
-            A: *float*
-                A is the pre-factor to the two-body repulsion term in the
-                tersoff interaction.
-
-            line: *str*
-                A line from a parameter file to be parsed.
-
-            form: *str*
-                Whether to use the original form (m=3, gamma=1) or the
-                Albe et al form (m=1, beta=1).  Must be original or albe.
-
-        **Returns**
-
-            tersoff: :class:`Tersoff`
-                A Tersoff object.
-        '''
 
         form = form.lower()
         assert form in ["original", "albe"], "Error - Form must be either original or albe"

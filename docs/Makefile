@@ -236,4 +236,4 @@ full: html latexpdf
 
 .PHONY: html2
 html2: html
-	cd $(BUILDDIR)/html; echo $(CURDIR)/$(BUILDDIR)/html; git branch; git add .; git commit -m "rebuilt docs"; git push origin gh-pages; cd $(SOURCEDIR); echo $(CURDIR)/$(SOURCEDIR); git branch; git add README.rst; git commit -m "rebuilt docs"; git push
+	cd $(BUILDDIR)/html; echo $(CURDIR)/$(BUILDDIR)/html; git branch; git add .; git commit -m "rebuilt docs"; git push origin gh-pages; cd $(SOURCEDIR); echo $(CURDIR)/$(SOURCEDIR); git branch; git add README.rst; git commit -m "rebuilt docs"

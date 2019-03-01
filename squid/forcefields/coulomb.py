@@ -18,20 +18,20 @@ CHARGE_UPPER_LIMIT = 4.0
 CHARGE_LOWER_LIMIT = 0.01
 
 class Coul(object):
+    """
+    Initialize the coulomb object.
+    **Parameters**
+        index: *str or int*
+            The index of the atom type.
+        charge: *float*
+            The charge.
+        line: *str*
+            A line from a parameter file to be parsed.
+    **Returns**
+        coulomb: :class:`Coul`
+            A Coul object.
+    """
     def __init__(self, index=None, charge=None, mass=None, element=None, line=None):
-        """
-        Initialize the coulomb object.
-        **Parameters**
-            index: *str or int*
-                The index of the atom type.
-            charge: *float*
-                The charge.
-            line: *str*
-                A line from a parameter file to be parsed.
-        **Returns**
-            coulomb: :class:`Coul`
-                A Coul object.
-        """
         # How many parameters exist in this potential
         self.N_params = 1
 

@@ -5,23 +5,24 @@ from squid.forcefields.helper import check_restriction
 
 
 class HarmonicConnector(object):
+    """
+    Initialize the LJ object.  Either pass indices + energies + equilibs,
+    or pass line.  If all are passed, then an error will be thrown.
+    **Parameters**
+        indices: *list or tuple, str or int*
+            The indices of the atom types in this connection.
+        energies: *list, float*
+            A list of energies associated with this connection.
+        equilibs: *list, float*
+            A list of equilibrium distances/angles for this connection.
+        line: *str*
+            A line from a parameter file to be parsed.
+    **Returns**
+        HarmonicConnector: :class:`HarmonicConnector`
+            A HarmonicConnector object.
+    """
+
     def __init__(self, indices=None, energies=None, equilibs=None, line=None):
-        """
-        Initialize the LJ object.  Either pass indices + energies + equilibs,
-        or pass line.  If all are passed, then an error will be thrown.
-        **Parameters**
-            indices: *list or tuple, str or int*
-                The indices of the atom types in this connection.
-            energies: *list, float*
-                A list of energies associated with this connection.
-            equilibs: *list, float*
-                A list of equilibrium distances/angles for this connection.
-            line: *str*
-                A line from a parameter file to be parsed.
-        **Returns**
-            HarmonicConnector: :class:`HarmonicConnector`
-                A HarmonicConnector object.
-        """
 
         if all([x is None for x in [indices, energies, equilibs]]) and line is not None:
             self.assign_line(line)

@@ -28,23 +28,24 @@ The LJ class contains:
 
 
 class LJ(object):
+    '''
+    Initialize the LJ object.  Either pass index + sigma + epsilon,
+    or pass line.  If all are passed, then an error will be thrown.
+    **Parameters**
+        index: *str or int*
+            The index of the atom type.
+        sigma: *float*
+            Sigma in LJ expression.
+        epsilon: *float*
+            Epsilon in LJ expression.
+        line: *str*
+            A line from a parameter file to be parsed.
+    **Returns**
+        lj: :class:`LJ`
+            A LJ object.
+    '''
+
     def __init__(self, index=None, sigma=None, epsilon=None, line=None):
-        '''
-        Initialize the LJ object.  Either pass index + sigma + epsilon,
-        or pass line.  If all are passed, then an error will be thrown.
-        **Parameters**
-            index: *str or int*
-                The index of the atom type.
-            sigma: *float*
-                Sigma in LJ expression.
-            epsilon: *float*
-                Epsilon in LJ expression.
-            line: *str*
-                A line from a parameter file to be parsed.
-        **Returns**
-            lj: :class:`LJ`
-                A LJ object.
-        '''
         # How many parameters exist in this potential
         self.N_params = 2
 

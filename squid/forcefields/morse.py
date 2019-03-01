@@ -31,31 +31,32 @@ The Morse class contains:
 
 
 class Morse(object):
+    '''
+    Initialize the Morse object.  The potential form can be found on the
+    LAMMPs webpage (http://lammps.sandia.gov/doc/pair_Morse.html).  Either
+    specify all the parameters, or pass a string to line, but not both.  If
+    both are specified, an error will be thrown.
+    **Parameters**
+        indices: *list or tuple, str or int*
+            The indices of the atom types in this pairwise interaction.
+        D0: *float*
+            D0 describes the well depth (energy units)
+            (defined relative to the dissociated atoms).
+        alpha: *float*
+            alpha controls the 'width' of the potential
+            (the smaller alpha is, the larger the well).
+        r0: *float*
+            r0 describes the equilibrium bond distance.
+        rc: *float*
+            rc describes the cutoff of the pairwise interaction.
+        line: *str*
+            A line from a parameter file to be parsed.
+    **Returns**
+        Morse: :class:`Morse`
+            A Morse object.
+    '''
+
     def __init__(self, indices=None, D0=None, alpha=None, r0=None, rc=None, line=None):
-        '''
-        Initialize the Morse object.  The potential form can be found on the
-        LAMMPs webpage (http://lammps.sandia.gov/doc/pair_Morse.html).  Either
-        specify all the parameters, or pass a string to line, but not both.  If
-        both are specified, an error will be thrown.
-        **Parameters**
-            indices: *list or tuple, str or int*
-                The indices of the atom types in this pairwise interaction.
-            D0: *float*
-                D0 describes the well depth (energy units)
-                (defined relative to the dissociated atoms).
-            alpha: *float*
-                alpha controls the 'width' of the potential
-                (the smaller alpha is, the larger the well).
-            r0: *float*
-                r0 describes the equilibrium bond distance.
-            rc: *float*
-                rc describes the cutoff of the pairwise interaction.
-            line: *str*
-                A line from a parameter file to be parsed.
-        **Returns**
-            Morse: :class:`Morse`
-                A Morse object.
-        '''
         # Assign default bounds
         # For the programmer: The bounds need reconsidering.
         self.D0_bounds = (0.1, 1000)

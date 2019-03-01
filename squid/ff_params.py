@@ -1,33 +1,8 @@
 """
 The Parameters class contains: 
 
-- :func:`__init__`
-- :func:`__add__`
-- :func:`__repr__`
-- :func:`forcefield`
-- :func:`generate`
-- :func:`opls_atom_2_struct`
-- :func:`set_all_masks`
-- :func:`set_mask`
-- :func:`set_opls_mask`
-- :func:`load_opls`
-- :func:`load_smrff`
-- :func:`write_smrff`
-- :func:`unpack`
-- :func:`pack`
-- :func:`dump_style`
-- :func:`mapper`
-- :func:`dump_bonds`
-- :func:`dump_angles`
-- :func:`dump_dihedrals`
-- :func:`dump_lj_cut_coul_cut`
-- :func:`dump_smooths`
-- :func:`dump_tersoff`
-- :func:`dump_morse`
-- :func:`dump_set_charge`
-- :func:`find_maximum`
-- :func:`get_smrff_style`
-- :func:`num_free_parameters`
+- :class:`Parameters`
+
 ------------
 
 """
@@ -53,27 +28,27 @@ OPLS_STRUCTURES = ["BONDS", "ANGLES", "DIHEDRALS"]
 
 
 class Parameters(object):
+    """
+    A Parameters object that holds all parameters pointed out by fptr.
+
+    **Parameters**
+
+        fptr: *list, tuple, str, str, optional*
+            A list of tuples, holding two strings: the force field type
+            (either OPLS or SMRFF right now), and the path to the
+            parameter file.  If no path is specified, we will try to grab
+            the one assigned in sysconst.
+        restrict: *list, str, optional*
+            A list of strings specifying which types are to be used.
+            Note, you must have unique types, lest they be overwritten.
+
+    **Returns**
+
+        params: :class:`Parameters`
+            This object.
+    """
+
     def __init__(self, fptr=[("OPLS", sysconst.opls_path)], restrict=None):
-        '''
-        A Parameters object that holds all parameters pointed out by fptr.
-
-        **Parameters**
-
-            fptr: *list, tuple, str, str, optional*
-                A list of tuples, holding two strings: the force field type
-                (either OPLS or SMRFF right now), and the path to the
-                parameter file.  If no path is specified, we will try to grab
-                the one assigned in sysconst.
-            restrict: *list, str, optional*
-                A list of strings specifying which types are to be used.
-                Note, you must have unique types, lest they be overwritten.
-
-        **Returns**
-
-            params: :class:`Parameters`
-                This object.
-
-        '''
         # Initialize empty data
         #####################################
         self.lj_params = []
