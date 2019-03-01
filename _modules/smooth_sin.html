@@ -1,0 +1,567 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>smooth_sin &#8212; Squid 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for smooth_sin</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Class object for the sin_l/sin_r/sin_inout smooths.</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">combinations_with_replacement</span>
+<span class="kn">from</span> <span class="nn">squid.forcefields.helper</span> <span class="k">import</span> <span class="n">check_restriction</span>
+
+
+<span class="c1"># The offset for the bounds based off of gcut</span>
+<span class="c1"># Thus, bounds become:</span>
+<span class="c1">#  d_in = (LOWER_CUT, gcut * RADII_OFFSET)</span>
+<span class="c1">#  r_in = (gcut * RADII_OFFSET, gcut * (1.0 - RADII_OFFSET))</span>
+<span class="c1"># Note, epsilon is used to try and prevent things from overlapping.</span>
+<span class="n">RADII_OFFSET</span> <span class="o">=</span> <span class="mf">0.2</span>
+<span class="n">EPSILON</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="n">LOWER_CUT</span> <span class="o">=</span> <span class="mf">0.2</span>
+<span class="n">SMOOTH_PFILE_ID</span> <span class="o">=</span> <span class="s2">&quot;SMOOTHS&quot;</span>
+<span class="n">END_ID</span> <span class="o">=</span> <span class="s2">&quot;END&quot;</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The Smooth class contains:</span>
+
+<span class="sd">------------</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="SmoothSin"><a class="viewcode-back" href="../forcefields.html#smooth_sin.SmoothSin">[docs]</a><span class="k">class</span> <span class="nc">SmoothSin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Initialize the smooth object for sin_l/sin_r/sin_inout smooths.</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">        smooth_index: *int*</span>
+<span class="sd">            Which smooth function this is applied to (0th, 1st, etc).</span>
+<span class="sd">        atom_i: *int*</span>
+<span class="sd">            Which atom type this applies to.  Note, using None is the same as *.</span>
+<span class="sd">        atom_j: *int*</span>
+<span class="sd">            Which atom type this applies to.  Note, using None is the same as *.=</span>
+<span class="sd">        r_in: *float*</span>
+<span class="sd">            The inner cutoff.</span>
+<span class="sd">        d_in: *float*</span>
+<span class="sd">            The inner cutoff radius.</span>
+<span class="sd">        gcut: *float*</span>
+<span class="sd">            The global cutoff, to never be exceeded.</span>
+<span class="sd">        r_out: *float, optional*</span>
+<span class="sd">            The outer cutoff.</span>
+<span class="sd">        d_out: *float, optional*</span>
+<span class="sd">            The outer cutoff radius.</span>
+<span class="sd">        lr: *str, optional*</span>
+<span class="sd">            If r_out and d_out are NOT specified, you MUST specify this. It is either</span>
+<span class="sd">            l or r to specify which direction this smooth is.</span>
+<span class="sd">        c_r: *float*</span>
+<span class="sd">            Coupled cutoff.  Only necessary if inout was used.</span>
+<span class="sd">        c_d: *float*</span>
+<span class="sd">            Coupled cutoff radius.  Only necessary if inout was used.</span>
+<span class="sd">        c_lr: *str*</span>
+<span class="sd">            If c_r and c_d are NOT specified, you MUST specify this. It is either</span>
+<span class="sd">            l or r to specify which direction this smooth is.</span>
+<span class="sd">        c_gcut: *float*</span>
+<span class="sd">            Coupled global cutoff, to never be exceeded.  Only necessary if inout is used.</span>
+<span class="sd">        c_s_index: *int*</span>
+<span class="sd">            Which smooth funciton this applies to (0th, 1st, etc).</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smooth_index</span><span class="p">,</span> <span class="n">atom_i</span><span class="p">,</span> <span class="n">atom_j</span><span class="p">,</span> <span class="n">r_in</span><span class="p">,</span> <span class="n">d_in</span><span class="p">,</span> <span class="n">gcut</span><span class="p">,</span>
+                 <span class="n">r_out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">d_out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">c_r</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">c_d</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">c_lr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">c_gcut</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">c_s_index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">smooth_index</span> <span class="o">=</span> <span class="n">smooth_index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atom_i</span> <span class="o">=</span> <span class="n">atom_i</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atom_j</span> <span class="o">=</span> <span class="n">atom_j</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r_in</span> <span class="o">=</span> <span class="n">r_in</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d_in</span> <span class="o">=</span> <span class="n">d_in</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r_out</span> <span class="o">=</span> <span class="n">r_out</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d_out</span> <span class="o">=</span> <span class="n">d_out</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="n">lr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gcut</span> <span class="o">=</span> <span class="n">gcut</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">c_r</span> <span class="o">=</span> <span class="n">c_r</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c_d</span> <span class="o">=</span> <span class="n">c_d</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c_lr</span> <span class="o">=</span> <span class="n">c_lr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c_gcut</span> <span class="o">=</span> <span class="n">c_gcut</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c_s_index</span> <span class="o">=</span> <span class="n">c_s_index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coupled</span> <span class="o">=</span> <span class="n">c_s_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">N_params</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">r_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">c_r</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
+
+        <span class="c1">#########################################################################</span>
+        <span class="c1"># Generate the bounds based on input cuts</span>
+        <span class="n">R_IN_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="n">gcut</span> <span class="o">*</span> <span class="n">RADII_OFFSET</span><span class="p">,</span> <span class="n">gcut</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">RADII_OFFSET</span><span class="p">))</span>
+        <span class="n">D_IN_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="n">LOWER_CUT</span><span class="p">,</span> <span class="n">gcut</span> <span class="o">*</span> <span class="n">RADII_OFFSET</span> <span class="o">-</span> <span class="n">EPSILON</span><span class="p">)</span>
+
+        <span class="c1"># In the case of inout, we need the outer bounds.  Further, if</span>
+        <span class="c1"># we are coupling with inout and lr is not None, we STILL needs</span>
+        <span class="c1"># the outer bounds</span>
+        <span class="k">if</span> <span class="n">lr</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="n">c_lr</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">coupled</span><span class="p">):</span>
+            <span class="c1"># gcut for bounds will depend on which smooth is further out</span>
+            <span class="k">if</span> <span class="n">coupled</span><span class="p">:</span>
+                <span class="n">local_gcut</span> <span class="o">=</span> <span class="n">coupled_lr_cut</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">local_gcut</span> <span class="o">=</span> <span class="n">gcut</span>
+
+            <span class="n">R_IN_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="n">gcut</span> <span class="o">*</span> <span class="n">RADII_OFFSET</span><span class="p">,</span> <span class="n">gcut</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)</span>
+            <span class="n">R_OUT_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="n">gcut</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">gcut</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">RADII_OFFSET</span><span class="p">))</span>
+            <span class="n">D_IN_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="n">LOWER_CUT</span><span class="p">,</span> <span class="n">gcut</span> <span class="o">*</span> <span class="n">RADII_OFFSET</span> <span class="o">-</span> <span class="n">EPSILON</span><span class="p">)</span>
+            <span class="n">D_OUT_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="n">LOWER_CUT</span><span class="p">,</span> <span class="n">gcut</span> <span class="o">*</span> <span class="n">RADII_OFFSET</span> <span class="o">-</span> <span class="n">EPSILON</span><span class="p">)</span>
+
+            <span class="c1"># In the case when both are inout, we need to also use C_</span>
+            <span class="k">if</span> <span class="n">lr</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">coupled</span> <span class="ow">and</span> <span class="n">c_lr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">R_IN_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="n">gcut</span> <span class="o">*</span> <span class="n">RADII_OFFSET</span><span class="p">,</span> <span class="n">gcut</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span>
+                <span class="n">D_IN_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="n">LOWER_CUT</span><span class="p">,</span> <span class="n">gcut</span> <span class="o">*</span> <span class="n">RADII_OFFSET</span> <span class="o">-</span> <span class="n">EPSILON</span><span class="p">)</span>
+                <span class="n">C_R_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="n">gcut</span> <span class="o">*</span> <span class="n">RADII_OFFSET</span><span class="p">,</span> <span class="n">gcut</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span>
+                <span class="n">C_D_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="n">LOWER_CUT</span><span class="p">,</span> <span class="n">gcut</span> <span class="o">*</span> <span class="n">RADII_OFFSET</span> <span class="o">-</span> <span class="n">EPSILON</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">C_R_BOUNDS</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">C_D_BOUNDS</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">C_R_BOUNDS</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">C_D_BOUNDS</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">R_OUT_BOUNDS</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">D_OUT_BOUNDS</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">R_IN_BOUNDS</span> <span class="o">=</span> <span class="n">R_IN_BOUNDS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">D_IN_BOUNDS</span> <span class="o">=</span> <span class="n">D_IN_BOUNDS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R_OUT_BOUNDS</span> <span class="o">=</span> <span class="n">R_OUT_BOUNDS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">D_OUT_BOUNDS</span> <span class="o">=</span> <span class="n">D_OUT_BOUNDS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">C_R_BOUNDS</span> <span class="o">=</span> <span class="n">C_R_BOUNDS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">C_D_BOUNDS</span> <span class="o">=</span> <span class="n">C_D_BOUNDS</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">smooth_index</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atom_i</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atom_j</span><span class="p">)]</span>
+        <span class="n">line</span> <span class="o">+=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r_in</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d_in</span><span class="p">)]</span>
+        <span class="n">line</span> <span class="o">+=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r_out</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d_out</span><span class="p">)]</span>
+        <span class="n">line</span> <span class="o">+=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c_r</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c_d</span><span class="p">)]</span>
+        <span class="n">line</span> <span class="o">+=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gcut</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c_gcut</span><span class="p">)]</span>
+        <span class="n">line</span> <span class="o">+=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lr</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c_lr</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c_s_index</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="c1"># return self.dump_pair_coeffs(None, skip_restricts=True)</span>
+
+<div class="viewcode-block" id="SmoothSin.parse_line"><a class="viewcode-back" href="../forcefields.html#smooth_sin.SmoothSin.parse_line">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">parse_line</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse line inputs and assign to this object.</span>
+<span class="sd">        **Parameters**</span>
+<span class="sd">            line: *str*</span>
+<span class="sd">                A string that holds a smooth parameter set.</span>
+<span class="sd">        **Returns**</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">local_parse</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="s2">&quot;None&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">t</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+        <span class="n">smooth_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">atom_i</span><span class="p">,</span> <span class="n">atom_j</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">r_in</span><span class="p">,</span> <span class="n">d_in</span><span class="p">,</span> <span class="n">r_out</span><span class="p">,</span> <span class="n">d_out</span><span class="p">,</span> <span class="n">c_r</span><span class="p">,</span> <span class="n">d_r</span><span class="p">,</span> <span class="n">gcut</span><span class="p">,</span> <span class="n">c_gcut</span> <span class="o">=</span> <span class="p">[</span><span class="n">local_parse</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">line</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">11</span><span class="p">]]</span>
+
+        <span class="n">lr</span><span class="p">,</span> <span class="n">c_lr</span> <span class="o">=</span> <span class="p">[</span><span class="n">local_parse</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">line</span><span class="p">[</span><span class="mi">11</span><span class="p">:</span><span class="mi">13</span><span class="p">]]</span>
+        <span class="n">c_s_index</span> <span class="o">=</span> <span class="n">local_parse</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">13</span><span class="p">],</span> <span class="nb">int</span><span class="p">)</span>
+
+        <span class="n">pkg</span> <span class="o">=</span> <span class="p">[</span><span class="n">smooth_index</span><span class="p">,</span> <span class="n">atom_i</span><span class="p">,</span> <span class="n">atom_j</span><span class="p">]</span>
+        <span class="n">pkg</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r_in</span><span class="p">,</span> <span class="n">d_in</span><span class="p">,</span> <span class="n">r_out</span><span class="p">,</span> <span class="n">d_out</span><span class="p">,</span> <span class="n">c_r</span><span class="p">,</span> <span class="n">d_r</span><span class="p">,</span> <span class="n">gcut</span><span class="p">,</span> <span class="n">c_gcut</span><span class="p">]</span>
+        <span class="n">pkg</span> <span class="o">+=</span> <span class="p">[</span><span class="n">lr</span><span class="p">,</span> <span class="n">c_lr</span><span class="p">,</span> <span class="n">c_s_index</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">pkg</span></div>
+
+<div class="viewcode-block" id="SmoothSin.dump_pair_coeffs"><a class="viewcode-back" href="../forcefields.html#smooth_sin.SmoothSin.dump_pair_coeffs">[docs]</a>    <span class="k">def</span> <span class="nf">dump_pair_coeffs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">restricts</span><span class="p">,</span> <span class="n">skip_restricts</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Get the smrff lammps input line for this smooth function.  Specifically</span>
+<span class="sd">        the pair_coeff line.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+
+        <span class="c1"># Handle restrict appropriately</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_i</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s2">&quot;*&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">check_restriction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atom_i</span><span class="p">,</span> <span class="n">restricts</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_j</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s2">&quot;*&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">check_restriction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atom_j</span><span class="p">,</span> <span class="n">restricts</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_i</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ai</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_restricts</span><span class="p">:</span>
+                <span class="n">ai</span> <span class="o">=</span> <span class="n">restricts</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atom_i</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ai</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_i</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_j</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">aj</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_restricts</span><span class="p">:</span>
+                <span class="n">aj</span> <span class="o">=</span> <span class="n">restricts</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atom_j</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">aj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_j</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="s1">&#39;inout&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span><span class="p">:</span>
+            <span class="n">style_name</span> <span class="o">=</span> <span class="s1">&#39;sin_inout&#39;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">==</span> <span class="s1">&#39;l&#39;</span><span class="p">:</span>
+            <span class="n">style_name</span> <span class="o">=</span> <span class="s1">&#39;sin_l&#39;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">==</span> <span class="s1">&#39;r&#39;</span><span class="p">:</span>
+            <span class="n">style_name</span> <span class="o">=</span> <span class="s1">&#39;sin_r&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Error - somehow style name is unknown&quot;</span><span class="p">)</span>
+
+        <span class="n">dists</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">r_in</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_in</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">style_name</span> <span class="o">==</span> <span class="s1">&#39;sin_inout&#39;</span><span class="p">:</span>
+            <span class="n">dists</span> <span class="o">+=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">r_out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_out</span><span class="p">]</span>
+        <span class="n">offset_couple</span> <span class="o">=</span> <span class="n">style_name</span> <span class="o">==</span> <span class="s1">&#39;sin_inout&#39;</span>
+        <span class="n">dists</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;</span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">dists</span><span class="p">])</span>
+    
+        <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;pair_coeff </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%d</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ai</span><span class="p">,</span> <span class="n">aj</span><span class="p">,</span> <span class="n">style_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">smooth_index</span><span class="p">,</span> <span class="n">dists</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">coupled</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_lr</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="s1">&#39;inout&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_lr</span><span class="p">:</span>
+                <span class="n">style_name</span> <span class="o">=</span> <span class="s1">&#39;sin_inout&#39;</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_lr</span> <span class="o">==</span> <span class="s1">&#39;l&#39;</span><span class="p">:</span>
+                <span class="n">style_name</span> <span class="o">=</span> <span class="s1">&#39;sin_l&#39;</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_lr</span> <span class="o">==</span> <span class="s1">&#39;r&#39;</span><span class="p">:</span>
+                <span class="n">style_name</span> <span class="o">=</span> <span class="s1">&#39;sin_r&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Error - somehow style name is unknown&quot;</span><span class="p">)</span>
+
+            <span class="n">dists</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">r_in</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_in</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_d</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">offset_couple</span><span class="p">:</span>
+                <span class="n">dists</span> <span class="o">=</span> <span class="n">dists</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+            <span class="k">if</span> <span class="kc">None</span> <span class="ow">in</span> <span class="n">dists</span><span class="p">:</span>
+                <span class="n">dists</span> <span class="o">=</span> <span class="n">dists</span><span class="p">[:</span><span class="n">dists</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="kc">None</span><span class="p">)]</span>
+            <span class="n">dists</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;</span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">dists</span><span class="p">])</span>
+
+            <span class="n">line</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">line</span> <span class="o">+=</span> <span class="s2">&quot;pair_coeff </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%d</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ai</span><span class="p">,</span> <span class="n">aj</span><span class="p">,</span> <span class="n">style_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_s_index</span><span class="p">,</span> <span class="n">dists</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">line</span></div>
+
+<div class="viewcode-block" id="SmoothSin.unpack"><a class="viewcode-back" href="../forcefields.html#smooth_sin.SmoothSin.unpack">[docs]</a>    <span class="k">def</span> <span class="nf">unpack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">with_bounds</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This function unpacks the smooth object into a list.</span>
+<span class="sd">        **Parameters**</span>
+<span class="sd">            with_indices: *bool, optional*</span>
+<span class="sd">                Whether to also include the indices in the list.</span>
+<span class="sd">            with_bounds: *bool, optional*</span>
+<span class="sd">                Whether to also include the bounds.</span>
+<span class="sd">        **Returns**</span>
+<span class="sd">            Smooth: *list, str/float*</span>
+<span class="sd">                A list of parameters.  With inidices includes smooth_index,</span>
+<span class="sd">                atom_i, and atom_j, else it is only the distances.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+
+        <span class="n">pkg</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">dists</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">r_in</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_in</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dists</span> <span class="o">+=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">r_out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_out</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_r</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dists</span> <span class="o">+=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">c_r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_d</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">with_indices</span><span class="p">:</span>
+            <span class="n">pkg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">smooth_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_s_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_j</span><span class="p">]</span> <span class="o">+</span> <span class="n">dists</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pkg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dists</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">with_bounds</span><span class="p">:</span>
+            <span class="c1"># Get all lower and upper bounds added to pkg</span>
+            <span class="c1"># After this, pkg = [params, lower, upper]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_out</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">bnd</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R_IN_BOUNDS</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D_IN_BOUNDS</span><span class="p">)):</span>
+                    <span class="n">pkg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="o">*</span><span class="n">bnd</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_r</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">bnd</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R_IN_BOUNDS</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D_IN_BOUNDS</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R_OUT_BOUNDS</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D_OUT_BOUNDS</span><span class="p">)):</span>
+                    <span class="n">pkg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="o">*</span><span class="n">bnd</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">bnd</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R_IN_BOUNDS</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D_IN_BOUNDS</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R_OUT_BOUNDS</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D_OUT_BOUNDS</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">C_R_BOUNDS</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">C_D_BOUNDS</span><span class="p">)):</span>
+                    <span class="n">pkg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="o">*</span><span class="n">bnd</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">pkg</span>
+
+        <span class="k">return</span> <span class="n">pkg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="SmoothSin.pack"><a class="viewcode-back" href="../forcefields.html#smooth_sin.SmoothSin.pack">[docs]</a>    <span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">with_index</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This function packs the smooth object from a list.</span>
+<span class="sd">        **Parameters**</span>
+<span class="sd">            params: *list*</span>
+<span class="sd">                A list holding the indices and parameters.</span>
+<span class="sd">        **Returns**</span>
+<span class="sd">            None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="s2">&quot;Error - in smooth packing the array length is wrong! (tried packing </span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="c1"># Auto flip with_index if len(params) == 8 or 10</span>
+        <span class="n">with_index</span> <span class="o">=</span> <span class="n">with_index</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">6</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="n">params</span> <span class="o">+</span> <span class="p">[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">))]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">with_index</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">r_in</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_in</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_d</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">__</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">params</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">smooth_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_s_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_j</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_in</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_in</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_d</span> <span class="o">=</span> <span class="n">params</span></div>
+
+<div class="viewcode-block" id="SmoothSin.generate"><a class="viewcode-back" href="../forcefields.html#smooth_sin.SmoothSin.generate">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">atom_types</span><span class="p">,</span> <span class="n">lri</span><span class="p">,</span> <span class="n">gcut</span><span class="p">,</span> <span class="n">smooth_index</span><span class="p">,</span> <span class="n">coupled</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">coupled_lr_smooth</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">coupled_lr_cut</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">coupled_smooth_index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Randomly generate parameters for smooths.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            atom_types: *list, str*</span>
+<span class="sd">                A list of all the atom types to have parameters generated for.</span>
+<span class="sd">            lri: *str*</span>
+<span class="sd">                Whether this is sin_l, sin_r, or sin_inout.</span>
+<span class="sd">            gcut: *float*</span>
+<span class="sd">                The global cutoff, to not be exceeded.</span>
+<span class="sd">            smooth_index: *int*</span>
+<span class="sd">                This smooth&#39;s index.</span>
+<span class="sd">            coupled: *bool, optional*</span>
+<span class="sd">                Whether to couple this smooth with another smooth or not.  If</span>
+<span class="sd">                so, then all coupled keywords need defining.</span>
+<span class="sd">            coupled_lr_smooth: *str*</span>
+<span class="sd">                Whether this is sin_l, sin_r, or sin_inout.</span>
+<span class="sd">            coupled_lr_cut: *float*</span>
+<span class="sd">                The global cutoff, to not be exceeded.</span>
+<span class="sd">            coupled_smooth_index: *int*</span>
+<span class="sd">                The coupled smooth&#39;s index.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            smooth_objs: *list, SmoothSin*</span>
+<span class="sd">                Returns a list of smooth objects.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">helper</span> <span class="k">import</span> <span class="n">random_in_range</span>
+
+        <span class="n">smooth_objs</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="s2">&quot;inout&quot;</span> <span class="ow">in</span> <span class="n">lri</span><span class="p">:</span>
+            <span class="n">lri</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lri</span> <span class="o">=</span> <span class="n">lri</span><span class="o">.</span><span class="n">strip</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;inout&quot;</span> <span class="ow">in</span> <span class="n">coupled_lr_smooth</span><span class="p">:</span>
+            <span class="n">c_lri</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">c_lri</span> <span class="o">=</span> <span class="n">coupled_lr_smooth</span><span class="o">.</span><span class="n">strip</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">indices</span> <span class="ow">in</span> <span class="n">combinations_with_replacement</span><span class="p">(</span><span class="n">atom_types</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">R_IN_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="n">gcut</span> <span class="o">*</span> <span class="n">RADII_OFFSET</span><span class="p">,</span> <span class="n">gcut</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">RADII_OFFSET</span><span class="p">))</span>
+            <span class="n">D_IN_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="n">LOWER_CUT</span><span class="p">,</span> <span class="n">gcut</span> <span class="o">*</span> <span class="n">RADII_OFFSET</span> <span class="o">-</span> <span class="n">EPSILON</span><span class="p">)</span>
+            <span class="n">r_in</span> <span class="o">=</span> <span class="n">random_in_range</span><span class="p">(</span><span class="n">R_IN_BOUNDS</span><span class="p">)</span>
+            <span class="n">d_in</span> <span class="o">=</span> <span class="n">random_in_range</span><span class="p">(</span><span class="n">D_IN_BOUNDS</span><span class="p">)</span>
+            <span class="n">atom_i</span><span class="p">,</span> <span class="n">atom_j</span> <span class="o">=</span> <span class="n">indices</span>
+
+            <span class="c1"># In the case of inout, we need the outer bounds.  Further, if</span>
+            <span class="c1"># we are coupling with inout and lri is not None, we STILL needs</span>
+            <span class="c1"># the outer bounds</span>
+            <span class="k">if</span> <span class="n">lri</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="n">c_lri</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">coupled</span><span class="p">):</span>
+
+                <span class="c1"># gcut for bounds will depend on which smooth is further out</span>
+                <span class="k">if</span> <span class="n">coupled</span><span class="p">:</span>
+                    <span class="n">local_gcut</span> <span class="o">=</span> <span class="n">coupled_lr_cut</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">local_gcut</span> <span class="o">=</span> <span class="n">gcut</span>
+
+                <span class="n">R_IN_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="n">gcut</span> <span class="o">*</span> <span class="n">RADII_OFFSET</span><span class="p">,</span> <span class="n">gcut</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)</span>
+                <span class="n">R_OUT_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="n">gcut</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">gcut</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">RADII_OFFSET</span><span class="p">))</span>
+                <span class="n">D_IN_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="n">LOWER_CUT</span><span class="p">,</span> <span class="n">gcut</span> <span class="o">*</span> <span class="n">RADII_OFFSET</span> <span class="o">-</span> <span class="n">EPSILON</span><span class="p">)</span>
+                <span class="n">D_OUT_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="n">LOWER_CUT</span><span class="p">,</span> <span class="n">gcut</span> <span class="o">*</span> <span class="n">RADII_OFFSET</span> <span class="o">-</span> <span class="n">EPSILON</span><span class="p">)</span>
+
+                <span class="c1"># In the case when both are inout, we need to also use C_</span>
+                <span class="k">if</span> <span class="n">lri</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">coupled</span> <span class="ow">and</span> <span class="n">c_lri</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">R_IN_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="n">gcut</span> <span class="o">*</span> <span class="n">RADII_OFFSET</span><span class="p">,</span> <span class="n">gcut</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span>
+                    <span class="n">D_IN_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="n">LOWER_CUT</span><span class="p">,</span> <span class="n">gcut</span> <span class="o">*</span> <span class="n">RADII_OFFSET</span> <span class="o">-</span> <span class="n">EPSILON</span><span class="p">)</span>
+                    <span class="n">C_R_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="n">gcut</span> <span class="o">*</span> <span class="n">RADII_OFFSET</span><span class="p">,</span> <span class="n">gcut</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span>
+                    <span class="n">C_D_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="n">LOWER_CUT</span><span class="p">,</span> <span class="n">gcut</span> <span class="o">*</span> <span class="n">RADII_OFFSET</span> <span class="o">-</span> <span class="n">EPSILON</span><span class="p">)</span>
+
+                    <span class="n">c_r</span> <span class="o">=</span> <span class="n">random_in_range</span><span class="p">(</span><span class="n">C_R_BOUNDS</span><span class="p">)</span>
+                    <span class="n">c_d</span> <span class="o">=</span> <span class="n">random_in_range</span><span class="p">(</span><span class="n">C_D_BOUNDS</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">c_r</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="n">c_d</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="n">C_R_BOUNDS</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="n">C_D_BOUNDS</span> <span class="o">=</span> <span class="kc">None</span>
+
+                <span class="n">r_in</span> <span class="o">=</span> <span class="n">random_in_range</span><span class="p">(</span><span class="n">R_IN_BOUNDS</span><span class="p">)</span>
+                <span class="n">d_in</span> <span class="o">=</span> <span class="n">random_in_range</span><span class="p">(</span><span class="n">D_IN_BOUNDS</span><span class="p">)</span>
+
+                <span class="n">r_out</span> <span class="o">=</span> <span class="n">random_in_range</span><span class="p">(</span><span class="n">R_OUT_BOUNDS</span><span class="p">)</span>
+                <span class="n">d_out</span> <span class="o">=</span> <span class="n">random_in_range</span><span class="p">(</span><span class="n">D_OUT_BOUNDS</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">r_out</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">d_out</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">c_r</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">c_d</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">C_R_BOUNDS</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">C_D_BOUNDS</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">R_OUT_BOUNDS</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">D_OUT_BOUNDS</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">smooth_objs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="bp">cls</span><span class="p">(</span>
+                    <span class="n">smooth_index</span><span class="p">,</span> <span class="n">atom_i</span><span class="p">,</span> <span class="n">atom_j</span><span class="p">,</span> <span class="n">r_in</span><span class="p">,</span> <span class="n">d_in</span><span class="p">,</span> <span class="n">gcut</span><span class="p">,</span>
+                    <span class="n">lr</span><span class="o">=</span><span class="n">lri</span><span class="p">,</span>
+                    <span class="n">r_out</span><span class="o">=</span><span class="n">r_out</span><span class="p">,</span> <span class="n">d_out</span><span class="o">=</span><span class="n">d_out</span><span class="p">,</span>
+                    <span class="n">c_r</span><span class="o">=</span><span class="n">c_r</span><span class="p">,</span> <span class="n">c_d</span><span class="o">=</span><span class="n">c_d</span><span class="p">,</span>
+                    <span class="n">c_lr</span><span class="o">=</span><span class="n">c_lri</span><span class="p">,</span> <span class="n">c_gcut</span><span class="o">=</span><span class="n">coupled_lr_cut</span><span class="p">,</span>
+                    <span class="n">c_s_index</span><span class="o">=</span><span class="n">coupled_smooth_index</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">smooth_objs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">R_IN_BOUNDS</span> <span class="o">=</span> <span class="n">R_IN_BOUNDS</span>
+            <span class="n">smooth_objs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">D_IN_BOUNDS</span> <span class="o">=</span> <span class="n">D_IN_BOUNDS</span>
+            <span class="n">smooth_objs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">R_OUT_BOUNDS</span> <span class="o">=</span> <span class="n">R_OUT_BOUNDS</span>
+            <span class="n">smooth_objs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">D_OUT_BOUNDS</span> <span class="o">=</span> <span class="n">D_OUT_BOUNDS</span>
+            <span class="n">smooth_objs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">C_R_BOUNDS</span> <span class="o">=</span> <span class="n">C_R_BOUNDS</span>
+            <span class="n">smooth_objs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">C_D_BOUNDS</span> <span class="o">=</span> <span class="n">C_D_BOUNDS</span>
+
+        <span class="k">return</span> <span class="n">smooth_objs</span></div>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Error Handling</span>
+        <span class="n">err_msg</span> <span class="o">=</span> <span class="s2">&quot;Error - You must specify either both r_out and d_out, or lr.&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span> <span class="n">err_msg</span>
+
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_in</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_in</span><span class="p">,</span> <span class="s2">&quot;Error - d_in cannot be larger than r_in.&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_out</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_out</span><span class="p">,</span> <span class="s2">&quot;Error - d_out cannot be larger than r_out.&quot;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_gcut</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">gcut</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_out</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_out</span><span class="p">,</span> <span class="s2">&quot;Error - r_out + d_out &gt; gcut. (</span><span class="si">%.2f</span><span class="s2"> &gt;= </span><span class="si">%.2f</span><span class="s2"> + </span><span class="si">%.2f</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gcut</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_out</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_gcut</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_out</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_out</span><span class="p">,</span> <span class="s2">&quot;Error - r_out + d_out &gt; c_gcut. (</span><span class="si">%.2f</span><span class="s2"> &gt;= </span><span class="si">%.2f</span><span class="s2"> + </span><span class="si">%.2f</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c_gcut</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_out</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;l&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">],</span> <span class="s2">&quot;Error - lr must be either l or r.&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_gcut</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">gcut</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_in</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_in</span><span class="p">,</span> <span class="s2">&quot;Error - r_in + d_in &gt; gcut. (</span><span class="si">%.2f</span><span class="s2"> &gt;= </span><span class="si">%.2f</span><span class="s2"> + </span><span class="si">%.2f</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gcut</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_in</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_in</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_gcut</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_in</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_in</span><span class="p">,</span> <span class="s2">&quot;Error - r_in + d_in &gt; c_gcut. (</span><span class="si">%.2f</span><span class="s2"> &gt;= </span><span class="si">%.2f</span><span class="s2"> + </span><span class="si">%.2f</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c_gcut</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_in</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_in</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SmoothSin.load_smrff"><a class="viewcode-back" href="../forcefields.html#smooth_sin.SmoothSin.load_smrff">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">load_smrff</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pfile</span><span class="p">,</span> <span class="n">pfptr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">restrict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Given a parameter file, inport the smooth parameters if possible.</span>
+<span class="sd">        **Parameters**</span>
+<span class="sd">            pfile: *str*</span>
+<span class="sd">                A parsed smrff parameter file input string (no comments or</span>
+<span class="sd">                trailing white spaces)</span>
+<span class="sd">            pfptr: *str*</span>
+<span class="sd">                The name of a parameter file to be parsed.  If specified,</span>
+<span class="sd">                then pfile is ignored (you may simply pass None as pfile).</span>
+<span class="sd">        **Returns**</span>
+<span class="sd">            smooth_objs: *list, smooth*, or *None*</span>
+<span class="sd">                Returns a list of smooth objects if possible, else None.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="kn">import</span> <span class="nn">squid.forcefields.smrff</span> <span class="k">as</span> <span class="nn">smrff_utils</span>
+
+        <span class="c1"># Ensure correct pfile format, and that we even need to parse it.</span>
+        <span class="k">if</span> <span class="n">pfptr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pfile</span> <span class="o">=</span> <span class="n">smrff_utils</span><span class="o">.</span><span class="n">parse_pfile</span><span class="p">(</span><span class="n">pfptr</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">SMOOTH_PFILE_ID</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pfile</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="n">pfile</span> <span class="o">=</span> <span class="n">pfile</span><span class="p">[</span><span class="n">pfile</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">SMOOTH_PFILE_ID</span><span class="p">):]</span>
+        <span class="n">pfile</span> <span class="o">=</span> <span class="n">pfile</span><span class="p">[:</span><span class="n">pfile</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">END_ID</span><span class="p">)]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">pfile</span> <span class="o">=</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">parse_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">pfile</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="bp">cls</span><span class="p">(</span><span class="n">smooth_index</span><span class="p">,</span> <span class="n">atom_i</span><span class="p">,</span> <span class="n">atom_j</span><span class="p">,</span> <span class="n">r_in</span><span class="p">,</span> <span class="n">d_in</span><span class="p">,</span> <span class="n">gcut</span><span class="p">,</span>
+                <span class="n">r_out</span><span class="o">=</span><span class="n">r_out</span><span class="p">,</span> <span class="n">d_out</span><span class="o">=</span><span class="n">d_out</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span>
+                <span class="n">c_r</span><span class="o">=</span><span class="n">c_r</span><span class="p">,</span> <span class="n">c_d</span><span class="o">=</span><span class="n">c_d</span><span class="p">,</span> <span class="n">c_lr</span><span class="o">=</span><span class="n">c_lr</span><span class="p">,</span>
+                <span class="n">c_gcut</span><span class="o">=</span><span class="n">c_gcut</span><span class="p">,</span> <span class="n">c_s_index</span><span class="o">=</span><span class="n">c_s_index</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">smooth_index</span><span class="p">,</span> <span class="n">atom_i</span><span class="p">,</span> <span class="n">atom_j</span><span class="p">,</span> <span class="n">r_in</span><span class="p">,</span> <span class="n">d_in</span><span class="p">,</span> <span class="n">r_out</span><span class="p">,</span> <span class="n">d_out</span><span class="p">,</span> <span class="n">c_r</span><span class="p">,</span> <span class="n">c_d</span><span class="p">,</span> <span class="n">gcut</span><span class="p">,</span> <span class="n">c_gcut</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">c_lr</span><span class="p">,</span> <span class="n">c_s_index</span> <span class="ow">in</span> <span class="n">pfile</span> <span class="k">if</span> <span class="n">check_restriction</span><span class="p">(</span><span class="n">atom_i</span><span class="p">,</span> <span class="n">restrict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">check_restriction</span><span class="p">(</span><span class="n">atom_j</span><span class="p">,</span> <span class="n">restrict</span><span class="p">)</span>
+        <span class="p">]</span></div></div>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table Of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../squid.html">Squid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codebase.html">Codebase</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Henry Herbol.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+    </div>
+  </body>
+</html>

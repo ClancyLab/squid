@@ -9,13 +9,10 @@
     <title>Codebase &#8212; Squid 0.0.1 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Examples" href="examples.html" />
@@ -619,7 +616,7 @@ as possible (within 10 iterations):</p>
 <li><a class="reference internal" href="#files.read_xyz" title="files.read_xyz"><code class="xref py py-func docutils literal notranslate"><span class="pre">read_xyz()</span></code></a></li>
 <li><a class="reference internal" href="#files.write_xyz" title="files.write_xyz"><code class="xref py py-func docutils literal notranslate"><span class="pre">write_xyz()</span></code></a></li>
 <li><a class="reference internal" href="#files.read_lammpstrj" title="files.read_lammpstrj"><code class="xref py py-func docutils literal notranslate"><span class="pre">read_lammpstrj()</span></code></a></li>
-<li><code class="xref py py-func docutils literal notranslate"><span class="pre">write_lammpstrj()</span></code></li>
+<li><a class="reference internal" href="#files.write_lammpstrj" title="files.write_lammpstrj"><code class="xref py py-func docutils literal notranslate"><span class="pre">write_lammpstrj()</span></code></a></li>
 <li><a class="reference internal" href="#files.read_lammps_data" title="files.read_lammps_data"><code class="xref py py-func docutils literal notranslate"><span class="pre">read_lammps_data()</span></code></a></li>
 <li><a class="reference internal" href="#files.write_lammps_data" title="files.write_lammps_data"><code class="xref py py-func docutils literal notranslate"><span class="pre">write_lammps_data()</span></code></a></li>
 <li><a class="reference internal" href="#files.last_modified" title="files.last_modified"><code class="xref py py-func docutils literal notranslate"><span class="pre">last_modified()</span></code></a></li>
@@ -649,7 +646,7 @@ datetime format.</dd>
 
 <dl class="function">
 <dt id="files.read_cml">
-<code class="descclassname">files.</code><code class="descname">read_cml</code><span class="sig-paren">(</span><em>name, new_method=False, extra_opls_parameters={}, parameter_files=[('OPLS', '/mnt/c/Users/hherb/Documents/subsystem/squid/forcefield_parameters/oplsaa.prm')], parameter_file='/mnt/c/Users/hherb/Documents/subsystem/squid/forcefield_parameters/oplsaa.prm', extra_parameters={}, test_charges=False, allow_errors=True, pair_style='lj/cut', default_angles=None, return_molecules=False, test_consistency=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/files.html#read_cml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#files.read_cml" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">files.</code><code class="descname">read_cml</code><span class="sig-paren">(</span><em>name, new_method=False, extra_opls_parameters={}, parameter_files=[('OPLS', '/home/hherbol/squid/forcefield_parameters/oplsaa.prm')], parameter_file='/home/hherbol/squid/forcefield_parameters/oplsaa.prm', extra_parameters={}, test_charges=False, allow_errors=True, pair_style='lj/cut', default_angles=None, return_molecules=False, test_consistency=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/files.html#read_cml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#files.read_cml" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read in a file written in the Chemical Markup Language (CML) format.
 It should be mentioned that when reading a file with multiple molecules,
 if you do not specify return_molecules=True, then everything will be
@@ -716,7 +713,7 @@ to None.</dd>
 </dl>
 <p>or</p>
 <dl class="docutils">
-<dt>parameters: <code class="xref py py-class docutils literal notranslate"><span class="pre">ff_params.Parameters</span></code></dt>
+<dt>parameters: <a class="reference internal" href="#ff_params.Parameters" title="ff_params.Parameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">ff_params.Parameters</span></code></a></dt>
 <dd>A parameter object holding all relevent data.</dd>
 <dt>molecules: <em>list,</em> <a class="reference internal" href="#structures.Molecule" title="structures.Molecule"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Molecule</span></code></a></dt>
 <dd>A list of molecules in read in from the CML file.</dd>
@@ -980,6 +977,13 @@ amongst different atom types(True), or not (False).</dd>
 </dd></dl>
 
 <dl class="function">
+<dt id="files.write_lammpstrj">
+<code class="descclassname">files.</code><code class="descname">write_lammpstrj</code><span class="sig-paren">(</span><em>frames_or_system</em>, <em>name_or_file=None</em>, <em>timesteps=None</em>, <em>box_bounds_list=None</em>, <em>attrs='id type x y z'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/files.html#write_lammpstrj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#files.write_lammpstrj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a lammps trajectory file from system or from atom frames.</p>
+<p><em>NOTE!</em> MORE DETAILS NEEDED IN THIS DOCSTRING! RAISE AWARENESS.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="files.write_mdl">
 <code class="descclassname">files.</code><code class="descname">write_mdl</code><span class="sig-paren">(</span><em>frames</em>, <em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/files.html#write_mdl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#files.write_mdl" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -999,6 +1003,2061 @@ format.</p>
 file buffer to write the xyz file.</dd>
 <dt>ID: <em>str, optional</em></dt>
 <dd>What is to be written on the xyz comment line.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ff_params">
+<span id="ff-params"></span><h2>ff_params<a class="headerlink" href="#module-ff_params" title="Permalink to this headline">¶</a></h2>
+<p>The Parameters class contains:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#ff_params.Parameters" title="ff_params.Parameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parameters</span></code></a></li>
+</ul>
+<hr class="docutils" />
+<dl class="class">
+<dt id="ff_params.Parameters">
+<em class="property">class </em><code class="descclassname">ff_params.</code><code class="descname">Parameters</code><span class="sig-paren">(</span><em>fptr=[('OPLS', '/home/hherbol/squid/forcefield_parameters/oplsaa.prm')], restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ff_params.html#Parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ff_params.Parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Parameters object that holds all parameters pointed out by fptr.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>fptr: <em>list, tuple, str, str, optional</em></dt>
+<dd>A list of tuples, holding two strings: the force field type
+(either OPLS or SMRFF right now), and the path to the
+parameter file.  If no path is specified, we will try to grab
+the one assigned in sysconst.</dd>
+<dt>restrict: <em>list, str, optional</em></dt>
+<dd>A list of strings specifying which types are to be used.
+Note, you must have unique types, lest they be overwritten.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <a class="reference internal" href="#ff_params.Parameters" title="ff_params.Parameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parameters</span></code></a></dt>
+<dd>This object.</dd>
+</dl>
+</div></blockquote>
+<dl class="method">
+<dt id="ff_params.Parameters.dump_angles">
+<code class="descname">dump_angles</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ff_params.html#Parameters.dump_angles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ff_params.Parameters.dump_angles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a string for lammps input in regards to assigning angle coeffs.</p>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>coeffs: <em>str</em></dt>
+<dd>A string of angle coeffs, with new line characters between
+different angles.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="ff_params.Parameters.dump_bonds">
+<code class="descname">dump_bonds</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ff_params.html#Parameters.dump_bonds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ff_params.Parameters.dump_bonds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a string for lammps input in regards to assigning bond coeffs.</p>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>coeffs: <em>str</em></dt>
+<dd>A string of bond coeffs, with new line characters between
+different bonds.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="ff_params.Parameters.dump_dihedrals">
+<code class="descname">dump_dihedrals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ff_params.html#Parameters.dump_dihedrals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ff_params.Parameters.dump_dihedrals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a string for lammps input in regards to assigning dihedral coeffs.</p>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>coeffs: <em>str</em></dt>
+<dd>A string of dihedral coeffs, with new line characters between
+different dihedrals.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="ff_params.Parameters.dump_lj_cut_coul_cut">
+<code class="descname">dump_lj_cut_coul_cut</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ff_params.html#Parameters.dump_lj_cut_coul_cut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ff_params.Parameters.dump_lj_cut_coul_cut" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will get the lammps command line argument for
+lj/cut/coul/cut of everything within the Parameters object.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>cmds: <em>str</em></dt>
+<dd>A string, separated with new lines, with pair_coeff for each
+lj/cut/coul/cut command possible within this parameter set.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="ff_params.Parameters.dump_morse">
+<code class="descname">dump_morse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ff_params.html#Parameters.dump_morse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ff_params.Parameters.dump_morse" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will get the lammps command line argument for
+morse of everything within the Parameters object.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>cmds: <em>str</em></dt>
+<dd>A string, separated with new lines, with pair_coeff for each
+morse command possible within this parameter set.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="ff_params.Parameters.dump_set_charge">
+<code class="descname">dump_set_charge</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ff_params.html#Parameters.dump_set_charge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ff_params.Parameters.dump_set_charge" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will get the lammps command line argument for
+“set type” of everything within the Parameters object.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>cmds: <em>str</em></dt>
+<dd>A string, separated with new lines, with pair_coeff for each
+morse command possible within this parameter set.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="ff_params.Parameters.dump_smooths">
+<code class="descname">dump_smooths</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ff_params.html#Parameters.dump_smooths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ff_params.Parameters.dump_smooths" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will get the lammps command line argument for
+smrff smooths of everything within the Parameters object.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>cmds: <em>str</em></dt>
+<dd>A string, separated with new lines, with pair_coeff for each
+smrff smooth command possible within this parameter set.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="ff_params.Parameters.dump_style">
+<code class="descname">dump_style</code><span class="sig-paren">(</span><em>style=None</em>, <em>tfile_name=None</em>, <em>tstyle_smrff=False</em>, <em>write_file=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ff_params.html#Parameters.dump_style"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ff_params.Parameters.dump_style" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will dump LAMMPS commands “pair_coeff” for chosen styles.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>style: <em>str</em></dt>
+<dd>Whether to ignore the universal bounds, assigned in this smrff.py file.smrff</dd>
+<dt>tfile_name: <em>str</em></dt>
+<dd>The name of the tersoff file.</dd>
+<dt>tstyle_smrff: <em>bool, optional</em></dt>
+<dd>Whether to output for SMRFF style (one line allocates memory,
+the rest overwrites the parameters) or not.</dd>
+<dt>write_file: <em>bool, optional</em></dt>
+<dd>Whether to write any files (ex. tersoff files) or not.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd>lammps_command: <em>str</em></dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="ff_params.Parameters.dump_tersoff">
+<code class="descname">dump_tersoff</code><span class="sig-paren">(</span><em>tfile_name</em>, <em>tstyle_smrff</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ff_params.html#Parameters.dump_tersoff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ff_params.Parameters.dump_tersoff" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will get the lammps command line argument for
+tersoff of everything within the Parameters object.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>tfile_name: <em>str</em></dt>
+<dd>The name of the tersoff file.</dd>
+<dt>tstyle_smrff: <em>bool, optional</em></dt>
+<dd>Whether to output for SMRFF style (one line allocates memory,
+the rest overwrites the parameters) or not.  If True, this
+will NOT generate a tersoff file.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>cmds: <em>str</em></dt>
+<dd>A string, separated with new lines, with pair_coeff for each
+tersoff command possible within this parameter set.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="ff_params.Parameters.find_maximum">
+<code class="descname">find_maximum</code><span class="sig-paren">(</span><em>style=None</em>, <em>coeff=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ff_params.html#Parameters.find_maximum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ff_params.Parameters.find_maximum" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function find the maximum value of some coefficient of some style.</p>
+<dl class="docutils">
+<dt><strong>Parameters</strong></dt>
+<dd><dl class="first last docutils">
+<dt>style: <em>str</em></dt>
+<dd>the name (or type) of the style</dd>
+<dt>coeff: <em>str</em></dt>
+<dd>the name (or type) of the coefficient</dd>
+</dl>
+</dd>
+<dt><strong>Returns</strong></dt>
+<dd>maximum_value: <em>str</em> or <em>float</em></dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="ff_params.Parameters.fix">
+<code class="descname">fix</code><span class="sig-paren">(</span><em>style</em>, <em>label</em>, <em>params='all'</em>, <em>value=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ff_params.html#Parameters.fix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ff_params.Parameters.fix" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will fix a specific style (coul, lj, morse, etc), label
+(where label is the atom label/type you want to fix), and the component
+(ex, sigma in LJ).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ff_params.Parameters.forcefield">
+<code class="descname">forcefield</code><span class="sig-paren">(</span><em>short_range</em>, <em>sr_cut</em>, <em>sr_smooth</em>, <em>long_range</em>, <em>lr_cut</em>, <em>lr_smooth</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ff_params.html#Parameters.forcefield"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ff_params.Parameters.forcefield" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will assign masks appropriately for the input forcefield.  It
+will also assign any necessary parameters for the desired forcefield.</p>
+<p>NOTE! This is a rudimentary starting point and should be improved on.
+pair style smrff allows for N transitions, whereas the way this is
+currently written only allows for short-range to long-range.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>short_range: <em>str</em></dt>
+<dd>What potential to use in the short range region.  NOTE! This
+MUST be different than the long_range potential.</dd>
+<dt>sr_cut: <em>float</em></dt>
+<dd>The global cutoff for the short_range potential.</dd>
+<dt>sr_smooth: <em>str</em></dt>
+<dd>What type of smoothing function to assign the short_range
+potential (NULL, ters_r, ters_l, sin_r, sin_l, sin_inout).</dd>
+<dt>long_range: <em>str</em></dt>
+<dd>What potential to use in the long range region.  NOTE! This
+MUST be different than the short_range potential.</dd>
+<dt>lr_cut: <em>float</em></dt>
+<dd>The global cutoff for the long_range potential.</dd>
+<dt>lr_smooth: <em>str</em></dt>
+<dd>What type of smoothing function to assign the long_range
+potential (NULL, ters_r, ters_l, sin_r, sin_l, sin_inout).</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="ff_params.Parameters.generate">
+<code class="descname">generate</code><span class="sig-paren">(</span><em>elems</em>, <em>signs=None</em>, <em>couple_smooths=True</em>, <em>form='original'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ff_params.html#Parameters.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ff_params.Parameters.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>For every mask that is true, we will generate random data.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>elems: <em>list, str</em></dt>
+<dd>A list of the elements, matching 1-to-1 with the given smrff_types.</dd>
+<dt>signs: <em>list, float</em></dt>
+<dd>A list of charge signs, matching 1-to-1 with the given smrff_types.</dd>
+<dt>couple_smooths: <em>bool, optional</em></dt>
+<dd>Whether to couple together like smooths.  If true, when you have a
+situation in which, say, sin_l and sin_r match up, then this will
+ensure that these two overlap perfectly.</dd>
+<dt>form: <em>str</em></dt>
+<dd>Whether to use the original form (m=3, gamma=1) or the
+Albe et al form (m=1, beta=1) for tersoff parameters.
+Must be original or albe.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="ff_params.Parameters.get_smrff_style">
+<code class="descname">get_smrff_style</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ff_params.html#Parameters.get_smrff_style"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ff_params.Parameters.get_smrff_style" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will return the smrff style.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ff_params.Parameters.load_opls">
+<code class="descname">load_opls</code><span class="sig-paren">(</span><em>fname</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ff_params.html#Parameters.load_opls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ff_params.Parameters.load_opls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an OPLS file name, in the Tinker format, parse it and load it
+into this parameters object.  Note, you should specify restrict before
+calling this function or else everything in the file will be loaded.
+If restrict is specified, then restrict_structure will be
+automatically generated during this function call.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>fname: <em>str</em></dt>
+<dd>The path to the opls file.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="ff_params.Parameters.load_smrff">
+<code class="descname">load_smrff</code><span class="sig-paren">(</span><em>fname</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ff_params.html#Parameters.load_smrff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ff_params.Parameters.load_smrff" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function to read in a SMRFF parameter file.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>fname: <em>str</em></dt>
+<dd>The path to a smrff parameter file.
+???.smrff</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="ff_params.Parameters.mapper">
+<code class="descname">mapper</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ff_params.html#Parameters.mapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ff_params.Parameters.mapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>A generalized function to map indices of atom types to structure types.
+Note, this is generalized and should allow for a wide range of x
+objects.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>x: <em>list or tuple or int or str or obj</em></dt>
+<dd>Some way of identifing the atom type.  Note, if obj, then it
+will check for a .index, .indices, or .index2s property.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>mapper_obj: <em>list, str or str</em></dt>
+<dd>The structure type, as either a list (if bond/angle/dihedral)
+or a string (if charge/lj).</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="ff_params.Parameters.num_free_parameters">
+<code class="descname">num_free_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ff_params.html#Parameters.num_free_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ff_params.Parameters.num_free_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will return the number of unfixed parameters.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ff_params.Parameters.pack">
+<code class="descname">pack</code><span class="sig-paren">(</span><em>params</em>, <em>with_indices=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ff_params.html#Parameters.pack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ff_params.Parameters.pack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Packs the parameters object from a 1D array.  NOTE! This is done in
+primarily for parameterization; which means the 1D array will NOT have
+the indices in it.  This can be overridden, however, by specifying the
+with_indices flag.</p>
+<p>Keep in mind, to maintain symmetry requirements in tersoff (where
+the two-body parameters are the same between A-B B and B-A A), this
+function will be tied closely to the unpack function.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float/int</em></dt>
+<dd>A list of parameters</dd>
+<dt>with_indices: <em>bool, optional</em></dt>
+<dd>Whether to account for the indices in the flat array.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="ff_params.Parameters.set_all_masks">
+<code class="descname">set_all_masks</code><span class="sig-paren">(</span><em>set_on</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ff_params.html#Parameters.set_all_masks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ff_params.Parameters.set_all_masks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Either turn all masks to being on or off.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>set_on: <em>bool</em></dt>
+<dd>What to set all values to (True/False).</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="ff_params.Parameters.set_mask">
+<code class="descname">set_mask</code><span class="sig-paren">(</span><em>mask</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ff_params.html#Parameters.set_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ff_params.Parameters.set_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a style, turn on the respective masks.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>mask: <em>str</em></dt>
+<dd>The potential for which masks should be turned on (ex. morse)</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="ff_params.Parameters.set_opls_mask">
+<code class="descname">set_opls_mask</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ff_params.html#Parameters.set_opls_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ff_params.Parameters.set_opls_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn off ALL masks, but leave OPLS ones on.</p>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="ff_params.Parameters.unpack">
+<code class="descname">unpack</code><span class="sig-paren">(</span><em>with_indices=False</em>, <em>with_bounds=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ff_params.html#Parameters.unpack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ff_params.Parameters.unpack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unpacks the parameters object into a 1D array for parameterization.
+This means that the indices are not included during unpacking!  Note,
+this can be overridden though if needed.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>with_indices: <em>bool, optional</em></dt>
+<dd>Whether to also include the indices in the flat array.</dd>
+<dt>with_bounds: <em>bool, optional</em></dt>
+<dd>Whether to also output the bounds for the parameters.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>flat_array: <em>list, float/int</em></dt>
+<dd>A list of floats/ints of our parameters.</dd>
+<dt>bounds_lower: <em>list, float/int</em></dt>
+<dd>If with_bounds is specified, then the lower bounds are returned.</dd>
+<dt>bounds_upper: <em>list, float/int</em></dt>
+<dd>If with_bounds is specified, then the upper bounds are returned.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="ff_params.Parameters.write_smrff">
+<code class="descname">write_smrff</code><span class="sig-paren">(</span><em>fname</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ff_params.html#Parameters.write_smrff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ff_params.Parameters.write_smrff" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function to save a SMRFF parameter file.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>fname: <em>str</em></dt>
+<dd>The file name to save the parameters to.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="forcefields">
+<h2>forcefields<a class="headerlink" href="#forcefields" title="Permalink to this headline">¶</a></h2>
+<p>The forcefields module contains various objects to define forcefields,
+as well as several functions to parse forcefield files.</p>
+<ul class="simple">
+<li><a class="reference internal" href="forcefields.html#opls.parse_pfile" title="opls.parse_pfile"><code class="xref py py-func docutils literal notranslate"><span class="pre">opls.parse_pfile()</span></code></a></li>
+<li><a class="reference internal" href="forcefields.html#smrff.parse_pfile" title="smrff.parse_pfile"><code class="xref py py-func docutils literal notranslate"><span class="pre">smrff.parse_pfile()</span></code></a></li>
+<li><a class="reference internal" href="forcefields.html#connectors.HarmonicConnector" title="connectors.HarmonicConnector"><code class="xref py py-class docutils literal notranslate"><span class="pre">connectors.HarmonicConnector</span></code></a></li>
+<li><a class="reference internal" href="forcefields.html#connectors.Bond" title="connectors.Bond"><code class="xref py py-class docutils literal notranslate"><span class="pre">connectors.Bond</span></code></a></li>
+<li><a class="reference internal" href="forcefields.html#connectors.Angle" title="connectors.Angle"><code class="xref py py-class docutils literal notranslate"><span class="pre">connectors.Angle</span></code></a></li>
+<li><a class="reference internal" href="forcefields.html#connectors.Dihedral" title="connectors.Dihedral"><code class="xref py py-class docutils literal notranslate"><span class="pre">connectors.Dihedral</span></code></a></li>
+<li><a class="reference internal" href="forcefields.html#coulomb.Coul" title="coulomb.Coul"><code class="xref py py-class docutils literal notranslate"><span class="pre">coulomb.Coul</span></code></a></li>
+<li><a class="reference internal" href="forcefields.html#lj.LJ" title="lj.LJ"><code class="xref py py-class docutils literal notranslate"><span class="pre">lj.LJ</span></code></a></li>
+<li><a class="reference internal" href="forcefields.html#morse.Morse" title="morse.Morse"><code class="xref py py-class docutils literal notranslate"><span class="pre">morse.Morse</span></code></a></li>
+<li><a class="reference internal" href="forcefields.html#tersoff.Tersoff" title="tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">tersoff.Tersoff</span></code></a></li>
+</ul>
+<hr class="docutils" />
+<span class="target" id="module-connectors"></span><p>The general connectors object.  This handles bonds/angles/dihedrals.</p>
+<dl class="class">
+<dt id="connectors.Angle">
+<em class="property">class </em><code class="descclassname">connectors.</code><code class="descname">Angle</code><span class="sig-paren">(</span><em>indices=None</em>, <em>energies=None</em>, <em>equilibs=None</em>, <em>line=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#Angle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.Angle" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="classmethod">
+<dt id="connectors.Angle.load_opls">
+<em class="property">classmethod </em><code class="descname">load_opls</code><span class="sig-paren">(</span><em>angle_types</em>, <em>pfptr=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#Angle.load_opls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.Angle.load_opls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a parameter file, inport the Angle parameters if possible.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>angle_types: <em>list,</em> <a class="reference internal" href="#structures.Struct" title="structures.Struct"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code></a></dt>
+<dd>Angle types from a parsed opls parameter file.</dd>
+<dt>pfptr: <em>str</em></dt>
+<dd>The name of a parameter file to be parsed.  If specified,
+then pfile is ignored (you may simply pass None as pfile).</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd><dl class="first last docutils">
+<dt>angle_objs: <em>list, Angle</em>, or <em>None</em></dt>
+<dd>Returns a list of Angle objects if possible, else None.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="connectors.Bond">
+<em class="property">class </em><code class="descclassname">connectors.</code><code class="descname">Bond</code><span class="sig-paren">(</span><em>indices=None</em>, <em>energies=None</em>, <em>equilibs=None</em>, <em>line=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#Bond"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.Bond" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="classmethod">
+<dt id="connectors.Bond.load_opls">
+<em class="property">classmethod </em><code class="descname">load_opls</code><span class="sig-paren">(</span><em>bond_types</em>, <em>pfptr=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#Bond.load_opls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.Bond.load_opls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a parameter file, inport the Bond parameters if possible.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>bond_types: <em>list,</em> <a class="reference internal" href="#structures.Struct" title="structures.Struct"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code></a></dt>
+<dd>Bond types from a parsed opls parameter file.</dd>
+<dt>pfptr: <em>str</em></dt>
+<dd>The name of a parameter file to be parsed.  If specified,
+then pfile is ignored (you may simply pass None as pfile).</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd><dl class="first last docutils">
+<dt>bond_objs: <em>list, Bond</em>, or <em>None</em></dt>
+<dd>Returns a list of Bond objects if possible, else None.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="connectors.Dihedral">
+<em class="property">class </em><code class="descclassname">connectors.</code><code class="descname">Dihedral</code><span class="sig-paren">(</span><em>indices=None</em>, <em>energies=None</em>, <em>equilibs=None</em>, <em>line=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#Dihedral"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.Dihedral" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="classmethod">
+<dt id="connectors.Dihedral.load_opls">
+<em class="property">classmethod </em><code class="descname">load_opls</code><span class="sig-paren">(</span><em>dihedral_types</em>, <em>pfptr=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#Dihedral.load_opls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.Dihedral.load_opls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a parameter file, inport the Dihedral parameters if possible.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>dihedral_types: <em>list,</em> <a class="reference internal" href="#structures.Struct" title="structures.Struct"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code></a></dt>
+<dd>Dihedral types from a parsed opls parameter file.</dd>
+<dt>pfptr: <em>str</em></dt>
+<dd>The name of a parameter file to be parsed.  If specified,
+then pfile is ignored (you may simply pass None as pfile).</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd><dl class="first last docutils">
+<dt>dihedral_objs: <em>list, Dihedral</em>, or <em>None</em></dt>
+<dd>Returns a list of Dihedral objects if possible, else None.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="connectors.HarmonicConnector">
+<em class="property">class </em><code class="descclassname">connectors.</code><code class="descname">HarmonicConnector</code><span class="sig-paren">(</span><em>indices=None</em>, <em>energies=None</em>, <em>equilibs=None</em>, <em>line=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#HarmonicConnector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.HarmonicConnector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the LJ object.  Either pass indices + energies + equilibs,
+or pass line.  If all are passed, then an error will be thrown.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>indices: <em>list or tuple, str or int</em></dt>
+<dd>The indices of the atom types in this connection.</dd>
+<dt>energies: <em>list, float</em></dt>
+<dd>A list of energies associated with this connection.</dd>
+<dt>equilibs: <em>list, float</em></dt>
+<dd>A list of equilibrium distances/angles for this connection.</dd>
+<dt>line: <em>str</em></dt>
+<dd>A line from a parameter file to be parsed.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd><dl class="first last docutils">
+<dt>HarmonicConnector: <a class="reference internal" href="forcefields.html#connectors.HarmonicConnector" title="connectors.HarmonicConnector"><code class="xref py py-class docutils literal notranslate"><span class="pre">HarmonicConnector</span></code></a></dt>
+<dd>A HarmonicConnector object.</dd>
+</dl>
+</dd>
+</dl>
+<dl class="method">
+<dt id="connectors.HarmonicConnector.assign_line">
+<code class="descname">assign_line</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#HarmonicConnector.assign_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.HarmonicConnector.assign_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse line inputs and assign to this object.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>line: <em>str</em></dt>
+<dd>A string that holds coulomb information.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="connectors.HarmonicConnector.fix">
+<code class="descname">fix</code><span class="sig-paren">(</span><em>params='all'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#HarmonicConnector.fix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.HarmonicConnector.fix" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will fix these parameters by assigning bounds to the values themselves.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="connectors.HarmonicConnector.load_opls">
+<em class="property">classmethod </em><code class="descname">load_opls</code><span class="sig-paren">(</span><em>info</em>, <em>pfptr=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#HarmonicConnector.load_opls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.HarmonicConnector.load_opls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a parameter file, inport the LJ parameters if possible.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>pfile: <em>str</em></dt>
+<dd>A parsed smrff parameter file input string (no comments or
+trailing white spaces)</dd>
+<dt>pfptr: <em>str</em></dt>
+<dd>The name of a parameter file to be parsed.  If specified,
+then pfile is ignored (you may simply pass None as pfile).</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd><dl class="first last docutils">
+<dt>lj_objs: <em>list, LJ</em>, or <em>None</em></dt>
+<dd>Returns a list of LJ objects if possible, else None.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="connectors.HarmonicConnector.load_smrff">
+<em class="property">classmethod </em><code class="descname">load_smrff</code><span class="sig-paren">(</span><em>pfile</em>, <em>pfptr=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#HarmonicConnector.load_smrff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.HarmonicConnector.load_smrff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a parameter file, inport the LJ parameters if possible.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>pfile: <em>str</em></dt>
+<dd>A parsed smrff parameter file input string (no comments or
+trailing white spaces)</dd>
+<dt>pfptr: <em>str</em></dt>
+<dd>The name of a parameter file to be parsed.  If specified,
+then pfile is ignored (you may simply pass None as pfile).</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd><dl class="first last docutils">
+<dt>lj_objs: <em>list, LJ</em>, or <em>None</em></dt>
+<dd>Returns a list of LJ objects if possible, else None.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="connectors.HarmonicConnector.pack">
+<code class="descname">pack</code><span class="sig-paren">(</span><em>params</em>, <em>with_indices=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#HarmonicConnector.pack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.HarmonicConnector.pack" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function packs the LJ object from a list.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list</em></dt>
+<dd>A list holding the indices, sigma, and epsilon (IN THAT ORDER).</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="connectors.HarmonicConnector.parse_line">
+<em class="property">static </em><code class="descname">parse_line</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#HarmonicConnector.parse_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.HarmonicConnector.parse_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse line inputs and assign to this object.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>line: <em>str</em></dt>
+<dd>A string that holds coulomb information.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="connectors.HarmonicConnector.printer">
+<code class="descname">printer</code><span class="sig-paren">(</span><em>bounds=None</em>, <em>with_indices=False</em>, <em>map_indices=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#HarmonicConnector.printer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.HarmonicConnector.printer" title="Permalink to this definition">¶</a></dt>
+<dd><p>This prints out a representation of this LJ object, in the format
+that is output to the smrff parameter file.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>bounds: <em>int, optional</em></dt>
+<dd>Whether to output the lower bounds (0), or upper boudns (1).
+If None, then the parameters themselves are output instead (default).</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd><dl class="first last docutils">
+<dt>lj: <em>str</em></dt>
+<dd>A string representation of LJ.  The indices, sigma, and epsilon
+are printed, in that precise order.  Note, numbers are printed
+to exactly 2 decimal places.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="connectors.HarmonicConnector.unpack">
+<code class="descname">unpack</code><span class="sig-paren">(</span><em>with_indices=False</em>, <em>bounds=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#HarmonicConnector.unpack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.HarmonicConnector.unpack" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function unpacks the LJ object into a list.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>with_indices: <em>bool, optional</em></dt>
+<dd>Whether to also include the indices in the list.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd><dl class="first last docutils">
+<dt>coul: <em>list, str/float</em></dt>
+<dd>A list, holding the string of the indices and the float of the
+charge.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="connectors.HarmonicConnector.validate">
+<code class="descname">validate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#HarmonicConnector.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.HarmonicConnector.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will validate data integrity.  In this case, we simply
+ensure data types are appropriate.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-coulomb"></span><p>The coulomb object.  This stores the index and charge.</p>
+<dl class="class">
+<dt id="coulomb.Coul">
+<em class="property">class </em><code class="descclassname">coulomb.</code><code class="descname">Coul</code><span class="sig-paren">(</span><em>index=None</em>, <em>charge=None</em>, <em>mass=None</em>, <em>element=None</em>, <em>line=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coulomb.html#Coul"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coulomb.Coul" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the coulomb object.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>index: <em>str or int</em></dt>
+<dd>The index of the atom type.</dd>
+<dt>charge: <em>float</em></dt>
+<dd>The charge.</dd>
+<dt>line: <em>str</em></dt>
+<dd>A line from a parameter file to be parsed.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd><dl class="first last docutils">
+<dt>coulomb: <a class="reference internal" href="forcefields.html#coulomb.Coul" title="coulomb.Coul"><code class="xref py py-class docutils literal notranslate"><span class="pre">Coul</span></code></a></dt>
+<dd>A Coul object.</dd>
+</dl>
+</dd>
+</dl>
+<dl class="method">
+<dt id="coulomb.Coul.fix">
+<code class="descname">fix</code><span class="sig-paren">(</span><em>params='all'</em>, <em>value=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coulomb.html#Coul.fix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coulomb.Coul.fix" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will fix these parameters by assigning bounds to the values themselves.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="coulomb.Coul.generate">
+<em class="property">classmethod </em><code class="descname">generate</code><span class="sig-paren">(</span><em>atom_types</em>, <em>elems</em>, <em>signs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coulomb.html#Coul.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coulomb.Coul.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Randomly generate parameters for coulomb.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>atom_types: <em>list, str</em></dt>
+<dd>A list of all the atom types to have parameters generated for.</dd>
+<dt>elems: <em>list, str</em></dt>
+<dd>List of the elements (in the same order as atom_types).</dd>
+<dt>signs: <em>list, float</em></dt>
+<dd>The list of the signs of the charges (in the same order as the atom_types).</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>coul_objs: <em>list, Coul</em></dt>
+<dd>Returns a list of Coul objects.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="coulomb.Coul.load_opls">
+<em class="property">classmethod </em><code class="descname">load_opls</code><span class="sig-paren">(</span><em>atom_types</em>, <em>pfptr=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coulomb.html#Coul.load_opls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coulomb.Coul.load_opls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a parameter file, importthe Coulomb parameters if possible.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>atom_types: <em>list,</em> <a class="reference internal" href="#structures.Struct" title="structures.Struct"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code></a></dt>
+<dd>Atom types from a parsed opls parameter file.</dd>
+<dt>pfptr: <em>str</em></dt>
+<dd>The name of a parameter file to be parsed.  If specified,
+then pfile is ignored (you may simply pass None as pfile).</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd><dl class="first last docutils">
+<dt>coul_objs: <em>list, Coul</em>, or <em>None</em></dt>
+<dd>Returns a list of Coul objects if possible, else None.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="coulomb.Coul.load_smrff">
+<em class="property">classmethod </em><code class="descname">load_smrff</code><span class="sig-paren">(</span><em>pfile</em>, <em>pfptr=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coulomb.html#Coul.load_smrff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coulomb.Coul.load_smrff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a parameter file, inport the coulomb parameters if possible.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>pfile: <em>str</em></dt>
+<dd>A parsed smrff parameter file input string (no comments or
+trailing white spaces)</dd>
+<dt>pfptr: <em>str</em></dt>
+<dd>The name of a parameter file to be parsed.  If specified,
+then pfile is ignored (you may simply pass None as pfile).</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd><dl class="first last docutils">
+<dt>coul_objs: <em>list, Coul</em>, or <em>None</em></dt>
+<dd>Returns a list of Coul objects if possible, else None.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="coulomb.Coul.pack">
+<code class="descname">pack</code><span class="sig-paren">(</span><em>params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coulomb.html#Coul.pack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coulomb.Coul.pack" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function packs the coulomb object from a list.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list</em></dt>
+<dd>A list holding the index and the charge.  Note, if you wish to
+only assign charge, then do so manually.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="coulomb.Coul.parse_line">
+<em class="property">static </em><code class="descname">parse_line</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coulomb.html#Coul.parse_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coulomb.Coul.parse_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse line inputs and assign to this object.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>line: <em>str</em></dt>
+<dd>A string that holds coulomb information.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="coulomb.Coul.unpack">
+<code class="descname">unpack</code><span class="sig-paren">(</span><em>with_indices=True</em>, <em>with_bounds=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coulomb.html#Coul.unpack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coulomb.Coul.unpack" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function unpacks the coulomb object into a list.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>with_indices: <em>bool, optional</em></dt>
+<dd>Whether to also include the indices in the list.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd><dl class="first last docutils">
+<dt>coul: <em>list, str/float</em></dt>
+<dd>A list, holding the string of the index and the float of the charge.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="coulomb.Coul.validate">
+<code class="descname">validate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/coulomb.html#Coul.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coulomb.Coul.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will validate data integrity.  
+In this case, we simply ensure data types are appropriate.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-helper"></span><dl class="function">
+<dt id="helper.check_restriction">
+<code class="descclassname">helper.</code><code class="descname">check_restriction</code><span class="sig-paren">(</span><em>p</em>, <em>restrict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helper.html#check_restriction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#helper.check_restriction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if p is within the restricted set.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>p: <em>obj</em></dt>
+<dd>Some parameter object, such as Coulomb, Morse, etc.</dd>
+<dt>restrict: <em>list, int</em></dt>
+<dd>A list of indices that we want to use.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>contained: <em>bool</em></dt>
+<dd>Whether p is completely in restrict (True) or not (False).</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="helper.is_struct">
+<code class="descclassname">helper.</code><code class="descname">is_struct</code><span class="sig-paren">(</span><em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helper.html#is_struct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#helper.is_struct" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function essentially does isinstance(p, struct) without needing
+to import squid.structures.  Currently there is a cyclic import that would
+make the later annoying to deal with.  NOTE - HOT FIX - REMOVE ASAP.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>p: <em>obj</em></dt>
+<dd>Some parameter object, such as Coulomb, Morse, etc.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>isStruct: <em>bool</em></dt>
+<dd>Whether p is a Struct (True) or not (False).</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="helper.random_in_range">
+<code class="descclassname">helper.</code><code class="descname">random_in_range</code><span class="sig-paren">(</span><em>bounds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helper.html#random_in_range"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#helper.random_in_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a random number in the given bounds: [lower, upper).</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>bounds: <em>list, float</em></dt>
+<dd>A lower and upper bound.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>rand: <em>float</em></dt>
+<dd>A random number in the specified range.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<span class="target" id="module-lj"></span><p>The Lennard-Jones object.  This stores the index and LJ parameters.</p>
+<dl class="data">
+<dt id="lj.END_ID">
+<code class="descclassname">lj.</code><code class="descname">END_ID</code><em class="property"> = 'END'</em><a class="headerlink" href="#lj.END_ID" title="Permalink to this definition">¶</a></dt>
+<dd><p>The LJ class contains:
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">__init__()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">__repr__()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">__eq__()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">__hash__()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">_printer()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">print_lower()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">print_upper()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">unpack()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">pack()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">validate()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">assign_line()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code>
+- <a href="#id1"><span class="problematic" id="id2">:classmethod:`load_smrff`</span></a>
+————</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="lj.LJ">
+<em class="property">class </em><code class="descclassname">lj.</code><code class="descname">LJ</code><span class="sig-paren">(</span><em>index=None</em>, <em>sigma=None</em>, <em>epsilon=None</em>, <em>line=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lj.html#LJ"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the LJ object.  Either pass index + sigma + epsilon,
+or pass line.  If all are passed, then an error will be thrown.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>index: <em>str or int</em></dt>
+<dd>The index of the atom type.</dd>
+<dt>sigma: <em>float</em></dt>
+<dd>Sigma in LJ expression.</dd>
+<dt>epsilon: <em>float</em></dt>
+<dd>Epsilon in LJ expression.</dd>
+<dt>line: <em>str</em></dt>
+<dd>A line from a parameter file to be parsed.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd><dl class="first last docutils">
+<dt>lj: <a class="reference internal" href="forcefields.html#lj.LJ" title="lj.LJ"><code class="xref py py-class docutils literal notranslate"><span class="pre">LJ</span></code></a></dt>
+<dd>A LJ object.</dd>
+</dl>
+</dd>
+</dl>
+<dl class="method">
+<dt id="lj.LJ.fix">
+<code class="descname">fix</code><span class="sig-paren">(</span><em>params='all'</em>, <em>value=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lj.html#LJ.fix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.fix" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will fix these parameters by assigning bounds to the values themselves.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="lj.LJ.generate">
+<em class="property">classmethod </em><code class="descname">generate</code><span class="sig-paren">(</span><em>atom_types</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lj.html#LJ.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Randomly generate parameters for lj sigma and epsilon.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>atom_types: <em>list, str</em></dt>
+<dd>A list of all the atom types to have parameters generated for.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>lj_objs: <em>list, LJ</em></dt>
+<dd>Returns a list of LJ objects.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="lj.LJ.load_opls">
+<em class="property">classmethod </em><code class="descname">load_opls</code><span class="sig-paren">(</span><em>atom_types</em>, <em>pfptr=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lj.html#LJ.load_opls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.load_opls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a parameter file, inport the LJ parameters if possible.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>atom_types: <em>list,</em> <a class="reference internal" href="#structures.Struct" title="structures.Struct"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code></a></dt>
+<dd>Atom types from a parsed opls parameter file.</dd>
+<dt>pfptr: <em>str</em></dt>
+<dd>The name of a parameter file to be parsed.  If specified,
+then pfile is ignored (you may simply pass None as pfile).</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd><dl class="first last docutils">
+<dt>lj_objs: <em>list, LJ</em>, or <em>None</em></dt>
+<dd>Returns a list of LJ objects if possible, else None.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="lj.LJ.load_smrff">
+<em class="property">classmethod </em><code class="descname">load_smrff</code><span class="sig-paren">(</span><em>pfile</em>, <em>pfptr=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lj.html#LJ.load_smrff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.load_smrff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a parameter file, inport the LJ parameters if possible.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>pfile: <em>str</em></dt>
+<dd>A parsed smrff parameter file input string (no comments or
+trailing white spaces)</dd>
+<dt>pfptr: <em>str</em></dt>
+<dd>The name of a parameter file to be parsed.  If specified,
+then pfile is ignored (you may simply pass None as pfile).</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd><dl class="first last docutils">
+<dt>lj_objs: <em>list, LJ</em>, or <em>None</em></dt>
+<dd>Returns a list of LJ objects if possible, else None.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="lj.LJ.pack">
+<code class="descname">pack</code><span class="sig-paren">(</span><em>params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lj.html#LJ.pack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.pack" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function packs the LJ object from a list.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list</em></dt>
+<dd>A list holding the index, sigma, and epsilon (IN THAT ORDER).</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="lj.LJ.parse_line">
+<em class="property">static </em><code class="descname">parse_line</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lj.html#LJ.parse_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.parse_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse line inputs and assign to this object.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>line: <em>str</em></dt>
+<dd>A string that holds coulomb information.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="lj.LJ.print_lower">
+<code class="descname">print_lower</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lj.html#LJ.print_lower"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.print_lower" title="Permalink to this definition">¶</a></dt>
+<dd><p>This prints out a representation of this LJ object’s lower bounds,
+in the format that is output to the smrff parameter file.
+<strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>lj: <em>str</em></dt>
+<dd>A string representation of LJ.  The index, sigma, and epsilon
+are printed, in that precise order.  Note, numbers are printed
+to exactly 2 decimal places.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="lj.LJ.print_upper">
+<code class="descname">print_upper</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lj.html#LJ.print_upper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.print_upper" title="Permalink to this definition">¶</a></dt>
+<dd><p>This prints out a representation of this LJ object’s upper bounds,
+in the format that is output to the smrff parameter file.
+<strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>lj: <em>str</em></dt>
+<dd>A string representation of LJ.  The index, sigma, and epsilon
+are printed, in that precise order.  Note, numbers are printed
+to exactly 2 decimal places.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="lj.LJ.unpack">
+<code class="descname">unpack</code><span class="sig-paren">(</span><em>with_indices=True</em>, <em>with_bounds=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lj.html#LJ.unpack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.unpack" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function unpacks the LJ object into a list.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>with_indices: <em>bool, optional</em></dt>
+<dd>Whether to also include the indices in the list.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd><dl class="first last docutils">
+<dt>coul: <em>list, str/float</em></dt>
+<dd>A list, holding the string of the index and the float of the
+charge.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="lj.LJ.validate">
+<code class="descname">validate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lj.html#LJ.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will validate data integrity.  In this case, we simply
+ensure data types are appropriate.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-morse"></span><p>The Morse object. This stores the indices and MORSE parameters.</p>
+<dl class="data">
+<dt id="morse.END_ID">
+<code class="descclassname">morse.</code><code class="descname">END_ID</code><em class="property"> = 'END'</em><a class="headerlink" href="#morse.END_ID" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Morse class contains:
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">__init__()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">__repr__()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">__eq__()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">__hash__()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">_printer()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">print_lower()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">print_upper()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">unpack()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">pack()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">validate()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">assign_line()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code>
+- <a href="#id3"><span class="problematic" id="id4">:classmethod:`load_smrff`</span></a>
+————</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="morse.Morse">
+<em class="property">class </em><code class="descclassname">morse.</code><code class="descname">Morse</code><span class="sig-paren">(</span><em>indices=None</em>, <em>D0=None</em>, <em>alpha=None</em>, <em>r0=None</em>, <em>rc=None</em>, <em>line=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/morse.html#Morse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#morse.Morse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the Morse object.  The potential form can be found on the
+LAMMPs webpage (<a class="reference external" href="http://lammps.sandia.gov/doc/pair_Morse.html">http://lammps.sandia.gov/doc/pair_Morse.html</a>).  Either
+specify all the parameters, or pass a string to line, but not both.  If
+both are specified, an error will be thrown.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>indices: <em>list or tuple, str or int</em></dt>
+<dd>The indices of the atom types in this pairwise interaction.</dd>
+<dt>D0: <em>float</em></dt>
+<dd>D0 describes the well depth (energy units)
+(defined relative to the dissociated atoms).</dd>
+<dt>alpha: <em>float</em></dt>
+<dd>alpha controls the ‘width’ of the potential
+(the smaller alpha is, the larger the well).</dd>
+<dt>r0: <em>float</em></dt>
+<dd>r0 describes the equilibrium bond distance.</dd>
+<dt>rc: <em>float</em></dt>
+<dd>rc describes the cutoff of the pairwise interaction.</dd>
+<dt>line: <em>str</em></dt>
+<dd>A line from a parameter file to be parsed.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd><dl class="first last docutils">
+<dt>Morse: <a class="reference internal" href="forcefields.html#morse.Morse" title="morse.Morse"><code class="xref py py-class docutils literal notranslate"><span class="pre">Morse</span></code></a></dt>
+<dd>A Morse object.</dd>
+</dl>
+</dd>
+</dl>
+<dl class="method">
+<dt id="morse.Morse.fix">
+<code class="descname">fix</code><span class="sig-paren">(</span><em>params='all'</em>, <em>value=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/morse.html#Morse.fix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#morse.Morse.fix" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will fix these parameters by assigning bounds to the values themselves.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="morse.Morse.generate">
+<em class="property">classmethod </em><code class="descname">generate</code><span class="sig-paren">(</span><em>atom_types</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/morse.html#Morse.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#morse.Morse.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Randomly generate parameters for morse.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>atom_types: <em>list, str</em></dt>
+<dd>A list of all the atom types to have parameters generated for.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>morse_objs: <em>list, Morse</em></dt>
+<dd>Returns a list of Morse objects.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="morse.Morse.load_smrff">
+<em class="property">classmethod </em><code class="descname">load_smrff</code><span class="sig-paren">(</span><em>pfile</em>, <em>pfptr=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/morse.html#Morse.load_smrff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#morse.Morse.load_smrff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a parameter file, import the Morse parameters if possible.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>pfile: <em>str</em></dt>
+<dd>A parsed smrff parameter file input string.
+(no comments or trailing white spaces)</dd>
+<dt>pfptr: <em>str</em></dt>
+<dd>The name of a parameter file to be parsed.
+If specified, then pfile is ignored.
+(you may simply pass None as pfile)
+(For programmer: The name of this parameter must be changed. It is hard to understand.)</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd><dl class="first last docutils">
+<dt>Morse_objs: <em>list, Morse</em>, or <em>None</em></dt>
+<dd>Returns a list of Morse objects if possible, else None.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="morse.Morse.pack">
+<code class="descname">pack</code><span class="sig-paren">(</span><em>params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/morse.html#Morse.pack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#morse.Morse.pack" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function packs the Morse object from a list.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list</em></dt>
+<dd>A list holding the indices, D0, alpha, r0, rc.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="morse.Morse.parse_line">
+<em class="property">static </em><code class="descname">parse_line</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/morse.html#Morse.parse_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#morse.Morse.parse_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse line inputs and assign to this object.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>line: <em>str</em></dt>
+<dd>A string that holds a three-body Morse parameter set.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="morse.Morse.print_lower">
+<code class="descname">print_lower</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/morse.html#Morse.print_lower"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#morse.Morse.print_lower" title="Permalink to this definition">¶</a></dt>
+<dd><p>This prints out a representation of this Morse object’s lower bound,
+in the format that is output to the smrff parameter file.
+<strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>Morse: <em>str</em></dt>
+<dd>A string representation of Morse parameters.
+It is in the following order: indices D0 alpha r0 rc</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="morse.Morse.print_upper">
+<code class="descname">print_upper</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/morse.html#Morse.print_upper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#morse.Morse.print_upper" title="Permalink to this definition">¶</a></dt>
+<dd><p>This prints out a representation of this Morse object’s upper bound,
+in the format that is output to the smrff parameter file.
+<strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>Morse: <em>str</em></dt>
+<dd>A string representation of Morse parameters.
+It is in the following order: indices D0 alpha r0 rc</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="morse.Morse.unpack">
+<code class="descname">unpack</code><span class="sig-paren">(</span><em>with_indices=True</em>, <em>bounds=None</em>, <em>with_bounds=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/morse.html#Morse.unpack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#morse.Morse.unpack" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function unpacks the Morse object into a list.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>with_indices: <em>bool, optional</em></dt>
+<dd>Whether to also include the indices in the list.</dd>
+<dt>bounds: <em>int, optional</em></dt>
+<dd>Whether to output the lower bounds (0), or upper bounds (1).
+If None, then the parameters themselves are output instead (default).</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd><dl class="first last docutils">
+<dt>Morse: <em>list, str/float</em></dt>
+<dd>A list, holding the string of the indices, D0, alpha, r0, rc.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="morse.Morse.validate">
+<code class="descname">validate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/morse.html#Morse.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#morse.Morse.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will validate data integrity.
+In this case, we simply ensure data types are appropriate.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-opls"></span><p>The OPLS Forcefield module contains functionality for parsing the OPLS
+forcefield and typing appropriately.  Note, you must first import
+files before ever importing frc_opls.</p>
+<ul class="simple">
+<li><code class="xref py py-func docutils literal notranslate"><span class="pre">read_opls_parameters()</span></code></li>
+<li><code class="xref py py-func docutils literal notranslate"><span class="pre">set_forcefield_parameters()</span></code></li>
+<li><code class="xref py py-func docutils literal notranslate"><span class="pre">check_net_charge()</span></code></li>
+<li><code class="xref py py-func docutils literal notranslate"><span class="pre">check_consistency()</span></code></li>
+</ul>
+<hr class="docutils" />
+<dl class="function">
+<dt id="opls.parse_pfile">
+<code class="descclassname">opls.</code><code class="descname">parse_pfile</code><span class="sig-paren">(</span><em>parameter_file='/home/hherbol/squid/forcefield_parameters/oplsaa.prm'</em>, <em>pair_style='lj/cut'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opls.html#parse_pfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#opls.parse_pfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads an opls parameter file written in the Tinker file format.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>parameter_file: <em>str, optional</em></dt>
+<dd>Relative or absolute path to an opls parameter file, written in
+the Tinker file format.</dd>
+<dt>pair_style: <em>str, optional</em></dt>
+<dd>The pair style to be assigned.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>atom_types: <em>list,</em> <a class="reference internal" href="#structures.Struct" title="structures.Struct"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code></a></dt>
+<dd>A list of the forcefield types for atoms, stored as
+<a class="reference internal" href="#structures.Struct" title="structures.Struct"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code></a>.</dd>
+<dt>bond_types: <em>list,</em> <a class="reference internal" href="#structures.Struct" title="structures.Struct"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code></a></dt>
+<dd>A list of the forcefield types for bonds, stored as
+<a class="reference internal" href="#structures.Struct" title="structures.Struct"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code></a>.</dd>
+<dt>angle_types: <em>list,</em> <a class="reference internal" href="#structures.Struct" title="structures.Struct"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code></a></dt>
+<dd>A list of the forcefield types for angles, stored as
+<a class="reference internal" href="#structures.Struct" title="structures.Struct"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code></a>.</dd>
+<dt>dihedral_types: <em>list,</em> <a class="reference internal" href="#structures.Struct" title="structures.Struct"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code></a></dt>
+<dd>A list of the forcefield types for dihedrals, stored as
+<a class="reference internal" href="#structures.Struct" title="structures.Struct"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code></a>.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<span class="target" id="module-smooth_sin"></span><p>Class object for the sin_l/sin_r/sin_inout smooths.</p>
+<dl class="data">
+<dt id="smooth_sin.END_ID">
+<code class="descclassname">smooth_sin.</code><code class="descname">END_ID</code><em class="property"> = 'END'</em><a class="headerlink" href="#smooth_sin.END_ID" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Smooth class contains:</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="smooth_sin.SmoothSin">
+<em class="property">class </em><code class="descclassname">smooth_sin.</code><code class="descname">SmoothSin</code><span class="sig-paren">(</span><em>smooth_index</em>, <em>atom_i</em>, <em>atom_j</em>, <em>r_in</em>, <em>d_in</em>, <em>gcut</em>, <em>r_out=None</em>, <em>d_out=None</em>, <em>lr=None</em>, <em>c_r=None</em>, <em>c_d=None</em>, <em>c_lr=None</em>, <em>c_gcut=None</em>, <em>c_s_index=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smooth_sin.html#SmoothSin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smooth_sin.SmoothSin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the smooth object for sin_l/sin_r/sin_inout smooths.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>smooth_index: <em>int</em></dt>
+<dd>Which smooth function this is applied to (0th, 1st, etc).</dd>
+<dt>atom_i: <em>int</em></dt>
+<dd>Which atom type this applies to.  Note, using None is the same as <a href="#id5"><span class="problematic" id="id6">*</span></a>.</dd>
+<dt>atom_j: <em>int</em></dt>
+<dd>Which atom type this applies to.  Note, using None is the same as <a href="#id7"><span class="problematic" id="id8">*</span></a>.=</dd>
+<dt>r_in: <em>float</em></dt>
+<dd>The inner cutoff.</dd>
+<dt>d_in: <em>float</em></dt>
+<dd>The inner cutoff radius.</dd>
+<dt>gcut: <em>float</em></dt>
+<dd>The global cutoff, to never be exceeded.</dd>
+<dt>r_out: <em>float, optional</em></dt>
+<dd>The outer cutoff.</dd>
+<dt>d_out: <em>float, optional</em></dt>
+<dd>The outer cutoff radius.</dd>
+<dt>lr: <em>str, optional</em></dt>
+<dd>If r_out and d_out are NOT specified, you MUST specify this. It is either
+l or r to specify which direction this smooth is.</dd>
+<dt>c_r: <em>float</em></dt>
+<dd>Coupled cutoff.  Only necessary if inout was used.</dd>
+<dt>c_d: <em>float</em></dt>
+<dd>Coupled cutoff radius.  Only necessary if inout was used.</dd>
+<dt>c_lr: <em>str</em></dt>
+<dd>If c_r and c_d are NOT specified, you MUST specify this. It is either
+l or r to specify which direction this smooth is.</dd>
+<dt>c_gcut: <em>float</em></dt>
+<dd>Coupled global cutoff, to never be exceeded.  Only necessary if inout is used.</dd>
+<dt>c_s_index: <em>int</em></dt>
+<dd>Which smooth funciton this applies to (0th, 1st, etc).</dd>
+</dl>
+</div></blockquote>
+<dl class="method">
+<dt id="smooth_sin.SmoothSin.dump_pair_coeffs">
+<code class="descname">dump_pair_coeffs</code><span class="sig-paren">(</span><em>restricts</em>, <em>skip_restricts=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smooth_sin.html#SmoothSin.dump_pair_coeffs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smooth_sin.SmoothSin.dump_pair_coeffs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the smrff lammps input line for this smooth function.  Specifically
+the pair_coeff line.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="smooth_sin.SmoothSin.generate">
+<em class="property">classmethod </em><code class="descname">generate</code><span class="sig-paren">(</span><em>atom_types</em>, <em>lri</em>, <em>gcut</em>, <em>smooth_index</em>, <em>coupled=False</em>, <em>coupled_lr_smooth=None</em>, <em>coupled_lr_cut=None</em>, <em>coupled_smooth_index=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smooth_sin.html#SmoothSin.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smooth_sin.SmoothSin.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Randomly generate parameters for smooths.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>atom_types: <em>list, str</em></dt>
+<dd>A list of all the atom types to have parameters generated for.</dd>
+<dt>lri: <em>str</em></dt>
+<dd>Whether this is sin_l, sin_r, or sin_inout.</dd>
+<dt>gcut: <em>float</em></dt>
+<dd>The global cutoff, to not be exceeded.</dd>
+<dt>smooth_index: <em>int</em></dt>
+<dd>This smooth’s index.</dd>
+<dt>coupled: <em>bool, optional</em></dt>
+<dd>Whether to couple this smooth with another smooth or not.  If
+so, then all coupled keywords need defining.</dd>
+<dt>coupled_lr_smooth: <em>str</em></dt>
+<dd>Whether this is sin_l, sin_r, or sin_inout.</dd>
+<dt>coupled_lr_cut: <em>float</em></dt>
+<dd>The global cutoff, to not be exceeded.</dd>
+<dt>coupled_smooth_index: <em>int</em></dt>
+<dd>The coupled smooth’s index.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>smooth_objs: <em>list, SmoothSin</em></dt>
+<dd>Returns a list of smooth objects.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="smooth_sin.SmoothSin.load_smrff">
+<em class="property">classmethod </em><code class="descname">load_smrff</code><span class="sig-paren">(</span><em>pfile</em>, <em>pfptr=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smooth_sin.html#SmoothSin.load_smrff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smooth_sin.SmoothSin.load_smrff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a parameter file, inport the smooth parameters if possible.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>pfile: <em>str</em></dt>
+<dd>A parsed smrff parameter file input string (no comments or
+trailing white spaces)</dd>
+<dt>pfptr: <em>str</em></dt>
+<dd>The name of a parameter file to be parsed.  If specified,
+then pfile is ignored (you may simply pass None as pfile).</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd><dl class="first last docutils">
+<dt>smooth_objs: <em>list, smooth</em>, or <em>None</em></dt>
+<dd>Returns a list of smooth objects if possible, else None.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="smooth_sin.SmoothSin.pack">
+<code class="descname">pack</code><span class="sig-paren">(</span><em>params</em>, <em>with_index=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smooth_sin.html#SmoothSin.pack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smooth_sin.SmoothSin.pack" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function packs the smooth object from a list.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list</em></dt>
+<dd>A list holding the indices and parameters.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="smooth_sin.SmoothSin.parse_line">
+<em class="property">static </em><code class="descname">parse_line</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smooth_sin.html#SmoothSin.parse_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smooth_sin.SmoothSin.parse_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse line inputs and assign to this object.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>line: <em>str</em></dt>
+<dd>A string that holds a smooth parameter set.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="smooth_sin.SmoothSin.unpack">
+<code class="descname">unpack</code><span class="sig-paren">(</span><em>with_indices=True</em>, <em>with_bounds=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smooth_sin.html#SmoothSin.unpack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smooth_sin.SmoothSin.unpack" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function unpacks the smooth object into a list.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>with_indices: <em>bool, optional</em></dt>
+<dd>Whether to also include the indices in the list.</dd>
+<dt>with_bounds: <em>bool, optional</em></dt>
+<dd>Whether to also include the bounds.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd><dl class="first last docutils">
+<dt>Smooth: <em>list, str/float</em></dt>
+<dd>A list of parameters.  With inidices includes smooth_index,
+atom_i, and atom_j, else it is only the distances.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-smrff"></span><p>This file will contain functions pertaining solely to the SMRFF force field
+and any associated files.</p>
+<ul class="simple">
+<li><a class="reference internal" href="forcefields.html#smrff.remove_comments" title="smrff.remove_comments"><code class="xref py py-func docutils literal notranslate"><span class="pre">remove_comments()</span></code></a></li>
+<li><a class="reference internal" href="forcefields.html#smrff.parse_pfile" title="smrff.parse_pfile"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse_pfile()</span></code></a></li>
+</ul>
+<dl class="function">
+<dt id="smrff.parse_pfile">
+<code class="descclassname">smrff.</code><code class="descname">parse_pfile</code><span class="sig-paren">(</span><em>fname</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smrff.html#parse_pfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smrff.parse_pfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will, given a smrff parameter file, will parse it by
+removing comments, trailing whitespaces, and empty lines.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>fname: <em>str</em></dt>
+<dd>The name of the parameter file to be parsed.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>parsed: <em>str</em></dt>
+<dd>A parsed string of said parameter file.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="smrff.remove_comments">
+<code class="descclassname">smrff.</code><code class="descname">remove_comments</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smrff.html#remove_comments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smrff.remove_comments" title="Permalink to this definition">¶</a></dt>
+<dd><p>A simple function to remove comments in a string.  Note, we don’t care
+about whitespace, so it also removes that.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>s: <em>str</em></dt>
+<dd>A string to remove comments from.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>s_no_comments: <em>str</em></dt>
+<dd>A string without comments.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<span class="target" id="module-tersoff"></span><p>The Tersoff object.  This stores the indices and TERSOFF parameters.</p>
+<dl class="data">
+<dt id="tersoff.END_ID">
+<code class="descclassname">tersoff.</code><code class="descname">END_ID</code><em class="property"> = 'END'</em><a class="headerlink" href="#tersoff.END_ID" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Tersoff class contains:
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">__init__()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">__repr__()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">__eq__()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">__hash__()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">_printer()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">print_lower()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">print_upper()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">unpack()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">pack()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">validate()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">turn_off()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">turn_off_3body()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">assign_line()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code>
+- <a href="#id9"><span class="problematic" id="id10">:classmethod:`load_smrff`</span></a>
+————</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="tersoff.Tersoff">
+<em class="property">class </em><code class="descclassname">tersoff.</code><code class="descname">Tersoff</code><span class="sig-paren">(</span><em>indices=None</em>, <em>m=None</em>, <em>gamma=None</em>, <em>lambda3=None</em>, <em>c=None</em>, <em>d=None</em>, <em>costheta0=None</em>, <em>n=None</em>, <em>beta=None</em>, <em>lambda2=None</em>, <em>B=None</em>, <em>R=None</em>, <em>D=None</em>, <em>lambda1=None</em>, <em>A=None</em>, <em>line=None</em>, <em>form='original'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tersoff.html#Tersoff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the Tersoff object.  The potential form can be found on the
+LAMMPs webpage (<a class="reference external" href="http://lammps.sandia.gov/doc/pair_tersoff.html">http://lammps.sandia.gov/doc/pair_tersoff.html</a>).  Either
+specify all the parameters, or pass a string to line, but not both.  If
+both are specified, an error will be thrown.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>indices: <em>list or tuple, str or int</em></dt>
+<dd>The indices of the atom types in this three-body interaction.</dd>
+<dt>m: <em>int</em></dt>
+<dd>m is an exponential term in the zeta component of the Tersoff
+potential.  It is either 1 or 3.</dd>
+<dt>gamma: <em>float</em></dt>
+<dd>gamma is a prefactor to g(theta) in the Tersoff potential,
+and is between 0 (completely off) and 1 (completely on).</dd>
+<dt>lambda3: <em>float</em></dt>
+<dd>lambda3 is the exponential coefficient of the three-body
+tersoff interaction.</dd>
+<dt>c: <em>float</em></dt>
+<dd>c describes the numerator part of the three-body interaction
+(found withing the g(theta) term).</dd>
+<dt>d: <em>float</em></dt>
+<dd>d describes the denominator part of the three-body interaction
+(found withing the g(theta) term).</dd>
+<dt>costheta0: <em>float</em></dt>
+<dd>costheta0 gives an equilibrium angle of sorts for the
+three-body interaction.  As such, it is restricted between -1
+and 1.</dd>
+<dt>n: <em>float</em></dt>
+<dd>n is a power that the three-body interaction is taken to (or
+to some function of n).</dd>
+<dt>beta: <em>float</em></dt>
+<dd>beta is some scaling to the three-body interactions, found in
+the b_ij term of the Tersoff potential.</dd>
+<dt>lambda2: <em>float</em></dt>
+<dd>lambda2 is the exponential coefficient of the two-body
+attraction term in the tersoff interaction.</dd>
+<dt>B: <em>float</em></dt>
+<dd>B is the pre-factor to the two-body attraction term in the
+tersoff interaction.</dd>
+<dt>R: <em>float</em></dt>
+<dd>R is a component of the tersoff potential’s cutoff distance.</dd>
+<dt>D: <em>float</em></dt>
+<dd>D is a component of the tersoff potential’s cutoff distance.</dd>
+<dt>lambda1: <em>float</em></dt>
+<dd>lambda1 is the exponential coefficient of the two-body
+repulsion term in the tersoff interaction.</dd>
+<dt>A: <em>float</em></dt>
+<dd>A is the pre-factor to the two-body repulsion term in the
+tersoff interaction.</dd>
+<dt>line: <em>str</em></dt>
+<dd>A line from a parameter file to be parsed.</dd>
+<dt>form: <em>str</em></dt>
+<dd>Whether to use the original form (m=3, gamma=1) or the
+Albe et al form (m=1, beta=1).  Must be original or albe.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>tersoff: <a class="reference internal" href="forcefields.html#tersoff.Tersoff" title="tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tersoff</span></code></a></dt>
+<dd>A Tersoff object.</dd>
+</dl>
+</div></blockquote>
+<dl class="method">
+<dt id="tersoff.Tersoff.fix">
+<code class="descname">fix</code><span class="sig-paren">(</span><em>params='all'</em>, <em>value=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tersoff.html#Tersoff.fix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.fix" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will fix these parameters by assigning bounds to the values themselves.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="tersoff.Tersoff.generate">
+<em class="property">classmethod </em><code class="descname">generate</code><span class="sig-paren">(</span><em>atom_types</em>, <em>form='original'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tersoff.html#Tersoff.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Randomly generate parameters for tersoff.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>atom_types: <em>list, str</em></dt>
+<dd>A list of all the atom types to have parameters generated for.</dd>
+<dt>form: <em>str</em></dt>
+<dd>Whether to use the original form (m=3, gamma=1) or the
+Albe et al form (m=1, beta=1).  Must be original or albe.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>ters_objs: <em>list, Tersoff</em></dt>
+<dd>Returns a list of Tersoff objects.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="tersoff.Tersoff.load_smrff">
+<em class="property">classmethod </em><code class="descname">load_smrff</code><span class="sig-paren">(</span><em>pfile</em>, <em>pfptr=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tersoff.html#Tersoff.load_smrff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.load_smrff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a parameter file, inport the tersoff parameters if possible.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>pfile: <em>str</em></dt>
+<dd>A parsed smrff parameter file input string (no comments or
+trailing white spaces)</dd>
+<dt>pfptr: <em>str</em></dt>
+<dd>The name of a parameter file to be parsed.  If specified,
+then pfile is ignored (you may simply pass None as pfile).</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>tersoff_objs: <em>list, Tersoff</em>, or <em>None</em></dt>
+<dd>Returns a list of Tersoff objects if possible, else None.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="tersoff.Tersoff.pack">
+<code class="descname">pack</code><span class="sig-paren">(</span><em>params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tersoff.html#Tersoff.pack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.pack" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function packs the tersoff object from a list.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list</em></dt>
+<dd>A list holding the indices, m, gamma, lambda3, c, d,
+costheta0, n, beta, lambda2, B, R, D, lambda1, A.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="tersoff.Tersoff.parse_line">
+<em class="property">static </em><code class="descname">parse_line</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tersoff.html#Tersoff.parse_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.parse_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse line inputs and assign to this object.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>line: <em>str</em></dt>
+<dd>A string that holds a three-body tersoff parameter set.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="tersoff.Tersoff.print_lower">
+<code class="descname">print_lower</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tersoff.html#Tersoff.print_lower"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.print_lower" title="Permalink to this definition">¶</a></dt>
+<dd><p>This prints out a representation of this tersoff object’s upper bound,
+in the format that is output to the smrff parameter file.</p>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>tersoff: <em>str</em></dt>
+<dd><p class="first">A string representation of Tersoff parameters.  It is in the
+following order:</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>indices m gamma lambda3 c d costheta0</dt>
+<dd>n beta  lambda2 B R     D     lambda1   A</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="tersoff.Tersoff.print_upper">
+<code class="descname">print_upper</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tersoff.html#Tersoff.print_upper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.print_upper" title="Permalink to this definition">¶</a></dt>
+<dd><p>This prints out a representation of this tersoff object’s upper bound,
+in the format that is output to the smrff parameter file.</p>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>tersoff: <em>str</em></dt>
+<dd><p class="first">A string representation of Tersoff parameters.  It is in the
+following order:</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>indices m gamma lambda3 c d costheta0</dt>
+<dd>n beta  lambda2 B R     D     lambda1   A</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="tersoff.Tersoff.set_default_bounds">
+<code class="descname">set_default_bounds</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tersoff.html#Tersoff.set_default_bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.set_default_bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign default bounds.  Further, if this is the case of A-B-B vs A-B-C
+we can simplify the bounds as only in the case of A-B-B are two body
+parameters n, Beta, lambda2, lambda1, and A read in.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tersoff.Tersoff.turn_off">
+<code class="descname">turn_off</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tersoff.html#Tersoff.turn_off"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.turn_off" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function essentially turns off the Tersoff potential.  This is
+accomplished by:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Setting a small cutoff distance.</li>
+<li>Assigning an impossibly large repulsion energy (A is large)</li>
+<li>Removing attractive potential (B is 0)</li>
+<li>Setting beta to 0 (this removes the three-body interaction)</li>
+<li>Setting all benign (unused) parameters to 1</li>
+</ol>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="tersoff.Tersoff.turn_off_3body">
+<code class="descname">turn_off_3body</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tersoff.html#Tersoff.turn_off_3body"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.turn_off_3body" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function essentially turns off the 3-body component of the
+Tersoff potential.  This is accomplished by:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Setting beta to 0 (this removes the three-body interaction)</li>
+<li>Setting all benign (unused) parameters to 1</li>
+</ol>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="tersoff.Tersoff.unpack">
+<code class="descname">unpack</code><span class="sig-paren">(</span><em>with_indices=True</em>, <em>bounds=None</em>, <em>with_bounds=False</em>, <em>for_output=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tersoff.html#Tersoff.unpack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.unpack" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function unpacks the tersoff object into a list.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>with_indices: <em>bool, optional</em></dt>
+<dd>Whether to also include the indices in the list.</dd>
+<dt>bounds: <em>int, optional</em></dt>
+<dd>Whether to output the lower bounds (0), or upper bounds (1).
+If None, then the parameters themselves are output instead (default).</dd>
+<dt>with_bounds: <em>bool, optional</em></dt>
+<dd>Whether to output the bounds or not.</dd>
+<dt>for_output: <em>bool, optional</em></dt>
+<dd>Whether this is for output (in which case we disregard 2-body sym flag)</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>tersoff: <em>list, str/float</em></dt>
+<dd>A list, holding the string of the indices, m, gamma, lambda3,
+c, d, costheta0, n, beta, lambda2, B, R, D, lambda1, A.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="tersoff.Tersoff.update_2body">
+<code class="descname">update_2body</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tersoff.html#Tersoff.update_2body"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.update_2body" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a tersoff parameter object, update the current one with
+the 2-body parameters (n, beta, lambda1, lambda2, A, B).</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>other: <em>:class:`Tersoff`</em></dt>
+<dd>A Tersoff parameter object to get 2-body parameters from.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="tersoff.Tersoff.validate">
+<code class="descname">validate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tersoff.html#Tersoff.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will validate data integrity.  In this case, we simply
+ensure data types are appropriate.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="tersoff.sorted_force_2body_symmetry">
+<code class="descclassname">tersoff.</code><code class="descname">sorted_force_2body_symmetry</code><span class="sig-paren">(</span><em>tersoff_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tersoff.html#sorted_force_2body_symmetry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.sorted_force_2body_symmetry" title="Permalink to this definition">¶</a></dt>
+<dd><p>In the case of randomly generating parameters, we may want to randomly
+force the 2body symmetry condition.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>tersoff_params: <em>list,</em> <a class="reference internal" href="forcefields.html#tersoff.Tersoff" title="tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tersoff</span></code></a></dt>
+<dd>A list of Tersoff objects.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>corrected_tersoff_params: <em>list,</em> <a class="reference internal" href="forcefields.html#tersoff.Tersoff" title="tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tersoff</span></code></a></dt>
+<dd>A list of Tersoff objects with the 2body symmetry condition ensured.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="tersoff.tag_tersoff_for_duplicate_2bodies">
+<code class="descclassname">tersoff.</code><code class="descname">tag_tersoff_for_duplicate_2bodies</code><span class="sig-paren">(</span><em>tersoff_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tersoff.html#tag_tersoff_for_duplicate_2bodies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.tag_tersoff_for_duplicate_2bodies" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will mimic the sorted_force_2body_symmetry and tag the duplicates
+that would be set by sorted_force_2body_symmetry.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>tersoff_params: <em>list,</em> <a class="reference internal" href="forcefields.html#tersoff.Tersoff" title="tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tersoff</span></code></a></dt>
+<dd>A list of Tersoff objects.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>tagged_tersoff_params: <em>list,</em> <a class="reference internal" href="forcefields.html#tersoff.Tersoff" title="tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tersoff</span></code></a></dt>
+<dd>A list of the unique Tersoff objects.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tersoff.verify_tersoff_2body_symmetry">
+<code class="descclassname">tersoff.</code><code class="descname">verify_tersoff_2body_symmetry</code><span class="sig-paren">(</span><em>tersoff_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tersoff.html#verify_tersoff_2body_symmetry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.verify_tersoff_2body_symmetry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of tersoff parameters, verify that they are such that
+the two-body parameters are symmetric.  What this means is that when
+we consider A-B B and B-A A, the two body parameters must be the same.
+This is necessary as LAMMPs will randomly isolate the two body
+interaction (A-B or B-A) and use the corresponding parameters.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>tersoff_params: <em>list,</em> <a class="reference internal" href="forcefields.html#tersoff.Tersoff" title="tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tersoff</span></code></a></dt>
+<dd>A list of Tersoff objects.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
@@ -1065,7 +3124,7 @@ raised if the net_charge is greater than <em>q_tol</em>.</p>
 
 <dl class="function">
 <dt id="frc_opls.read_opls_parameters">
-<code class="descclassname">frc_opls.</code><code class="descname">read_opls_parameters</code><span class="sig-paren">(</span><em>parameter_file='/mnt/c/Users/hherb/Documents/subsystem/squid/forcefield_parameters/oplsaa.prm'</em>, <em>pair_style='lj/cut'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/frc_opls.html#read_opls_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frc_opls.read_opls_parameters" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">frc_opls.</code><code class="descname">read_opls_parameters</code><span class="sig-paren">(</span><em>parameter_file='/home/hherbol/squid/forcefield_parameters/oplsaa.prm'</em>, <em>pair_style='lj/cut'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/frc_opls.html#read_opls_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frc_opls.read_opls_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads an opls parameter file written in the Tinker file format.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
@@ -1098,7 +3157,7 @@ the Tinker file format.</dd>
 
 <dl class="function">
 <dt id="frc_opls.set_forcefield_parameters">
-<code class="descclassname">frc_opls.</code><code class="descname">set_forcefield_parameters</code><span class="sig-paren">(</span><em>atoms, bonds=[], angles=[], dihedrals=[], parameter_file=[('OPLS', '/mnt/c/Users/hherb/Documents/subsystem/squid/forcefield_parameters/oplsaa.prm')], name='unnamed', extra_parameters={}, test_consistency=True, test_charges=True, allow_errors=False, pair_style='lj/cut', allow_no_ffp=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/frc_opls.html#set_forcefield_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frc_opls.set_forcefield_parameters" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">frc_opls.</code><code class="descname">set_forcefield_parameters</code><span class="sig-paren">(</span><em>atoms, bonds=[], angles=[], dihedrals=[], parameter_file=[('OPLS', '/home/hherbol/squid/forcefield_parameters/oplsaa.prm')], name='unnamed', extra_parameters={}, test_consistency=True, test_charges=True, allow_errors=False, pair_style='lj/cut', allow_no_ffp=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/frc_opls.html#set_forcefield_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frc_opls.set_forcefield_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads an opls parameter file written in the Tinker file format.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
@@ -2557,7 +4616,7 @@ number of processors)</dd>
 
 <dl class="function">
 <dt id="jobs.pysub">
-<code class="descclassname">jobs.</code><code class="descname">pysub</code><span class="sig-paren">(</span><em>job_name</em>, <em>nprocs=1</em>, <em>ntasks=1</em>, <em>nodes=1</em>, <em>adjust_nodes=True</em>, <em>omp=None</em>, <em>queue='None'</em>, <em>walltime='00:30:00'</em>, <em>xhost=None</em>, <em>path='/mnt/c/Users/hherb/Documents/subsystem/squid/docs'</em>, <em>priority=None</em>, <em>args=None</em>, <em>remove_sub_script=True</em>, <em>unique_name=False</em>, <em>redundancy=False</em>, <em>py3=False</em>, <em>use_mpi=False</em>, <em>modules=None</em>, <em>slurm_allocation=None</em>, <em>queueing_system='None'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs.html#pysub"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jobs.pysub" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jobs.</code><code class="descname">pysub</code><span class="sig-paren">(</span><em>job_name</em>, <em>nprocs=1</em>, <em>ntasks=1</em>, <em>nodes=1</em>, <em>adjust_nodes=True</em>, <em>omp=None</em>, <em>queue='None'</em>, <em>walltime='00:30:00'</em>, <em>xhost=None</em>, <em>path='/home/hherbol/squid/docs'</em>, <em>priority=None</em>, <em>args=None</em>, <em>remove_sub_script=True</em>, <em>unique_name=False</em>, <em>redundancy=False</em>, <em>py3=False</em>, <em>use_mpi=False</em>, <em>modules=None</em>, <em>slurm_allocation=None</em>, <em>queueing_system='None'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs.html#pysub"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jobs.pysub" title="Permalink to this definition">¶</a></dt>
 <dd><p>Submission of python scripts to run on your queue.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
@@ -2583,6 +4642,10 @@ when the user underspecifies nodes.</dd>
 <dt>queue: <em>str, optional</em></dt>
 <dd>Which queue you want your script to run on (specific to
 your queueing system).</dd>
+<dt>walltime: <em>str, optional</em></dt>
+<dd>How long to post the job on the queue for in d-h:m:s where d are
+days, h are hours, m are minutes, and s are seconds.  Default is
+for 30 minutes (00:30:00).</dd>
 <dt>priority: <em>int, optional</em></dt>
 <dd>Priority of the simulation (queueing system dependent).  Priority
 ranges (in NBS) from a low of 1 (start running whenever) to a
@@ -2771,8 +4834,6 @@ This does NOT remove the task from other tasks however.</p>
 <li><a class="reference internal" href="#lammps_job.read_dump" title="lammps_job.read_dump"><code class="xref py py-func docutils literal notranslate"><span class="pre">read_dump()</span></code></a></li>
 <li><a class="reference internal" href="#lammps_job.job" title="lammps_job.job"><code class="xref py py-func docutils literal notranslate"><span class="pre">job()</span></code></a></li>
 <li><a class="reference internal" href="#lammps_job.read_TIP4P_types" title="lammps_job.read_TIP4P_types"><code class="xref py py-func docutils literal notranslate"><span class="pre">read_TIP4P_types()</span></code></a></li>
-<li><a class="reference internal" href="#lammps_job.PotEngSurfaceJob" title="lammps_job.PotEngSurfaceJob"><code class="xref py py-func docutils literal notranslate"><span class="pre">PotEngSurfaceJob()</span></code></a></li>
-<li><code class="xref py py-func docutils literal notranslate"><span class="pre">PotEngSurfaceJob_v2()</span></code></li>
 <li><a class="reference internal" href="#lammps_job.OptJob" title="lammps_job.OptJob"><code class="xref py py-func docutils literal notranslate"><span class="pre">OptJob()</span></code></a></li>
 <li><a class="reference internal" href="#lammps_job.thermo_2_text" title="lammps_job.thermo_2_text"><code class="xref py py-func docutils literal notranslate"><span class="pre">thermo_2_text()</span></code></a></li>
 <li><a class="reference internal" href="#lammps_job.read_thermo" title="lammps_job.read_thermo"><code class="xref py py-func docutils literal notranslate"><span class="pre">read_thermo()</span></code></a></li>
@@ -2840,7 +4901,7 @@ the queue.</dd>
 
 <dl class="function">
 <dt id="lammps_job.job">
-<code class="descclassname">lammps_job.</code><code class="descname">job</code><span class="sig-paren">(</span><em>run_name</em>, <em>input_script</em>, <em>system=None</em>, <em>queue='None'</em>, <em>procs=1</em>, <em>ntasks=1</em>, <em>nodes=1</em>, <em>adjust_nodes=True</em>, <em>email=None</em>, <em>write_data_file=True</em>, <em>pair_coeffs_included=True</em>, <em>hybrid_pair=False</em>, <em>hybrid_angle=False</em>, <em>TIP4P=False</em>, <em>no_echo=False</em>, <em>redundancy=False</em>, <em>params=None</em>, <em>lmp_path='/mnt/c/Users/hherb/Documents/subsystem/squid/lammps/16Mar18/src/lmp_wsl'</em>, <em>slurm_allocation=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lammps_job.html#job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lammps_job.job" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">lammps_job.</code><code class="descname">job</code><span class="sig-paren">(</span><em>run_name</em>, <em>input_script</em>, <em>system=None</em>, <em>queue='None'</em>, <em>procs=1</em>, <em>ntasks=1</em>, <em>nodes=1</em>, <em>walltime='00:30:00'</em>, <em>adjust_nodes=True</em>, <em>email=None</em>, <em>write_data_file=True</em>, <em>pair_coeffs_included=True</em>, <em>hybrid_pair=False</em>, <em>hybrid_angle=False</em>, <em>TIP4P=False</em>, <em>no_echo=False</em>, <em>redundancy=False</em>, <em>params=None</em>, <em>lmp_path='/home/hherbol/squid/lammps/16Mar18/src/lmp_smrff'</em>, <em>slurm_allocation=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lammps_job.html#job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lammps_job.job" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper to submitting a LAMMPs simulation.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
@@ -2864,6 +4925,10 @@ will use is procs * ntasks.</dd>
 <dd>(For SLURM) The number of nodes this job requires.  If requesting
 ntasks * procs &lt; 24 * nodes, a warning is printed, as on MARCC
 each node has only 24 cores.</dd>
+<dt>walltime: <em>str, optional</em></dt>
+<dd>How long to post the job on the queue for in d-h:m:s where d are
+days, h are hours, m are minutes, and s are seconds.  Default is
+for 30 minutes (00:30:00).</dd>
 <dt>adjust_nodes: <em>bool, optional</em></dt>
 <dd>Whether to automatically calculate how many nodes is necessary
 when the user underspecifies nodes.</dd>
@@ -3315,7 +5380,7 @@ delete every file with the .txt and .log extension.</dd>
 <hr class="docutils" />
 <dl class="class">
 <dt id="neb.NEB">
-<em class="property">class </em><code class="descclassname">neb.</code><code class="descname">NEB</code><span class="sig-paren">(</span><em>name</em>, <em>states</em>, <em>theory</em>, <em>extra_section=''</em>, <em>initial_guess=None</em>, <em>spring_atoms=None</em>, <em>procs=1</em>, <em>queue=None</em>, <em>mem=2000</em>, <em>priority=None</em>, <em>disp=0</em>, <em>k=0.00367453</em>, <em>charge=0</em>, <em>multiplicity=1</em>, <em>fit_rigid=True</em>, <em>DFT='orca'</em>, <em>opt='LBFGS'</em>, <em>start_job=None</em>, <em>get_results=None</em>, <em>new_opt_params={}</em>, <em>callback=None</em>, <em>ci_neb=False</em>, <em>ci_N=5</em>, <em>no_energy=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neb.html#NEB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neb.NEB" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">neb.</code><code class="descname">NEB</code><span class="sig-paren">(</span><em>name</em>, <em>states</em>, <em>theory</em>, <em>extra_section=''</em>, <em>initial_guess=None</em>, <em>spring_atoms=None</em>, <em>procs=1</em>, <em>queue=None</em>, <em>mem=2000</em>, <em>priority=None</em>, <em>disp=0</em>, <em>k=0.00367453</em>, <em>charge=0</em>, <em>multiplicity=1</em>, <em>fit_rigid=True</em>, <em>DFT='orca'</em>, <em>opt='LBFGS'</em>, <em>start_job=None</em>, <em>get_results=None</em>, <em>new_opt_params={}</em>, <em>callback=None</em>, <em>ci_neb=False</em>, <em>ci_N=5</em>, <em>no_energy=False</em>, <em>orca4=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neb.html#NEB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neb.NEB" title="Permalink to this definition">¶</a></dt>
 <dd><p>A method for determining the minimum energy pathway of a reaction using
 DFT. Note, this method was written for atomic orbital DFT codes; however,
 is potentially generalizable to other programs.</p>
@@ -3390,6 +5455,8 @@ which image to be used.</dd>
 of the tangent is based on only the force, and not the energy.
 Note, the code still expects the get_results function to return
 two things, so just have it return (None, atoms + forces).</dd>
+<dt>orca4: <em>bool, optional</em></dt>
+<dd>Whether to use orca4 (True) or 3 (False).</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
@@ -3487,7 +5554,7 @@ Angstrom (Ha/Ang).</dd>
 
 <dl class="function">
 <dt id="neb.g09_start_job">
-<code class="descclassname">neb.</code><code class="descname">g09_start_job</code><span class="sig-paren">(</span><em>NEB</em>, <em>i</em>, <em>state</em>, <em>charge</em>, <em>multiplicity</em>, <em>procs</em>, <em>queue</em>, <em>initial_guess</em>, <em>extra_section</em>, <em>mem</em>, <em>priority</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neb.html#g09_start_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neb.g09_start_job" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">neb.</code><code class="descname">g09_start_job</code><span class="sig-paren">(</span><em>NEB</em>, <em>i</em>, <em>state</em>, <em>charge</em>, <em>multiplicity</em>, <em>procs</em>, <em>queue</em>, <em>initial_guess</em>, <em>extra_section</em>, <em>mem</em>, <em>priority</em>, <em>extra_keywords={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neb.html#g09_start_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neb.g09_start_job" title="Permalink to this definition">¶</a></dt>
 <dd><p>A method for submitting a single point calculation using Gaussian09 for
 NEB calculations.</p>
 <p><strong>Parameters</strong></p>
@@ -3520,6 +5587,8 @@ hessian.</dd>
 <dt>priority: <em>int</em></dt>
 <dd>Whether to submit the job with a given priority (NBS). Not setup for
 this function yet.</dd>
+<dt>extra_keywords: <em>dict, optional</em></dt>
+<dd>Specify extra keywords beyond the defaults.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
@@ -3566,7 +5635,7 @@ Angstrom (Ha/Ang).</dd>
 
 <dl class="function">
 <dt id="neb.orca_start_job">
-<code class="descclassname">neb.</code><code class="descname">orca_start_job</code><span class="sig-paren">(</span><em>NEB</em>, <em>i</em>, <em>state</em>, <em>charge</em>, <em>multiplicity</em>, <em>procs</em>, <em>queue</em>, <em>initial_guess</em>, <em>extra_section</em>, <em>mem</em>, <em>priority</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neb.html#orca_start_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neb.orca_start_job" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">neb.</code><code class="descname">orca_start_job</code><span class="sig-paren">(</span><em>NEB</em>, <em>i</em>, <em>state</em>, <em>charge</em>, <em>multiplicity</em>, <em>procs</em>, <em>queue</em>, <em>initial_guess</em>, <em>extra_section</em>, <em>mem</em>, <em>priority</em>, <em>extra_keywords={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neb.html#orca_start_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neb.orca_start_job" title="Permalink to this definition">¶</a></dt>
 <dd><p>A method for submitting a single point calculation using Orca for NEB
 calculations.</p>
 <p><strong>Parameters</strong></p>
@@ -3598,6 +5667,8 @@ hessian.</dd>
 <dd>How many MegaBytes (MB) of memory you have available per core.</dd>
 <dt>priority: <em>int</em></dt>
 <dd>Whether to submit to NBS with a given priority</dd>
+<dt>extra_keywords: <em>dict, optional</em></dt>
+<dd>Specify extra keywords beyond the defaults.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
@@ -3616,12 +5687,12 @@ hessian.</dd>
 Several of these approaches are founded on methods within scipy with
 minor alterations made.</p>
 <ul class="simple">
-<li><a class="reference internal" href="#module-steepest_descent" title="steepest_descent"><code class="xref py py-func docutils literal notranslate"><span class="pre">steepest_descent()</span></code></a></li>
-<li><a class="reference internal" href="#module-bfgs" title="bfgs"><code class="xref py py-func docutils literal notranslate"><span class="pre">bfgs()</span></code></a></li>
-<li><a class="reference internal" href="#module-lbfgs" title="lbfgs"><code class="xref py py-func docutils literal notranslate"><span class="pre">lbfgs()</span></code></a></li>
-<li><a class="reference internal" href="#module-quick_min" title="quick_min"><code class="xref py py-func docutils literal notranslate"><span class="pre">quick_min()</span></code></a></li>
-<li><a class="reference internal" href="#module-fire" title="fire"><code class="xref py py-func docutils literal notranslate"><span class="pre">fire()</span></code></a></li>
-<li><a class="reference internal" href="#module-conjugate_gradient" title="conjugate_gradient"><code class="xref py py-func docutils literal notranslate"><span class="pre">conjugate_gradient()</span></code></a></li>
+<li><a class="reference internal" href="optimizers.html#module-steepest_descent" title="steepest_descent"><code class="xref py py-func docutils literal notranslate"><span class="pre">steepest_descent()</span></code></a></li>
+<li><a class="reference internal" href="optimizers.html#module-bfgs" title="bfgs"><code class="xref py py-func docutils literal notranslate"><span class="pre">bfgs()</span></code></a></li>
+<li><a class="reference internal" href="optimizers.html#module-lbfgs" title="lbfgs"><code class="xref py py-func docutils literal notranslate"><span class="pre">lbfgs()</span></code></a></li>
+<li><a class="reference internal" href="optimizers.html#module-quick_min" title="quick_min"><code class="xref py py-func docutils literal notranslate"><span class="pre">quick_min()</span></code></a></li>
+<li><a class="reference internal" href="optimizers.html#module-fire" title="fire"><code class="xref py py-func docutils literal notranslate"><span class="pre">fire()</span></code></a></li>
+<li><a class="reference internal" href="optimizers.html#module-conjugate_gradient" title="conjugate_gradient"><code class="xref py py-func docutils literal notranslate"><span class="pre">conjugate_gradient()</span></code></a></li>
 </ul>
 <hr class="docutils" />
 <span class="target" id="module-steepest_descent"></span><dl class="function">
@@ -4132,7 +6203,7 @@ to each atom.</dd>
 
 <dl class="function">
 <dt id="orca.gbw_to_cube">
-<code class="descclassname">orca.</code><code class="descname">gbw_to_cube</code><span class="sig-paren">(</span><em>name</em>, <em>mo</em>, <em>spin=0</em>, <em>grid=40</em>, <em>local=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/orca.html#gbw_to_cube"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orca.gbw_to_cube" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">orca.</code><code class="descname">gbw_to_cube</code><span class="sig-paren">(</span><em>name</em>, <em>mo</em>, <em>spin=0</em>, <em>grid=40</em>, <em>local=False</em>, <em>orca4=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/orca.html#gbw_to_cube"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orca.gbw_to_cube" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pipe in flags to orca_plot to generate a cube file for the given
 molecular orbital.  Note, this is assumed to be running from the parent
 directory (ie, gbw is in the orca/BASENAME/BASENAME.orca.gbw).</p>
@@ -4149,6 +6220,8 @@ this is 0 indexed.</dd>
 <dd>Whether to plot the alpha or beta (0 or 1) operator.</dd>
 <dt>grid: <em>int, optional</em></dt>
 <dd>The grid resolution, default being 40.</dd>
+<dt>orca4: <em>bool, optional</em></dt>
+<dd>Whether the simulation was run in orca3 or orca4.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
@@ -4254,7 +6327,7 @@ dependent).</dd>
 
 <dl class="function">
 <dt id="orca.mo_analysis">
-<code class="descclassname">orca.</code><code class="descname">mo_analysis</code><span class="sig-paren">(</span><em>name</em>, <em>orbital=None</em>, <em>HOMO=True</em>, <em>LUMO=True</em>, <em>wireframe=True</em>, <em>hide=True</em>, <em>iso=0.04</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/orca.html#mo_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orca.mo_analysis" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">orca.</code><code class="descname">mo_analysis</code><span class="sig-paren">(</span><em>name</em>, <em>orbital=None</em>, <em>HOMO=True</em>, <em>LUMO=True</em>, <em>wireframe=True</em>, <em>hide=True</em>, <em>iso=0.04</em>, <em>orca4=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/orca.html#mo_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orca.mo_analysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Post process an orca job using orca_plot and vmd to display molecular
 orbitals and the potential surface.  NOTE! By default Orca does not take
 into account degenerate energy states when populating.  To do so, ensure
@@ -4285,6 +6358,8 @@ opening.</dd>
 <dt>iso: <em>float, optional</em></dt>
 <dd>Isosurface magnitude.  Set to 0.04 by default, but 0.01 may be
 better.</dd>
+<dt>orca4: <em>bool, optional</em></dt>
+<dd>Whether the simulation was run in orca3 or orca4.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
@@ -4734,6 +6809,8 @@ copy of Mulliken charges.</dd>
 <dt>MBO: <em>list, list,</em> <a class="reference internal" href="#structures.Atom" title="structures.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></a> <em>, float</em></dt>
 <dd>A list of lists, each list holding (1) a list of atoms in the bond
 and (2) the Mayer Bond Order (MBO) of said bond.</dd>
+<dt>vibfreq: <em>list, float</em></dt>
+<dd>A list of the vibrational frequencies if available, otherwise None.</dd>
 <dt>convergence: <em>list, str</em> VERIFY</dt>
 <dd>A list of convergence criteria and matching values.</dd>
 <dt>converged: <em>bool</em></dt>
@@ -5168,7 +7245,8 @@ comprised of <em>Atom</em>, <em>Bond</em>, <em>Angle</em>, <em>Dihedral</em>, an
 <dl class="method">
 <dt id="structures.Atom.flatten">
 <code class="descname">flatten</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/structures.html#Atom.flatten"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#structures.Atom.flatten" title="Permalink to this definition">¶</a></dt>
-<dd><p>Obtain simplified position output.</p>
+<dd><p>Obtain simplified position output.  NOTE! This is in a list, not a
+numpy array, so keep this in mind.</p>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
@@ -5300,7 +7378,7 @@ comprised of <em>Atom</em>, <em>Bond</em>, <em>Angle</em>, <em>Dihedral</em>, an
 
 <dl class="class">
 <dt id="structures.Molecule">
-<em class="property">class </em><code class="descclassname">structures.</code><code class="descname">Molecule</code><span class="sig-paren">(</span><em>atoms_or_filename</em>, <em>bonds=None</em>, <em>angles=None</em>, <em>dihedrals=None</em>, <em>parameter_file='/mnt/c/Users/hherb/Documents/subsystem/squid/forcefield_parameters/oplsaa.prm'</em>, <em>extra_parameters={}</em>, <em>test_charges=False</em>, <em>allow_errors=False</em>, <em>default_angles=None</em>, <em>test_consistency=False</em>, <em>charge=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/structures.html#Molecule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#structures.Molecule" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">structures.</code><code class="descname">Molecule</code><span class="sig-paren">(</span><em>atoms_or_filename</em>, <em>bonds=None</em>, <em>angles=None</em>, <em>dihedrals=None</em>, <em>parameter_file='/home/hherbol/squid/forcefield_parameters/oplsaa.prm'</em>, <em>extra_parameters={}</em>, <em>test_charges=False</em>, <em>allow_errors=False</em>, <em>default_angles=None</em>, <em>test_consistency=False</em>, <em>charge=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/structures.html#Molecule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#structures.Molecule" title="Permalink to this definition">¶</a></dt>
 <dd><p>A molecule object to store atoms and any/all associated interatomic connections.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
@@ -6032,71 +8110,6 @@ the numerator and denomenator (such as Ha/Ang to eV/Bohr).</p>
 </dd></dl>
 
 </div>
-<div class="section" id="utils">
-<h2>utils<a class="headerlink" href="#utils" title="Permalink to this headline">¶</a></h2>
-<p>The utils module was one of the crucial modules used in the original Squid code.  However,
-due to confusion in what functions belonged where, it eventually became cluttered.  Thus, it has
-now been deprecated.  You can find the following functions in their new modules:</p>
-<p>The following have been placed in the <em>structures</em> module:</p>
-<ul class="simple">
-<li>Struct</li>
-<li>System</li>
-<li>Molecule</li>
-<li>Atom</li>
-<li>Bond</li>
-<li>Dihedral</li>
-</ul>
-<p>The following have been placed in the <em>results</em> module:</p>
-<ul class="simple">
-<li>DFT_out</li>
-<li>sim_out</li>
-</ul>
-<p>The following have been placed in the <em>geometry</em> module:</p>
-<ul class="simple">
-<li>angle_size</li>
-<li>dihedral_angle</li>
-<li>get_bonds</li>
-<li>get_angles_and_dihedrals</li>
-<li>orthogonal_procrustes</li>
-<li>procrustes</li>
-<li>interpolate</li>
-<li>motion_per_frame</li>
-<li>dist_squared</li>
-<li>dist</li>
-<li>rotation_matrix</li>
-<li>rotate_xyz</li>
-<li>rotate_frames</li>
-<li>rand_rotation</li>
-<li>mvee</li>
-<li>align_centroid</li>
-<li>center_frames</li>
-<li>pretty_xyz -&gt; smooth_xyz (note the changed function name)</li>
-</ul>
-<p>The following have been placed in the <em>frc_opls</em> module:</p>
-<ul class="simple">
-<li>opls_options</li>
-</ul>
-<p>The following have been placed in the <em>print_helper</em> module:</p>
-<ul class="simple">
-<li>color_set</li>
-<li>colour_set</li>
-<li>strip_color</li>
-<li>strip_colour</li>
-<li>spaced_print</li>
-</ul>
-<p>The following have been placed in the <em>linux_helper</em> module:</p>
-<ul class="simple">
-<li>clean_up_folder</li>
-</ul>
-<p>The following have been placed in the <em>jobs</em> module:</p>
-<ul class="simple">
-<li>Job</li>
-</ul>
-<p>The following have been placed in the <em>debyer</em> module:</p>
-<ul class="simple">
-<li>get_pdf</li>
-</ul>
-</div>
 <div class="section" id="module-visualization">
 <span id="visualization"></span><h2>visualization<a class="headerlink" href="#module-visualization" title="Permalink to this headline">¶</a></h2>
 <p>The visualization module automates some visualization procedures for
@@ -6252,7 +8265,7 @@ orbitals.</dd>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="index.html">Table of Contents</a></h3>
+<h3><a href="index.html">Table Of Contents</a></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="squid.html">Squid</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Codebase</a><ul>
@@ -6261,6 +8274,8 @@ orbitals.</dd>
 <li class="toctree-l2"><a class="reference internal" href="#module-debyer">debyer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-doe_lhs">doe_lhs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-files">files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ff_params">ff_params</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#forcefields">forcefields</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-frc_opls">frc_opls</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-g09">g09</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-geometry">geometry</a></li>
@@ -6279,7 +8294,6 @@ orbitals.</dd>
 <li class="toctree-l2"><a class="reference internal" href="#module-spline_neb">spline_neb</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-structures">structures</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-units">units</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#utils">utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-visualization">visualization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-vmd">vmd</a></li>
 </ul>
@@ -6336,7 +8350,7 @@ orbitals.</dd>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2016, Henry Herbol.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

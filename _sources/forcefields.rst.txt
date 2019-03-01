@@ -8,7 +8,7 @@ as well as several functions to parse forcefield files.
 - :class:`connectors.Bond`
 - :class:`connectors.Angle`
 - :class:`connectors.Dihedral`
-- :class:`coul.Coul`
+- :class:`coulomb.Coul`
 - :class:`lj.LJ`
 - :class:`morse.Morse`
 - :class:`tersoff.Tersoff`

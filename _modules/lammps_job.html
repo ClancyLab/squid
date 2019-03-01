@@ -9,13 +9,10 @@
     <title>lammps_job &#8212; Squid 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
   </head><body>
@@ -46,8 +43,6 @@
 <span class="sd">- :func:`read_dump`</span>
 <span class="sd">- :func:`job`</span>
 <span class="sd">- :func:`read_TIP4P_types`</span>
-<span class="sd">- :func:`PotEngSurfaceJob`</span>
-<span class="sd">- :func:`PotEngSurfaceJob_v2`</span>
 <span class="sd">- :func:`OptJob`</span>
 <span class="sd">- :func:`thermo_2_text`</span>
 <span class="sd">- :func:`read_thermo`</span>
@@ -309,6 +304,7 @@
         <span class="n">procs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">ntasks</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">nodes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">walltime</span><span class="o">=</span><span class="s2">&quot;00:30:00&quot;</span><span class="p">,</span>
         <span class="n">adjust_nodes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">email</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">write_data_file</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -320,7 +316,7 @@
         <span class="n">redundancy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">lmp_path</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">lmp_path</span><span class="p">,</span>
-        <span class="n">slurm_allocation</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">slurm_allocation</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">slurm_default_allocation</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper to submitting a LAMMPs simulation.</span>
 
@@ -345,6 +341,10 @@
 <span class="sd">            (For SLURM) The number of nodes this job requires.  If requesting</span>
 <span class="sd">            ntasks * procs &lt; 24 * nodes, a warning is printed, as on MARCC</span>
 <span class="sd">            each node has only 24 cores.</span>
+<span class="sd">        walltime: *str, optional*</span>
+<span class="sd">            How long to post the job on the queue for in d-h:m:s where d are</span>
+<span class="sd">            days, h are hours, m are minutes, and s are seconds.  Default is</span>
+<span class="sd">            for 30 minutes (00:30:00).</span>
 <span class="sd">        adjust_nodes: *bool, optional*</span>
 <span class="sd">            Whether to automatically calculate how many nodes is necessary</span>
 <span class="sd">            when the user underspecifies nodes.</span>
@@ -442,6 +442,7 @@
                                      <span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span>
                                      <span class="n">adjust_nodes</span><span class="o">=</span><span class="n">adjust_nodes</span><span class="p">,</span>
                                      <span class="n">queue</span><span class="o">=</span><span class="n">queue</span><span class="p">,</span>
+                                     <span class="n">walltime</span><span class="o">=</span><span class="n">walltime</span><span class="p">,</span>
                                      <span class="n">additional_env_vars</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">lmp_env_vars</span><span class="p">,</span>
                                      <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>
                                      <span class="n">redundancy</span><span class="o">=</span><span class="n">redundancy</span><span class="p">,</span>
@@ -1048,7 +1049,7 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../index.html">Table of Contents</a></h3>
+<h3><a href="../index.html">Table Of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../squid.html">Squid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../codebase.html">Codebase</a></li>
@@ -1086,7 +1087,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2016, Henry Herbol.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

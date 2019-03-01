@@ -9,13 +9,10 @@
     <title>files &#8212; Squid 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
   </head><body>
@@ -975,8 +972,13 @@
 <span class="c1"># Write lammpstrj file from system or from atom frames. Currently supports:</span>
 <span class="c1"># id, type, x, xs, xu, xsu, vx, fx</span>
 <span class="c1"># VMD automatically reads this when labelled as .lammpstrj</span>
-<span class="k">def</span> <span class="nf">write_lammpstrj</span><span class="p">(</span><span class="n">frames_or_system</span><span class="p">,</span> <span class="n">name_or_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<div class="viewcode-block" id="write_lammpstrj"><a class="viewcode-back" href="../codebase.html#files.write_lammpstrj">[docs]</a><span class="k">def</span> <span class="nf">write_lammpstrj</span><span class="p">(</span><span class="n">frames_or_system</span><span class="p">,</span> <span class="n">name_or_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                     <span class="n">box_bounds_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="s1">&#39;id type x y z&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Write a lammps trajectory file from system or from atom frames.</span>
+
+<span class="sd">    *NOTE!* MORE DETAILS NEEDED IN THIS DOCSTRING! RAISE AWARENESS.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="c1"># Set to default filename if not set (out.lammpstrj)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">name_or_file</span><span class="p">:</span>
         <span class="n">name_or_file</span> <span class="o">=</span> <span class="s1">&#39;out&#39;</span>
@@ -1068,7 +1070,7 @@
 
     <span class="c1"># Close file if it was opened outside of this function</span>
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">name_or_file</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="read_xyz_gen"><a class="viewcode-back" href="../codebase.html#files.read_xyz_gen">[docs]</a><span class="k">def</span> <span class="nf">read_xyz_gen</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;element&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">],</span> <span class="n">cast_elem_to_sym</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -1713,7 +1715,7 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../index.html">Table of Contents</a></h3>
+<h3><a href="../index.html">Table Of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../squid.html">Squid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../codebase.html">Codebase</a></li>
@@ -1751,7 +1753,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2016, Henry Herbol.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

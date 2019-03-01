@@ -9,13 +9,10 @@
     <title>jobs &#8212; Squid 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
   </head><body>
@@ -63,7 +60,7 @@
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="c1"># Squid Imports</span>
 <span class="kn">from</span> <span class="nn">squid</span> <span class="k">import</span> <span class="n">sysconst</span>
-
+<span class="kn">from</span> <span class="nn">squid.geometry</span> <span class="k">import</span> <span class="n">reduce_list</span>
 
 <span class="k">def</span> <span class="nf">_isFloat</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">try</span><span class="p">:</span>
@@ -471,7 +468,7 @@
                <span class="n">preface</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                <span class="n">redundancy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                <span class="n">unique_name</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-               <span class="n">slurm_allocation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">slurm_allocation</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">slurm_default_allocation</span><span class="p">,</span>
                <span class="n">queueing_system</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">queueing_system</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Code to submit a simulation to the specified queue and queueing system.</span>
@@ -555,18 +552,12 @@
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Will adjust nodes accordingly...&quot;</span><span class="p">)</span>
             <span class="n">nodes</span> <span class="o">=</span> <span class="p">(</span><span class="n">procs</span> <span class="o">*</span> <span class="n">ntasks</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">24</span> <span class="o">+</span> <span class="mi">1</span>
 
-    <span class="c1"># Grab a default allocation if necessary</span>
-    <span class="k">if</span> <span class="n">slurm_allocation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sysconst</span><span class="p">,</span> <span class="s2">&quot;slurm_default_allocation&quot;</span><span class="p">):</span>
-            <span class="n">slurm_allocation</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">slurm_allocation</span> <span class="o">=</span> <span class="n">sysconst</span><span class="o">.</span><span class="n">slurm_default_allocation</span>
     <span class="k">if</span> <span class="n">slurm_allocation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">slurm_allocation</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">slurm_allocation</span> <span class="o">=</span> <span class="s2">&quot;#SBATCH -A &quot;</span> <span class="o">+</span> <span class="n">slurm_allocation</span>
 
-    <span class="k">if</span> <span class="n">queue</span> <span class="ow">is</span> <span class="s2">&quot;debug&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">queue</span> <span class="ow">is</span> <span class="s2">&quot;debugger&quot;</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Would have submitted job </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">queueing_system</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;nbs&quot;</span><span class="p">:</span>
 
@@ -641,7 +632,7 @@
             <span class="n">mpi_s</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">mpi_s</span> <span class="o">=</span> <span class="n">sysconst</span><span class="o">.</span><span class="n">mpi_preface</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
-        <span class="n">generic_script</span> <span class="o">=</span> <span class="n">generic_script</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">mpi_s</span> <span class="o">+</span> <span class="n">job_to_submit</span>
+        <span class="n">generic_script</span> <span class="o">=</span> <span class="n">generic_script</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">date</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">mpi_s</span> <span class="o">+</span> <span class="n">job_to_submit</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">date&quot;</span>
 
         <span class="k">if</span> <span class="n">sandbox</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">use_NBS_sandbox</span><span class="p">:</span>
             <span class="n">generic_script</span> <span class="o">+=</span> <span class="n">sandbox_append</span>
@@ -728,7 +719,7 @@
             <span class="n">mpi_s</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">mpi_s</span> <span class="o">=</span> <span class="n">sysconst</span><span class="o">.</span><span class="n">mpi_preface</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
-        <span class="n">generic_script</span> <span class="o">=</span> <span class="n">generic_script</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">mpi_s</span> <span class="o">+</span> <span class="n">job_to_submit</span>
+        <span class="n">generic_script</span> <span class="o">=</span> <span class="n">generic_script</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">date</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">mpi_s</span> <span class="o">+</span> <span class="n">job_to_submit</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">date&quot;</span>
 
         <span class="c1"># NBS requires a blank line at the end</span>
         <span class="n">generic_script</span> <span class="o">=</span> <span class="n">generic_script</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
@@ -804,7 +795,7 @@
           <span class="n">py3</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
           <span class="n">use_mpi</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
           <span class="n">modules</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-          <span class="n">slurm_allocation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+          <span class="n">slurm_allocation</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">slurm_default_allocation</span><span class="p">,</span>
           <span class="n">queueing_system</span><span class="o">=</span><span class="n">sysconst</span><span class="o">.</span><span class="n">queueing_system</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Submission of python scripts to run on your queue.</span>
@@ -832,6 +823,10 @@
 <span class="sd">        queue: *str, optional*</span>
 <span class="sd">            Which queue you want your script to run on (specific to</span>
 <span class="sd">            your queueing system).</span>
+<span class="sd">        walltime: *str, optional*</span>
+<span class="sd">            How long to post the job on the queue for in d-h:m:s where d are</span>
+<span class="sd">            days, h are hours, m are minutes, and s are seconds.  Default is</span>
+<span class="sd">            for 30 minutes (00:30:00).</span>
 <span class="sd">        priority: *int, optional*</span>
 <span class="sd">            Priority of the simulation (queueing system dependent).  Priority</span>
 <span class="sd">            ranges (in NBS) from a low of 1 (start running whenever) to a</span>
@@ -874,12 +869,6 @@
     <span class="k">if</span> <span class="s2">&quot;.py&quot;</span> <span class="ow">in</span> <span class="n">job_name</span><span class="p">:</span>
         <span class="n">job_name</span> <span class="o">=</span> <span class="n">job_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="c1"># Grab a default allocation if necessary</span>
-    <span class="k">if</span> <span class="n">slurm_allocation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sysconst</span><span class="p">,</span> <span class="s2">&quot;slurm_default_allocation&quot;</span><span class="p">):</span>
-            <span class="n">slurm_allocation</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">slurm_allocation</span> <span class="o">=</span> <span class="n">sysconst</span><span class="o">.</span><span class="n">slurm_default_allocation</span>
     <span class="k">if</span> <span class="n">slurm_allocation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">slurm_allocation</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="k">else</span><span class="p">:</span>
@@ -894,7 +883,7 @@
             <span class="n">modules</span> <span class="o">=</span> <span class="p">[</span><span class="n">modules</span><span class="p">]</span>
         <span class="n">use_these_mods</span> <span class="o">=</span> <span class="n">use_these_mods</span> <span class="o">+</span> <span class="n">modules</span>
 
-    <span class="n">modules</span> <span class="o">=</span> <span class="n">use_these_mods</span>
+    <span class="n">modules</span> <span class="o">=</span> <span class="n">reduce_list</span><span class="p">(</span><span class="n">use_these_mods</span><span class="p">)</span>
 
     <span class="c1"># Throw an error if we request nbs queueing with unknown queue</span>
     <span class="k">if</span> <span class="n">queueing_system</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;nbs&quot;</span> <span class="ow">and</span> <span class="n">queue</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">get_nbs_queues</span><span class="p">():</span>
@@ -974,6 +963,8 @@
 <span class="s1">$OMP$</span>
 <span class="s1">source /fs/home/$USER/.zshrc</span>
 
+<span class="s1">date</span>
+
 <span class="s1">&#39;&#39;&#39;</span>
 
         <span class="k">if</span> <span class="n">nprocs</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">use_mpi</span><span class="p">:</span>
@@ -983,6 +974,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">NBS</span> <span class="o">+=</span> <span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">$PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$&gt; $PY_NAME2$.log 2&gt;&amp;1</span>
+<span class="s1">&#39;&#39;&#39;</span>
+
+        <span class="n">NBS</span> <span class="o">+=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">date</span>
 <span class="s1">&#39;&#39;&#39;</span>
 
         <span class="n">NBS</span> <span class="o">=</span> <span class="n">NBS</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$UNIQUE$&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;##NBS-unique: yes&quot;</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="n">unique_name</span><span class="p">)])</span>
@@ -1073,6 +1068,8 @@
 <span class="s1">module reset</span>
 <span class="s1">$MODULES$</span>
 
+<span class="s1">date</span>
+
 <span class="s1">&#39;&#39;&#39;</span>
 
         <span class="k">if</span> <span class="n">nprocs</span> <span class="o">*</span> <span class="n">ntasks</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">use_mpi</span><span class="p">:</span>
@@ -1082,6 +1079,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">SLURM</span> <span class="o">+=</span> <span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">$PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$&gt; $PY_NAME2$.log 2&gt;&amp;1</span>
+<span class="s1">&#39;&#39;&#39;</span>
+
+        <span class="n">SLURM</span> <span class="o">+=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">date</span>
 <span class="s1">&#39;&#39;&#39;</span>
 
         <span class="n">SLURM</span> <span class="o">=</span> <span class="n">SLURM</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$PYTHON_PATH$&quot;</span><span class="p">,</span> <span class="n">py_path</span><span class="p">)</span>
@@ -1206,7 +1207,7 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../index.html">Table of Contents</a></h3>
+<h3><a href="../index.html">Table Of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../squid.html">Squid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../codebase.html">Codebase</a></li>
@@ -1244,7 +1245,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2016, Henry Herbol.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>
