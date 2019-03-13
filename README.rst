@@ -25,7 +25,7 @@ Then, simply run:
 
 .. code-block:: bash
 
-   [user@local]~% python install.py
+   [user@local]~% python install_local.py
 
 and you are good to go with using Squid.
 
