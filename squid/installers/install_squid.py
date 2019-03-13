@@ -221,7 +221,8 @@ def run_full_install(install_packmol=True,
                      use_orca4=True, sandbox_orca=False,
                      install_lammps=True,
                      lammps_sffx="squid", lammps_version="16Mar18",
-                     extra_lammps_packages=[], smrff_path=None
+                     extra_lammps_packages=[], smrff_path=None,
+                     skip_prompt=False
                      ):
     '''
     This function runs the full squid install.
@@ -266,21 +267,22 @@ FINAL NOTE! IF YOU ARE INSTALLING ON MARCC, THEN DO THE FOLLOWING PRIOR TO RUNNI
     load("python/2.7-anaconda")
 ''')
 
-    # Bind raw_input to input so we can have either python2 or python3 work
-    # on install
-    try:
-        input = raw_input
-    except NameError:
-        pass
-
-    ans = input("Use settings currently in the install file (y/N): ")
-    ans = ans.strip().lower()
-    if len(ans) > 1:
-        ans = ans[0]
-    if ans != "y":
-        print("Please open up the install.py file in a text editor and edit all\
-     settings appropriately.")
-        sys.exit()
+    if not skip_prompt:
+        # Bind raw_input to input so we can have either python2 or python3 work
+        # on install
+        try:
+            input = raw_input
+        except NameError:
+            pass
+    
+        ans = input("Use settings currently in the install file (y/N): ")
+        ans = ans.strip().lower()
+        if len(ans) > 1:
+            ans = ans[0]
+        if ans != "y":
+            print("Please open up the install.py file in a text editor and edit all\
+         settings appropriately.")
+            sys.exit()
 
     # This is the current directory WITH NO TRAILING SLASH!
     cwd = os.getcwd()

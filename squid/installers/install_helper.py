@@ -48,7 +48,7 @@ def download_file(loc, link, md5sum):
     if os.path.exists(fpath) and md5(open(fpath, 'r').read()).hexdigest() == md5sum:
         print("%s already is downloaded and exists.  No need to re-download." % fname)
     else:
-        os.system("wget --continue --tries=20 -P %s/ %s" % (loc, link))
+        os.system("wget --continue --tries=1000 -P %s/ %s" % (loc, link))
         download_successful = os.path.exists("%s" % fpath)
         if not download_successful:
             print("FAILURE TO DOWNLOAD %s! Verify your internet connection and try again." % fname)
