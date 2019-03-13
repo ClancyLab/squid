@@ -67,14 +67,14 @@ Then, simply run:</p>
 <p>When installing, you may change many variables in your <em>install_local.py</em> file.  This section outlines what these
 variables are, and how they will effect your installation:</p>
 <ul class="simple">
-<li><dl class="first docutils">
-<dt>install_target <span class="classifier-delimiter">:</span> <span class="classifier">“wsl” or “marcc”.</span></dt>
-<dd><ul class="first last">
+<li>install_target : “wsl” or “marcc”.</li>
+</ul>
+<blockquote>
+<div><ul class="simple">
 <li>This variable is necessary to specify, and will alter how the installation proceeds based on if it is to be installed on MARCC, or on some Linux system.  Note, the “wsl” key has been tested for Windows Subsystem for Linux (WSL), as well as Ubuntu.  We appologize for any confusion here.</li>
 </ul>
-</dd>
-</dl>
-</li>
+</div></blockquote>
+<ul class="simple">
 <li>shell : “.bashrc”. This variable simply specifies where your shell file is.  You may set it accordingly.</li>
 <li>install_X : True or False.  There are many install_X variables in the file, where X may be some program.  These flags simply tell Squid whether you wish to install the various components or not.  Note, if you choose not to, Squid will not function in “full”.  If you already have these programs installed, please see the Editing Squid Installation section.</li>
 <li>mpirun_path : path to mpirun executable.  This is a string giving the path to the mpi executable you wish to use.  It may be mpiexec, mpirun, or whatever.</li>
