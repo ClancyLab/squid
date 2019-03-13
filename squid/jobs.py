@@ -1087,7 +1087,7 @@ strings, or None")
             job_to_return = Job(job_info[0], job_id=job_info[-1])
             job_to_return.redundancy = True
             return job_to_return
-        elif job_exists:
+        elif unique_name and job_exists:
             raise Exception("Job with name %s already exists in the queue!" % job_name)
 
         # Submit job
