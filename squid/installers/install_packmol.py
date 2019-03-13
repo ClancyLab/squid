@@ -3,7 +3,7 @@ import sys
 from squid.installers.install_helper import save_module, download_file
 
 
-def run_install(location):
+def run_install(location, MODULEDIR):
     os.chdir(location)
     cwd = os.getcwd()
     if cwd.endswith("/"):
@@ -32,7 +32,7 @@ prepend_path("PATH",    "$CWD/packmol")
 '''
     while "$CWD" in packmol_mod_file:
         packmol_mod_file = packmol_mod_file.replace("$CWD", cwd)
-    save_module(packmol_mod_file, "packmol")
+    save_module(packmol_mod_file, "packmol", MODULEDIR)
 
     return cwd + "/packmol/packmol"
 

@@ -3,7 +3,7 @@ import sys
 from squid.installers.install_helper import save_module, download_file
 
 
-def run_install(location, python_path):
+def run_install(location, python_path, MODULEDIR):
 
     NAME = "NLOpt"
     FOLDER = "nlopt-2.5.0"
@@ -60,7 +60,7 @@ prepend_path("PYTHONPATH",         "$CWD$/$FOLDER$/build/lib/python2.7/site-pack
         while identifier in mod_file:
             mod_file = mod_file.replace(identifier, str(word))
 
-    save_module(mod_file, FOLDER)
+    save_module(mod_file, FOLDER, MODULEDIR)
 
 
 if __name__ == "__main__":

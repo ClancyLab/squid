@@ -6,7 +6,7 @@ from squid.installers.install_helper import save_module, download_file
 VERSION_ERROR = "Error - Invalid version in OpenMPI Installation."
 
 
-def run_install(location, version):
+def run_install(location, version, MODULEDIR):
 
     # Error Handling
     version = str(version)
@@ -78,7 +78,7 @@ prepend_path("LD_LIBRARY_PATH",    "$CWD$/$FOLDER$/build/lib")
         os.mkdir("%s/.modules" % HOMEDIR)
     if not os.path.exists("%s/.modules/openmpi" % HOMEDIR):
         os.mkdir("%s/.modules/openmpi" % HOMEDIR)
-    save_module(mod_file, FOLDER)
+    save_module(mod_file, FOLDER, MODULEDIR)
 
 
 if __name__ == "__main__":
