@@ -116,5 +116,6 @@ run_full_install(
     use_orca4=use_orca4, sandbox_orca=sandbox_orca,
     lammps_sffx=lammps_sffx, lammps_version=lammps_version,
     extra_lammps_packages=extra_lammps_packages,
-    smrff_path=smrff_path, mod_folder=mod_folder
+    smrff_path=smrff_path, mod_folder=mod_folder,
+    skip_prompt=False
 )

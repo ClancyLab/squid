@@ -22,12 +22,12 @@ CC =        mpicxx
 # static-libgcc and static-libstdc++ are to make the final binary as
 #     portable as possible
 # g means to compile this with debugging flags
-CCFLAGS =   -g -O3 -m64 -static-libgcc -static-libstdc++ -Wall -Wextra
+CCFLAGS =  -std=c++11 -g -O3 -m64 -static-libgcc -static-libstdc++ -Wall -Wextra
 SHFLAGS =   -fPIC
 DEPFLAGS =  -M
 
 LINK =      mpicxx
-LINKFLAGS = -g -O3 -m64 -static-libgcc -static-libstdc++ -Wall -Wextra
+LINKFLAGS = -std=c++11 -g -O3 -m64 -static-libgcc -static-libstdc++ -Wall -Wextra
 LIB =
 SIZE =      size
 

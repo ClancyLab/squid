@@ -1536,9 +1536,6 @@ Masses
                                for t in system.bond_types]))
         else:
             f.write('\n'.join([str(i + 1) + " " + b.printer() for i, b in enumerate(system.bond_types)]))
-    elif params.bond_params != []:
-        f.write("\n\nBond Coeffs\n\n")
-        f.write('\n'.join([str(i + 1) + " " + b.printer(with_indices=True) for i, b in enumerate(params.bond_params)]))
     if system.angles:
         f.write("\n\nAngle Coeffs\n\n")
         if not new_method:
@@ -1552,9 +1549,6 @@ Masses
                                    for t in system.angle_types]))
         else:
             f.write('\n'.join([str(i + 1) + " " + b.printer() for i, b in enumerate(system.angle_types)]))
-    elif params.angle_params != []:
-        f.write("\n\nAngle Coeffs\n\n")
-        f.write('\n'.join([str(i + 1) + " " + b.printer(with_indices=True) for i, b in enumerate(params.angle_params)]))
     if system.dihedrals:
         f.write("\n\nDihedral Coeffs\n\n")
         if not new_method:
@@ -1565,9 +1559,6 @@ Masses
                                for t in system.dihedral_types]))
         else:
             f.write('\n'.join([str(i + 1) + " " + b.printer() for i, b in enumerate(system.dihedral_types)]))
-    elif params.dihedral_params != []:
-        f.write("\n\nDihedral Coeffs\n\n")
-        f.write('\n'.join([str(i + 1) + " " + b.printer(with_indices=True) for i, b in enumerate(params.dihedral_params)]))
 
     f.write("\n\nAtoms\n\n")
 
