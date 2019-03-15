@@ -50,4 +50,6 @@ prepend_path("PATH",    "$CWD/packmol")
 
 
 if __name__ == "__main__":
-    run_install("../")
+    MODULEPATH = os.path.expanduser("~") + "/.modules"
+    MODULEPATH = "/scratch/groups/pclancy3/programs/modules"
+    run_install("../", MODULEPATH)
