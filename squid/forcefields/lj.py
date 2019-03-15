@@ -186,8 +186,8 @@ class LJ(object):
         '''
         self.index = str(self.index)
         self.sigma, self.epsilon = float(self.sigma), float(self.epsilon)
-        assert self.sigma > 0, "In LJ, sigma should be larger than 0! It is %f" % self.sigma
-        assert self.epsilon >= 0, "In LJ, epsilon should be larger than 0! It is %f" % self.epsilon
+        assert self.sigma > 0, "In LJ (index %s), sigma should be larger than 0! It is %f" % (self.index, self.sigma)
+        assert self.epsilon >= 0, "In LJ (index %s), epsilon should be larger than 0! It is %f" % (self.index, self.epsilon)
 
     @staticmethod
     def parse_line(line):
