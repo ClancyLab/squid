@@ -14,6 +14,9 @@ install_target = "marcc"
 # Select what shell's resource file path relative to the home dir
 # Typically this will be either .zshrc or .bashrc
 shell = '.bashrc'
+# If you wish to install somewhere other than ~/.modules, specify it
+# here.  Note, this needs to NOT end in a slash.
+mod_folder = None
 ##############################################################################
 # If specifing we are to install these below, then leave paths as None
 install_packmol = True
@@ -46,7 +49,7 @@ orca_path = "/software/apps/orca/3.0.3/bin/orca"
 orca4_path = "/software/apps/orca/4.0.1.2/bin/orca"
 use_orca4 = True
 sandbox_orca = False
-install_necessary_openmpi = True
+install_necessary_openmpi = False
 orca_env_vars = '''
 module load orca/3.0.3
 module list
@@ -113,5 +116,6 @@ run_full_install(
     use_orca4=use_orca4, sandbox_orca=sandbox_orca,
     lammps_sffx=lammps_sffx, lammps_version=lammps_version,
     extra_lammps_packages=extra_lammps_packages,
-    smrff_path=smrff_path
+    smrff_path=smrff_path, mod_folder=mod_folder,
+    skip_prompt=False
 )

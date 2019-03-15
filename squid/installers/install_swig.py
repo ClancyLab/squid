@@ -3,7 +3,7 @@ import sys
 from squid.installers.install_helper import save_module, download_file
 
 
-def run_install(location):
+def run_install(location, MODULEDIR):
 
     NAME = "swig"
     FOLDER = "swig-3.0.12"
@@ -59,7 +59,7 @@ prepend_path("PATH",               "$CWD$/$FOLDER$/build/bin")
         while identifier in mod_file:
             mod_file = mod_file.replace(identifier, str(word))
 
-    save_module(mod_file, FOLDER)
+    save_module(mod_file, FOLDER, MODULEDIR)
 
 
 if __name__ == "__main__":

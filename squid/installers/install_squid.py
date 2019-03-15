@@ -10,7 +10,7 @@ from squid.installers.install_swig import run_install as run_install_swig
 from squid.installers.install_nlopt import run_install as run_install_nlopt
 
 
-def _setup_openmpi(orca_path, orca4_path):
+def _setup_openmpi(orca_path, orca4_path, MODULEDIR):
     if isvalid(orca4_path):
         # If orca4 is a file, point to folder instead
         if os.path.isfile(orca4_path) and orca4_path.endswith("/orca"):
@@ -20,7 +20,7 @@ def _setup_openmpi(orca_path, orca4_path):
             ompi_v = "2.1.5"
         elif "4.0." in orca4_path:
             ompi_v = "2.0.2"
-        run_install_openmpi("./", ompi_v)
+        run_install_openmpi("./", ompi_v, MODULEDIR)
         orca_mod_file = '''help([[
 For detailed instructions, go to:
     https://orcaforum.cec.mpg.de/
@@ -43,12 +43,12 @@ prepend_path("LD_LIBRARY_PATH",    "$ORCA$")
         for k, v in swap_with_this:
             while k in orca_mod_file:
                 orca_mod_file = orca_mod_file.replace(k, v)
-        save_module(orca_mod_file, "orca-4")
+        save_module(orca_mod_file, "orca-4", MODULEDIR)
     if isvalid(orca_path):
         # If orca4 is a file, point to folder instead
         if os.path.isfile(orca_path) and orca_path.endswith("/orca"):
             orca_path = orca_path[:-5]
-        run_install_openmpi("./", "1.6.5")
+        run_install_openmpi("./", "1.6.5", MODULEDIR)
         orca_mod_file = '''help([[
 For detailed instructions, go to:
     https://orcaforum.cec.mpg.de/
@@ -71,7 +71,7 @@ prepend_path("LD_LIBRARY_PATH",    "$ORCA$")
         for k, v in swap_with_this:
             while k in orca_mod_file:
                 orca_mod_file = orca_mod_file.replace(k, v)
-        save_module(orca_mod_file, "orca-3")
+        save_module(orca_mod_file, "orca-3", MODULEDIR)
 
 
 def _squid_setup(anaconda_path,
@@ -87,7 +87,7 @@ def _squid_setup(anaconda_path,
                  text_editor_path, g09_formchk, g09_cubegen,
                  mpirun_path, default_queue,
                  use_orca4, sandbox_orca,
-                 cwd, HOMEDIR):
+                 cwd, HOMEDIR, MODULEDIR):
     '''
     This function will setup the squid sysconst file and module.
     '''
@@ -203,7 +203,7 @@ set_alias('vmd_lmp','function _vmd_lmp() { $PYTHON_PATH $CWD/console_scripts/vmd
         while ss in exports_and_aliases:
             exports_and_aliases = exports_and_aliases.replace(ss, v)
 
-    save_module(exports_and_aliases.strip() + "\n", "squid")
+    save_module(exports_and_aliases.strip() + "\n", "squid", MODULEDIR)
 
 
 def run_full_install(install_packmol=True,
@@ -222,7 +222,7 @@ def run_full_install(install_packmol=True,
                      install_lammps=True,
                      lammps_sffx="squid", lammps_version="16Mar18",
                      extra_lammps_packages=[], smrff_path=None,
-                     skip_prompt=False
+                     skip_prompt=False, mod_folder=None
                      ):
     '''
     This function runs the full squid install.
@@ -287,13 +287,17 @@ FINAL NOTE! IF YOU ARE INSTALLING ON MARCC, THEN DO THE FOLLOWING PRIOR TO RUNNI
     # This is the current directory WITH NO TRAILING SLASH!
     cwd = os.getcwd()
     HOMEDIR = os.path.expanduser("~")
-    if not os.path.exists("%s/.modules" % HOMEDIR):
-        os.mkdir("%s/.modules" % HOMEDIR)
+    if mod_folder is None:
+        MODULEDIR = "%s/.modules" % HOMEDIR
+    else:
+        MODULEDIR = mod_folder
+    if not os.path.exists(MODULEDIR):
+        os.mkdir(MODULEDIR)
 
     # This will be appended to the shell
     shell_append = """
 # Add a new folder for personal modules
-export MODULEPATH=""" + HOMEDIR + """/.modules:$MODULEPATH
+export MODULEPATH=""" + MODULEDIR + """:$MODULEPATH
 """
 
     if install_target != "marcc":
@@ -310,7 +314,7 @@ else
     module refresh
 fi
 """
-        os.system("touch ~/.modules/StdEnv.lua")
+        os.system("touch %s/StdEnv.lua" % MODULEDIR)
 
     # If the shell_append is not already in the shell then add it
     if not os.path.exists("%s/%s" % (HOMEDIR, shell)):
@@ -334,29 +338,29 @@ fi
         default_modules.append('load("python/2.7-anaconda")')
         on_marcc = True
     elif install_target == "wsl":
-        anaconda_path = run_install_anaconda(anaconda_install_dir)
+        anaconda_path = run_install_anaconda(anaconda_install_dir, MODULEDIR)
         default_modules.append('load("anaconda-2.7")')
     else:
         raise Exception("Invalid install target.")
     python_path = anaconda_path + "/bin/python"
     if install_nlopt:
-        run_install_swig("./")
-        run_install_nlopt("./", python_path)
+        run_install_swig("./", MODULEDIR)
+        run_install_nlopt("./", python_path, MODULEDIR)
         default_modules.append('load("swig-3.0.12")')
         default_modules.append('load("nlopt-2.5.0")')
     # Install packmol if desired
     if install_packmol:
-        packmol_path = run_install_packmol("./")
+        packmol_path = run_install_packmol("./", MODULEDIR)
         default_modules.append('load("packmol")')
     if install_lammps:
         lmp_path = run_install_lammps(
             "./", python_path, lammps_version, lammps_sffx,
             extra_lammps_packages=extra_lammps_packages,
-            smrff_path=smrff_path, on_marcc=on_marcc
+            smrff_path=smrff_path, on_marcc=on_marcc, MODULEDIR=MODULEDIR
         )
         default_modules.append('load("lammps/%s")' % lammps_version)
     if install_necessary_openmpi:
-        _setup_openmpi(orca_path, orca4_path)
+        _setup_openmpi(orca_path, orca4_path, MODULEDIR)
 
     default_modules = '\n'.join(default_modules)
 
@@ -374,9 +378,9 @@ fi
         text_editor_path, g09_formchk, g09_cubegen,
         mpirun_path, default_queue,
         use_orca4, sandbox_orca,
-        cwd, HOMEDIR
+        cwd, HOMEDIR, MODULEDIR
     )
 
     print("Install is complete! Please source %s or simply restart your terminal." % shell)
     if install_target != "marcc":
-        print("You may change your default module setup in ~/.modules/StdEnv.lua")
+        print("You may change your default module setup in %s/StdEnv.lua" % MODULEDIR)

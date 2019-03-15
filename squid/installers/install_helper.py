@@ -11,21 +11,23 @@ def isvalid(x):
     return isinstance(x, str) and x.strip().lower() not in ["", "none"]
 
 
-def save_module(modfile, filename):
+def save_module(modfile, filename, MODULEDIR):
     # Step 1 - Ensure user modules folder exists
     HOMEDIR = os.path.expanduser("~")
     if HOMEDIR.endswith("/"):
         HOMEDIR = HOMEDIR[:-1]
-    if not os.path.exists(HOMEDIR + "/.modules"):
-        os.mkdir(HOMEDIR + "/.modules")
+    if MODULEDIR is None:
+        MODULEDIR = HOMEDIR + "/.modules"
+    if not os.path.exists(MODULEDIR):
+        os.mkdir(MODULEDIR)
 
     # Step 2 - Check if filename exists
-    if os.path.exists("%s/.modules/%s.lua" % (HOMEDIR, filename)):
+    if os.path.exists("%s/%s.lua" % (MODULEDIR, filename)):
         print("Warning! %s module already exists.  Will rename to %s_OLD." % (filename, filename))
-        os.system("mv %s/.modules/%s.lua %s/.modules/%s.lua_OLD" % (HOMEDIR, filename, HOMEDIR, filename))
+        os.system("mv %s/%s.lua %s/%s.lua_OLD" % (MODULEDIR, filename, MODULEDIR, filename))
 
     # Step 3 - Generate the module file
-    fptr = open("%s/.modules/%s.lua" % (HOMEDIR, filename), 'w')
+    fptr = open("%s/%s.lua" % (MODULEDIR, filename), 'w')
     fptr.write(modfile)
     fptr.close()
 

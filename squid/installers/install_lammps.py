@@ -5,7 +5,7 @@ from squid.installers.install_helper import save_module, download_file
 
 def run_install(location, python_path, VERSION, SFFX,
                 extra_lammps_packages=[],
-                smrff_path=None, on_marcc=False):
+                smrff_path=None, on_marcc=False, MODULEDIR=None):
 
     LAMMPS_MAKEFILE = '''
 # mpi = MPI with its default compiler
@@ -22,12 +22,12 @@ CC =        mpicxx
 # static-libgcc and static-libstdc++ are to make the final binary as
 #     portable as possible
 # g means to compile this with debugging flags
-CCFLAGS =   -g -O3 -m64 -static-libgcc -static-libstdc++ -Wall -Wextra
+CCFLAGS =  -std=c++11 -g -O3 -m64 -static-libgcc -static-libstdc++ -Wall -Wextra
 SHFLAGS =   -fPIC
 DEPFLAGS =  -M
 
 LINK =      mpicxx
-LINKFLAGS = -g -O3 -m64 -static-libgcc -static-libstdc++ -Wall -Wextra
+LINKFLAGS = -std=c++11 -g -O3 -m64 -static-libgcc -static-libstdc++ -Wall -Wextra
 LIB =
 SIZE =      size
 
@@ -228,11 +228,14 @@ $MODULE_LOADERS$
             mod_file = mod_file.replace(identifier, str(word))
 
     HOMEDIR = os.path.expanduser("~")
-    if not os.path.exists("%s/.modules" % HOMEDIR):
-        os.mkdir("%s/.modules" % HOMEDIR)
-    if not os.path.exists("%s/.modules/lammps" % HOMEDIR):
-        os.mkdir("%s/.modules/lammps" % HOMEDIR)
-    save_module(mod_file, FOLDER)
+    if MODULEDIR is None:
+        MODULEDIR = HOMEDIR + "/.modules"
+
+    if not os.path.exists(MODULEDIR):
+        os.mkdir(MODULEDIR)
+    if not os.path.exists("%s/lammps" % MODULEDIR):
+        os.mkdir("%s/lammps" % MODULEDIR)
+    save_module(mod_file, FOLDER, MODULEDIR)
 
     return cwd + "/" + FOLDER + "/src/lmp_" + SFFX
 

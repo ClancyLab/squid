@@ -2,7 +2,7 @@ import os
 from squid.installers.install_helper import save_module, download_file
 
 
-def run_install(anaconda_path):
+def run_install(anaconda_path, MODULEDIR):
     homedir = os.path.expanduser("~")
     potential_anaconda_install_dirs = [
         homedir + "/anaconda",
@@ -41,7 +41,7 @@ whatis("Description: Anaconda, Python")
 prepend_path("PATH",            "$ANACONDA/bin")
 prepend_path("LD_LIBRARY_PATH", "$ANACONDA/lib")
 '''.replace("$ANACONDA", anaconda_path).replace("$ANACONDA", anaconda_path)
-    save_module(anaconda_module, "anaconda-2.7")
+    save_module(anaconda_module, "anaconda-2.7", MODULEDIR)
 
     return anaconda_path
 
