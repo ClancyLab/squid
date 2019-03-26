@@ -397,6 +397,11 @@ class Molecule(_Physical):
             A list of all dihedrals within the system.
         parameter_file: *str, optional*
             A path to your forcefield file. Currently only supports OPLS-AA.
+        parameter_files: *list, tuple, str, str, optional*
+            A list of tuples, holding two strings: the force field type
+            (either OPLS or SMRFF right now), and the path to the
+            parameter file.  If no path is specified, we will try to grab
+            the one assigned in sysconst.
         extra_parameters: *dict, optional*
             Additional OPLS parameters to apply to the forcefield.
         test_charges: *bool, optional*
@@ -418,6 +423,7 @@ class Molecule(_Physical):
     """
     def __init__(self, atoms_or_filename, bonds=None, angles=None,
      dihedrals=None, parameter_file=sysconst.opls_path, extra_parameters={},
+     parameter_files=[("OPLS", sysconst.opls_path)],
      test_charges=False, allow_errors=False, default_angles=None,
      test_consistency=False, charge=None): 
         # Set atoms, bonds, etc, or assume 'atoms' contains all those things if only one parameter is passed in
@@ -430,6 +436,7 @@ class Molecule(_Physical):
             else:
                 atoms, bonds, angles, dihedrals = files.read_cml(self.filename,
                      parameter_file=parameter_file,
+                     parameter_files=parameter_files,
                      extra_parameters=extra_parameters,
                      test_charges=test_charges,
                      allow_errors=allow_errors,
