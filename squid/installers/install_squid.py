@@ -1,6 +1,7 @@
 # System imports
 import os
 import sys
+from distutils.spawn import find_executable
 from squid.installers.install_helper import save_module, isvalid
 from squid.installers.install_anaconda import run_install as run_install_anaconda
 from squid.installers.install_lammps import run_install as run_install_lammps
@@ -17,7 +18,7 @@ def _setup_openmpi(orca_path, orca4_path, MODULEDIR):
             orca4_path = orca4_path[:-5]
 
         if "4.1." in orca4_path:
-            ompi_v = "2.1.5"
+            ompi_v = "3.1.3"
         elif "4.0." in orca4_path:
             ompi_v = "2.0.2"
         run_install_openmpi("./", ompi_v, MODULEDIR)
@@ -228,7 +229,7 @@ def run_full_install(install_packmol=True,
     This function runs the full squid install.
     '''
     install_target = install_target.lower()
-    assert install_target in ["wsl", "marcc"], "Error - Invalid install target."
+    assert install_target in ["wsl", "marcc", "linux"], "Error - Invalid install target."
 
     # Print pre-requisite warning
     print('''Before you can install squid locally, it is recommended that the
@@ -337,21 +338,26 @@ fi
         anaconda_path = "/software/apps/anaconda/5.2/python/2.7"
         default_modules.append('load("python/2.7-anaconda")')
         on_marcc = True
-    elif install_target == "wsl":
+    elif install_target in ["wsl", "linux"]:
         anaconda_path = run_install_anaconda(anaconda_install_dir, MODULEDIR)
         default_modules.append('load("anaconda-2.7")')
     else:
         raise Exception("Invalid install target.")
     python_path = anaconda_path + "/bin/python"
     if install_nlopt:
-        run_install_swig("./", MODULEDIR)
+        if find_executable("swig") is None:
+            run_install_swig("./", MODULEDIR)
+            default_modules.append('load("swig-3.0.12")')
+        else:
+            print("Swig was already found installed on the system!")
         run_install_nlopt("./", python_path, MODULEDIR)
-        default_modules.append('load("swig-3.0.12")')
         default_modules.append('load("nlopt-2.5.0")')
     # Install packmol if desired
+    packmol_path = None
     if install_packmol:
         packmol_path = run_install_packmol("./", MODULEDIR)
         default_modules.append('load("packmol")')
+    lmp_path = None
     if install_lammps:
         lmp_path = run_install_lammps(
             "./", python_path, lammps_version, lammps_sffx,

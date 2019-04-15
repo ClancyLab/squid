@@ -6,7 +6,7 @@ def opt_CNH_start():
     # Read in the xyz file
     frames = files.read_xyz("CNH_start.xyz")
     # Run a simulation locally using the Hartree Fock method (with 3 corrections)
-    return orca.job("CNH_start", "! HF-3c Opt", atoms=frames, queue="short")
+    return orca.job("CNH_start", "! HF-3c Opt", atoms=frames, queue=None)
 
 
 def opt_CNH_end():
