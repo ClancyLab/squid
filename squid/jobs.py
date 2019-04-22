@@ -758,7 +758,8 @@ def pysub(job_name,
           use_mpi=False,
           modules=None,
           slurm_allocation=sysconst.slurm_default_allocation,
-          queueing_system=sysconst.queueing_system):
+          queueing_system=sysconst.queueing_system,
+          jobarray=None):
     """
     Submission of python scripts to run on your queue.
 
@@ -820,6 +821,10 @@ def pysub(job_name,
             Whether to use a slurm allocation for this job or not.  If so, specify the name.
         queueing_system: *str, optional*
             Which queueing system you are using (NBS or PBS).
+        jobarray: *tuple, int, optional*
+            Specifies a job array of this python script should be run.  In this case, the
+            python script is submitted with a final argument corresponding to the index of
+            the job array.  NOTE - This will only work on SLURM.
 
     **Returns**
 
@@ -1016,6 +1021,10 @@ strings, or None")
         raise Exception("THIS CODE NOT WRITTEN YET.")
     elif queueing_system.strip().lower() == "slurm":
         # Setup nbs script
+        jobarray_id = ""
+        if jobarray is not None:
+            job_array_script = "#SBATCH --array=%d-%d" % jobarray
+            jobarray_id = " $SLURM_ARRAY_TASK_ID"
         SLURM = '''#!/bin/sh
 #SBATCH -J "$JOB_NAME1$"
 #SBATCH -o $JOB_NAME2$.o%j
@@ -1023,6 +1032,9 @@ strings, or None")
 #SBATCH -n $NTASKS$''' + ("\n#SBATCH -c $NPROCS$" if nprocs > 1 else "") + '''
 #SBATCH -p $QUEUE$
 #SBATCH -t $WALLTIME$
+
+''' + job_array_script + '''
+
 ''' + slurm_allocation + '''
 
 $OMP$
@@ -1036,11 +1048,11 @@ date
 
         if nprocs * ntasks > 1 and use_mpi:
             SLURM += '''
-$MPIRUN$ -np $NPROCS$ $PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$> $PY_NAME2$.log 2>&1
+$MPIRUN$ -np $NPROCS$ $PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$''' + jobarray_id + ''' > $PY_NAME2$.log 2>&1
 '''.replace("$MPIRUN$", sysconst.mpirun_path).replace("$NPROCS$", str(nprocs * ntasks))
         else:
             SLURM += '''
-$PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$> $PY_NAME2$.log 2>&1
+$PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$''' + jobarray_id + ''' > $PY_NAME2$.log 2>&1
 '''
 
         SLURM += '''

@@ -14,26 +14,31 @@ A command line tool to submit jobs to the queue.
 pysub [script.py] [Options]
 
     Flag          Default     Description
--help, -h     :            :  Print this help menu
--n            :     1      :  Number of processors to use
--nt, -tasks   :     1      :  Number of tasks this job will run
--o, -omp      :            :  Manually specify what OMP_NUM_THREADS should be.
--mpi          :            :  Whether to run python with mpirun or not.
--q            :            :  Which queue to submit to
--walltime, -t :  00:30:00  :  The walltime to use
--priority, -p :            :  Manually specify job priority
--unique, -u   :   False    :  Whether to require a unique simulation name.
+-help, -h      :            :  Print this help menu
+-n             :     1      :  Number of processors to use
+-nt, -tasks    :     1      :  Number of tasks this job will run
+-o, -omp       :            :  Manually specify what OMP_NUM_THREADS should be.
+-mpi           :            :  Whether to run python with mpirun or not.
+-q             :            :  Which queue to submit to
+-walltime, -t  :  00:30:00  :  The walltime to use
+-priority, -p  :            :  Manually specify job priority
+-unique, -u    :   False    :  Whether to require a unique simulation name.
 
--xhost, -x    :            :  If needed, specify computer
--args, -a     :            :  A list of arguments for the python code
--mods, -m     :            :  Specify the modules you wish to use here.  This
-                              appends to the ones in sysconst that you set
-                              as defaults.
--mo           :   False    :  Whether to override the default modules.
--keep, -k     :            :  Whether to keep the submission file
+-jobarray, -ja :   None     :  Whether to run a job array.  If this flag is
+                               specified, it MUST be followed by two values to
+                               indicate the lower and upper bounds of the
+                               indexing.
 
--py3          :            :  Whether to use python 3, or 2 (2 is default).
--alloc, -A    :   None     :  Whether to specify a SLURM Allocation.
+-xhost, -x     :            :  If needed, specify computer
+-args, -a      :            :  A list of arguments for the python code
+-mods, -m      :            :  Specify the modules you wish to use here.  This
+                               appends to the ones in sysconst that you set
+                               as defaults.
+-mo            :   False    :  Whether to override the default modules.
+-keep, -k      :            :  Whether to keep the submission file
+
+-py3           :            :  Whether to use python 3, or 2 (2 is default).
+-alloc, -A     :   None     :  Whether to specify a SLURM Allocation.
 
 Default behaviour is to generate a job with the same name
 as the python script and to generate a .log file with the
@@ -70,6 +75,7 @@ py3 = False
 use_mpi = False
 tasks = 1
 slurm_allocation = None
+jobarray = None
 
 if not hasattr(sysconst, "default_pysub_modules"):
     use_these_mods = []
@@ -137,7 +143,15 @@ if "-t" in argv[2:]:
 if "-walltime" in argv[2:]:
     walltime = argv[argv.index('-walltime') + 1]
 
+if "-jobarray" in argv[2:]:
+    i = argv.index("-jobarray")
+    jobarray = map(int, [argv[i + 1], argv[i + 2]])
+elif "-ja" in argv[2:]:
+    i = argv.index("-ja")
+    jobarray = map(int, [argv[i + 1], argv[i + 2]])
+
 pysub(job_name, nprocs=nprocs, ntasks=tasks, omp=omp, queue=queue, xhost=xhost,
       path=getcwd(), remove_sub_script=rss, priority=priority,
       walltime=walltime, unique_name=unique, py3=py3, use_mpi=use_mpi,
-      modules=use_these_mods, slurm_allocation=slurm_allocation)
+      modules=use_these_mods, slurm_allocation=slurm_allocation,
+      jobarray=jobarray)
