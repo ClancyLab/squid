@@ -1022,9 +1022,11 @@ strings, or None")
     elif queueing_system.strip().lower() == "slurm":
         # Setup nbs script
         jobarray_id = ""
+        jobarray_log_append = ""
         if jobarray is not None:
-            job_array_script = "#SBATCH --array=%d-%d" % jobarray
+            job_array_script = "#SBATCH --array=%d-%d" % tuple(jobarray)
             jobarray_id = " $SLURM_ARRAY_TASK_ID"
+            jobarray_log_append = "_$SLURM_ARRAY_TASK_ID"
         SLURM = '''#!/bin/sh
 #SBATCH -J "$JOB_NAME1$"
 #SBATCH -o $JOB_NAME2$.o%j
@@ -1048,11 +1050,11 @@ date
 
         if nprocs * ntasks > 1 and use_mpi:
             SLURM += '''
-$MPIRUN$ -np $NPROCS$ $PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$''' + jobarray_id + ''' > $PY_NAME2$.log 2>&1
+$MPIRUN$ -np $NPROCS$ $PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$''' + jobarray_id + ''' > $PY_NAME2$''' + jobarray_log_append + '''.log 2>&1
 '''.replace("$MPIRUN$", sysconst.mpirun_path).replace("$NPROCS$", str(nprocs * ntasks))
         else:
             SLURM += '''
-$PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$''' + jobarray_id + ''' > $PY_NAME2$.log 2>&1
+$PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$''' + jobarray_id + ''' > $PY_NAME2$''' + jobarray_log_append + '''.log 2>&1
 '''
 
         SLURM += '''
