@@ -1024,6 +1024,7 @@ strings, or None")
         jobarray_id = ""
         jobarray_log_append = ""
         jobarray_outfile = ""
+        job_array_script = ""
         if jobarray is not None:
             job_array_script = "#SBATCH --array=%d-%d" % tuple(jobarray)
             jobarray_id = " ${SLURM_ARRAY_TASK_ID}"

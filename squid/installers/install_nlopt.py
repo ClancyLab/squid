@@ -64,5 +64,7 @@ prepend_path("PYTHONPATH",         "$CWD$/$FOLDER$/build/lib/python2.7/site-pack
 
 
 if __name__ == "__main__":
-    run_install("../", sys.executable)
+    MODULEPATH = os.path.expanduser("~") + "/.modules"
+    MODULEPATH = "/scratch/groups/pclancy3/programs/modules"
+    run_install("../../", sys.executable, MODULEPATH)
 
