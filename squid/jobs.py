@@ -1023,13 +1023,15 @@ strings, or None")
         # Setup nbs script
         jobarray_id = ""
         jobarray_log_append = ""
+        jobarray_outfile = ""
         if jobarray is not None:
             job_array_script = "#SBATCH --array=%d-%d" % tuple(jobarray)
             jobarray_id = " ${SLURM_ARRAY_TASK_ID}"
             jobarray_log_append = "_${SLURM_ARRAY_TASK_ID}"
+            jobarray_outfile = ".a%a"
         SLURM = '''#!/bin/sh
 #SBATCH -J "$JOB_NAME1$"
-#SBATCH -o $JOB_NAME2$.o%j
+#SBATCH -o $JOB_NAME2$''' + jobarray_outfile + '''.o%j
 #SBATCH -N $NODES$
 #SBATCH -n $NTASKS$''' + ("\n#SBATCH -c $NPROCS$" if nprocs > 1 else "") + '''
 #SBATCH -p $QUEUE$
