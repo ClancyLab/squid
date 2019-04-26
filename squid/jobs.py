@@ -550,7 +550,7 @@ def submit_job(name,
             Whether to use a slurm allocation for this job or not.  If so, specify the name.
         queueing_system: *str, optional*
             Which queueing system you are using (NBS, PBS, or SLURM).
-        jobarray: *tuple, int, optional*
+        jobarray: *str or tuple, int, optional*
             Specifies a job array should be run.  In this case, the script is
             submitted as is.  The user is responsible for adding in the
             appropriate environment variable names, such as ${SLURM_ARRAY_TASK_ID}.
@@ -731,7 +731,10 @@ equates to %d nodes on marcc; however, you only requested %d nodes." % (procs, n
         jobarray_outfile_append = ""
         job_array_script = ""
         if jobarray is not None:
-            job_array_script = "#SBATCH --array=%d-%d" % tuple(jobarray)
+            if isinstance(jobarray, str):
+                job_array_script = "#SBATCH --array=%s" % jobarray
+            else:
+                job_array_script = "#SBATCH --array=%d-%d" % tuple(jobarray)
             jobarray_id = " ${SLURM_ARRAY_TASK_ID}"
             jobarray_log_append = "_${SLURM_ARRAY_TASK_ID}"
             jobarray_outfile_append = ".a%a"

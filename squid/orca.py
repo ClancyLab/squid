@@ -415,7 +415,7 @@ def jobarray(run_name, route, frames, extra_section='', grad=False,
              charge=None, multiplicity=None, charge_and_multiplicity='0 1',
              redundancy=False, unique_name=True,
              previous=None, mem=2000, priority=None, xhost=None,
-             orca4=sysconst.use_orca4,
+             orca4=sysconst.use_orca4, jobarray_values=None,
              slurm_allocation=sysconst.slurm_default_allocation):
     '''
     Wrapper to submitting various Orca simulations as a job array on a SLURM
@@ -497,6 +497,10 @@ def jobarray(run_name, route, frames, extra_section='', grad=False,
             Whether to use orca 4 (True) or orca 3 (False).
         slurm_allocation: *str, optional*
             Whether to use a slurm allocation for this job or not.  If so, specify the name.
+        jobarray_values: *str, optional*
+            If specified, instead of indicating a range for job arrays, we will use these
+            specific values.  For example, jobarray_values=1,2,4,5 would submit jobs, but
+            skip the 3rd index by name.
 
     **Returns**
 
@@ -504,8 +508,26 @@ def jobarray(run_name, route, frames, extra_section='', grad=False,
             Teturn the job container.
     '''
 
-    assert queue is not None and queue.lower() != "debugger", "Error - Invalid queue for job arrays."
-    assert sysconst.queueing_system.lower() == "slurm", "Error - Only available for SLURM!"
+    # In the case that we are not on SLURM, then submit each individual job.
+    if sysconst.queueing_system.lower() != "slurm":
+        print("Warning - %s job array not supported.  Serializing job submission." % sysconst.queueing_system)
+
+        running_jobs = []
+        for i, atoms in enumerate(frames):
+            running_jobs.append(
+                job(
+                    run_name=run_name + ".%d" % i, route=route,
+                    extra_section=extra_section,
+                    atoms=atoms, queue=queue, unique_name=False,
+                    procs=procs, walltime=walltime
+                )
+            )
+        return running_jobs
+
+    if jobarray_values is not None:
+        assert jobarray_values.count(",") == len(frames) - 1, "Error - Invalid jobarray_values string."
+    else:
+        jobarray_values = (0, len(frames) - 1)
 
     properties = {
         "extra_section": extra_section,
@@ -555,7 +577,7 @@ def jobarray(run_name, route, frames, extra_section='', grad=False,
         sandbox=None, use_NBS_sandbox=False,
         additional_env_vars=orca_env,
         sub_flag=sysconst.orca_sub_flag, slurm_allocation=slurm_allocation,
-        jobarray=(0, len(frames) - 1),
+        jobarray=jobarray_values,
         outfile_name="orca/" + run_name + ".%a/" + run_name + ".%a.o%j"
     )
 
