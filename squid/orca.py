@@ -556,7 +556,7 @@ def jobarray(run_name, route, frames, extra_section='', grad=False,
         additional_env_vars=orca_env,
         sub_flag=sysconst.orca_sub_flag, slurm_allocation=slurm_allocation,
         jobarray=(0, len(frames) - 1),
-        outfile_name="orca/%s.%a/%s.%a.o%j"
+        outfile_name="orca/%s.%a/%s.%a.o%j" % (run_name, run_name)
     )
 
 
