@@ -98,11 +98,60 @@ class Job(object):
 
 
 def _get_job(s_flag, queueing_system=sysconst.queueing_system, detail=1):
+    detail = int(detail)
+
     if queueing_system.strip().lower() == "nbs":
         main_detail = detail
         if detail <= 0:
             detail = 1
-        all_jobs = get_all_jobs(queueing_system, detail)
+
+        # Get input from jlist as a string
+        p = run_nbs_cmd("%s/jlist" % sysconst.nbs_bin_path)
+        output = p.stdout.read()
+
+        # Get data from string
+        pattern = getpass.getuser() +\
+            '''[\s]+([\S]+)[\s]+([\S]+)[\s]+([\S]+)'''
+        info = re.findall(pattern, output)
+
+        # Get a list of names
+        names = []
+        for a in info:
+            names.append(a[0])
+
+        if len(names) > 0:
+            out_ids = output.split("\n")
+            out_ids = [x.split()[0] for x in out_ids if len(x.split()) > 0 and _isFloat(x.split()[0])]
+            info = [tuple(list(i) + [j]) for i, j in zip(info, out_ids)]
+
+        # If user wants more information
+        all_jobs = None
+        if detail == 3:
+            _close_pipes(p)
+            all_jobs = [i[-1] for i in info]
+        elif detail == 2:
+            for i, a in enumerate(info):
+                #p = subprocess.Popen(['jshow', a[0]], stdout=subprocess.PIPE)
+                p = run_nbs_cmd("%s/jshow %s" % (sysconst.nbs_bin_path, a[0]))
+                s = p.stdout.read()
+                serv = s[s.find('Queue name:'):].split()[2].strip()
+                try:
+                    threads = s[s.find('Slot Reservations'):].split()[4]
+                    threads = threads.strip()
+                except:
+                    threads = 1
+                info[i] = info[i] + (serv, threads,)
+            _close_pipes(p)
+            all_jobs = info
+
+        if all_jobs is None:
+            # Return appropriate information
+            _close_pipes(p)
+            if detail == 1:
+                all_jobs = info
+            else:
+                all_jobs = names
+
         job_indices = [i for i, j in enumerate(all_jobs)
                        if s_flag in " ".join(j)]
         chosen_jobs = [all_jobs[i] for i in job_indices]
@@ -110,6 +159,7 @@ def _get_job(s_flag, queueing_system=sysconst.queueing_system, detail=1):
             return [j[0] for j in chosen_jobs]
         else:
             return chosen_jobs
+
     elif queueing_system.strip().lower() == "pbs":
         # Do This
         raise Exception("THIS CODE NOT WRITTEN YET.")
@@ -142,7 +192,7 @@ def _get_job(s_flag, queueing_system=sysconst.queueing_system, detail=1):
                 j[INDICES["jobid"]]
                 for j in all_jobs if s_flag == j[INDICES["state"]].strip()
             ]
-        if detail == 2:
+        elif detail == 2:
             all_jobs = [
                 (
                     j[INDICES["jobname"]],
