@@ -431,7 +431,8 @@ def submit_job(name,
                redundancy=False,
                unique_name=True,
                slurm_allocation=sysconst.slurm_default_allocation,
-               queueing_system=sysconst.queueing_system):
+               queueing_system=sysconst.queueing_system,
+               jobarray=None):
     """
     Code to submit a simulation to the specified queue and queueing system.
 
@@ -485,6 +486,10 @@ def submit_job(name,
             Whether to use a slurm allocation for this job or not.  If so, specify the name.
         queueing_system: *str, optional*
             Which queueing system you are using (NBS, PBS, or SLURM).
+        jobarray: *tuple, int, optional*
+            Specifies a job array should be run.  In this case, the script is
+            submitted as is.  The user is responsible for adding in the
+            appropriate environment variable names, such as ${SLURM_ARRAY_TASK_ID}.
 
     **Returns**
 
@@ -654,14 +659,24 @@ equates to %d nodes on marcc; however, you only requested %d nodes." % (procs, n
         raise Exception("THIS CODE NOT WRITTEN YET.")
     elif queueing_system.strip().lower() == "slurm":
         # Generate your script
+        jobarray_id = ""
+        jobarray_log_append = ""
+        jobarray_outfile_append = ""
+        job_array_script = ""
+        if jobarray is not None:
+            job_array_script = "#SBATCH --array=%d-%d" % tuple(jobarray)
+            jobarray_id = " ${SLURM_ARRAY_TASK_ID}"
+            jobarray_log_append = "_${SLURM_ARRAY_TASK_ID}"
+            jobarray_outfile_append = ".a%a"
         generic_script = '''#!/bin/sh
 #SBATCH -J  ''' + name + '''
-#SBATCH -o  ''' + name + '''.o%j
+#SBATCH -o  ''' + name + jobarray_outfile_append + '''.o%j
 #SBATCH -N ''' + str(nodes) + '''
 #SBATCH -n ''' + str(ntasks) + ('''
 #SBATCH -c ''' + str(procs) if procs > 1 else "") + '''
 #SBATCH -p ''' + queue + '''
 #SBATCH -t ''' + walltime + '''
+''' + job_array_script + '''
 ''' + slurm_allocation + '''
 
 source ~/.bashrc
@@ -1020,7 +1035,7 @@ strings, or None")
         # Do This
         raise Exception("THIS CODE NOT WRITTEN YET.")
     elif queueing_system.strip().lower() == "slurm":
-        # Setup nbs script
+        # Setup slurm script
         jobarray_id = ""
         jobarray_log_append = ""
         jobarray_outfile = ""

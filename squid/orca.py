@@ -409,6 +409,156 @@ Please run simulation with grad=True." % (input_file, os.getcwd()))
     return atoms, energy
 
 
+def jobarray(run_name, route, frames, extra_section='', grad=False,
+             queue=None, walltime="00:30:00", sandbox=sysconst.sandbox_orca,
+             procs=1, ntasks=1, nodes=1, adjust_nodes=True,
+             charge=None, multiplicity=None, charge_and_multiplicity='0 1',
+             redundancy=False, unique_name=True,
+             previous=None, mem=2000, priority=None, xhost=None,
+             orca4=sysconst.use_orca4,
+             slurm_allocation=sysconst.slurm_default_allocation):
+    '''
+    Wrapper to submitting various Orca simulations as a job array on a SLURM
+    system.  This is used when there are many atomic systems, stored in a
+    list, that need to have the same DFT calculation performed on each.
+
+    Note - When requesting procs/ntasks/nodes, these will be per-job.  As
+    such, do **NOT** multiply out.  For instance, if you request ntasks=4,
+    and len(frames) = 10, you will be running 10 jobs, each with 4 tasks.
+
+    **Parameters**
+
+        run_name: *str*
+            Name of the simulation to be run.
+        route: *str*
+            The DFT route line, containing the function, basis set, etc.
+            Note, if route=None and previous != None, the route from
+            the previous simulation will be used instead.
+        frames: *list,* :class:`structures.Atom`
+            Each atomic system that needs to be simulated.
+        extra_section: *str, optional*
+            Additional DFT simulation parameters.  If None and previous is
+            not None, then previous extra section is used.
+        grad: *bool, optional*
+            Whether to force RunTyp Gradient.
+        queue: *str, optional*
+            What queue to run the simulation on (queueing system dependent).
+        sandbox: *bool, optional*
+            Whether to run the job in a sandbox or not.
+        procs: *int, optional*
+            How many processors to run the simulation on.  Note, the actual
+            number requested by orca will be procs * ntasks.
+        ntasks: *int, optional*
+            (For SLURM) The number of tasks this job will run, each task uses
+            procs number of cores.  Note, the actual number requested by orca
+            will be procs * ntasks.
+        nodes: *int, optional*
+            (For SLURM) The number of nodes this job requires.  If requesting
+            ntasks * procs < 24 * nodes, a warning is printed, as on MARCC
+            each node has only 24 cores.
+        adjust_nodes: *bool, optional*
+            Whether to automatically calculate how many nodes is necessary
+            when the user underspecifies nodes.
+        charge: *float, optional*
+            Charge of the system.  If this is used, then
+            charge_and_multiplicity is ignored. If multiplicity is used,
+            but charge is not, then default charge of 0 is chosen.
+        multiplicity: *int, optional*
+            Multiplicity of the system.  If this is used, then
+            charge_and_multiplicity is ignored. If charge is used, but
+            multiplicity is not, then default multiplicity of 1 is chosen.
+        charge_and_multiplicity: *str, optional*
+            Charge and multiplicity of the system.  If neither charge nor
+            multiplicity are specified, then both are grabbed from this
+            string.
+        redundancy: *bool, optional*
+            With redundancy on, if the job is submitted and unique_name is on, then
+            if another job of the same name is running, a pointer to that job will
+            instead be returned.
+        unique_name: *bool, optional*
+            Whether to force the requirement of a unique name or not.  NOTE! If
+            you submit simulations from the same folder, ensure that this is True
+            lest you have a redundancy problem! To overcome said issue, you can
+            set redundancy to True as well (but only if the simulation is truly
+            redundant).
+        previous: *str, optional*
+            Name of a previous simulation for which to try reading in
+            information using the MORead method.
+        mem: *float, optional*
+            Amount of memory per processor that is available (in MB).
+        priority: *int, optional*
+            Priority of the simulation (queueing system dependent).  Priority
+            ranges (in NBS) from a low of 1 (start running whenever) to a
+            high of 255 (start running ASAP).
+        xhost: *list, str or str, optional*
+            Which processor to run the simulation on(queueing system
+            dependent).
+        orca4: *bool, optional*
+            Whether to use orca 4 (True) or orca 3 (False).
+        slurm_allocation: *str, optional*
+            Whether to use a slurm allocation for this job or not.  If so, specify the name.
+
+    **Returns**
+
+        job: :class:`jobs.Job`
+            Teturn the job container.
+    '''
+
+    assert queue is not None and queue.lower() != "debugger", "Error - Invalid queue for job arrays."
+    assert sysconst.queueing_system.lower() == "slurm", "Error - Only available for SLURM!"
+
+    properties = {
+        "extra_section": extra_section,
+        "grad": grad,
+        "queue": "debugger",  # We do this so that we only generate scripts at first.
+        "walltime": walltime,
+        "sandbox": sandbox,
+        "procs": procs,
+        "ntasks": ntasks,
+        "nodes": nodes,
+        "adjust_nodes": adjust_nodes,
+        "charge": charge,
+        "multiplicity": multiplicity,
+        "charge_and_multiplicity": charge_and_multiplicity,
+        "redundancy": redundancy,
+        "unique_name": unique_name,
+        "previous": previous,
+        "mem": mem,
+        "priority": priority,
+        "xhost": xhost,
+        "orca4": orca4,
+        "slurm_allocation": slurm_allocation
+    }
+
+    # Step 1 - we can run orca.job on each frame; HOWEVER, we do so by
+    # requesting the debugger queue.  This way, we only generate the
+    # input scripts.
+    for i, atoms in enumerate(frames):
+        job(run_name + ".%d" % i, route, atoms=atoms, **properties)
+    # Step 2 - we generate the jobarray script to run the orca jobs on SLURM.
+    if orca4:
+        orca_path = sysconst.orca4_path
+        orca_env = sysconst.orca4_env_vars
+    else:
+        orca_path = sysconst.orca_path
+        orca_env = sysconst.orca_env_vars
+
+    job_to_submit = orca_path + " " + os.getcwd() + '/' + run_name + ".${SLURM_ARRAY_TASK_ID}.orca > "
+    job_to_submit += (os.getcwd() + '/' + run_name + ".${SLURM_ARRAY_TASK_ID}") + ".out\n\n"
+
+    return jobs.submit_job(
+        run_name, job_to_submit,
+        ntasks=ntasks, procs=procs, nodes=nodes, adjust_nodes=adjust_nodes,
+        queue=queue, mem=mem, priority=priority,
+        walltime=walltime, xhosts=xhost,
+        unique_name=unique_name, redundancy=redundancy,
+        sandbox=None, use_NBS_sandbox=False,
+        additional_env_vars=orca_env,
+        sub_flag=sysconst.orca_sub_flag, slurm_allocation=slurm_allocation,
+        jobarray=(0, len(frames) - 1)
+    )
+
+
 # A function to run an Orca DFT Simulation
 def job(run_name, route, atoms=[], extra_section='', grad=False,
         queue=None, walltime="00:30:00", sandbox=sysconst.sandbox_orca,
