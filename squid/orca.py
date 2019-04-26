@@ -510,13 +510,21 @@ def jobarray(run_name, route, frames, extra_section='', grad=False,
 
     # In the case that we are not on SLURM, then submit each individual job.
     if sysconst.queueing_system.lower() != "slurm":
-        print("Warning - %s job array not supported.  Serializing job submission." % sysconst.queueing_system)
+        queue_system = sysconst.queueing_system
+        if queue_system is None or queue_system == "None":
+            queue_system = "Locally run"
+        print("Warning - %s job array not supported.  Serializing job submission instead." % queue_system)
 
         running_jobs = []
-        for i, atoms in enumerate(frames):
+        if isinstance(jobarray_values, str):
+            indexing = jobarray_values.split(",")
+        else:
+            indexing = map(str, range(jobarray_values[0], jobarray_values[1] + 1))
+
+        for i, atoms in zip(indexing, frames):
             running_jobs.append(
                 job(
-                    run_name=run_name + ".%d" % i, route=route,
+                    run_name=run_name + ".%s" % i, route=route,
                     extra_section=extra_section,
                     atoms=atoms, queue=queue, unique_name=False,
                     procs=procs, walltime=walltime
