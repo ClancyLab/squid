@@ -114,7 +114,17 @@ def _get_job(s_flag, queueing_system=sysconst.queueing_system, detail=1):
         # Do This
         raise Exception("THIS CODE NOT WRITTEN YET.")
     elif queueing_system.strip().lower() == "slurm":
-        cmd = 'sacct --format=User%30,JobName%50,JobID,State,Partition,NCPUS,Elapsed --state=PD,R'
+        # Get a list of jobs that are pending or running
+        cmd = 'sacct --format=User%30,JobName%50,JobIDRaw,State,Partition,NCPUS,Elapsed'
+        p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+        output = p.stdout.read().split('\n')
+        VALID_STR = ["pending", "running"]
+        output = [
+            line.strip()
+            for line in output
+            if any([s.lower() in line.lower() for s in VALID_STR])
+        ]
+
         INDICES = {
             "user": 0,
             "jobname": 1,
@@ -124,8 +134,7 @@ def _get_job(s_flag, queueing_system=sysconst.queueing_system, detail=1):
             "nprocs": 5,
             "time": 6
         }
-        p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
-        output = p.stdout.read().split('\n')
+
         all_jobs = [job.strip().split() for job in output
                     if getpass.getuser() in job]
         if detail == 3:
@@ -179,8 +188,10 @@ def _get_job(s_flag, queueing_system=sysconst.queueing_system, detail=1):
         raise Exception("Unknown queueing system passed to _get_job. \
 Please choose NBS, PBS, or SLURM for now.")
 
+
 def public_get_job(s_flag, detail):
     return _get_job(s_flag, detail=detail)
+
 
 def get_all_jobs(queueing_system=sysconst.queueing_system, detail=0):
     """
@@ -214,108 +225,110 @@ def get_all_jobs(queueing_system=sysconst.queueing_system, detail=0):
                          queue,
                          number of processors)
     """
-    if queueing_system.strip().lower() == "nbs":
-        # Get input from jlist as a string
-        #p = subprocess.Popen(['jlist'], stdout=subprocess.PIPE)
-        p = run_nbs_cmd("%s/jlist" % sysconst.nbs_bin_path)
-        output = p.stdout.read()
+    return get_running_jobs(queueing_system=queueing_system, detail=detail) +\
+        get_pending_jobs(queueing_system=queueing_system, detail=detail)
+#     if queueing_system.strip().lower() == "nbs":
+#         # Get input from jlist as a string
+#         #p = subprocess.Popen(['jlist'], stdout=subprocess.PIPE)
+#         p = run_nbs_cmd("%s/jlist" % sysconst.nbs_bin_path)
+#         output = p.stdout.read()
 
-        # Get data from string
-        pattern = getpass.getuser() +\
-            '''[\s]+([\S]+)[\s]+([\S]+)[\s]+([\S]+)'''
-        info = re.findall(pattern, output)
+#         # Get data from string
+#         pattern = getpass.getuser() +\
+#             '''[\s]+([\S]+)[\s]+([\S]+)[\s]+([\S]+)'''
+#         info = re.findall(pattern, output)
 
-        # Get a list of names
-        names = []
-        for a in info:
-            names.append(a[0])
+#         # Get a list of names
+#         names = []
+#         for a in info:
+#             names.append(a[0])
 
-        if len(names) > 0:
-            out_ids = output.split("\n")
-            out_ids = [x.split()[0] for x in out_ids if len(x.split()) > 0 and _isFloat(x.split()[0])]
-            info = [tuple(list(i) + [j]) for i, j in zip(info, out_ids)]
+#         if len(names) > 0:
+#             out_ids = output.split("\n")
+#             out_ids = [x.split()[0] for x in out_ids if len(x.split()) > 0 and _isFloat(x.split()[0])]
+#             info = [tuple(list(i) + [j]) for i, j in zip(info, out_ids)]
 
-        # If user wants more information
-        if detail == 3:
-            _close_pipes(p)
-            return [i[-1] for i in info]
-        if detail == 2:
-            for i, a in enumerate(info):
-                #p = subprocess.Popen(['jshow', a[0]], stdout=subprocess.PIPE)
-                p = run_nbs_cmd("%s/jshow %s" % (sysconst.nbs_bin_path, a[0]))
-                s = p.stdout.read()
-                serv = s[s.find('Queue name:'):].split()[2].strip()
-                try:
-                    threads = s[s.find('Slot Reservations'):].split()[4]
-                    threads = threads.strip()
-                except:
-                    threads = 1
-                info[i] = info[i] + (serv, threads,)
-            _close_pipes(p)
-            return info
+#         # If user wants more information
+#         if detail == 3:
+#             _close_pipes(p)
+#             return [i[-1] for i in info]
+#         if detail == 2:
+#             for i, a in enumerate(info):
+#                 #p = subprocess.Popen(['jshow', a[0]], stdout=subprocess.PIPE)
+#                 p = run_nbs_cmd("%s/jshow %s" % (sysconst.nbs_bin_path, a[0]))
+#                 s = p.stdout.read()
+#                 serv = s[s.find('Queue name:'):].split()[2].strip()
+#                 try:
+#                     threads = s[s.find('Slot Reservations'):].split()[4]
+#                     threads = threads.strip()
+#                 except:
+#                     threads = 1
+#                 info[i] = info[i] + (serv, threads,)
+#             _close_pipes(p)
+#             return info
 
-        # Return appropriate information
-        _close_pipes(p)
-        if detail == 1:
-            return info
-        else:
-            return names
+#         # Return appropriate information
+#         _close_pipes(p)
+#         if detail == 1:
+#             return info
+#         else:
+#             return names
 
-    elif queueing_system.strip().lower() == "pbs":
-        # Do This
-        raise Exception("THIS CODE NOT WRITTEN YET.")
-    elif queueing_system.strip().lower() == "slurm":
-        cmd = 'sacct --format=User%30,JobName%50,JobID,State,Partition,NCPUS,Elapsed --state=PD,R'
-        INDICES = {
-            "user": 0,
-            "jobname": 1,
-            "jobid": 2,
-            "state": 3,
-            "queue": 4,
-            "nprocs": 5,
-            "time": 6
-        }
-        p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
-        output = p.stdout.read().split('\n')
-        all_jobs = [job.strip().split() for job in output
-                    if getpass.getuser() in job]
-        if detail == 3:
-            all_jobs = [
-                j[INDICES["jobid"]]
-                for j in all_jobs
-            ]
-        elif detail == 2:
-            all_jobs = [
-                (
-                    j[INDICES["jobname"]],
-                    j[INDICES["time"]],
-                    j[INDICES["state"]],
-                    j[INDICES["jobid"]],
-                    j[INDICES["queue"]],
-                    j[INDICES["nprocs"]]
-                )
-                for j in all_jobs
-            ]
-        elif detail == 1:
-            all_jobs = [
-                (
-                    j[INDICES["jobname"]],
-                    j[INDICES["time"]],
-                    j[INDICES["state"]],
-                    j[INDICES["jobid"]]
-                )
-                for j in all_jobs
-            ]
-        else:
-            all_jobs = [
-                j[INDICES["jobname"]]
-                for j in all_jobs
-            ]
-        _close_pipes(p)
-        return all_jobs
-    else:
-        raise Exception("Unknown queueing system passed to get_all_jobs. \
-Please choose NBS, PBS, or SLURM for now.")
+#     elif queueing_system.strip().lower() == "pbs":
+#         # Do This
+#         raise Exception("THIS CODE NOT WRITTEN YET.")
+#     elif queueing_system.strip().lower() == "slurm":
+#         cmd = 'sacct --format=User%30,JobName%50,JobID,State,Partition,NCPUS,Elapsed --state=PD,R'
+#         INDICES = {
+#             "user": 0,
+#             "jobname": 1,
+#             "jobid": 2,
+#             "state": 3,
+#             "queue": 4,
+#             "nprocs": 5,
+#             "time": 6
+#         }
+#         p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+#         output = p.stdout.read().split('\n')
+#         all_jobs = [job.strip().split() for job in output
+#                     if getpass.getuser() in job]
+#         if detail == 3:
+#             all_jobs = [
+#                 j[INDICES["jobid"]]
+#                 for j in all_jobs
+#             ]
+#         elif detail == 2:
+#             all_jobs = [
+#                 (
+#                     j[INDICES["jobname"]],
+#                     j[INDICES["time"]],
+#                     j[INDICES["state"]],
+#                     j[INDICES["jobid"]],
+#                     j[INDICES["queue"]],
+#                     j[INDICES["nprocs"]]
+#                 )
+#                 for j in all_jobs
+#             ]
+#         elif detail == 1:
+#             all_jobs = [
+#                 (
+#                     j[INDICES["jobname"]],
+#                     j[INDICES["time"]],
+#                     j[INDICES["state"]],
+#                     j[INDICES["jobid"]]
+#                 )
+#                 for j in all_jobs
+#             ]
+#         else:
+#             all_jobs = [
+#                 j[INDICES["jobname"]]
+#                 for j in all_jobs
+#             ]
+#         _close_pipes(p)
+#         return all_jobs
+#     else:
+#         raise Exception("Unknown queueing system passed to get_all_jobs. \
+# Please choose NBS, PBS, or SLURM for now.")
 
 
 def get_running_jobs(queueing_system=sysconst.queueing_system, detail=1):
