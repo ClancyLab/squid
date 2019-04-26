@@ -543,8 +543,8 @@ def jobarray(run_name, route, frames, extra_section='', grad=False,
         orca_path = sysconst.orca_path
         orca_env = sysconst.orca_env_vars
 
-    job_to_submit = orca_path + " " + os.getcwd() + '/' + run_name + ".${SLURM_ARRAY_TASK_ID}.orca > "
-    job_to_submit += (os.getcwd() + '/' + run_name + ".${SLURM_ARRAY_TASK_ID}") + ".out\n\n"
+    job_to_submit = orca_path + " " + os.getcwd() + '/orca/' + run_name + ".${SLURM_ARRAY_TASK_ID}/" + run_name + ".${SLURM_ARRAY_TASK_ID}.orca > "
+    job_to_submit += (os.getcwd() + '/orca/' + run_name + ".${SLURM_ARRAY_TASK_ID}/" + run_name + ".${SLURM_ARRAY_TASK_ID}") + ".out\n\n"
 
     return jobs.submit_job(
         run_name, job_to_submit,
