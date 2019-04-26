@@ -432,7 +432,8 @@ def submit_job(name,
                unique_name=True,
                slurm_allocation=sysconst.slurm_default_allocation,
                queueing_system=sysconst.queueing_system,
-               jobarray=None):
+               jobarray=None,
+               outfile_name=None):
     """
     Code to submit a simulation to the specified queue and queueing system.
 
@@ -490,6 +491,9 @@ def submit_job(name,
             Specifies a job array should be run.  In this case, the script is
             submitted as is.  The user is responsible for adding in the
             appropriate environment variable names, such as ${SLURM_ARRAY_TASK_ID}.
+        outfile_name: *str, optional*
+            If you wish to manually override the default outfile name in a SLURM
+            job, you may do so here.
 
     **Returns**
 
@@ -668,9 +672,11 @@ equates to %d nodes on marcc; however, you only requested %d nodes." % (procs, n
             jobarray_id = " ${SLURM_ARRAY_TASK_ID}"
             jobarray_log_append = "_${SLURM_ARRAY_TASK_ID}"
             jobarray_outfile_append = ".a%a"
+        if outfile_name is None:
+            outfile_name = name + jobarray_outfile_append + ".o%j"
         generic_script = '''#!/bin/sh
-#SBATCH -J  ''' + name + '''
-#SBATCH -o  ''' + name + jobarray_outfile_append + '''.o%j
+#SBATCH -J ''' + name + '''
+#SBATCH -o ''' + outfile_name + '''
 #SBATCH -N ''' + str(nodes) + '''
 #SBATCH -n ''' + str(ntasks) + ('''
 #SBATCH -c ''' + str(procs) if procs > 1 else "") + '''
