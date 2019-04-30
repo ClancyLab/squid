@@ -563,6 +563,15 @@ def submit_job(name,
         None
     """
 
+    # Handle running locally if queue is None
+    if queue is None:
+        return Job(
+            name,
+            process_handle=subprocess.Popen(
+                job_to_submit.strip().split(), shell=False
+            )
+        )
+
     # Throw an error if we request nbs queueing with unknown queue
     if queueing_system.lower() == "nbs" and queue.lower() not in get_nbs_queues():
         if queue.lower() != "none":
@@ -593,6 +602,7 @@ equates to %d nodes on marcc; however, you only requested %d nodes." % (procs, n
 
     if queue is "debugger":
         print("\nWould have submitted job %s\n" % name)
+        return Job(None)
     elif queueing_system.strip().lower() == "nbs":
 
         # In the case of NBS, we only have procs, not ntasks, so figure
