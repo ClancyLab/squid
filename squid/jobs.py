@@ -413,7 +413,9 @@ def get_running_jobs(queueing_system=sysconst.queueing_system, detail=1):
                          queue,
                          number of processors)
     """
-    if queueing_system.strip().lower() == "nbs":
+    if queueing_system is None or queueing_system.strip().lower() == "none":
+        return []
+    elif queueing_system.strip().lower() == "nbs":
         return _get_job("RUNNING", queueing_system, detail)
     elif queueing_system.strip().lower() == "pbs":
         # Do This
@@ -423,8 +425,8 @@ def get_running_jobs(queueing_system=sysconst.queueing_system, detail=1):
     elif queueing_system.strip().lower() == "slurm-xsede":
         return _get_job("Running", queueing_system, detail)
     else:
-        raise Exception("Unknown queueing system passed to get_running_jobs. \
-Please choose NBS, PBS, or SLURM for now.")
+        raise Exception("Unknown queueing system (%s) passed to get_running_jobs. \
+Please choose NBS, PBS, or SLURM for now." % str(queueing_system))
 
 
 def get_pending_jobs(queueing_system=sysconst.queueing_system, detail=0):
@@ -460,7 +462,9 @@ def get_pending_jobs(queueing_system=sysconst.queueing_system, detail=0):
                          queue,
                          number of processors)
     """
-    if queueing_system.strip().lower() == "nbs":
+    if queueing_system is None or queueing_system.strip().lower() == "none":
+        return []
+    elif queueing_system.strip().lower() == "nbs":
         return _get_job("pending", queueing_system, detail)
     elif queueing_system.strip().lower() == "pbs":
         # Do This
@@ -470,8 +474,8 @@ def get_pending_jobs(queueing_system=sysconst.queueing_system, detail=0):
     elif queueing_system.strip().lower() == "slurm-xsede":
         return _get_job("Waiting", queueing_system, detail)
     else:
-        raise Exception("Unknown queueing system passed to get_pending_jobs. \
-Please choose NBS, PBS, or SLURM for now.")
+        raise Exception("Unknown queueing system (%s) passed to get_pending_jobs. \
+Please choose NBS, PBS, or SLURM for now." % str(queueing_system))
 
 
 def submit_job(name,
