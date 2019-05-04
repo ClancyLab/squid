@@ -39,6 +39,7 @@ pysub [script.py] [Options]
 
 -py3           :            :  Whether to use python 3, or 2 (2 is default).
 -alloc, -A     :   None     :  Whether to specify a SLURM Allocation.
+-gpu           :   None     :  The number of desired GPUs you want.
 
 Default behaviour is to generate a job with the same name
 as the python script and to generate a .log file with the
@@ -76,6 +77,7 @@ use_mpi = False
 tasks = 1
 slurm_allocation = None
 jobarray = None
+gpu = None
 
 if not hasattr(sysconst, "default_pysub_modules"):
     use_these_mods = []
@@ -143,6 +145,9 @@ if "-t" in argv[2:]:
 if "-walltime" in argv[2:]:
     walltime = argv[argv.index('-walltime') + 1]
 
+if "-gpu" in argv[2:]:
+    gpu = int(argv[argv.index('-gpu') + 1])
+
 if "-jobarray" in argv[2:]:
     i = argv.index("-jobarray")
     jobarray = map(int, [argv[i + 1], argv[i + 2]])
@@ -154,4 +159,4 @@ pysub(job_name, nprocs=nprocs, ntasks=tasks, omp=omp, queue=queue, xhost=xhost,
       path=getcwd(), remove_sub_script=rss, priority=priority,
       walltime=walltime, unique_name=unique, py3=py3, use_mpi=use_mpi,
       modules=use_these_mods, slurm_allocation=slurm_allocation,
-      jobarray=jobarray)
+      jobarray=jobarray, gpu=gpu)

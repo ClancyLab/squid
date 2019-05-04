@@ -877,6 +877,7 @@ def pysub(job_name,
           unique_name=False,
           redundancy=False,
           py3=False,
+          gpu=None,
           use_mpi=False,
           modules=None,
           slurm_allocation=sysconst.slurm_default_allocation,
@@ -908,6 +909,9 @@ def pysub(job_name,
         queue: *str, optional*
             Which queue you want your script to run on (specific to
             your queueing system).
+        gpu: *int, optional*
+            Whether to submit the job on GPUs.  If so, specify a value for how
+            GPUs will be requested.
         walltime: *str, optional*
             How long to post the job on the queue for in d-h:m:s where d are
             days, h are hours, m are minutes, and s are seconds.  Default is
@@ -962,6 +966,22 @@ def pysub(job_name,
         slurm_allocation = ""
     else:
         slurm_allocation = "#SBATCH --account=" + slurm_allocation
+
+    if gpu is not None:
+        AVAIL_GPU_QUEUE_SYSTEMS = ["slurm"]
+        msg = "Error - gpu only implemented for the following: %s" % ', '.join(AVAIL_GPU_QUEUE_SYSTEMS)
+        assert queueing_system.strip().lower() in AVAIL_GPU_QUEUE_SYSTEMS, msg
+        AVAIL_GPU_PARTS = ["unlimited", "gpuk80", "gpup100", "debugger"]
+        msg = "Error - queue (%s) not available with gpus.  Choose one: %s" % (queue, ', '.join(AVAIL_GPU_PARTS))
+        assert queue.lower() in AVAIL_GPU_PARTS, msg
+
+        gpu_flag_slurm = "#SBATCH --gres=gpu:%d" % int(gpu)  # Not sure... I think so though
+        # On MARCC we need gpu tasks, and 6 cores per task
+        ntasks = int(gpu)
+        nprocs = 6
+    else:
+        # We need to remove gpu nodes from available nodes on SLURM/MARCC
+        gpu_flag_slurm = "#SBATCH --exclude=gpu004,gpu005"
 
     if not hasattr(sysconst, "default_pysub_modules"):
         use_these_mods = []
@@ -1161,7 +1181,7 @@ strings, or None")
 #SBATCH --time=$WALLTIME$
 ''' + job_array_script + '''
 ''' + slurm_allocation + '''
-
+''' + gpu_flag_slurm + '''
 $OMP$
 
 module reset
