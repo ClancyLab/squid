@@ -425,6 +425,7 @@ def submit_job(name,
                additional_env_vars="",
                sandbox=None,
                use_NBS_sandbox=False,
+               gpu=None,
                sub_flag="",
                email=None,
                preface=None,
@@ -456,6 +457,9 @@ def submit_job(name,
             when the user underspecifies nodes.
         queue: *str, optional*
             Queue you are submitting to (queueing system dependent).
+        gpu: *int, optional*
+            Whether to submit the job on GPUs.  If so, specify a value for how
+            GPUs will be requested.
         mem: *float, optional*
             Amount of memory you're requesting.
         priority: *int, optional*
@@ -506,6 +510,22 @@ def submit_job(name,
     if unique_name and queueing_system.strip().lower() not in ["slurm", "nbs"]:
         print("Warning - unique_name not implemented for non-NBS queueing systems.")
 
+    if gpu is not None:
+        AVAIL_GPU_QUEUE_SYSTEMS = ["slurm"]
+        msg = "Error - gpu only implemented for the following: %s" % ', '.join(AVAIL_GPU_QUEUE_SYSTEMS)
+        assert queueing_system.strip().lower() in AVAIL_GPU_QUEUE_SYSTEMS, msg
+        AVAIL_GPU_PARTS = ["unlimited", "gpuk80", "gpup100", "debugger"]
+        msg = "Error - queue (%s) not available with gpus.  Choose one: %s" % (queue, ', '.join(AVAIL_GPU_PARTS))
+        assert queue.lower() in AVAIL_GPU_PARTS, msg
+
+        gpu_flag_slurm = "#SBATCH --gres=gpu:%d" % int(gpu)  # Not sure... I think so though
+        # On MARCC we need gpu tasks, and 6 cores per task
+        ntasks = int(gpu)
+        procs = 6
+    else:
+        # We need to remove gpu nodes from available nodes on SLURM/MARCC
+        gpu_flag_slurm = "#SBATCH --exclude gpu004 gpu005"
+
     procs, ntasks, nodes = int(procs), int(ntasks), int(nodes)
     if procs * ntasks > 24 * nodes:
         print("Warning - You requested %d tasks and %d cpus-per-task.  This \
@@ -517,7 +537,7 @@ equates to %d nodes on marcc; however, you only requested %d nodes." % (procs, n
     if slurm_allocation is None:
         slurm_allocation = ""
     else:
-        slurm_allocation = "#SBATCH -A " + slurm_allocation
+        slurm_allocation = "#SBATCH --account=" + slurm_allocation
 
     if queue is "debugger":
         print("\nWould have submitted job %s\n" % name)
@@ -655,14 +675,15 @@ equates to %d nodes on marcc; however, you only requested %d nodes." % (procs, n
     elif queueing_system.strip().lower() == "slurm":
         # Generate your script
         generic_script = '''#!/bin/sh
-#SBATCH -J  ''' + name + '''
-#SBATCH -o  ''' + name + '''.o%j
-#SBATCH -N ''' + str(nodes) + '''
-#SBATCH -n ''' + str(ntasks) + ('''
-#SBATCH -c ''' + str(procs) if procs > 1 else "") + '''
-#SBATCH -p ''' + queue + '''
-#SBATCH -t ''' + walltime + '''
+#SBATCH --job-name"''' + name + '''"
+#SBATCH --output="''' + name + '''.o%j"
+#SBATCH --nodes=''' + str(nodes) + '''
+#SBATCH --ntasks-per-node=''' + str(ntasks) + ('''
+#SBATCH --cpus-per-task=''' + str(procs) if procs > 1 else "") + '''
+#SBATCH --partition=''' + queue + '''
+#SBATCH --time=''' + walltime + '''
 ''' + slurm_allocation + '''
+''' + gpu_flag_slurm + '''
 
 source ~/.bashrc
 '''
@@ -839,7 +860,7 @@ def pysub(job_name,
     if slurm_allocation is None:
         slurm_allocation = ""
     else:
-        slurm_allocation = "#SBATCH -A " + slurm_allocation
+        slurm_allocation = "#SBATCH --account=" + slurm_allocation
 
     if not hasattr(sysconst, "default_pysub_modules"):
         use_these_mods = []
@@ -1031,12 +1052,12 @@ strings, or None")
             jobarray_log_append = "_${SLURM_ARRAY_TASK_ID}"
             jobarray_outfile = ".a%a"
         SLURM = '''#!/bin/sh
-#SBATCH -J "$JOB_NAME1$"
-#SBATCH -o $JOB_NAME2$''' + jobarray_outfile + '''.o%j
-#SBATCH -N $NODES$
-#SBATCH -n $NTASKS$''' + ("\n#SBATCH -c $NPROCS$" if nprocs > 1 else "") + '''
-#SBATCH -p $QUEUE$
-#SBATCH -t $WALLTIME$
+#SBATCH --job-name="$JOB_NAME1$"
+#SBATCH --output="$JOB_NAME2$''' + jobarray_outfile + '''.o%j"
+#SBATCH --nodes=$NODES$
+#SBATCH --ntasks-per-node=$NTASKS$''' + ("\n#SBATCH --cpus-per-task=$NPROCS$" if nprocs > 1 else "") + '''
+#SBATCH --partition=$QUEUE$
+#SBATCH --time=$WALLTIME$
 
 ''' + job_array_script + '''
 
