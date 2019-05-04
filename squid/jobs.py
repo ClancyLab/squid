@@ -524,7 +524,7 @@ def submit_job(name,
         procs = 6
     else:
         # We need to remove gpu nodes from available nodes on SLURM/MARCC
-        gpu_flag_slurm = "#SBATCH --exclude gpu004 gpu005"
+        gpu_flag_slurm = "#SBATCH --exclude=gpu004,gpu005"
 
     procs, ntasks, nodes = int(procs), int(ntasks), int(nodes)
     if procs * ntasks > 24 * nodes:
@@ -675,7 +675,7 @@ equates to %d nodes on marcc; however, you only requested %d nodes." % (procs, n
     elif queueing_system.strip().lower() == "slurm":
         # Generate your script
         generic_script = '''#!/bin/sh
-#SBATCH --job-name"''' + name + '''"
+#SBATCH --job-name="''' + name + '''"
 #SBATCH --output="''' + name + '''.o%j"
 #SBATCH --nodes=''' + str(nodes) + '''
 #SBATCH --ntasks-per-node=''' + str(ntasks) + ('''
