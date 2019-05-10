@@ -879,9 +879,7 @@ less than 2 atoms!")
         job_obj = jobs.Job(run_name, process_handle=process_handle)
     elif queue == 'debugger':
         print 'Would run', run_name
-        # Return to the appropriate directory
-        os.chdir('../..')
-        return jobs.Job(None)
+        job_obj = jobs.Job(None)
     else:
         # Details copied from orca for sandbox
         if not use_NBS_sandbox:
