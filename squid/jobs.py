@@ -778,7 +778,7 @@ equates to %d nodes on marcc; however, you only requested %d nodes." % (procs, n
 #SBATCH --job-name="''' + name + '''"
 #SBATCH --output="''' + outfile_name + '''"
 #SBATCH --nodes=''' + str(nodes) + '''
-#SBATCH --ntasks-per-node=''' + str(ntasks) + ('''
+#SBATCH --ntasks=''' + str(ntasks) + ('''
 #SBATCH --cpus-per-task=''' + str(procs) if procs > 1 else "") + '''
 #SBATCH --partition=''' + queue + '''
 #SBATCH --time=''' + walltime + '''
@@ -1176,7 +1176,7 @@ strings, or None")
 #SBATCH --job-name="$JOB_NAME1$"
 #SBATCH --output="$JOB_NAME2$''' + jobarray_outfile + '''.o%j"
 #SBATCH --nodes=$NODES$
-#SBATCH --ntasks-per-node=$NTASKS$''' + ("\n#SBATCH --cpus-per-task=$NPROCS$" if nprocs > 1 else "") + '''
+#SBATCH --ntasks=$NTASKS$''' + ("\n#SBATCH --cpus-per-task=$NPROCS$" if nprocs > 1 else "") + '''
 #SBATCH --partition=$QUEUE$
 #SBATCH --time=$WALLTIME$
 ''' + job_array_script + '''
