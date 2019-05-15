@@ -20,6 +20,7 @@ import sys
 import copy
 import time
 import shutil
+import itertools
 import subprocess
 
 # Squid imports
@@ -409,7 +410,7 @@ Please run simulation with grad=True." % (input_file, os.getcwd()))
     return atoms, energy
 
 
-def jobarray(run_name, route, frames, extra_section='', grad=False,
+def jobarray(run_name, route, frames, n_frames=None, extra_section='', grad=False,
              queue=None, walltime="00:30:00", sandbox=sysconst.sandbox_orca,
              procs=1, ntasks=1, nodes=1, adjust_nodes=True,
              charge=None, multiplicity=None, charge_and_multiplicity='0 1',
@@ -436,6 +437,8 @@ def jobarray(run_name, route, frames, extra_section='', grad=False,
             the previous simulation will be used instead.
         frames: *list,* :class:`structures.Atom`
             Each atomic system that needs to be simulated.
+        n_frames: *int, optional*
+            The number of frames.
         extra_section: *str, optional*
             Additional DFT simulation parameters.  If None and previous is
             not None, then previous extra section is used.
@@ -508,6 +511,19 @@ def jobarray(run_name, route, frames, extra_section='', grad=False,
             Teturn the job container.
     '''
 
+    # Robustly find the length of frames.  If it is a generator,
+    # then split it and find that length.  NOTE! This will process
+    # the values, so may be slow.  If the generators are more complex
+    # then the user should use the keyword n_frames and this will
+    # be skipped
+    if n_frames is None:
+        try:
+            n_frames = len(frames)
+        except TypeError:
+            # In this case, it is a generator
+            frames, frames_held = itertools.tee(frames)
+            n_frames = sum(1 for x in frames_held)
+
     # In the case that we are not on SLURM, then submit each individual job.
     if queue is None or sysconst.queueing_system.lower() != "slurm":
         queue_system = sysconst.queueing_system
@@ -536,9 +552,9 @@ def jobarray(run_name, route, frames, extra_section='', grad=False,
         return running_jobs
 
     if jobarray_values is not None:
-        assert jobarray_values.count(",") == len(frames) - 1, "Error - Invalid jobarray_values string."
+        assert jobarray_values.count(",") == n_frames - 1, "Error - Invalid jobarray_values string."
     else:
-        jobarray_values = (0, len(frames) - 1)
+        jobarray_values = (0, n_frames - 1)
 
     properties = {
         "extra_section": extra_section,
