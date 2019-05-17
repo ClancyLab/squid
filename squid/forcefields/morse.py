@@ -11,6 +11,24 @@ BOUND_EPS = 1E-6
 MORSE_PFILE_ID = "MORSE"
 END_ID = "END"
 
+##############################################################################
+# From a cursory scan of existing parameters, D0 ranges
+# from 0.2 eV to 4.3 eV (or so).  From this, we will make the
+# range be 1 - 150
+# PREVIOUSLY USED RANGES:
+#   (0.1, 1000)
+D0_BOUNDS = (1, 150)
+# This dictates the width of the well.  From a cursory scan of
+# existing parameters, this should be on the order of 1.0 - 2.0 ang.
+# PREVIOUSLY USED RANGES:
+#   (0.1, 100)
+ALPHA_BOUNDS = (0.2, 5.0)
+# r0 is the equilibrium bond length.  No bonds should exist closer
+# than 0.5 angstroms, and similarly no bond length further than 4.0.
+R0_BOUNDS = (0.5, 4.0)
+RC_BOUNDS = (0.1, 15.0)
+##############################################################################
+
 """
 The Morse class contains:
 - :func:`__init__`
@@ -59,22 +77,10 @@ class Morse(object):
     def __init__(self, indices=None, D0=None, alpha=None, r0=None, rc=None, line=None):
         # Assign default bounds
         # For the programmer: The bounds need reconsidering.
-
-        # From a cursory scan of existing parameters, D0 ranges
-        # from 0.2 eV to 4.3 eV (or so).  From this, we will make the
-        # range be 1 - 150
-        # PREVIOUSLY USED RANGES:
-        #   (0.1, 1000)
-        self.D0_bounds = (1, 150)
-        # This dictates the width of the well.  From a cursory scan of
-        # existing parameters, this should be on the order of 1.0 - 2.0 ang.
-        # PREVIOUSLY USED RANGES:
-        #   (0.1, 100)
-        self.alpha_bounds = (0.2, 5.0)
-        # r0 is the equilibrium bond length.  No bonds should exist closer
-        # than 0.5 angstroms, and similarly no bond length further than 4.0.
-        self.r0_bounds = (0.5, 4.0)
-        self.rc_bounds = (0.1, 15.0)
+        self.D0_bounds = D0_BOUNDS
+        self.alpha_bounds = ALPHA_BOUNDS
+        self.r0_bounds = R0_BOUNDS
+        self.rc_bounds = RC_BOUNDS
 
         # How many parameters exist in this potential
         self.N_params = 4
@@ -362,10 +368,10 @@ class Morse(object):
         morse_objs = []
 
         for indices in combinations_with_replacement(atom_types, 2):
-            D0 = random_in_range((0.1, 1000))
-            alpha = random_in_range((0.1, 100))
-            r0 = random_in_range((0.1, 5.0))
-            rc = random_in_range((0.1, 15.0))
+            D0 = random_in_range(D0_BOUNDS)
+            alpha = random_in_range(ALPHA_BOUNDS)
+            r0 = random_in_range(R0_BOUNDS)
+            rc = random_in_range(RC_BOUNDS)
             morse_objs.append(cls(indices, D0, alpha, r0, rc))
 
         return morse_objs
