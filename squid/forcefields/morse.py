@@ -59,9 +59,21 @@ class Morse(object):
     def __init__(self, indices=None, D0=None, alpha=None, r0=None, rc=None, line=None):
         # Assign default bounds
         # For the programmer: The bounds need reconsidering.
-        self.D0_bounds = (0.1, 1000)
-        self.alpha_bounds = (0.1, 100)
-        self.r0_bounds = (0.1, 5.0)
+
+        # From a cursory scan of existing parameters, D0 ranges
+        # from 0.2 eV to 4.3 eV (or so).  From this, we will make the
+        # range be 1 - 150
+        # PREVIOUSLY USED RANGES:
+        #   (0.1, 1000)
+        self.D0_bounds = (1, 150)
+        # This dictates the width of the well.  From a cursory scan of
+        # existing parameters, this should be on the order of 1.0 - 2.0 ang.
+        # PREVIOUSLY USED RANGES:
+        #   (0.1, 100)
+        self.alpha_bounds = (0.2, 5.0)
+        # r0 is the equilibrium bond length.  No bonds should exist closer
+        # than 0.5 angstroms, and similarly no bond length further than 4.0.
+        self.r0_bounds = (0.5, 4.0)
         self.rc_bounds = (0.1, 15.0)
 
         # How many parameters exist in this potential
