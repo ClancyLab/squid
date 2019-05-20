@@ -14,10 +14,11 @@ END_ID = "END"
 ##############################################################################
 # From a cursory scan of existing parameters, D0 ranges
 # from 0.2 eV to 4.3 eV (or so).  From this, we will make the
-# range be 1 - 150
+# range be 1 - 150 for kcal/mol.  However, to facilitate atoms that do
+# not bond, we allow for ultra low D0
 # PREVIOUSLY USED RANGES:
 #   (0.1, 1000)
-D0_BOUNDS = (1, 150)
+D0_BOUNDS = (0.1, 150)
 # This dictates the width of the well.  From a cursory scan of
 # existing parameters, this should be on the order of 1.0 - 2.0 ang.
 # PREVIOUSLY USED RANGES:
@@ -25,7 +26,11 @@ D0_BOUNDS = (1, 150)
 ALPHA_BOUNDS = (0.2, 5.0)
 # r0 is the equilibrium bond length.  No bonds should exist closer
 # than 0.5 angstroms, and similarly no bond length further than 4.0.
-R0_BOUNDS = (0.5, 4.0)
+# However, to facilitate situations where no bond exists, we allow for
+# R0 to go all the way up to 10.  When parameterizing, it is advised that
+# someone appreciate if something binds or not, and assign R0 to a low
+# range (0.5 - 4.0) or a high range(4.0 - 10.0)
+R0_BOUNDS = (0.5, 10.0)
 RC_BOUNDS = (0.1, 15.0)
 ##############################################################################
 
