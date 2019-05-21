@@ -328,7 +328,7 @@ class Morse(object):
         '''
         self.r0_bounds = (0.5, 4.0)
         if self.r0 > self.r0_bounds[-1] or self.r0 < self.r0_bounds[0]:
-            self.r0 = (self.r0_bounds[-1] - self.r0_bounds[0]) / 2.0
+            self.r0 = (self.r0_bounds[-1] - self.r0_bounds[0]) / 2.0 + self.r0_bounds[0]
 
     def set_nonbinder(self):
         '''
@@ -341,13 +341,13 @@ class Morse(object):
         '''
         self.r0_bounds = (4.0, 10.0)
         if self.r0 > self.r0_bounds[-1] or self.r0 < self.r0_bounds[0]:
-            self.r0 = (self.r0_bounds[-1] - self.r0_bounds[0]) / 2.0
+            self.r0 = (self.r0_bounds[-1] - self.r0_bounds[0]) / 2.0 + self.r0_bounds[0]
         self.D0_bounds = (0.1, 50.0)
         if self.D0 > self.D0_bounds[-1] or self.D0 < self.D0_bounds[0]:
-            self.D0 = (self.D0_bounds[-1] - self.D0_bounds[0]) / 2.0
+            self.D0 = (self.D0_bounds[-1] - self.D0_bounds[0]) / 2.0 + self.D0_bounds[0]
         self.alpha_bounds = (0.01, 1.0)
         if self.alpha > self.alpha_bounds[-1] or self.alpha < self.alpha_bounds[0]:
-            self.alpha = (self.alpha_bounds[-1] - self.alpha_bounds[0]) / 2.0
+            self.alpha = (self.alpha_bounds[-1] - self.alpha_bounds[0]) / 2.0 + self.alpha_bounds[0]
 
     @classmethod
     def load_smrff(cls, pfile, pfptr=None, restrict=None):
