@@ -319,6 +319,36 @@ class Morse(object):
         else:
             raise Exception("In Morse, tried fixing %s parameter (does not exist)!" % params)
 
+    def set_binder(self):
+        '''
+        This will adjust bounds such that the parameters are in a range of a
+        morse "Bond".  This means that:
+
+            0.5 < r < 4.0
+        '''
+        self.r0_bounds = (0.5, 4.0)
+        if self.r0 > self.r0_bounds[-1] or self.r0 < self.r0_bounds[0]:
+            self.r0 = (self.r0_bounds[-1] - self.r0_bounds[0]) / 2.0
+
+    def set_nonbinder(self):
+        '''
+        This will adjust bounds such that the parameters are in a range of a
+        morse "Non-Bond".  This means that:
+
+            4.0 < r < 10.0
+            0.1 < D0 < 50.0
+            0.01 < alpha < 5.0
+        '''
+        self.r0_bounds = (4.0, 10.0)
+        if self.r0 > self.r0_bounds[-1] or self.r0 < self.r0_bounds[0]:
+            self.r0 = (self.r0_bounds[-1] - self.r0_bounds[0]) / 2.0
+        self.D0_bounds = (0.1, 50.0)
+        if self.D0 > self.D0_bounds[-1] or self.D0 < self.D0_bounds[0]:
+            self.D0 = (self.D0_bounds[-1] - self.D0_bounds[0]) / 2.0
+        self.alpha_bounds = (0.01, 1.0)
+        if self.alpha > self.alpha_bounds[-1] or self.alpha < self.alpha_bounds[0]:
+            self.alpha = (self.alpha_bounds[-1] - self.alpha_bounds[0]) / 2.0
+
     @classmethod
     def load_smrff(cls, pfile, pfptr=None, restrict=None):
         '''
