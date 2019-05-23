@@ -23,7 +23,7 @@ D0_BOUNDS = (0.1, 150)
 # existing parameters, this should be on the order of 1.0 - 2.0 ang.
 # PREVIOUSLY USED RANGES:
 #   (0.1, 100)
-ALPHA_BOUNDS = (0.2, 5.0)
+ALPHA_BOUNDS = (0.01, 5.0)
 # r0 is the equilibrium bond length.  No bonds should exist closer
 # than 0.5 angstroms, and similarly no bond length further than 4.0.
 # However, to facilitate situations where no bond exists, we allow for
