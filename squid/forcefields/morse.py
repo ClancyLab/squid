@@ -23,7 +23,7 @@ D0_BOUNDS = (0.1, 150)
 # existing parameters, this should be on the order of 1.0 - 2.0 ang.
 # PREVIOUSLY USED RANGES:
 #   (0.1, 100)
-ALPHA_BOUNDS = (0.01, 5.0)
+ALPHA_BOUNDS = (0.1, 5.0)
 # r0 is the equilibrium bond length.  No bonds should exist closer
 # than 0.5 angstroms, and similarly no bond length further than 4.0.
 # However, to facilitate situations where no bond exists, we allow for
@@ -337,7 +337,7 @@ class Morse(object):
 
             4.0 < r < 10.0
             0.1 < D0 < 50.0
-            0.01 < alpha < 5.0
+            0.1 < alpha < 5.0
         '''
         self.r0_bounds = (4.0, 10.0)
         if self.r0 > self.r0_bounds[-1] or self.r0 < self.r0_bounds[0]:
@@ -345,7 +345,7 @@ class Morse(object):
         self.D0_bounds = (0.1, 50.0)
         if self.D0 > self.D0_bounds[-1] or self.D0 < self.D0_bounds[0]:
             self.D0 = (self.D0_bounds[-1] - self.D0_bounds[0]) / 2.0 + self.D0_bounds[0]
-        self.alpha_bounds = (0.01, 1.0)
+        self.alpha_bounds = (0.1, 1.0)
         if self.alpha > self.alpha_bounds[-1] or self.alpha < self.alpha_bounds[0]:
             self.alpha = (self.alpha_bounds[-1] - self.alpha_bounds[0]) / 2.0 + self.alpha_bounds[0]
 
