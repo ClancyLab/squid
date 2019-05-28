@@ -1032,7 +1032,7 @@ equates to %d nodes on marcc; however, you only requested %d nodes." % (nprocs, 
     if queue.strip().lower() == "none":
         if omp != "":
             os.system(omp)
-        cmd = "$PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$> $PY_NAME2$.log 2>&1"
+        cmd = "$PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$$JA1$ > $PY_NAME2$$JA2$.log 2>&1"
         cmd += " & disown"
         cmd = cmd.replace("$PYTHON_PATH$", py_path)
         cmd = cmd.replace("$PY_NAME1$", path + '/' + job_name)
@@ -1045,10 +1045,20 @@ equates to %d nodes on marcc; however, you only requested %d nodes." % (nprocs, 
 strings, or None")
             args = " ".join(args) + " "
             cmd = cmd.replace("$ARGS$", args)
-        os.system(cmd)
+
+        local_cmd = cmd
+        if jobarray is None:
+            local_cmd = cmd.replace("$JA1$", "")
+            local_cmd = local_cmd.replace("$JA2$", "")
+            os.system(local_cmd)
+        else:
+            for i in range(int(jobarray[0]), int(jobarray[1]) + 1):
+                local_cmd = cmd.replace("$JA1$", " %d" % i)
+                local_cmd = local_cmd.replace("$JA2$", ".%d" % i)
+                os.system(local_cmd)
         if not remove_sub_script:
             fptr = open("%s.nbs" % job_name, 'w')
-            fptr.write(cmd)
+            fptr.write(local_cmd)
             fptr.close()
     elif queueing_system.strip().lower() == "nbs":
         # In the case of NBS, we only have procs, not ntasks, so figure
