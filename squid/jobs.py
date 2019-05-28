@@ -19,10 +19,52 @@ import re
 import sys
 import time
 import getpass
+import itertools
 import subprocess
 # Squid Imports
 from squid import sysconst
 from squid.geometry import reduce_list
+
+
+def _simplify_numerical_array(values):
+    '''
+    Given integer values, simplify to a numerical array.  Note, values may
+    also be given as a comma separated string.  This is used in jobarray.
+    '''
+    # Step 1 - Appropriately parse out values so we have one long int array
+    if isinstance(values, str):
+        values = values.strip().split(",")
+
+    held_values = []
+    for value in values:
+        if isinstance(value, int):
+            held_values.append(value)
+        elif "-" in value:
+            lower, upper = map(int, value.split("-"))
+            value_array = list(range(lower, upper + 1))
+            held_values += value_array
+        else:
+            held_values.append(int(value))
+    values = sorted(held_values)
+
+    # Step 2 - Start concatenating as best as possible
+    # https://stackoverflow.com/a/4629241
+    # User: Graham
+    def ranges(i):
+        for a, b in itertools.groupby(enumerate(i), lambda (x, y): y - x):
+            b = list(b)
+            yield b[0][1], b[-1][1]
+
+    values = list(ranges(values))
+
+    simplified_strings = [
+        "%d-%d" % (a, b) if len("%d-%d" % (a, b)) < len(",".join(map(str, range(a, b + 1))))
+        else ",".join(map(str, range(a, b + 1)))
+        for a, b in values
+    ]
+
+    return ",".join(simplified_strings)
+
 
 def _isFloat(x):
     try:
@@ -766,7 +808,7 @@ equates to %d nodes on marcc; however, you only requested %d nodes." % (procs, n
         job_array_script = ""
         if jobarray is not None:
             if isinstance(jobarray, str):
-                job_array_script = "#SBATCH --array=%s" % jobarray
+                job_array_script = "#SBATCH --array=%s" % _simplify_numerical_array(jobarray)
             else:
                 job_array_script = "#SBATCH --array=%d-%d" % tuple(jobarray)
             jobarray_id = " ${SLURM_ARRAY_TASK_ID}"
