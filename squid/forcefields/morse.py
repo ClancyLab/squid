@@ -14,11 +14,11 @@ END_ID = "END"
 ##############################################################################
 # From a cursory scan of existing parameters, D0 ranges
 # from 0.2 eV to 4.3 eV (or so).  From this, we will make the
-# range be 1 - 150 for kcal/mol.  However, to facilitate atoms that do
+# range be 1 - 300 for kcal/mol.  However, to facilitate atoms that do
 # not bond, we allow for ultra low D0
 # PREVIOUSLY USED RANGES:
 #   (0.1, 1000)
-D0_BOUNDS = (0.1, 150)
+D0_BOUNDS = (0.1, 300)
 # This dictates the width of the well.  From a cursory scan of
 # existing parameters, this should be on the order of 1.0 - 2.0 ang.
 # PREVIOUSLY USED RANGES:
