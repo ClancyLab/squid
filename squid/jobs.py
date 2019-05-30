@@ -1245,8 +1245,8 @@ date
 
         if nprocs * ntasks > 1 and use_mpi:
             SLURM += '''
-$MPIRUN$ -np $NPROCS$ $PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$''' + jobarray_id + ''' > $PY_NAME2$''' + jobarray_log_append + '''.log 2>&1
-'''.replace("$MPIRUN$", sysconst.mpirun_path).replace("$NPROCS$", str(nprocs * ntasks))
+$MPIRUN$ -np $NPROCS$ $PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$'''.replace("$MPIRUN$", sysconst.mpirun_path).replace("$NPROCS$", str(nprocs * ntasks)) + jobarray_id + ''' > $PY_NAME2$''' + jobarray_log_append + '''.log 2>&1
+'''
         else:
             SLURM += '''
 $PYTHON_PATH$ -u $PY_NAME1$.py $ARGS$''' + jobarray_id + ''' > $PY_NAME2$''' + jobarray_log_append + '''.log 2>&1
