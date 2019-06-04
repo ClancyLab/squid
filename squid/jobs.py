@@ -238,7 +238,7 @@ def _get_job(s_flag, queueing_system=sysconst.queueing_system, detail=1):
         for i, local_job in enumerate(all_jobs):
             jobID = local_job[INDICES["jobid"]]
             if "_" in jobID:
-                local_job[i][INDICES["jobid"]] = jobID.split("_")[0]
+                all_jobs[i][INDICES["jobid"]] = jobID.split("_")[0]
 
         if detail == 3:
             all_jobs = [
