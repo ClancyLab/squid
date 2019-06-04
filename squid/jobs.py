@@ -207,7 +207,11 @@ def _get_job(s_flag, queueing_system=sysconst.queueing_system, detail=1):
         raise Exception("THIS CODE NOT WRITTEN YET.")
     elif queueing_system.strip().lower() == "slurm":
         # Get a list of jobs that are pending or running
-        cmd = 'sacct --format=User%30,JobName%50,JobIDRaw,State,Partition,NCPUS,Elapsed'
+        # Note - instead of using JobIDRaw, we use JobID and parse out the _ from any job arrays
+        # This was a potential issue when we wait on a job array to finish and end up
+        # thinking the job was done prematurely.
+        cmd = 'sacct --format=User%30,JobName%50,JobID,State,Partition,NCPUS,Elapsed'
+        # cmd = 'sacct --format=User%30,JobName%50,JobIDRaw,State,Partition,NCPUS,Elapsed'
         p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
         output = p.stdout.read().split('\n')
         VALID_STR = ["pending", "running"]
