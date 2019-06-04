@@ -233,6 +233,13 @@ def _get_job(s_flag, queueing_system=sysconst.queueing_system, detail=1):
 
         all_jobs = [job.strip().split() for job in output
                     if getpass.getuser() in job]
+
+        # Clean up all_jobs in case of job arrays.
+        for i, local_job in enumerate(all_jobs):
+            jobID = local_job[INDICES["jobid"]]
+            if "_" in jobID:
+                local_job[i][INDICES["jobid"]] = jobID.split("_")[0]
+
         if detail == 3:
             all_jobs = [
                 j[INDICES["jobid"]]
