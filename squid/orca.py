@@ -511,19 +511,6 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='', grad=Fals
             Teturn the job container.
     '''
 
-    # Robustly find the length of frames.  If it is a generator,
-    # then split it and find that length.  NOTE! This will process
-    # the values, so may be slow.  If the generators are more complex
-    # then the user should use the keyword n_frames and this will
-    # be skipped
-    if n_frames is None:
-        try:
-            n_frames = len(frames)
-        except TypeError:
-            # In this case, it is a generator
-            frames, frames_held = itertools.tee(frames)
-            n_frames = sum(1 for x in frames_held)
-
     properties = {
         "extra_section": extra_section,
         "grad": grad,
@@ -546,6 +533,31 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='', grad=Fals
         "slurm_allocation": slurm_allocation
     }
 
+    # Robustly find the length of frames.  If it is a generator,
+    # then split it and find that length.  NOTE! This will process
+    # the values, so may be slow.  If the generators are more complex
+    # then the user should use the keyword n_frames and this will
+    # be skipped
+    if n_frames is None:
+        try:
+            n_frames = len(frames)
+        except TypeError:
+            # In this case, it is a generator
+            frames, frames_held = itertools.tee(frames)
+            n_frames = sum(1 for x in frames_held)
+
+    # Determine indexing to use here as we generate the orca job files.  These
+    # are essentially the numerical values of jobarray_values.  Afterwards, ensure
+    # jobarray_values corresponds appropriately to this for jobs.submit_job() so
+    # the naming convention is the same.
+    if jobarray_values is None:
+        jobarray_values = (0, n_frames - 1)
+    if isinstance(jobarray_values, str):
+        indexing = jobarray_values.split(",")
+    else:
+        indexing = map(str, range(jobarray_values[0], jobarray_values[1] + 1))
+    jobarray_values = ",".join(indexing)
+
     # In the case that we are not on SLURM, then submit each individual job.
     if queue is None or sysconst.queueing_system.lower() != "slurm":
         queue_system = sysconst.queueing_system
@@ -557,33 +569,21 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='', grad=Fals
             print("Warning - %s job array not supported.  Serializing job submission instead." % queue_system)
 
         running_jobs = []
-        if isinstance(jobarray_values, str):
-            indexing = jobarray_values.split(",")
-        else:
-            indexing = map(str, range(jobarray_values[0], jobarray_values[1] + 1))
 
         for i, atoms in zip(indexing, frames):
             running_jobs.append(
                 job(
                     run_name=run_name + ".%s" % i, route=route, atoms=atoms,
                     queue=queue, **properties
-#                    extra_section=extra_section,
-#                    atoms=atoms, queue=queue, unique_name=False,
-#                    procs=procs, walltime=walltime
                 )
             )
         return running_jobs
 
-    if jobarray_values is not None:
-        assert jobarray_values.count(",") == n_frames - 1, "Error - Invalid jobarray_values string."
-    else:
-        jobarray_values = (0, n_frames - 1)
-
     # Step 1 - we can run orca.job on each frame; HOWEVER, we do so by
     # requesting the debugger queue.  This way, we only generate the
     # input scripts.
-    for i, atoms in enumerate(frames):
-        job(run_name + ".%d" % i, route, atoms=atoms, queue="debugger", **properties)
+    for i, atoms in zip(indexing, frames):
+        job(run_name + ".%s" % i, route, atoms=atoms, queue="debugger", **properties)
     # Step 2 - we generate the jobarray script to run the orca jobs on SLURM.
     if orca4:
         orca_path = sysconst.orca4_path
