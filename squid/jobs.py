@@ -210,14 +210,33 @@ def _get_job(s_flag, queueing_system=sysconst.queueing_system, detail=1):
         # Note - instead of using JobIDRaw, we use JobID and parse out the _ from any job arrays
         # This was a potential issue when we wait on a job array to finish and end up
         # thinking the job was done prematurely.
-        cmd = 'sacct --format=User%30,JobName%50,JobID,State,Partition,NCPUS,Elapsed'
-        # cmd = 'sacct --format=User%30,JobName%50,JobIDRaw,State,Partition,NCPUS,Elapsed'
-        p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
-        output = p.stdout.read().split('\n')
+        read_successful = False
+        output, output_error = "", ""
+        for i in range(50):
+            cmd = 'sacct --format=User%30,JobName%50,JobID,State,Partition,NCPUS,Elapsed'
+            p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            output = p.stdout.read().strip()
+            output_error = p.stderr.read()
+            # If we successfully called sacct, break the for loop
+            if output_error is None or output_error.strip() == "":
+                read_successful = True
+                break
+            else:
+                time.sleep(SACCT_SLEEP_TIMER)
+        if not read_successful:
+            print("\nFailed to communicate with sacct!")
+            print("--------------- JOB OUTPUT ---------------")
+            print(output)
+            print("---------------- JOB ERROR ---------------")
+            print(output_error)
+            print("---------------------------------")
+            sys.stdout.flush()
+            raise Exception()
+
         VALID_STR = ["pending", "running"]
         output = [
             line.strip()
-            for line in output
+            for line in output.split("\n")
             if any([s.lower() in line.lower() for s in VALID_STR])
         ]
 
