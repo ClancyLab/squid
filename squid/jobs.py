@@ -210,6 +210,7 @@ def _get_job(s_flag, queueing_system=sysconst.queueing_system, detail=1):
         # Note - instead of using JobIDRaw, we use JobID and parse out the _ from any job arrays
         # This was a potential issue when we wait on a job array to finish and end up
         # thinking the job was done prematurely.
+        SACCT_SLEEP_TIMER = 60.0
         read_successful = False
         output, output_error = "", ""
         for i in range(50):
