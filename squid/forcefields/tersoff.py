@@ -783,17 +783,19 @@ class Tersoff(object):
                 beta = 1
                 gamma = random_in_range((0.0, 1.0))
 
-            lambda3 = random_in_range((0, 10.0))
+            lambda3 = random_in_range((0, 2.0))
             c = random_in_range((0.1, 150000.0))
             d = random_in_range((0.1, 50.0))
             costheta0 = random_in_range((-1.0, 1.0))
-            n = random_in_range((0, 50.0))
-            lambda2 = random_in_range((0, 10.0))
-            B = random_in_range((100.0, 100000.0))
+            n = random_in_range((0.1, 2.0))
+            lambda2 = random_in_range((0.5, 5.0))
+            # We expect A >> B, so we randomly generate B to being smaller.
+            # However, we do have a B_bounds that goes up to 300,000.0
+            B = random_in_range((200.0, 50000.0))
             R = random_in_range((1.1, 3.0))
             D = random_in_range((0.1, 1.0))
-            lambda1 = random_in_range((0, 10.0))
-            A = random_in_range((100.0, 100000.0))
+            lambda1 = random_in_range((0.5, 5.0))
+            A = random_in_range((200.0, 300000.0))
 
             Tersoff_Objs.append(
                 cls(
