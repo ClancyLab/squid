@@ -274,19 +274,34 @@ class Tersoff(object):
         Assign default bounds.  Further, if this is the case of A-B-B vs A-B-C
         we can simplify the bounds as only in the case of A-B-B are two body
         parameters n, Beta, lambda2, lambda1, and A read in.
+
+        Note - we change the A_bounds and B_bounds to be 200.0 - 300,000.0 kcal/mol
+        This is because, in literature, tersoff A and B bounds (reported in eV) are
+        minimum around 40 eV and maximum around 10,000 eV.  We add a little buffer
+        for the lower and upper, and get the given bounds.
+
+        Similarly, lambda1 and lambda2 are consistently between 1.0 and 4.0, so we have
+        Set the bounds to be 0.5 to 5.0.
+
+        Similarly, n was found to be primarily around 0.75 in literature, and at times just
+        fixed to 1.0.  There was one odd case of being 22; however, it seems like an outlier
+        as most cases shows 0.1 < n < 2.0.  As such, that is was n was set to being.
+
+        Lambda3 appears to normally be set to 0 in the literature; however, the highest I
+        found was around 1.8.  As such, lambda3 is set here from 0.0 to 2.0.
         '''
-        self.lambda3_bounds = (0.0, 10.0)
+        self.lambda3_bounds = (0.0, 2.0)
         self.c_bounds = (0.1, 150000.0)
         self.d_bounds = (0.1, 50.0)
         self.costheta0_bounds = (-1.0, 1.0)
         self.R_bounds = (0.0002, 5.0)
         self.D_bounds = (0.0001, 1.1)
         if self.indices is None or self.indices[-1] == self.indices[-2]:
-            self.n_bounds = (0, 50.0)
-            self.lambda2_bounds = (0, 10.0)
-            self.B_bounds = (0.0, 1000000.0)
-            self.lambda1_bounds = (0, 10.0)
-            self.A_bounds = (0.0, 1000000.0)
+            self.n_bounds = (0.1, 2.0)
+            self.lambda2_bounds = (0.5, 5.0)
+            self.B_bounds = (200.0, 300000.0)
+            self.lambda1_bounds = (0.5, 5.0)
+            self.A_bounds = (200.0, 300000.0)
         elif self.indices[-1] != self.indices[-2]:
             self.n_bounds = (1.0, 1.0)
             self.lambda2_bounds = (1.0, 1.0)
