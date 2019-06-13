@@ -142,7 +142,21 @@ class Job(object):
 def _get_job(s_flag, queueing_system=sysconst.queueing_system, detail=1):
     detail = int(detail)
 
-    if queueing_system.strip().lower() == "nbs":
+    # Handle running locally if queue is None
+    use_queueing_system = queueing_system is not None
+    if queueing_system is not None:
+        queueing_system = queueing_system.strip().lower()
+    use_nbs = False
+    use_slurm = False
+    use_slurm_xsede = False
+    use_pbs = False
+    if use_queueing_system:
+        use_nbs = queueing_system == "nbs"
+        use_slurm = queueing_system == "slurm"
+        use_slurm_xsede = queueing_system == "slurm-xsede"
+        use_pbs = queueing_system == "pbs"
+
+    if use_nbs:
         main_detail = detail
         if detail <= 0:
             detail = 1
@@ -202,10 +216,10 @@ def _get_job(s_flag, queueing_system=sysconst.queueing_system, detail=1):
         else:
             return chosen_jobs
 
-    elif queueing_system.strip().lower() == "pbs":
+    elif use_pbs:
         # Do This
         raise Exception("THIS CODE NOT WRITTEN YET.")
-    elif queueing_system.strip().lower() == "slurm":
+    elif use_slurm:
         # Get a list of jobs that are pending or running
         # Note - instead of using JobIDRaw, we use JobID and parse out the _ from any job arrays
         # This was a potential issue when we wait on a job array to finish and end up
@@ -293,7 +307,7 @@ def _get_job(s_flag, queueing_system=sysconst.queueing_system, detail=1):
                 for j in all_jobs if s_flag == j[INDICES["state"]].strip()
             ]
         return all_jobs
-    elif queueing_system.strip().lower() == "slurm-xsede":
+    elif use_slurm_xsede:
         p = subprocess.Popen(['showq'], stdout=subprocess.PIPE)
         output = p.stdout.read().split('\n')
         all_jobs = [job.strip().split() for job in output
@@ -350,108 +364,6 @@ def get_all_jobs(queueing_system=sysconst.queueing_system, detail=0):
     """
     return get_running_jobs(queueing_system=queueing_system, detail=detail) +\
         get_pending_jobs(queueing_system=queueing_system, detail=detail)
-#     if queueing_system.strip().lower() == "nbs":
-#         # Get input from jlist as a string
-#         #p = subprocess.Popen(['jlist'], stdout=subprocess.PIPE)
-#         p = run_nbs_cmd("%s/jlist" % sysconst.nbs_bin_path)
-#         output = p.stdout.read()
-
-#         # Get data from string
-#         pattern = getpass.getuser() +\
-#             '''[\s]+([\S]+)[\s]+([\S]+)[\s]+([\S]+)'''
-#         info = re.findall(pattern, output)
-
-#         # Get a list of names
-#         names = []
-#         for a in info:
-#             names.append(a[0])
-
-#         if len(names) > 0:
-#             out_ids = output.split("\n")
-#             out_ids = [x.split()[0] for x in out_ids if len(x.split()) > 0 and _isFloat(x.split()[0])]
-#             info = [tuple(list(i) + [j]) for i, j in zip(info, out_ids)]
-
-#         # If user wants more information
-#         if detail == 3:
-#             _close_pipes(p)
-#             return [i[-1] for i in info]
-#         if detail == 2:
-#             for i, a in enumerate(info):
-#                 #p = subprocess.Popen(['jshow', a[0]], stdout=subprocess.PIPE)
-#                 p = run_nbs_cmd("%s/jshow %s" % (sysconst.nbs_bin_path, a[0]))
-#                 s = p.stdout.read()
-#                 serv = s[s.find('Queue name:'):].split()[2].strip()
-#                 try:
-#                     threads = s[s.find('Slot Reservations'):].split()[4]
-#                     threads = threads.strip()
-#                 except:
-#                     threads = 1
-#                 info[i] = info[i] + (serv, threads,)
-#             _close_pipes(p)
-#             return info
-
-#         # Return appropriate information
-#         _close_pipes(p)
-#         if detail == 1:
-#             return info
-#         else:
-#             return names
-
-#     elif queueing_system.strip().lower() == "pbs":
-#         # Do This
-#         raise Exception("THIS CODE NOT WRITTEN YET.")
-#     elif queueing_system.strip().lower() == "slurm":
-#         cmd = 'sacct --format=User%30,JobName%50,JobID,State,Partition,NCPUS,Elapsed --state=PD,R'
-#         INDICES = {
-#             "user": 0,
-#             "jobname": 1,
-#             "jobid": 2,
-#             "state": 3,
-#             "queue": 4,
-#             "nprocs": 5,
-#             "time": 6
-#         }
-#         p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
-#         output = p.stdout.read().split('\n')
-#         all_jobs = [job.strip().split() for job in output
-#                     if getpass.getuser() in job]
-#         if detail == 3:
-#             all_jobs = [
-#                 j[INDICES["jobid"]]
-#                 for j in all_jobs
-#             ]
-#         elif detail == 2:
-#             all_jobs = [
-#                 (
-#                     j[INDICES["jobname"]],
-#                     j[INDICES["time"]],
-#                     j[INDICES["state"]],
-#                     j[INDICES["jobid"]],
-#                     j[INDICES["queue"]],
-#                     j[INDICES["nprocs"]]
-#                 )
-#                 for j in all_jobs
-#             ]
-#         elif detail == 1:
-#             all_jobs = [
-#                 (
-#                     j[INDICES["jobname"]],
-#                     j[INDICES["time"]],
-#                     j[INDICES["state"]],
-#                     j[INDICES["jobid"]]
-#                 )
-#                 for j in all_jobs
-#             ]
-#         else:
-#             all_jobs = [
-#                 j[INDICES["jobname"]]
-#                 for j in all_jobs
-#             ]
-#         _close_pipes(p)
-#         return all_jobs
-#     else:
-#         raise Exception("Unknown queueing system passed to get_all_jobs. \
-# Please choose NBS, PBS, or SLURM for now.")
 
 
 def get_running_jobs(queueing_system=sysconst.queueing_system, detail=1):
@@ -645,36 +557,47 @@ def submit_job(name,
     """
 
     # Handle running locally if queue is None
-    if queue is None:
+    use_queueing_system = queueing_system is not None
+    if queue is None or queue.strip().lower() == "none":
         return Job(
             name,
             process_handle=subprocess.Popen(
                 job_to_submit.strip().split(), shell=False
             )
         )
+    assert isinstance(queue, str), "Error - Queue must be either None or a string."
+    queue = queue.lower()
+    if queueing_system is not None:
+        queueing_system = queueing_system.strip().lower()
+
+    use_nbs = False
+    use_slurm = False
+    use_pbs = False
+    if use_queueing_system:
+        use_nbs = queueing_system == "nbs"
+        use_slurm = queueing_system == "slurm"
+        use_pbs = queueing_system == "pbs"
 
     # Throw an error if we request nbs queueing with unknown queue
-    if queueing_system.lower() == "nbs" and queue.lower() not in get_nbs_queues():
-        if queue.lower() != "none":
-            raise Exception("NBS queue %s does not exist!" % queue)
+    if use_nbs and queue not in get_nbs_queues():
+        raise Exception("NBS queue %s does not exist!" % queue)
 
-    if queueing_system.lower() == "slurm" and queue.lower() not in get_slurm_queues():
-        if queue.lower() != "none":
-            raise Exception("SLURM queue %s does not exist (options are %s)!" % (queue, str(get_slurm_queues())))
+    if use_slurm and queue not in get_slurm_queues():
+        raise Exception("SLURM queue %s does not exist (options are %s)!" % (queue, str(get_slurm_queues())))
 
-    if redundancy and queueing_system.strip().lower() not in ["slurm", "nbs"]:
-        print("Warning - redundancy not implemented for non-NBS queueing systems.")
+    if redundancy and not any([use_nbs, use_slurm]):
+        print("Warning - redundancy implemented only for NBS and SLURM.")
 
-    if unique_name and queueing_system.strip().lower() not in ["slurm", "nbs"]:
-        print("Warning - unique_name not implemented for non-NBS queueing systems.")
+    if unique_name and not any([use_nbs, use_slurm]):
+        print("Warning - unique_name implemented only for NBS and SLURM.")
 
     if gpu is not None:
         AVAIL_GPU_QUEUE_SYSTEMS = ["slurm"]
         msg = "Error - gpu only implemented for the following: %s" % ', '.join(AVAIL_GPU_QUEUE_SYSTEMS)
-        assert queueing_system.strip().lower() in AVAIL_GPU_QUEUE_SYSTEMS, msg
+        assert use_queueing_system and queueing_system in AVAIL_GPU_QUEUE_SYSTEMS, msg
         AVAIL_GPU_PARTS = ["unlimited", "gpuk80", "gpup100", "debugger"]
         msg = "Error - queue (%s) not available with gpus.  Choose one: %s" % (queue, ', '.join(AVAIL_GPU_PARTS))
-        assert queue.lower() in AVAIL_GPU_PARTS, msg
+        assert queue in AVAIL_GPU_PARTS, msg
 
         gpu_flag_slurm = "#SBATCH --gres=gpu:%d" % int(gpu)  # Not sure... I think so though
         # On MARCC we need gpu tasks, and 6 cores per task
@@ -700,8 +623,7 @@ equates to %d nodes on marcc; however, you only requested %d nodes." % (procs, n
     if queue is "debugger":
         print("\nWould have submitted job %s\n" % name)
         return Job(None)
-    elif queueing_system.strip().lower() == "nbs":
-
+    elif use_nbs:
         # In the case of NBS, we only have procs, not ntasks, so figure
         # things out accordingly
         if ntasks > 1:
@@ -828,10 +750,10 @@ equates to %d nodes on marcc; however, you only requested %d nodes." % (procs, n
         _close_pipes(job_pipe)
         return Job(name, job_id=job_id)
 
-    elif queueing_system.strip().lower() == "pbs":
+    elif use_pbs:
         # Do This
         raise Exception("THIS CODE NOT WRITTEN YET.")
-    elif queueing_system.strip().lower() == "slurm":
+    elif use_slurm:
         # Generate your script
         jobarray_id = ""
         jobarray_log_append = ""
@@ -931,7 +853,7 @@ source ~/.bashrc
         return Job(name, job_id=job_id)
     else:
         raise Exception("Unknown queueing system passed to submit_job. \
-Please choose NBS or PBS for now.")
+Please choose NBS or PBS for now.  Attempted job on queue %s." % str(queue))
 
 
 def pysub(job_name,
@@ -1040,13 +962,29 @@ def pysub(job_name,
     else:
         slurm_allocation = "#SBATCH --account=" + slurm_allocation
 
+    use_queueing_system = queueing_system is not None
+    if queue is not None:
+        queue = queue.strip().lower()
+    else:
+        queue = "none"
+    if queueing_system is not None:
+        queueing_system = queueing_system.strip().lower()
+
+    use_nbs = False
+    use_slurm = False
+    use_pbs = False
+    if use_queueing_system:
+        use_nbs = queueing_system == "nbs"
+        use_slurm = queueing_system == "slurm"
+        use_pbs = queueing_system == "pbs"
+
     if gpu is not None:
         AVAIL_GPU_QUEUE_SYSTEMS = ["slurm"]
         msg = "Error - gpu only implemented for the following: %s" % ', '.join(AVAIL_GPU_QUEUE_SYSTEMS)
-        assert queueing_system.strip().lower() in AVAIL_GPU_QUEUE_SYSTEMS, msg
+        assert use_queueing_system and queueing_system in AVAIL_GPU_QUEUE_SYSTEMS, msg
         AVAIL_GPU_PARTS = ["unlimited", "gpuk80", "gpup100", "debugger"]
         msg = "Error - queue (%s) not available with gpus.  Choose one: %s" % (queue, ', '.join(AVAIL_GPU_PARTS))
-        assert queue.lower() in AVAIL_GPU_PARTS, msg
+        assert queue in AVAIL_GPU_PARTS, msg
 
         gpu_flag_slurm = "#SBATCH --gres=gpu:%d" % int(gpu)  # Not sure... I think so though
         # On MARCC we need gpu tasks, and 6 cores per task
@@ -1068,12 +1006,12 @@ def pysub(job_name,
     modules = reduce_list(use_these_mods)
 
     # Throw an error if we request nbs queueing with unknown queue
-    if queueing_system.lower() == "nbs" and queue.lower() not in get_nbs_queues():
-        if queue.lower() != "none":
+    if use_nbs and queue not in get_nbs_queues():
+        if queue != "none":
             raise Exception("NBS queue %s does not exist!" % queue)
 
-    if queueing_system.lower() == "slurm" and queue.lower() not in get_slurm_queues():
-        if queue.lower() != "none":
+    if use_slurm and queue not in get_slurm_queues():
+        if queue != "none":
             raise Exception("SLURM queue %s does not exist (options are %s)!" % (queue, str(get_slurm_queues())))
 
     nprocs, ntasks, nodes = int(nprocs), int(ntasks), int(nodes)
@@ -1084,9 +1022,6 @@ equates to %d nodes on marcc; however, you only requested %d nodes." % (nprocs, 
             print("\tWill adjust nodes accordingly...")
             nodes = (nprocs * ntasks - 1) // 24 + 1
 
-    if queue is None:
-        queue = "none"
-
     if omp is not None:
         omp = "export OMP_NUM_THREADS=" + str(omp)
     else:
@@ -1096,11 +1031,11 @@ equates to %d nodes on marcc; however, you only requested %d nodes." % (nprocs, 
     if py3:
         py_path = sysconst.python3_path
 
-    if unique_name and not queueing_system.strip().lower() == "nbs":
-        print("Warning - unique_name not implemented for non-NBS queueing systems.")
+    if redundancy and not any([use_nbs, use_slurm]):
+        print("Warning - redundancy implemented only for NBS and SLURM.")
 
-    if redundancy and not queueing_system.strip().lower() == "nbs":
-        print("Warning - redundancy not implemented for non-NBS queueing systems.")
+    if unique_name and not any([use_nbs, use_slurm]):
+        print("Warning - unique_name implemented only for NBS and SLURM.")
 
     if queue.strip().lower() == "none":
         if omp != "":
@@ -1133,7 +1068,7 @@ strings, or None")
             fptr = open("%s.nbs" % job_name, 'w')
             fptr.write(local_cmd)
             fptr.close()
-    elif queueing_system.strip().lower() == "nbs":
+    elif use_nbs:
         # In the case of NBS, we only have procs, not ntasks, so figure
         # things out accordingly
         if ntasks > 1:
@@ -1241,10 +1176,10 @@ strings, or None")
             os.system('rm ' + job_name + '.nbs')
         _close_pipes(job_pipe)
         return Job(job_name, job_id=job_id)
-    elif queueing_system.strip().lower() == "pbs":
+    elif use_pbs:
         # Do This
         raise Exception("THIS CODE NOT WRITTEN YET.")
-    elif queueing_system.strip().lower() == "slurm":
+    elif use_slurm:
         # Setup slurm script
         jobarray_id = ""
         jobarray_log_append = ""

@@ -737,7 +737,7 @@ Switching to Single Point.")
     procs, ntasks, nodes = int(procs), int(ntasks), int(nodes)
     cores_to_use = procs * ntasks
 
-    if sysconst.queueing_system.lower() == "slurm" and cores_to_use > ntasks:
+    if not sysconst.queueing_system is None and sysconst.queueing_system.lower() == "slurm" and cores_to_use > ntasks:
         # This is an issue due to "Slots" being allocated whenever ntasks is specified, but not when cpu-per-task is specified.  Orca apparently requests N slots, so we need to call for ntasks, not procs.
         # raise Exception("Error - When using slurm, you must specify ntasks instead of procs for number of cores to use.")
 
