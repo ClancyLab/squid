@@ -201,7 +201,7 @@ DIHERALS (molecule_index: index)
             atoms: *list, float*
                 A 1D array of atomic positions.
         """
-        return np.array([[a.x, a.y, a.z] for a in self.atoms]).flatten()
+        return np.array([a.flatten() for a in self.atoms]).flatten()
 
     def net_charge(self):
         """
@@ -560,6 +560,29 @@ def run_unit_tests():
         "Error - When deepcopying molecule, the bonds are not connected."
     assert copied_chex.bonds[0].atoms[0] is not chex.atoms[10],\
         "Error - When deepcopying molecule, the atoms were not deepcopied."
+
+    flat_chex = [
+        -1.54846, -0.62372, -0.23277, -2.36075, -1.8303, 0.22901, -0.09058,
+        -0.72742, 0.20628, -1.99055, 0.29459, 0.16994, -1.59582, -0.54877,
+        -1.32609, 0.54389, -2.03745, -0.25281, -0.03335, -0.65785, 1.29946,
+        0.47714, 0.11843, -0.19774, -0.26907, -3.24874, 0.19654, 1.56326,
+        -2.1112, 0.1429, 0.6251, -2.03877, -1.34664, -1.73066, -3.14223,
+        -0.23062, -3.3831, -1.75673, -0.15876, -2.43273, -1.82396, 1.32351,
+        -1.79709, -3.2148, -1.32304, -2.29648, -3.98613, 0.18023, -0.21477,
+        -3.33864, 1.28832, 0.17038, -4.16187, -0.22089
+    ]
+    assert all(flat_chex == chex.flatten()),\
+        "Error - Flattening molecule has failed."
+
+    # Randomize the atom coordinates
+    for i in range(100):
+        j = np.random.randint(0, len(copied_chex.atoms))
+        copied_chex.atoms[j] += np.random.random(3)
+    assert not all(flat_chex == copied_chex.flatten()),\
+        "Error - Need to scramble here for further testing, but this failed."
+    copied_chex.set_positions(flat_chex)
+    assert all(flat_chex == copied_chex.flatten()),\
+        "Error - set_positions failed."
 
     print("squid.structures.molecule - All unit tests passed!")
 

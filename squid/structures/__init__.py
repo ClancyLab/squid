@@ -16,5 +16,5 @@ molecular system. Each *System* object can be comprised of several
 """
 from squid.structures.atom import Atom
 from squid.structures.topology import Connector
-# from squid.structures.molecule import Molecule
+from squid.structures.molecule import Molecule
 # from squid.structures.system import System

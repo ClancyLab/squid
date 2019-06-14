@@ -1,4 +1,5 @@
 # System imports
+import os
 import copy
 # Squid imports
 from squid import units
@@ -9,18 +10,18 @@ from squid.structures.topology import Connector
 import numpy as np
 
 
-class System(_Physical):
+class System(object):
     """
     A system object to store molecules for one's simulations.
 
     **Parameters**
 
-        name: *str, optional*
-            System Name.
+        name: *str*
+            System Name.  This is used when any files/folders are generated.
         box_size: *tuple, float, optional*
             System x, y, and z lengths.
         box_angles: *tuple, float, optional*
-            System xy, yz, and xz angles.
+            System xy, yz, and xz angles in degrees.
         periodic: *bool, optional*
             Whether to have periodic boundaries on or off.
 
@@ -29,89 +30,68 @@ class System(_Physical):
         system: :class:`structures.System`
             The System class container.
     """
-    # Initialize all system variables. Convert to float as necessary to prepare for any needed math
-    def __init__(self, name=None, box_size=(10.0, 10.0, 10.0), box_angles=(90.0, 90.0, 90.0), periodic=False):
-        self.atoms, self.bonds, self.angles, self.dihedrals = [], [], [], []
-        self.box_size = [float(param) for param in box_size]  # (a, b, c)
-        self.box_angles = [float(param) for param in box_angles]  # (alpha, beta, gamma)
-        self.name = name
-        self.molecules = []
+
+    def __init__(self, name,
+                 box_size=(10.0, 10.0, 10.0), box_angles=(90.0, 90.0, 90.0),
+                 periodic=False):
+        self.name = str(name)
         self.periodic = periodic
+        self.atoms = []
+        self.bonds = []
+        self.angles = []
+        self.dihedrals = []
+        self.molecules = []
 
-        # If the system is not a monoclinic box, set lammps triclinic parameters
-        if abs(box_angles[0] - 90) > 0.001 or abs(box_angles[1] - 90) > 0.001 or abs(box_angles[2] - 90) > 0.001:
-            self.setTriclinicBox(self.periodic, self.box_size, self.box_angles)
+        cast.assert_vec(box_size)
+        cast.box_angles(box_size)
+        self.box_size = np.array(map(float, box_size))
+        self.box_angles = np.array(map(float, box_angles))
+        a, b, c = self.box_size
+        alpha, beta, gamma = self.box_angles
 
-        # If system is a monoclinic box and set default lammps triclinic parameters
-        # Assumes center of box is the origin
+        EPS = 1E-3
+        if any([abs(ba - 90) > EPS for ba in box_angles]):
+            """
+            If the angles are not 90, the system is triclinic.  So we will set
+            the relative information here.  For LAMMPS, trigonal vectors are
+            established by using xy, xz, and yz:
+
+                A = (xhi - xlo, 0.0, 0.0)
+                B = (xy, yhi - ylo, 0.0)
+                C = (xz, yz, zhi - zlo)
+            Formula for converting (a, b, c, alpha, beta, gamma) to
+            (lx, ly, lz, xy, xz, yz) taken from online lammps help.
+            """
+            self.xlo, self.ylo, self.zlo = 0.0, 0.0, 0.0
+
+            self.xhi = a
+            self.xy = b * np.cos(np.deg2rad(gamma))
+            self.xz = c * np.cos(np.deg2rad(beta))
+            self.yhi = np.sqrt(b**2 - self.xy**2)
+            self.yz = (b * c * np.cos(np.deg2rad(alpha)) -
+                       self.xy * self.xz) / self.yhi
+            self.zhi = np.sqrt(c**2 - self.xz**2 - self.yz**2)
         else:
-            self.xlo = -self.box_size[0] / 2.0
-            self.ylo = -self.box_size[1] / 2.0
-            self.zlo = -self.box_size[2] / 2.0
-            self.xhi = self.box_size[0] / 2.0
-            self.yhi = self.box_size[1] / 2.0
-            self.zhi = self.box_size[2] / 2.0
+            """
+            Otherwise, we have a monoclinic box.  We will set the
+            center to the euclidean origin.
+            """
+            self.xlo = -a / 2.0
+            self.ylo = -b / 2.0
+            self.zlo = -c / 2.0
+            self.xhi = a / 2.0
+            self.yhi = b / 2.0
+            self.zhi = c / 2.0
             self.xy = 0.0
             self.xz = 0.0
             self.yz = 0.0
-
-    # Establish lammps triclinic box boundary conditions for this system
-    def setTriclinicBox(self, periodic, box_size, box_angles):
-        """
-        A function to establish a triclinic box boundary condition for this system.
-
-        **Parameters**
-        
-            periodic: *bool, optional*
-                Whether to have periodic boundaries on or off.
-                Initial guess.
-            box_size: *tuple, float, optional*
-                System x, y, and z lengths.
-            box_angles: *tuple, float, optional*
-                System xy, yz, and xz angles.
-
-        **Returns**
-
-            None
-
-        """
-        self.box_size[0] = box_size[0]
-        self.box_size[1] = box_size[1]
-        self.box_size[2] = box_size[2]
-        self.box_angles[0] = box_angles[0]
-        self.box_angles[1] = box_angles[1]
-        self.box_angles[2] = box_angles[2]
-
-        a = box_size[0]
-        b = box_size[1]
-        c = box_size[2]
-        alpha = box_angles[0]
-        beta = box_angles[1]
-        gamma = box_angles[2]
-
-        # For lammmps, trigonal vectors established by using xy xz yz
-        # A = (xhi-xlo,0,0);
-        # B = (xy,yhi-ylo,0);
-        # C = (xz,yz,zhi-zlo)
-        self.xlo = 0.0
-        self.ylo = 0.0
-        self.zlo = 0.0
-
-        # Formula for converting (a,b,c,alpha,beta,gamma) to (lx,ly,lz,xy,xz,yz)
-        # taken from online lammps help
-        self.xhi = a
-        self.xy = b*math.cos(math.radians(gamma))
-        self.xz = c*math.cos(math.radians(beta))
-        self.yhi = math.sqrt(b**2 - self.xy**2)
-        self.yz = (b*c*math.cos(math.radians(alpha)) - self.xy * self.xz)/ self.yhi
-        self.zhi = math.sqrt(c**2 - self.xz**2 - self.yz**2)
 
     def add(self, molecule, x=0.0, y=0.0, z=0.0, scale_x=1.0, scale_y=1.0, scale_z=1.0):
         """
         A function to add a molecule to this system.
 
         **Parameters**
-        
+
             molecule: :class:`structures.Molecule`
                 A Molecule structure.
             x: *float, optional*
@@ -560,14 +540,14 @@ end structure
                     xyz_file.write('%s%d %f %f %f\n'
                                    % (a.element, i, a.x, a.y, a.z))
                 xyz_file.close()
-    
+
                 f.write('''
 structure %s_%d.xyz
   number %d
   inside box %f %f %f %f %f %f''' % ((self.name, i, molecule_counts[i]) + lower + upper) + '''
 ''' + additional + '''
 end structure
-''' )
+''')
             f.write(extra_block_at_end)
             f.close()
 
@@ -640,4 +620,3 @@ end structure
         for atom in self.atoms:
             text += atom.to_string()
         return text
-

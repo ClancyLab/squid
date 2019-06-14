@@ -14,8 +14,7 @@ as periodic table data management.
 ------------
 
 """
-import constants
-from constants import ENERGY, PRESSURE, DISTANCE, PERIODIC_TABLE
+from squid.constants import ENERGY, PRESSURE, DISTANCE, PERIODIC_TABLE
 
 def convert_energy(e0, e1, e_val):
     """
