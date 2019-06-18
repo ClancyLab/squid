@@ -530,68 +530,6 @@ def parse_chelpg(input_file):
     return charges
 
 
-# Optimize a custom PM6 semi-empirical method based on Gaussian examples at a
-# higher level of theory
-def optimize_pm6(name, examples, param_string, starting_params, queue=None):
-    from scipy.optimize import minimize
-
-    examples = [structures.Struct(name=example, atoms=atoms(example))
-                for example in examples]
-    for e in examples:
-        e.bonds = [(b.atoms[0].index - 1, b.atoms[1].index - 1)
-                   for b in geometry.get_bonds(e.atoms)]
-
-    n_bonds = sum([len(e.bonds) for e in examples])
-
-    counter = [0]
-
-    def pm6_error(params):
-        # Run Gaussian jobs with new parameters
-        for i, example in enumerate(examples):
-            running_jobs = [job('%s-%d-%d' % (name, counter[0], i),
-                                'PM6=(Input,Print) Opt=Loose',
-                                example.atoms,
-                                extra_section=param_string % tuple(params),
-                                queue=queue,
-                                force=True)]
-        # Wait for all jobs to finish
-        for j in running_jobs:
-            j.wait()
-
-        # Get forces and energies resulting from new parameters
-        geom_error = 0.0
-        for i, example in enumerate(examples):
-            try:
-                new_energy, new_atoms = parse_atoms(
-                    '%s-%d-%d' % (name, counter[0], i),
-                    check_convergence=False)
-            except:
-                print '%s-%d-%d' % (name, counter[0], i), 'has no data'
-                exit()
-            if parse_atoms('%s-%d-%d' % (name, counter[0], i)) is None:
-                print '%s-%d-%d' % (name, counter[0], i),\
-                      'did not converge fully'
-
-            # Compare results
-            for b in example.bonds:
-                d1 = geometry.dist(example.atoms[b[0]], example.atoms[b[1]])
-                d2 = geometry.dist(new_atoms[b[0]], new_atoms[b[1]])
-                geom_error += (d1 - d2)**2
-
-        error = geom_error / n_bonds
-
-        print error**0.5, params
-
-        counter[0] += 1
-
-        return error
-
-    minimize(pm6_error,
-             starting_params,
-             method='Nelder-Mead',
-             options={'disp': True})
-
-
 # A function that returns the binding energy of a molecule A with BSSE (Basis
 # Set Superposition Error) corrections.
 #     job_total - This is the name of a gaussian job that holds the full

@@ -76,3 +76,42 @@ def get_center_of_mass(atoms, skip_H=False):
         sum(yList) / totalMass,
         sum(zList) / totalMass
     ])
+
+
+def rotate_atoms(atoms, m, around="com"):
+    """
+    Rotate atoms by the given matrix *m*.
+
+    **Parameters**
+
+        atoms: *list,* :class:`structures.atom.Atom`
+            A list of atoms to be rotated.
+        m: *list, list, float*
+            A 3x3 matrix describing the rotation to be
+            applied to this molecule.
+        around: *str, optional*
+            Whether to rotate around the center of mass (com), center of
+            geometry (cog), or neither ("None" or None).
+
+    **Returns**
+
+        atoms: *list,* :class:`structures.atom.Atom`
+            The rotated atomic coordinates.
+    """
+    if around is None or around.strip().lower() is "none":
+        center = None
+    elif around.strip().lower() is "com":
+        center = get_center_of_mass()
+    elif around.strip().lower() is "cog":
+        center = get_center_of_geometry()
+    else:
+        raise Exception("Invalid specification in rotate.")
+
+    for a in atoms:
+        if center is not None:
+            a.translate(-center)
+        a.x, a.y, a.z = np.dot(np.asarray(m), np.array([a.x, a.y, a.z]))
+        if center is not None:
+            a.translate(center)
+
+    return atoms

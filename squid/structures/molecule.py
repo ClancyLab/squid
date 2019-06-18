@@ -12,86 +12,14 @@ __docformat__ = 'reStructuredText'
 import copy
 # Squid imports
 from squid.utils import cast
-from squid.structures import misc
+from squid.geometry import misc
 from squid.structures.atom import Atom
 from squid.structures.topology import Connector
+from squid.structures.topology import get_angle
+from squid.structures.topology import get_dihedral_angle
+
 # External imports
 import numpy as np
-
-
-def get_dihedral_angle(a, b=None, c=None, d=None, deg=True):
-    """
-    Use the Praxeolitic formula to determine the dihedral angle between
-    4 atoms.
-
-    **Parameters**
-
-        a: :class:`structures.atom.Atom`
-            First atom in the dihedral, or a tuple of all 4.
-        b: :class:`structures.atom.Atom` *, optional*
-            Second atom in the dihedral.
-        c: :class:`structures.atom.Atom` *, optional*
-            Third atom in the dihedral.
-        d: :class:`structures.atom.Atom` *, optional*
-            Fourth atom in the dihedral.
-        deg: *bool, optional*
-            Whether to return the angle in degrees (True) or radians (False).
-
-    **Returns**
-
-        theta: *float*
-            Return the dihedral angle, default is degrees.
-
-    **References**
-
-        * http://stackoverflow.com/a/34245697
-    """
-    # Error handling
-    assert any([
-        all([
-            cast.check_vec(a, length=4, numeric=False),
-            b is None,
-            c is None,
-            d is None
-        ]),
-        all([
-            isinstance(a, Connector),
-            isinstance(b, Connector),
-            isinstance(c, Connector),
-            isinstance(d, Connector),
-        ])
-    ]), "Error - Invalid attempt to use get_dihedral_angle(). Check arguments."
-
-    if b is None:
-        p0, p1, p2, p3 = map(lambda atom: atom.flatten(), a)
-    else:
-        p0, p1, p2, p3 = map(lambda atom: atom.flatten(), (a, b, c, d))
-
-    b0 = -1.0 * (p1 - p0)
-    b1 = p2 - p1
-    b2 = p3 - p2
-
-    # normalize b1 so that it does not influence magnitude of vector
-    # rejections that come next
-    b1 /= np.linalg.norm(b1)
-
-    # vector rejections
-    # v = projection of b0 onto plane perpendicular to b1
-    #   = b0 minus component that aligns with b1
-    # w = projection of b2 onto plane perpendicular to b1
-    #   = b2 minus component that aligns with b1
-    v = b0 - np.dot(b0, b1) * b1
-    w = b2 - np.dot(b2, b1) * b1
-
-    # angle between v and w in a plane is the torsion angle
-    # v and w may not be normalized but that's fine since tan is y/x
-    x = np.dot(v, w)
-    y = np.dot(np.cross(b1, v), w)
-
-    phi = np.arctan2(y, x)
-    if deg:
-        phi = np.rad2deg(phi)
-    return phi
 
 
 class Molecule(object):
@@ -495,21 +423,11 @@ set_positions.")
                 continue
             for i, a in enumerate(center_bonded):
                 for b in center_bonded[i + 1:]:
-                    A = np.sqrt((center.z - b.z)**2 +
-                                (center.x - b.x)**2 +
-                                (center.y - b.y)**2)
-                    N = np.sqrt((a.z - b.z)**2 +
-                                (a.x - b.x)**2 +
-                                (a.y - b.y)**2)
-                    B = np.sqrt((center.z - a.z)**2 +
-                                (center.x - a.x)**2 +
-                                (center.y - a.y)**2)
-
-                    angle = np.rad2deg(np.arccos(
-                        (A**2 + B**2 - N**2) / (2 * A * B)))
-                    if np.isnan(angle):
-                        angle = 0.0
-                    self.angles.append(Connector((a, center, b), angle=angle))
+                    self.angles.append(
+                        Connector(
+                            (a, center, b),
+                            angle=get_angle((a, center, b))
+                        ))
 
         # Updated to provide deterministic dihedral order with the same
         # time complexity

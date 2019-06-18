@@ -2,7 +2,7 @@
 import copy
 # Squid imports
 from squid.utils import cast
-from squid.structures import misc
+from squid.geometry import misc
 from squid.structures.molecule import Molecule, get_unit_test_structures
 # External imports
 import numpy as np
