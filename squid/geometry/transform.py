@@ -64,7 +64,7 @@ def align_centroid(atoms, recenter=True, skip_H=True):
     for a, b in zip(new_atoms, points):
         a.x, a.y, a.z = b
     if recenter:
-        com = np.array(molec.get_center_of_geometry(skip_H=skip_H)) * -1.0
+        com = np.array(get_center_of_geometry(new_atoms, skip_H=skip_H)) * -1.0
         for a in new_atoms:
             a.translate(com)
 
@@ -276,12 +276,12 @@ def smooth_xyz(frames,
             frames = f_low + f_mid + f_high
         elif i == 0:
             f_low = copy.deepcopy(frames[i])
-            f_mid = interpolate(frames[i], frames[i + 1], 1)
+            f_mid = interpolate(frames[i], frames[i + 1], 1)[:-1]
             f_high = copy.deepcopy(frames[i + 1:])
             frames = [f_low] + f_mid + f_high
         else:
             f_low = copy.deepcopy(frames[:i])
-            f_mid = interpolate(frames[i - 1], frames[i], 3)
+            f_mid = interpolate(frames[i - 1], frames[i], 1)[:-1]
             f_high = copy.deepcopy(frames[i])
             frames = f_low + f_mid + [f_high]
 
@@ -374,9 +374,51 @@ def run_unit_tests():
     assert interp[0][0] != frame_1[0],\
         "Error - Pointer followed through interpolation.  It shouldn't."
 
-    raise Exception("Unit Test perturbate")
-    raise Exception("Unit Test procrustes")
-    raise Exception("Unit Test align_centroid")
+    from squid.unittests.examples import get_test_frames
+    from squid.unittests.examples import get_unit_test_structures
+    _, _, _, chex, chex_copied = get_unit_test_structures()
+    check_atoms = np.array([a.flatten() for a in chex.atoms])
+    EPS = 1E-3
+    for rotate in [True, False]:
+        for i in range(5):
+            local_atoms = copy.deepcopy(chex_copied.atoms)
+            perturbate(local_atoms, dx=0.1, dr=5, around="com", rotate=rotate)
+            local_atoms = np.array([a.flatten() for a in local_atoms])
+            assert np.linalg.norm(check_atoms - local_atoms) > EPS,\
+                "Error - Perturbation isn't working."
+        for i in range(5):
+            local_atoms = copy.deepcopy(chex_copied.atoms)
+            perturbate(local_atoms, dx=0.1, dr=5, around="cog", rotate=rotate)
+            local_atoms = np.array([a.flatten() for a in local_atoms])
+            assert np.linalg.norm(check_atoms - local_atoms) > EPS,\
+                "Error - Perturbation isn't working."
+        for i in range(5):
+            local_atoms = copy.deepcopy(chex_copied.atoms)
+            perturbate(local_atoms, dx=0.1, dr=5, around=None, rotate=rotate)
+            local_atoms = np.array([a.flatten() for a in local_atoms])
+            assert np.linalg.norm(check_atoms - local_atoms) > EPS,\
+                "Error - Perturbation isn't working."
+
+    frames = get_test_frames()
+    mpf_prior = motion_per_frame(frames)
+    procrustes(frames, count_atoms=None,
+               append_in_loop=True, reflection=False)
+    assert sum(mpf_prior) > sum(motion_per_frame(frames)),\
+        "Error - Procrustes did not work!"
+    assert abs(sum(motion_per_frame(frames)) - 0.563173) < EPS,\
+        "Error - Procrustes somehow made worse than before."
+
+    _, _, _, chex, chex_copied = get_unit_test_structures()
+    new_atoms, A = align_centroid(chex.atoms, recenter=True, skip_H=True)
+    assert chex.atoms == chex_copied.atoms,\
+        "Error - align_centroid moved atoms within the list!"
+    A_held = np.array([
+        [3.24793594e-02, 1.58400634e-01, -4.24441908e-03],
+        [1.58190353e-01, -3.25251754e-02, 3.87540435e-04],
+        [-2.16105492e-04, -1.93356076e-03, -3.54229102e-01]])
+    assert np.linalg.norm(A - A_held) < EPS,\
+        "Error - align_centroid has changed!"
+
     raise Exception("Unit Test smooth_xyz")
 
     print("squid.geometry.smooth - All unit tests passed!")
