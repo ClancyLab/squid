@@ -11,8 +11,8 @@ __docformat__ = 'reStructuredText'
 # System imports
 import copy
 # Squid imports
-from squid import units
 from squid.utils import cast
+from squid.structures import misc
 from squid.structures.atom import Atom
 from squid.structures.topology import Connector
 # External imports
@@ -26,13 +26,13 @@ def get_dihedral_angle(a, b=None, c=None, d=None, deg=True):
 
     **Parameters**
 
-        a: :class:`structures.Atom`
+        a: :class:`structures.atom.Atom`
             First atom in the dihedral, or a tuple of all 4.
-        b: :class:`structures.Atom` *, optional*
+        b: :class:`structures.atom.Atom` *, optional*
             Second atom in the dihedral.
-        c: :class:`structures.Atom` *, optional*
+        c: :class:`structures.atom.Atom` *, optional*
             Third atom in the dihedral.
-        d: :class:`structures.Atom` *, optional*
+        d: :class:`structures.atom.Atom` *, optional*
             Fourth atom in the dihedral.
         deg: *bool, optional*
             Whether to return the angle in degrees (True) or radians (False).
@@ -101,20 +101,27 @@ class Molecule(object):
 
     **Parameters**
 
-        atoms: *list,* :class:`structures.Atom`
+        atoms: *list,* :class:`structures.atom.Atom`
             A list of atoms.
-        bonds: *list, tuple,* :class:`structures.Atom` *, optional*
+        bonds: *list, tuple,* :class:`structures.atom.Atom` *, optional*
             A list of all bonds within the system.
-        angles: *list, tuple,* :class:`structures.Atom` *, optional*
+        angles: *list, tuple,* :class:`structures.atom.Atom` *, optional*
             A list of all angles within the system.
-        dihedrals: *list, tuple,* :class:`structures.Atom` *, optional*
+        dihedrals: *list, tuple,* :class:`structures.atom.Atom` *, optional*
             A list of all dihedrals within the system.
+        molecule_index: *int, optional*
+            The index to be assigned for this molecule.
+        assign_indices: *bool, optional*
+            Whether to assign the molecule a default index of 1 (if no other
+            is specified), and to assign the atomic indices, indexed at 1.
+            If molecule_index is specified, that will take precedence over
+            the default of 1; however, the atom re-indexing will still take
+            place.
 
     **Returns**
 
-        molecule: :class:`structures.Molecule`
+        molecule: :class:`structures.molecule.Molecule`
             The Molecule class container.
-
     """
 
     def __init__(self, atoms,
@@ -152,14 +159,78 @@ DIHERALS (molecule_index: index)
 """ % (atoms, bonds, angles, dihedrals)
 
     def __add__(self, other):
+        """
+        If given some 3D array, offset all atomic coordinates.
+
+        **Parameters**
+
+            other: *array, float*
+                Some 3D array/tuple/list of sorts that indicates a
+                translation.
+
+        **Returns**
+
+            None
+        """
         cast.assert_vec(other, length=3, numeric=True)
-        for atom in self.atoms:
-            atom.translate(other)
+        new = copy.deepcopy(self)
+        new.translate(other)
+        return new
 
     def __sub__(self, other):
+        """
+        If given some 3D array, offset all atomic coordinates.
+
+        **Parameters**
+
+            other: *array, float*
+                Some 3D array/tuple/list of sorts that indicates a
+                translation.
+
+        **Returns**
+
+            None
+        """
         cast.assert_vec(other, length=3, numeric=True)
-        for atom in self.atoms:
-            atom.translate(-np.array(other))
+        return self.__add__(-np.array(other, dtype=float))
+
+    def __mul__(self, other):
+        """
+        If given some 3D array, scale all atomic coordinates.
+
+        **Parameters**
+
+            other: *array, float*
+                Some 3D array/tuple/list of sorts that indicates a
+                scalar operation.
+
+        **Returns**
+
+            None
+        """
+        cast.assert_vec(other, length=3, numeric=True)
+        new = copy.deepcopy(self)
+        new.scale(other)
+        return new
+
+    def __truediv__(self, other):
+        """
+        If given some 3D array, scale all atomic coordinates.
+
+        **Parameters**
+
+            other: *array, float*
+                Some 3D array/tuple/list of sorts that indicates a
+                scalar operation.
+
+        **Returns**
+
+            None
+        """
+        assert 0.0 not in other,\
+            "Error - Cannot divide by 0!"
+        cast.assert_vec(other, length=3, numeric=True)
+        return self.__mul__(np.array(1.0 / np.array(other, dtype=float)))
 
     def __eq__(self, other):
         return all([
@@ -183,14 +254,21 @@ DIHERALS (molecule_index: index)
         """
         Simply reassign atomic indices based on their current positions
         in the atoms array.  This is zero indexed, unless otherwise specified.
+        Further, assign the molecule_index of the atoms to be the same as this
+        molecule object.
 
         **Parameters**
 
             offset: *int, optional*
                 What offset to use when indexing.
+
+        **Returns**
+
+            None
         """
         for i, a in enumerate(self.atoms):
             a.index = i + offset
+            a.molecule_index = self.molecule_index
 
     def flatten(self):
         """
@@ -207,11 +285,16 @@ DIHERALS (molecule_index: index)
         """
         Return the net charge of the molecule.  This requires that atoms
         have charges associated with them.
+
+        **Returns**
+
+            charge: *float*
+                The atomic charge of the system.
         """
-        return sum([
+        return float(sum([
             a.charge for a in self.atoms
             if hasattr(a, "charge") and a.charge is not None
-        ])
+        ]))
 
     def rotate(self, m, around="com"):
         """
@@ -264,6 +347,24 @@ DIHERALS (molecule_index: index)
         for a in self.atoms:
             a.translate(v)
 
+    def scale(self, v):
+        """
+        Apply a scalar to this molecule.
+
+        **Parameters**
+
+            v: *list, float*
+                A vector of 3 floats specifying the x, y,
+                and z scalars to be applied.
+
+        **Returns**
+
+            None
+        """
+        cast.assert_vec(v, length=3, numeric=True)
+        for a in self.atoms:
+            a.scale(v)
+
     def set_positions(self, positions, new_atom_list=False):
         """
         Manually specify atomic positions of your molecule.
@@ -313,22 +414,7 @@ set_positions.")
                 A np.array of the x, y, and z coordinate
                 of the center of geometry.
         """
-        if len(self.atoms) == 0:
-            return [0.0, 0.0, 0.0]
-
-        if skip_H:
-            n = float(len([a for a in self.atoms if a.element != "H"]))
-        else:
-            n = float(len(self.atoms))
-        if skip_H:
-            x = sum([a.x for a in self.atoms if a.element != "H"]) / n
-            y = sum([a.y for a in self.atoms if a.element != "H"]) / n
-            z = sum([a.z for a in self.atoms if a.element != "H"]) / n
-        else:
-            x = sum([a.x for a in self.atoms]) / n
-            y = sum([a.y for a in self.atoms]) / n
-            z = sum([a.z for a in self.atoms]) / n
-        return np.array([x, y, z])
+        return misc.get_center_of_geometry(self.atoms, skip_H=skip_H)
 
     def get_center_of_mass(self, skip_H=False):
         """
@@ -345,27 +431,7 @@ set_positions.")
             com: *np.array, float*
                 A np.array of the x, y, and z coordinate of the center of mass.
         """
-        if len(self.atoms) == 0:
-            return (0.0, 0.0, 0.0)
-
-        xList = []
-        yList = []
-        zList = []
-        totalMass = 0.0
-        for a in self.atoms:
-            if skip_H and a.element == "H":
-                continue
-            mass = units.elem_weight(a.element)
-            xList.append(a.x * mass)
-            yList.append(a.y * mass)
-            zList.append(a.z * mass)
-            totalMass += mass
-
-        return np.array([
-            sum(xList) / totalMass,
-            sum(yList) / totalMass,
-            sum(zList) / totalMass
-        ])
+        return misc.get_center_of_mass(self.atoms, skip_H=skip_H)
 
     def merge(self, other, deepcopy=False):
         """
@@ -382,6 +448,10 @@ set_positions.")
                 pointers are different between the molecules),
                 or to merge via pointers, in which the other
                 molecule has similar pointers.
+
+        **Returns**
+
+            None
         """
         self.reassign_indices()
         local_other = other
@@ -398,6 +468,10 @@ set_positions.")
         """
         Given a list of atom structures with bonded information, calculate
         angles and dihedrals.
+
+        **Returns**
+
+            None
         """
 
         # Get a list of bonded interactions to each atom.
@@ -465,7 +539,7 @@ set_positions.")
                           for d in list(set(dihedral_list))]
 
 
-def run_unit_tests():
+def get_unit_test_structures():
     m1a = Molecule([
         Atom("H", 0, 0, 0),
         Atom("He", 1, 0, 0),
@@ -539,6 +613,12 @@ def run_unit_tests():
     chex = Molecule(atoms, bonds)
     copied_chex = copy.deepcopy(chex)
 
+    return m1a, m1b, m2, chex, copied_chex
+
+
+def run_unit_tests():
+    m1a, m1b, m2, chex, copied_chex = get_unit_test_structures()
+
     assert m1a == m1b, "Error - Unable to identify identical molecules."
     assert m1a != m2, "Error - Unable to distinguish different molecules."
 
@@ -555,6 +635,15 @@ def run_unit_tests():
     assert np.linalg.norm(
         m1a.get_center_of_mass(skip_H=True) - (1.82598148, 0.0, 0.0)) < EPS,\
         "Error - Center of Geometry failed."
+
+    scale = np.array((2.0, 0.3, 1.0))
+    com = np.array((2.00107278, 0.0, 0.0))
+    assert np.linalg.norm(
+        (m1a * scale).get_center_of_mass() - com * scale) < EPS,\
+        "Error - Multiplication failed."
+    assert np.linalg.norm(
+        (m1a / scale).get_center_of_mass() - com / scale) < EPS,\
+        "Error - Division failed."
 
     assert copied_chex.bonds[0].atoms[0] is copied_chex.atoms[10],\
         "Error - When deepcopying molecule, the bonds are not connected."

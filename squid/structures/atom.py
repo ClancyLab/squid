@@ -76,9 +76,22 @@ class Atom(object):
 
     def __sub__(self, other):
         cast.assert_vec(other, length=3, numeric=True)
+        return self + -np.array(other)
+
+    def __mul__(self, other):
+        cast.assert_vec(other, length=3, numeric=True)
         local_atom = self.replicate()
-        local_atom.translate(-np.array(other))
+        local_atom.scale(other)
         return local_atom
+
+    def __truediv__(self, other):
+        assert 0.0 not in other,\
+            "Error - Cannot divide by 0!"
+        cast.assert_vec(other, length=3, numeric=True)
+        return self * np.array(1.0 / np.array(other, dtype=float))
+
+    def __div__(self, other):
+        return self.__truediv__(other)
 
     def __eq__(self, other):
         """
@@ -91,8 +104,11 @@ class Atom(object):
             self.x == other.x,
             self.y == other.y,
             self.z == other.z,
-            self.index == other.index,
-            self.molecule_index == other.molecule_index,
+            # NOTE - We do not check indexing as this may change when an atom
+            # is added to a molecule/system; however, it is in effect the same
+            # atom!
+            # self.index == other.index,
+            # self.molecule_index == other.molecule_index,
             self.label == other.label,
             self.charge == other.charge
         ])
@@ -144,6 +160,26 @@ class Atom(object):
         self.x += float(v[0])
         self.y += float(v[1])
         self.z += float(v[2])
+
+    def scale(self, v):
+        """
+        Scale the atom by a vector.  This can be useful if we want to
+        change coordinate systems.
+
+        **Parameters**
+
+            v: *list, float*
+                A vector of 3 floats specifying the x, y,
+                and z scalars to be applied.
+
+        **Returns**
+
+            None
+        """
+        cast.assert_vec(v, length=3, numeric=True)
+        self.x *= float(v[0])
+        self.y *= float(v[1])
+        self.z *= float(v[2])
 
     def flatten(self):
         """
@@ -220,6 +256,7 @@ def run_unit_tests():
 
     coords = np.array([-1.2, 1.2, 3.1])
     offset = np.array([0.1, 0.1, 0.1])
+    scalar = np.array([0.2, 1.0, 2.0])
     a4 = Atom("I", *coords)
     a4a = a4 + offset
     a4b = Atom("I", *(coords + offset))
@@ -229,6 +266,10 @@ def run_unit_tests():
     a4e += offset
     a4f = a4.replicate()
     a4f -= offset
+    a4ga = a4 * scalar
+    a4gb = Atom("I", *(coords * scalar))
+    a4ha = a4 / scalar
+    a4hb = Atom("I", *(coords / scalar))
 
     a4_str = """molecule_index: 1 and index: None
     x, y, z = (-1.200, 1.200, 3.100)
@@ -245,6 +286,11 @@ def run_unit_tests():
     assert all(a5.flatten() == coords), "Error - Flatten has failed."
     assert a4e == a4a, "Error - Failed += attempt."
     assert a4f == a4c, "Error - Failed -= attempt."
+    EPS = 1E-4
+    assert np.linalg.norm(a4ga.flatten() - a4gb.flatten()) < EPS,\
+        "Error - Unable to multiply coordinates to atoms."
+    assert np.linalg.norm(a4ha.flatten() - a4hb.flatten()) < EPS,\
+        "Error - Unable to divide coordinates to atoms."
 
     print("squid.structures.atom - All unit tests passed!")
 

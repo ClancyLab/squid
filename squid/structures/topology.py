@@ -1,9 +1,29 @@
+__docformat__ = 'reStructuredText'
+
 from squid.utils import cast
 from squid.structures.atom import Atom
 
 
 class Connector(object):
     """
+    The Connector class works to hold connection information between atoms.
+    This is used primarily for bonds, angles, and dihedrals.  A corresponding
+    length and angle can also be held in the object (defaults to None).
+
+    **Parameters**
+
+        atoms: *list,* :class:`structures.atom.Atom`
+            A list of atoms to connect. If you connect atoms for an angle, the
+            second atom is the center atom.
+        length: *float, optional*
+            The bond length in Angstroms.
+        angle: *float, optional*
+            The angle of the connection in degrees.
+
+    **Returns**
+
+        connection: :class:`structures.topology.Connector`
+            This connector object.
     """
 
     def __init__(self, atoms, length=None, angle=None):

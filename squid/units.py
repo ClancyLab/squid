@@ -14,7 +14,9 @@ as periodic table data management.
 ------------
 
 """
+from squid import constants
 from squid.constants import ENERGY, PRESSURE, DISTANCE, PERIODIC_TABLE
+
 
 def convert_energy(e0, e1, e_val):
     """
@@ -35,16 +37,19 @@ def convert_energy(e0, e1, e_val):
             Converted e_val to units of e1.
     """
 
-    if e_val == 0: return 0
-    if e0 == e1: return e_val
+    if e_val == 0:
+        return 0
+    if e0 == e1:
+        return e_val
     if len(e0) > 2 and e0[0:2] == 'kT':
         val = e_val * constants.K_b * float(e0[3:])
     else:
-        val = e_val * ENERGY[e0] # This many joules
+        val = e_val * ENERGY[e0]  # This many joules
     if len(e1) > 2 and e1[0:2] == 'kT':
-        return val/(constants.K_b * float(e1[3:]))
+        return val / (constants.K_b * float(e1[3:]))
 
-    return val/ENERGY[e1] # This many of unit e1
+    return val / ENERGY[e1]  # This many of unit e1
+
 
 def convert_pressure(p0, p1, p_val):
     """
@@ -64,15 +69,13 @@ def convert_pressure(p0, p1, p_val):
         pressure: *float*
             Converted p_val to units of p1.
     """
-    #print("Converting %lg %s to " % (p_val,p0)),
+    if p_val == 0:
+        return 0
+    if p0 == p1:
+        return p_val
+    val = p_val * PRESSURE[p0]  # This many atm
+    return val / PRESSURE[p1]  # This many of unit p1
 
-    if p_val == 0: return 0
-    if p0 == p1: return p_val
-    val = p_val * PRESSURE[p0] # This many atm
-
-    #print("%lg %s.\n" % (val/PRESSURE[p1],p1))
-
-    return val/PRESSURE[p1] # This many of unit p1
 
 def convert_dist(d0, d1, d_val):
     """
@@ -92,15 +95,13 @@ def convert_dist(d0, d1, d_val):
         distance: *float*
             Converted d_val to units of d1.
     """
-    #print("Converting %lg %s to " % (d_val,d0)),
+    if d_val == 0:
+        return 0
+    if d0 == d1:
+        return d_val
+    val = d_val * DISTANCE[d0]  # This many angstroms
+    return val / DISTANCE[d1]  # This many of unit d1
 
-    if d_val == 0: return 0
-    if d0 == d1: return d_val
-    val = d_val * DISTANCE[d0] # This many angstroms
-
-    #print("%lg %s.\n" % (val/DISTANCE[d1],d1))
-
-    return val/DISTANCE[d1] # This many of unit d1
 
 def elem_i2s(elem_int):
     """
@@ -116,13 +117,16 @@ def elem_i2s(elem_int):
         elem_sym: *str*
             Elemental symbol.
     """
-    try: i = int(elem_int) # Check if it's already a symbol, if so return it
-    except: return elem_int
+    if isinstance(elem_int, str):
+        return elem_int
+    i = int(elem_int)
     if i == 0:
         raise Exception("Trying to find the element for index 0.")
     if i > len(PERIODIC_TABLE):
-        raise Exception("Trying to find element %d, outside of PERIODIC_TABLE." % i)
-    return PERIODIC_TABLE[i]['sym'] # If not, convert it
+        raise Exception("Trying to find element %d, outside of \
+PERIODIC_TABLE." % i)
+    return PERIODIC_TABLE[i]['sym']  # If not, convert it
+
 
 def elem_s2i(elem_sym):
     """
@@ -140,12 +144,13 @@ def elem_s2i(elem_sym):
     """
 
     # Else convert it
-    for i in range(1,len(PERIODIC_TABLE)):
+    for i in range(1, len(PERIODIC_TABLE)):
         if PERIODIC_TABLE[i]['sym'] == elem_sym:
             return i
 
     # Return -1 if you couldn't
     return -1
+
 
 def elem_weight(elem):
     """
@@ -161,10 +166,13 @@ def elem_weight(elem):
         elem_weight: *float*
             Weight of the element in AMU.
     """
-    if type(elem) == str: return PERIODIC_TABLE[elem_s2i(elem)]['weight']
-    if type(elem) == int: return PERIODIC_TABLE[elem]['weight']
+    if type(elem) == str:
+        return PERIODIC_TABLE[elem_s2i(elem)]['weight']
+    if type(elem) == int:
+        return PERIODIC_TABLE[elem]['weight']
     print("Warning - No weight found for %s!" % str(elem))
     return -1
+
 
 def elem_sym_from_weight(weight, delta=1e-1):
     """
@@ -183,10 +191,12 @@ def elem_sym_from_weight(weight, delta=1e-1):
             The elemental symbol.
     """
     for elem in PERIODIC_TABLE[1:]:
-        if abs(weight-elem['weight']) < delta: return elem['sym']
+        if abs(weight - elem['weight']) < delta:
+            return elem['sym']
     raise Exception("Unable to find element of weight %lg" % weight)
 
-def convert(old,new,val):
+
+def convert(old, new, val):
     """
     A generic converter of fractional units.  This works only for one unit in
     the numerator and denomenator (such as Ha/Ang to eV/Bohr).
@@ -205,21 +215,23 @@ def convert(old,new,val):
         new_val: *float*
             Converted value in units of new.
     """
-    #print("Converting %lg %s to " % (val,old)),
+    if val == 0:
+        return 0
 
-    if val == 0: return 0
-    
-    a,b = old.split('/')
-    a2,b2 = new.split('/')
+    a, b = old.split('/')
+    a2, b2 = new.split('/')
 
-    if a in ENERGY: new_val = convert_energy(a,a2,val)
-    else: new_val = convert_dist(a,a2,val)
+    if a in ENERGY:
+        new_val = convert_energy(a, a2, val)
+    else:
+        new_val = convert_dist(a, a2, val)
 
-    if new_val != 0: new_val = 1./new_val
+    if new_val != 0:
+        new_val = 1.0 / new_val
 
-    if b in ENERGY: new_val = convert_energy(b,b2,new_val)
-    else: new_val = convert_dist(b,b2,new_val)
+    if b in ENERGY:
+        new_val = convert_energy(b, b2, new_val)
+    else:
+        new_val = convert_dist(b, b2, new_val)
 
-    #print("%lg %s.\n" % (1./new_val, new))
-
-    return 1./new_val
+    return 1.0 / new_val
