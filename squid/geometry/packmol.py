@@ -1,4 +1,6 @@
-def packmol(self, molecules, molecule_ratio=(1,), new_method=False,
+
+
+def packmol(molecules, molecule_ratio=(1,), new_method=False,
             density=1.0, seed=1, persist=True, number=None,
             additional="", custom=None, extra_block_at_end='',
             extra_block_at_beginning='', tolerance=2.0):
@@ -152,3 +154,12 @@ end structure
 
     if not persist:
         os.system("rm -rf sys_packmol")
+
+
+def run_unit_tests():
+    raise Exception("TO DO")
+    print("squid.geometry.procrustes - All unit tests passed!")
+
+
+if __name__ == "__main__":
+    run_unit_tests()

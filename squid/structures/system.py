@@ -3,7 +3,7 @@ import copy
 # Squid imports
 from squid.utils import cast
 from squid.geometry import misc
-from squid.structures.molecule import Molecule, get_unit_test_structures
+from squid.structures.molecule import Molecule
 # External imports
 import numpy as np
 
@@ -287,6 +287,25 @@ class System(object):
         """
         return misc.get_center_of_mass(self.atoms, skip_H=skip_H)
 
+    def rotate(self, m, around="com"):
+        """
+        Rotate the system by the given matrix *m*.
+
+        **Parameters**
+
+            m: *list, list, float*
+                A 3x3 matrix describing the rotation to be
+                applied to this molecule.
+            around: *str, optional*
+                Whether to rotate around the center of mass (com), center of
+                geometry (cog), or neither ("None" or None).
+
+        **Returns**
+
+            None
+        """
+        misc.rotate_atoms(self.atoms, m, around=around)
+
     def set_types(self, params=None):
         '''
         Given the atoms, bonds, angles, and dihedrals in a system object,
@@ -380,6 +399,7 @@ class System(object):
 
 def run_unit_tests():
     # Get various molecules to play with
+    from squid.unittests.examples import get_unit_test_structures
     m1a, m1b, m2, chex, copied_chex = get_unit_test_structures()
     m1aa = copy.deepcopy(m1a)
 

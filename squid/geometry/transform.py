@@ -1,13 +1,11 @@
 import copy
 import scipy
 import numpy as np
-from squid.structures.atom import Atom
-from squid.structures.molecule import Molecule
+from squid.geometry.misc import *
 from squid.geometry.spatial import mvee
 from squid.geometry.spatial import motion_per_frame
 from squid.geometry.spatial import random_rotation_matrix
 from squid.geometry.spatial import orthogonal_procrustes
-from squid.geometry.misc import *
 
 
 # Given a list of atom objects, this will (1) use mvee to generate a minimum
@@ -49,7 +47,8 @@ def align_centroid(atoms, recenter=True, skip_H=True):
 
     # Get points and the ellipsoid
     A, centroid = mvee(new_atoms)
-    points = Molecule(new_atoms).flatten().reshape((-1, 3))
+    points = np.array([
+        a.flatten() for a in new_atoms]).flatten().reshape((-1, 3))
 
     # Rotate the ellipsoid
     omega, R = np.linalg.eigh(A)
@@ -61,13 +60,14 @@ def align_centroid(atoms, recenter=True, skip_H=True):
     points = np.dot(points, rotation).reshape((-1, 3))
 
     # Recenter the points
-    molec = Molecule(new_atoms)
-    molec.set_positions(points, new_atom_list=False)
+    for a, b in zip(new_atoms, points):
+        a.x, a.y, a.z = b
     if recenter:
         com = np.array(molec.get_center_of_geometry(skip_H=skip_H)) * -1.0
-        molec.translate(com)
+        for a in new_atoms:
+            a.translate(com)
 
-    return molec.atoms, A
+    return new_atoms, A
 
 
 # Procrustes works by geting an orthogonal frame to map frames[1:] to be as
@@ -180,12 +180,12 @@ def interpolate(frame_1, frame_2, N):
     ]
 
 
-def smooth_xyz(name,
-               R_MAX=0.5,
-               F_MAX=25,
-               N_FRAMES=None,
-               PROCRUSTES=True,
-               outName=None,
+def smooth_xyz(frames,
+               R_max=0.5,
+               F_max=25,
+               N_frames=None,
+               use_procrustes=True,
+               fname=None,
                verbose=False):
     """
     Smooth out an xyz file by linearly interpolating frames to minimize the
@@ -194,23 +194,23 @@ def smooth_xyz(name,
 
     **Parameters**
 
-        name: *list, list,* :class:`structures.Atom`
+        frames: *list, list,* :class:`structures.Atom`
             A list of lists of atoms.
-        R_MAX: *float, optional*
+        R_max: *float, optional*
             The maximum motion allowed between consecutive frames.
-        F_MAX: *int, optional*
+        F_max: *int, optional*
             The maximum number of frames allowed before failing the smooth
             function.
-        N_FRAMES: *int, optional*
-            If this is specified, forgo the R_MAX and F_MAX and just
-            interpolate out into N_FRAMES.  Note, if more than N_FRAMES
-            exists, this also cuts back into exactly N_FRAMES.
-        PROCRUSTES: *bool, optional*
+        N_frames: *int, optional*
+            If this is specified, forgo the R_max and F_max and just
+            interpolate out into N_frames.  Note, if more than N_frames
+            exists, this also cuts back into exactly N_frames.
+        use_procrustes: *bool, optional*
             Whether procrustes is to be used during smoothing (True), or
             not (False).
-        outName: *str, optional*
+        fname: *str, optional*
             An output file name for the smoothed frames (without the .xyz
-            extension).
+            extension).  If None, then no file is made.
         verbose: *bool, optional*
             Whether additional stdout is desired (True), or not (False).
 
@@ -219,57 +219,59 @@ def smooth_xyz(name,
         frames: *list, list,* :class:`structures.Atom`
             Returns a list of smoothed frames
     """
-    # Get data as either frames or a file
-    if isinstance(name, list):
-        frames = name
-    else:
-        raise Exception("TO DO")
 
-    if N_FRAMES is not None:
-        R_MAX = float("-inf")
-        F_MAX = float("inf")
-    else:
-        N_FRAMES = F_MAX
+    assert len(frames) > 1,\
+        "Error - You must have more than 1 frame if you want to interpolate."
 
-    # Loop till we're below R_MAX
+    if N_frames is None:
+        N_frames = F_max
+    else:
+        R_max = float("-inf")
+        F_max = float("inf")
+
+    assert N_frames > 1,\
+        "Error - Either N_frames or F_max was set to 1."
+
+    UPPER = 1E6
+    assert N_frames < UPPER,\
+        "Error - Either N_frames or F_max was set too large (>%d)." % UPPER
+
+    # Loop till we're below R_max
     while 1:
-        # If len(frames) > N_FRAMES, break out of while and trim
-        if len(frames) > N_FRAMES:
+        # If len(frames) > N_frames, break out of while and trim
+        if len(frames) > N_frames:
             break
-        if len(frames) == 1:
-            raise Exception("You cannot interpolate with only 1 frame!")
 
         # Find largest motion_per_frame
-        if PROCRUSTES:
+        if use_procrustes:
             procrustes(frames)
-        tmp = motion_per_frame(frames)
-        i = tmp.index(max(tmp))
+        mpf = motion_per_frame(frames)
 
         # Check if we're done
-        r2 = max(tmp)
-        if r2 < R_MAX:
+        if max(mpf) < R_max:
             break
 
-        if len(frames) > F_MAX:
+        if len(frames) > F_max:
             print("-------------------------------------------------------")
-            print(tmp)
+            print(mpf)
             print("-------------------------------------------------------")
             print("\n\nError - Could not lower motion below %lg in %d frames."
-                  % (R_MAX, F_MAX), sys.exc_info()[0])
+                  % (R_max, F_max), sys.exc_info()[0])
             exit()
         else:
             if verbose:
                 print("Currently Frames = %d\tr2 = %lg" % (len(frames), r2))
 
         # Now, split the list, interpolate, and regenerate
+        i = mpf.index(max(mpf))
         if i > 0 and i < len(frames) - 1:
             f_low = copy.deepcopy(frames[:i])
             f_high = copy.deepcopy(frames[i + 1:])
-            f_mid = interpolate(frames[i - 1], frames[i + 1], 3)
+            f_mid = interpolate(frames[i], frames[i + 1], 1)[:-1]
             frames = f_low + f_mid + f_high
         elif i == 0:
             f_low = copy.deepcopy(frames[i])
-            f_mid = interpolate(frames[i], frames[i + 1], 3)
+            f_mid = interpolate(frames[i], frames[i + 1], 1)
             f_high = copy.deepcopy(frames[i + 1:])
             frames = [f_low] + f_mid + f_high
         else:
@@ -294,13 +296,13 @@ def smooth_xyz(name,
 
     while len(frames) > N_FRAMES:
         # Get smallest motion and remove
-        if PROCRUSTES:
+        if use_procrustes:
             procrustes(frames)
-        tmp = motion_per_frame(frames[:-1])
-        i = tmp.index(min(tmp[1:]))
+        mpf = motion_per_frame(frames[:-1])
+        i = mpf.index(min(mpf[1:]))
         del frames[i]
 
-    if PROCRUSTES:
+    if use_procrustes:
         procrustes(frames)
     if verbose:
         print("\tThere are now a total of %d frames" % len(frames))
@@ -337,12 +339,13 @@ def perturbate(atoms, dx=0.1, dr=5, around="com", rotate=True):
         a.translate(rand_step)
     if rotate:
         m = random_rotation_matrix(limit_angle=dr)
-        rotate_atoms(atoms, m, )
-        atoms = rand_rotate(limit_angle=dr, around=around)
+        atoms = rotate_atoms(atoms, m, around=around)
+
     return atoms
 
 
 def run_unit_tests():
+    from squid.structures.atom import Atom
     frame_1 = [
         Atom("H", 0, 0, 0),
         Atom("H", 0, 1, 0),
@@ -365,6 +368,11 @@ def run_unit_tests():
     frame_1[0] += (1.0, 0.0, 0.0)
     assert interp[0][0] != frame_1[0],\
         "Error - Pointer followed through interpolation.  It shouldn't."
+
+    raise Exception("Unit Test perturbate")
+    raise Exception("Unit Test procrustes")
+    raise Exception("Unit Test align_centroid")
+    raise Exception("Unit Test smooth_xyz")
 
     print("squid.geometry.smooth - All unit tests passed!")
 

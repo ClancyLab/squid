@@ -31,11 +31,11 @@ class Molecule(object):
 
         atoms: *list,* :class:`structures.atom.Atom`
             A list of atoms.
-        bonds: *list, tuple,* :class:`structures.atom.Atom` *, optional*
+        bonds: *list,* :class:`structures.topology.Connector` *, optional*
             A list of all bonds within the system.
-        angles: *list, tuple,* :class:`structures.atom.Atom` *, optional*
+        angles: *list,* :class:`structures.topology.Connector` *, optional*
             A list of all angles within the system.
-        dihedrals: *list, tuple,* :class:`structures.atom.Atom` *, optional*
+        dihedrals: *list,* :class:`structures.topology.Connector` *, optional*
             A list of all dihedrals within the system.
         molecule_index: *int, optional*
             The index to be assigned for this molecule.
@@ -241,21 +241,7 @@ DIHERALS (molecule_index: index)
 
             None
         """
-        if around is None or around.strip().lower() is "none":
-            center = None
-        elif around.strip().lower() is "com":
-            center = self.get_center_of_mass()
-        elif around.strip().lower() is "cog":
-            center = self.get_center_of_geometry()
-        else:
-            raise Exception("Invalid specification in rotate.")
-
-        if center is not None:
-            self.translate(-center)
-        for a in self.atoms:
-            a.x, a.y, a.z = np.dot(np.asarray(m), np.array([a.x, a.y, a.z]))
-        if center is not None:
-            self.translate(center)
+        misc.rotate_atoms(self.atoms, m, around=around)
 
     def translate(self, v):
         """
@@ -457,84 +443,8 @@ set_positions.")
                           for d in list(set(dihedral_list))]
 
 
-def get_unit_test_structures():
-    m1a = Molecule([
-        Atom("H", 0, 0, 0),
-        Atom("He", 1, 0, 0),
-        Atom("F", 2, 0, 0),
-        Atom("H", 3, 0, 0),
-        Atom("H", 4, 0, 0),
-        Atom("H", 5, 0, 0),
-    ])
-    m1b = Molecule([
-        Atom("H", 0, 0, 0),
-        Atom("He", 1, 0, 0),
-        Atom("F", 2, 0, 0),
-        Atom("H", 3, 0, 0),
-        Atom("H", 4, 0, 0),
-        Atom("H", 5, 0, 0),
-    ])
-    m2 = Molecule([
-        Atom("O", 0, 1, 0),
-        Atom("Si", 1, 0, 0),
-        Atom("O", 2, 1, 0),
-        Atom("H", 3, 1, 0),
-        Atom("H", 3, 2, 0),
-    ])
-    m2.bonds = [
-        Connector((m2.atoms[0], m2.atoms[1])),
-        Connector((m2.atoms[2], m2.atoms[1])),
-        Connector((m2.atoms[2], m2.atoms[3])),
-        Connector((m2.atoms[2], m2.atoms[4])),
-    ]
-
-    atoms = [
-        Atom("C", -1.54846, -0.62372, -0.23277),
-        Atom("C", -2.36075, -1.83030, 0.22901),
-        Atom("C", -0.09058, -0.72742, 0.20628),
-        Atom("H", -1.99055, 0.29459, 0.16994),
-        Atom("H", -1.59582, -0.54877, -1.32609),
-        Atom("C", 0.54389, -2.03745, -0.25281),
-        Atom("H", -0.03335, -0.65785, 1.29946),
-        Atom("H", 0.47714, 0.11843, -0.19774),
-        Atom("C", -0.26907, -3.24874, 0.19654),
-        Atom("H", 1.56326, -2.11120, 0.14290),
-        Atom("H", 0.62510, -2.03877, -1.34664),
-        Atom("C", -1.73066, -3.14223, -0.23062),
-        Atom("H", -3.38310, -1.75673, -0.15876),
-        Atom("H", -2.43273, -1.82396, 1.32351),
-        Atom("H", -1.79709, -3.21480, -1.32304),
-        Atom("H", -2.29648, -3.98613, 0.18023),
-        Atom("H", -0.21477, -3.33864, 1.28832),
-        Atom("H", 0.17038, -4.16187, -0.22089)
-    ]
-    bonds = [
-        Connector((atoms[11 - 1], atoms[6 - 1])),
-        Connector((atoms[5 - 1], atoms[1 - 1])),
-        Connector((atoms[15 - 1], atoms[12 - 1])),
-        Connector((atoms[6 - 1], atoms[10 - 1])),
-        Connector((atoms[6 - 1], atoms[9 - 1])),
-        Connector((atoms[6 - 1], atoms[3 - 1])),
-        Connector((atoms[1 - 1], atoms[4 - 1])),
-        Connector((atoms[1 - 1], atoms[3 - 1])),
-        Connector((atoms[1 - 1], atoms[2 - 1])),
-        Connector((atoms[12 - 1], atoms[16 - 1])),
-        Connector((atoms[12 - 1], atoms[9 - 1])),
-        Connector((atoms[12 - 1], atoms[2 - 1])),
-        Connector((atoms[18 - 1], atoms[9 - 1])),
-        Connector((atoms[8 - 1], atoms[3 - 1])),
-        Connector((atoms[13 - 1], atoms[2 - 1])),
-        Connector((atoms[9 - 1], atoms[17 - 1])),
-        Connector((atoms[3 - 1], atoms[7 - 1])),
-        Connector((atoms[2 - 1], atoms[14 - 1]))
-    ]
-    chex = Molecule(atoms, bonds)
-    copied_chex = copy.deepcopy(chex)
-
-    return m1a, m1b, m2, chex, copied_chex
-
-
 def run_unit_tests():
+    from squid.unittests.examples import get_unit_test_structures
     m1a, m1b, m2, chex, copied_chex = get_unit_test_structures()
 
     assert m1a == m1b, "Error - Unable to identify identical molecules."
@@ -590,6 +500,32 @@ def run_unit_tests():
     copied_chex.set_positions(flat_chex)
     assert all(flat_chex == copied_chex.flatten()),\
         "Error - set_positions failed."
+
+    # Assess rotation
+    atoms = [
+        Atom("H1", 1, 0, 0),
+        Atom("H2", 0, 1, 0),
+        Atom("H3", 0, 0, 1),
+    ]
+    mol = Molecule(
+        atoms,
+        bonds=[Connector((atoms[0], atoms[1])),
+               Connector((atoms[1], atoms[2]))]
+    )
+    m = [[1., 0., 0.],
+         [0., 0., -1.],
+         [0., 1., 0.]]
+    mol.rotate(m, None)
+    EPS = 1E-6
+    assert np.linalg.norm(
+        mol.atoms[0].flatten() - np.array((1.000, 0.000, 0.000))) < EPS,\
+        "Error - Failed rotation!"
+    assert np.linalg.norm(
+        mol.atoms[1].flatten() - np.array((0.000, 0.000, 1.000))) < EPS,\
+        "Error - Failed rotation!"
+    assert np.linalg.norm(
+        mol.atoms[2].flatten() - np.array((0.000, -1.000, 0.000))) < EPS,\
+        "Error - Failed rotation!"
 
     print("squid.structures.molecule - All unit tests passed!")
 

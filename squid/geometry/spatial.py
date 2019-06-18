@@ -1,7 +1,7 @@
 import scipy
 import numpy as np
+from squid.utils import cast
 from scipy.linalg.decomp_svd import svd
-from squid.structures.molecule import Molecule
 
 
 def motion_per_frame(frames):
@@ -16,7 +16,7 @@ def motion_per_frame(frames):
 
     **Returns**
 
-        motion: *list, float*
+        motion: *np.array, float*
             List of motion between consecutive frames (frame_i vs
             frame_(i - 1)).  As len(motion) = len(frames), this means that
             motion[0] = 0.
@@ -26,11 +26,11 @@ def motion_per_frame(frames):
         for i in range(1, len(atom_list)):
             a = atom_list[i - 1]
             b = atom_list[i]
-            per_state_avg[i] += np.linalg.norm(a - b)
+            per_state_avg[i] += np.linalg.norm(a.flatten() - b.flatten())
     motion = []
     for x in per_state_avg:
         motion.append(x / len(frames[0]))
-    return motion
+    return np.array(motion)
 
 
 def rotation_matrix(axis, theta, units="deg"):
@@ -57,6 +57,11 @@ def rotation_matrix(axis, theta, units="deg"):
 
         * http://stackoverflow.com/questions/6802577/python-rotation-of-3d-vector/25709323#25709323
     """
+    cast.assert_vec(axis, length=3, numeric=True)
+    axis = np.array(axis)
+    assert cast.is_numeric(theta),\
+        "Error - Theta should be a numerical value (it is %s)." % str(theta)
+    theta = float(theta)
     if "deg" in units.lower():
         theta = np.radians(theta)
     return scipy.linalg.expm(
@@ -85,7 +90,7 @@ def random_rotation_matrix(limit_angle=None, lower_bound=0.1,
 
     **Returns**
 
-        frames: *list, list, float*
+        frames: *np.array, list, float*
             A random rotation matrix.
 
     **References**
@@ -96,7 +101,7 @@ def random_rotation_matrix(limit_angle=None, lower_bound=0.1,
         return np.eye(3).tolist()
 
     for _ in range(MAXITER):
-        x = [np.random() for i in range(3)]
+        x = [np.random.random() for i in range(3)]
         theta = x[0] * 2 * np.pi
         phi = x[1] * 2 * np.pi
         z = x[2] * 2
@@ -134,14 +139,14 @@ def random_rotation_matrix(limit_angle=None, lower_bound=0.1,
         M[2][2] = 1.0 - z   # This equals Vz * Vz - 1.0
 
         if limit_angle is None:
-            return M
+            return np.array(M)
 
         # Else, we calculate the angle of rotation
         # https://en.wikipedia.org/wiki/Rotation_matrix,
         #     Tr(A) = 1 + 2 * cos(angle)
         angle = np.arccos(0.5 * (np.trace(M) - 1.0))
         if angle <= limit_angle:
-            return M
+            return np.array(M)
 
     raise Exception("Error in geometry.transform.rand_rotation.  \
 Unable to find a matrix within %d loops." % MAXITER)
@@ -218,6 +223,11 @@ def orthogonal_procrustes(A, ref_matrix, reflection=False):
           -without-reflection/896635
     """
 
+    assert hasattr(A, "__len__") and hasattr(ref_matrix, "__len__"),\
+        "Error - A and ref_matrix must be lists of atomic coordinates!"
+    cast.assert_vec(A[0], length=3, numeric=True)
+    cast.assert_vec(ref_matrix[0], length=3, numeric=True)
+
     A = np.asarray_chkfinite(A)
     ref_matrix = np.asarray_chkfinite(ref_matrix)
 
@@ -283,8 +293,9 @@ def mvee(points, tol=0.001):
         * http://stackoverflow.com/questions/14016898/port-matlab-bounding-ellipsoid-code-to-python/14025140#14025140
     """
 
-    points = Molecule(points).flatten().reshape((-1, 3))
-    points = np.asmatrix(points)
+    points = np.asmatrix(np.array([
+        a.flatten() for a in points
+    ]).flatten().reshape((-1, 3)))
     N, d = points.shape
     if N < 4:
         raise Exception("Error - mvee only works on 4 or more atoms.")
@@ -308,3 +319,74 @@ def mvee(points, tol=0.001):
     points = np.asarray(A).flatten().reshape((-1, 3))
     centroid = np.squeeze(np.asarray(c))
     return points, centroid
+
+
+def run_unit_tests():
+    from squid.unittests.examples import get_test_frames
+    from squid.unittests.examples import get_unit_test_structures
+    frames = get_test_frames()
+    _, _, _, chex, chex_copied = get_unit_test_structures()
+
+    # Test motion_per_frame
+    EPS = 1E-6
+    mpf = motion_per_frame(frames)
+    mpf_bench = np.array([
+        0.000000, 2.647889, 3.001952, 3.032599, 3.683384, 3.130709,
+        3.694779, 3.197487, 3.130007, 2.972059])
+    assert np.linalg.norm(mpf - mpf_bench) < EPS,\
+        "Error - motion_per_frame frailed."
+
+    # Test MVEE
+    points_held = np.array([
+        np.array([1.61735467e-01, -4.71693888e-05, 2.30673933e-03]),
+        np.array([-4.71693888e-05, 1.61499779e-01, -2.10316248e-04]),
+        np.array([2.30673933e-03, -2.10316248e-04, 3.54226872e-01])])
+    centroid_held = np.array([-0.91044061, -1.93326703, -0.0144016])
+    points, centroid = mvee(chex.atoms)
+    EPS = 1E-6
+    assert all([
+        points_held.shape == points.shape,
+        np.linalg.norm(points_held - points) < EPS,
+        centroid_held.shape == centroid.shape,
+        np.linalg.norm(centroid_held - centroid) < EPS
+    ]), "Error - MVEE failed."
+
+    m = random_rotation_matrix()
+    chex_copied.rotate(m, around=None)
+    R, scale = orthogonal_procrustes(
+        chex.flatten().reshape((-1, 3)),
+        chex_copied.flatten().reshape((-1, 3))
+    )
+    assert np.linalg.norm(m.T - R) < EPS,\
+        "Error - orthogonal_procrustes has failed!"
+    assert abs(scale - 157.179) < 0.01,\
+        "Error - Scale returns differently in orthogonal_procrustes."
+
+    EPS = 1E-3
+    for i in range(10):
+        assert np.linalg.norm(random_rotation_matrix() -
+                              random_rotation_matrix()) > EPS,\
+            "Error - random_rotation_matrix is deterministic!"
+
+    EPS = 1E-6
+    m1a = rotation_matrix([1.0, 0.0, 0.0], 90, units="deg")
+    m1b = rotation_matrix([1.0, 0.0, 0.0], np.deg2rad(90), units="rad")
+    m2 = rotation_matrix([1.3, 10.0, -9.31], -23.4)
+    m1_held = [[1., 0., 0.],
+               [0., 0., -1.],
+               [0., 1., 0.]]
+    m2_held = [[0.91849252, -0.26372572, -0.29465273],
+               [0.27507797, 0.96141714, -0.00303193],
+               [0.28408378, -0.07826767, 0.95559959]]
+    assert np.linalg.norm(m1a - m1_held) < EPS,\
+        "Error - rotation_matrix failed."
+    assert np.linalg.norm(m1b - m1_held) < EPS,\
+        "Error - rotation_matrix failed."
+    assert np.linalg.norm(m2 - m2_held) < EPS,\
+        "Error - rotation_matrix defaults changed, or code failed."
+
+    print("squid.geometry.spatial - All unit tests passed!")
+
+
+if __name__ == "__main__":
+    run_unit_tests()
