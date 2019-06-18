@@ -1,6 +1,7 @@
 import copy
 import scipy
 import numpy as np
+from squid.utils import cast
 from squid.geometry.misc import *
 from squid.geometry.spatial import mvee
 from squid.geometry.spatial import motion_per_frame
@@ -163,10 +164,14 @@ def interpolate(frame_1, frame_2, N):
         frames: *list, list, float*
             List of interpolated frames, inclusive of frame_1 and frame_2.
     """
-    assert all([isinstance(a, Atom) for a in frame_1]),\
-        "Error - Interpolate must take two lists of atoms."
-    assert all([isinstance(a, Atom) for a in frame_2]),\
-        "Error - Interpolate must take two lists of atoms."
+    assert isinstance(frame_1, list),\
+        "Error - frame_1 should be a list of Atom objects."
+    assert isinstance(frame_2, list),\
+        "Error - frame_2 should be a list of Atom objects."
+    assert not cast.check_vec(frame_1[0], length=3, numeric=True),\
+        "Error - frame_1 should be a list of Atom objects."
+    assert not cast.check_vec(frame_2[0], length=3, numeric=True),\
+        "Error - frame_2 should be a list of Atom objects."
     assert N > 0, "Error - Interpolate must have N > 0."
     assert isinstance(N, int),\
         "Error - N must be an integer."
