@@ -218,4 +218,8 @@ PERIODIC_TABLE = [['atomic_num', 'weight (AMU)', 'name', 'sym', 'mp (C)', 'bp (C
                   {'atomic_num': 89, 'weight': 227.0, 'sym': 'Ac', 'ionization': 5.17, 'bp': 3200.0, 'group': 3, 'name': 'Actinium', 'density': 10.07, 'vdw_r': None, 'mp': 1050.0, 'econfig': ['[Rn]', '6d1', '7s2']},
                   {'atomic_num': 90, 'weight': 232.0381, 'sym': 'Th', 'ionization': 6.3067, 'bp': 4790.0, 'group': 102, 'name': 'Thorium', 'density': 11.72, 'vdw_r': 2.75, 'mp': 1750.0, 'econfig': ['[Rn]', '6d2', '7s2']},
                   {'atomic_num': 91, 'weight': 231.0359, 'sym': 'Pa', 'ionization': 5.89, 'bp': None, 'group': 102, 'name': 'Protactinium', 'density': 15.4, 'vdw_r': None, 'mp': 1568.0, 'econfig': ['[Rn]', '5f2', '6d1', '7s2']},
-                  {'atomic_num': 92, 'weight': 238.0289, 'sym': 'U', 'ionization': 6.1941, 'bp': 3818.0, 'group': 102, 'name': 'Uranium', 'density': 18.95, 'vdw_r': 2.65, 'mp': 1132.0, 'econfig': ['[Rn]', '5f3', '6d1', '7s2']}]
+                  {'atomic_num': 92, 'weight': 238.0289, 'sym': 'U', 'ionization': 6.1941, 'bp': 3818.0, 'group': 102, 'name': 'Uranium', 'density': 18.95, 'vdw_r': 2.65, 'mp': 1132.0, 'econfig': ['[Rn]', '5f3', '6d1', '7s2']},
+                  {'atomic_num': 93, 'weight': None, 'sym': None, 'ionization': None, 'bp': None, 'group': None, 'name': None, 'density': None, 'vdw_r': None, 'mp': None, 'econfig': None},
+                  {'atomic_num': 94, 'weight': None, 'sym': None, 'ionization': None, 'bp': None, 'group': None, 'name': None, 'density': None, 'vdw_r': None, 'mp': None, 'econfig': None},
+                  {'atomic_num': 95, 'weight': 243.0, 'sym': 'Am', 'ionization': None, 'bp': 2284.0, 'group': 102, 'name': 'Americium', 'density': 12, 'vdw_r': None, 'mp': 1449.0, 'econfig': ['[Rn]', '5f7', '7s2']},
+]

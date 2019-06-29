@@ -15,7 +15,7 @@ END_ID = "END"
 CHARGE_LOWER = 0.5
 CHARGE_UPPER = 3.0
 CHARGE_UPPER_LIMIT = 4.0
-CHARGE_LOWER_LIMIT = 0.01
+CHARGE_LOWER_LIMIT = 0.0
 
 class Coul(object):
     """
@@ -222,7 +222,7 @@ class Coul(object):
         """
         Given a parameter file, importthe Coulomb parameters if possible.
         **Parameters**
-            atom_types: *list,* :class:`structures.Struct`
+            atom_types: *list, dict, ...*
                 Atom types from a parsed opls parameter file.
             pfptr: *str*
                 The name of a parameter file to be parsed.  If specified,
@@ -238,8 +238,8 @@ class Coul(object):
             atom_types, _, _, _ = opls_utils.parse_pfile(pfptr)
 
         return [
-            cls(index=t.index, charge=t.charge, mass=t.mass,
-                element=(elem_i2s(t.element) if t.element != 0 else "X"))
+            cls(index=t["index"], charge=t["charge"], mass=t["mass"],
+                element=(elem_i2s(t["element"]) if t["element"] != 0 else "X"))
             for t in atom_types if check_restriction(t, restrict)
         ]
 

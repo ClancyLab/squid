@@ -179,15 +179,31 @@ class LJ(object):
             self.index, self.sigma, self.epsilon = params
         self.validate()
 
-    def validate(self):
+    def validate(self, warn=True):
         '''
         This function will validate data integrity.  In this case, we simply
         ensure data types are appropriate.
         '''
         self.index = str(self.index)
         self.sigma, self.epsilon = float(self.sigma), float(self.epsilon)
-        assert self.sigma > 0, "In LJ (index %s), sigma should be larger than 0! It is %f" % (self.index, self.sigma)
-        assert self.epsilon >= 0, "In LJ (index %s), epsilon should be larger than 0! It is %f" % (self.index, self.epsilon)
+
+        MIN_SIGMA = 1E-4
+        MIN_EPSILON = 1E-4
+
+        if warn:
+            if self.sigma <= 0.0:
+                print("Warning, in LJ (index %s), sigma is %f.  It should \
+be greater than 0!  Setting to %.2f."
+                      % (self.index, self.sigma, MIN_SIGMA))
+            if self.epsilon < 0.0:
+                print("Warning, in LJ (index %s), epsilon is %f.  It should \
+be greater than 0!  Setting to %.2f."
+                      % (self.index, self.epsilon, MIN_EPSILON))
+        else:
+            assert self.sigma > 0, "In LJ (index %s), sigma should be larger \
+than 0! It is %f" % (self.index, self.sigma)
+            assert self.epsilon >= 0, "In LJ (index %s), epsilon should be \
+larger than 0! It is %f" % (self.index, self.epsilon)
 
     @staticmethod
     def parse_line(line):
@@ -275,7 +291,7 @@ class LJ(object):
         '''
         Given a parameter file, inport the LJ parameters if possible.
         **Parameters**
-            atom_types: *list,* :class:`structures.Struct`
+            atom_types: *list, dict, ...*
                 Atom types from a parsed opls parameter file.
             pfptr: *str*
                 The name of a parameter file to be parsed.  If specified,
@@ -291,7 +307,7 @@ class LJ(object):
             atom_types, _, _, _ = opls_utils.parse_pfile(pfptr)
 
         return [
-            cls(index=t.index, sigma=t.vdw_r, epsilon=t.vdw_e)
+            cls(index=t["index"], sigma=t["vdw_r"], epsilon=t["vdw_e"])
             for t in atom_types if check_restriction(t, restrict)
         ]
 

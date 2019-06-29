@@ -15,7 +15,6 @@ files before ever importing frc_opls.
 # System imports
 import re
 # Squid imports
-from squid.structures import Struct
 from squid import sysconst
 
 
@@ -56,48 +55,50 @@ def parse_pfile(parameter_file=sysconst.opls_path, pair_style='lj/cut'):
             continue
         if columns[0] == 'atom':
             m = re.match(atom_line, line)
-            atom_type = Struct(
-                index=int(m.group(1)), index2=int(m.group(2)),
-                element_name=m.group(3), notes=m.group(4),
-                element=int(m.group(5)), mass=float(m.group(6)),
-                bond_count=int(m.group(7)), style=pair_style
-            )
-            if '(UA)' in atom_type.notes:
-                atom_type.element = 0  # reject united-atom parameters
+            atom_type = {
+                "index": int(m.group(1)), "index2": int(m.group(2)),
+                "element_name": m.group(3), "notes": m.group(4),
+                "element": int(m.group(5)), "mass": float(m.group(6)),
+                "bond_count": int(m.group(7)), "style": pair_style
+            }
+            if '(UA)' in atom_type.keys():
+                atom_type["element"] = 0  # reject united-atom parameters
             atom_types.append(atom_type)
         elif columns[0] == 'vdw':
-            atom_types[int(columns[1]) - 1].vdw_r = float(columns[2])
-            atom_types[int(columns[1]) - 1].vdw_e = float(columns[3])
+            # It makes no sense to have vdw_r = 0.  So, we set it to a min
+            # of some EPS which is really close to 0.
+            atom_types[int(columns[1]) - 1]["vdw_r"] = float(columns[2])
+            atom_types[int(columns[1]) - 1]["vdw_e"] = float(columns[3])
         elif columns[0] == 'charge':
-            atom_types[int(columns[1]) - 1].charge = float(columns[2])
+            atom_types[int(columns[1]) - 1]["charge"] = float(columns[2])
         elif columns[0] == 'bond':
             bond_types.append(
-                Struct(
-                    index2s=tuple(
+                {
+                    "index2s": tuple(
                         [int(s) for s in columns[1:3]]
                     ),
-                    e=float(columns[3]),
-                    r=float(columns[4]),
-                    style='harmonic'))
+                    "e": float(columns[3]),
+                    "r": float(columns[4]),
+                    "style": 'harmonic'})
         elif columns[0] == 'angle':
             angle_types.append(
-                Struct(
-                    index2s=tuple(
+                {
+                    "index2s": tuple(
                         [int(s) for s in columns[1:4]]
                     ),
-                    e=float(columns[4]),
-                    angle=float(columns[5]),
-                    style='harmonic'))
+                    "e": float(columns[4]),
+                    "angle": float(columns[5]),
+                    "style": 'harmonic'})
         elif columns[0] == 'torsion':
             dihedral_types.append(
-                Struct(
-                    index2s=tuple(
+                {
+                    "index2s": tuple(
                         [int(s) for s in columns[1:5]]
                     ),
-                    e=tuple([float(s) for s in columns[5::3]]),
-                    style='opls'))
-            if len(dihedral_types[-1].e) == 3:
-                dihedral_types[-1].e = dihedral_types[-1].e + (0.,)
+                    "e": tuple([float(s) for s in columns[5::3]]),
+                    "style": 'opls'})
+            if len(dihedral_types[-1]["e"]) == 3:
+                dihedral_types[-1]["e"] = dihedral_types[-1]["e"] + (0.,)
         elif columns[0] == 'pair_type':
             pass
 

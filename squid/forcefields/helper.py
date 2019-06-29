@@ -67,8 +67,8 @@ def check_restriction(p, restrict):
     elif is_struct(p):
         return all([str(i) in restrict for i in p.index2s])
     else:
-        print type(p)
-        print p
+        print(type(p))
+        print(p)
         raise Exception("Error - Incorrect object type passed to check_restrict")
 
 

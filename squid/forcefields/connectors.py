@@ -224,8 +224,8 @@ class Bond(HarmonicConnector):
             _, bond_types, _, _ = opls_utils.parse_pfile(pfptr)
 
         return [
-            cls(indices=t.index2s, energies=[t.e], equilibs=[t.r])
-            for t in bond_types if check_restriction(t.index2s, restrict)
+            cls(indices=t["index2s"], energies=[t["e"]], equilibs=[t["r"]])
+            for t in bond_types if check_restriction(t["index2s"], restrict)
         ]
 
 
@@ -250,8 +250,8 @@ class Angle(HarmonicConnector):
             _, _, angle_types, _ = opls_utils.parse_pfile(pfptr)
 
         return [
-            cls(indices=t.index2s, energies=[t.e], equilibs=[t.angle])
-            for t in angle_types if check_restriction(t.index2s, restrict)
+            cls(indices=t["index2s"], energies=[t["e"]], equilibs=[t["angle"]])
+            for t in angle_types if check_restriction(t["index2s"], restrict)
         ]
 
 
@@ -276,6 +276,6 @@ class Dihedral(HarmonicConnector):
             _, _, _, dihedral_types = opls_utils.parse_pfile(pfptr)
 
         return [
-            cls(indices=t.index2s, energies=t.e, equilibs=[])
-            for t in dihedral_types if check_restriction(t.index2s, restrict)
+            cls(indices=t["index2s"], energies=t["e"], equilibs=[])
+            for t in dihedral_types if check_restriction(t["index2s"], restrict)
         ]
