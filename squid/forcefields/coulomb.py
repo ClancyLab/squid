@@ -3,6 +3,7 @@ The coulomb object.  This stores the index and charge.
 
 """
 
+import copy
 import numpy as np
 
 from squid.units import elem_i2s, elem_weight
@@ -16,6 +17,7 @@ CHARGE_LOWER = 0.5
 CHARGE_UPPER = 3.0
 CHARGE_UPPER_LIMIT = 4.0
 CHARGE_LOWER_LIMIT = 0.0
+
 
 class Coul(object):
     """
@@ -31,23 +33,34 @@ class Coul(object):
         coulomb: :class:`Coul`
             A Coul object.
     """
-    def __init__(self, index=None, charge=None, mass=None, element=None, line=None):
+    def __init__(self, index=None, charge=None,
+                 mass=None, element=None, line=None):
         # How many parameters exist in this potential
         self.N_params = 1
 
         if line is not None and all([x is None for x in [index, charge]]):
             self.assign_line(line)
         elif line is None and all([x is not None for x in [index, charge]]):
-            assert not isinstance(index, list), "In Coul, initialized with index being a list, not a string/int!"
-            self.index, self.charge, self.mass, self.element = index, charge, mass, element
+            assert not isinstance(index, list),\
+                "In Coul, index is a list, not a string/int!"
+            self.index, self.charge, self.mass, self.element =\
+                index, charge, mass, element
         else:
-            raise Exception("Either specify index and charge, or the line to be parsed, but not both.")
+            raise Exception("\
+Either specify index and charge, or the line to be parsed, but not both.")
 
         # Assign default bounds
         self.charge_bounds = tuple(
             sorted(
-                [np.sign(self.charge) * max(abs(self.charge) * 0.5, CHARGE_LOWER_LIMIT),
-                 np.sign(self.charge) * min(abs(self.charge) * 1.5, CHARGE_UPPER_LIMIT)]))
+                [np.sign(self.charge) * max(abs(self.charge) * 0.5,
+                 CHARGE_LOWER_LIMIT),
+                 np.sign(self.charge) * min(abs(self.charge) * 1.5,
+                 CHARGE_UPPER_LIMIT)]))
+
+        # Set a default mass if mass is None
+        if self.mass is None and self.element is not None:
+            self.mass = elem_weight(self.element)
+
         self.validate()
 
     def __repr__(self):
@@ -79,7 +92,8 @@ class Coul(object):
         **Parameters**
             bounds: *int, optional*
                 Whether to output the lower bounds (0), or upper boudns (1).
-                If None, then the parameters themselves are output instead (default).
+                If None, then the parameters themselves are output instead
+                (default).
         **Returns**
             Coul: *str*
                 A string representation of Coul.  The index and the charge (to
@@ -87,9 +101,13 @@ class Coul(object):
         """
         self.validate()
         if bounds is not None:
-            return "%s %.2f %s %.4f" % (self.index, self.charge_bounds[bounds], self.element, self.mass)
+            return "%s %.2f %s %.4f" % (
+                self.index, self.charge_bounds[bounds],
+                self.element, self.mass)
         else:
-            return "%s %.2f %s %.4f" % (self.index, self.charge, self.element, self.mass)
+            return "%s %.2f %s %.4f" % (
+                self.index, self.charge,
+                self.element, self.mass)
 
     def print_lower(self):
         return self._printer(bounds=0)
@@ -105,7 +123,8 @@ class Coul(object):
                 Whether to also include the indices in the list.
         **Returns**
             coul: *list, str/float*
-                A list, holding the string of the index and the float of the charge.
+                A list, holding the string of the index and the float of
+                the charge.
         """
         self.validate()
 
@@ -133,7 +152,9 @@ class Coul(object):
         **Returns**
             None
         """
-        assert len(params) in [1, 2], "In Coul, tried packing %d parameters.  Should be either 1 or 2!" % len(params)
+        assert len(params) in [1, 2],\
+            "In Coul, tried packing %d parameters. \
+Should be either 1 or 2!" % len(params)
         if len(params) > 1:
             self.index, self.charge = params
         else:
@@ -142,12 +163,16 @@ class Coul(object):
 
     def validate(self):
         """
-        This function will validate data integrity.  
+        This function will validate data integrity.
         In this case, we simply ensure data types are appropriate.
         """
         self.index, self.charge = str(self.index), float(self.charge)
-        assert abs(self.charge) <= CHARGE_UPPER_LIMIT, "In Coul, tried assigning an unreasonably large charge! (Q = %.2f)" % self.charge
-        assert abs(self.charge) >= CHARGE_LOWER_LIMIT, "In Coul, tried assigning an unreasonably small charge! (Q = %.2f)" % self.charge
+        assert abs(self.charge) <= CHARGE_UPPER_LIMIT,\
+            "In Coul, tried assigning an unreasonably large charge! \
+(Q = %.2f)" % self.charge
+        assert abs(self.charge) >= CHARGE_LOWER_LIMIT,\
+            "In Coul, tried assigning an unreasonably small charge! \
+(Q = %.2f)" % self.charge
 
     @staticmethod
     def parse_line(line):
@@ -167,22 +192,28 @@ class Coul(object):
         return index, charge, element, mass
 
     def assign_line(self, line):
-        self.index, self.charge, self.element, self.mass = self.parse_line(line)
+        self.index, self.charge, self.element, self.mass =\
+            self.parse_line(line)
         self.validate()
 
     def fix(self, params='all', value=None):
         """
-        This will fix these parameters by assigning bounds to the values themselves.
+        This will fix these parameters by assigning bounds to the
+        values themselves.
         """
         if params in ['all', 'charge']:
             if value is not None:
                 if isinstance(value, list) or isinstance(value, tuple):
-                    assert len(value) == 1, "Error - tried setting charge to some odd list %s" % str(value)
+                    assert len(value) == 1,\
+                        "Error - tried setting charge to some odd list %s"\
+                        % str(value)
                     value = value[0]
                 self.charge = float(value)
             self.charge_bounds = (self.charge, self.charge)
         else:
-            raise Exception("In Coulomb, tried fixing %s parameter (does not exist)!" % params)
+            raise Exception(
+                "In Coulomb, tried fixing %s parameter (does not exist)!"
+                % params)
 
     @classmethod
     def load_smrff(cls, pfile, pfptr=None, restrict=None):
@@ -214,7 +245,8 @@ class Coul(object):
 
         return [
             cls(index=index, charge=charge, element=element, mass=mass)
-            for index, charge, element, mass in pfile if check_restriction(index, restrict)
+            for index, charge, element, mass in pfile
+            if check_restriction(index, restrict)
         ]
 
     @classmethod
@@ -255,7 +287,8 @@ class Coul(object):
             elems: *list, str*
                 List of the elements (in the same order as atom_types).
             signs: *list, float*
-                The list of the signs of the charges (in the same order as the atom_types).
+                The list of the signs of the charges (in the same order as
+                the atom_types).
 
         **Returns**
 
@@ -267,8 +300,10 @@ class Coul(object):
         coul_objs = []
 
         for atype, elem, sign in zip(atom_types, elems, signs):
-            assert sign in [-1.0, 1.0], "Error - sign is not valid! Must be -1.0 or 1.0"
-            charge_bounds = tuple(sorted([CHARGE_LOWER * float(sign), CHARGE_UPPER * float(sign)]))
+            assert sign in [-1.0, 1.0],\
+                "Error - sign is not valid! Must be -1.0 or 1.0"
+            charge_bounds = tuple(sorted([
+                CHARGE_LOWER * float(sign), CHARGE_UPPER * float(sign)]))
             charge = random_in_range(charge_bounds)
             mass = elem_weight(elem)
             coul_objs.append(cls(atype, charge, mass, elem))
@@ -276,3 +311,46 @@ class Coul(object):
 
         return coul_objs
 
+
+def run_unit_tests():
+    # Ensure we do not allow a blank Coul
+    try:
+        _ = Coul(
+            index=None, charge=None, mass=None, element=None, line=None)
+        raise ValueError("Coul initialization failed!")
+    except Exception:
+        pass
+    # Ensure we do not allow a blank Coul (which should be None on all
+    # by default)
+    try:
+        _ = Coul()
+        raise ValueError("Coul initialization failed!")
+    except Exception:
+        pass
+
+    # Ensure strings have not changed
+    ct1 = Coul(
+        index=1, charge=1, element="He"
+    )
+    ct1_s = "1 1.00 He 4.0026"
+    assert ct1_s == str(ct1).strip(), "Error - String formatting has changed"
+    ct2 = Coul(
+        index=3, charge=-1, element="Mo"
+    )
+    ct2_s = "3 -1.00 Mo 95.9400"
+    assert ct2_s == str(ct2).strip(), "Error - String formatting has changed"
+
+    ct2_hold = copy.deepcopy(ct2)
+    ct2.pack(ct2.unpack())
+    assert ct2_hold == ct2, "Error - Packing and Unpacking has failed"
+
+    # Comparison is done only by index.  Thus, these should still equate!
+    ct2.charge = 0.0
+    assert ct2_hold == ct2, "Error - Unable to compare atoms in Coul"
+    # And these should not equate
+    ct2.index = "32113"
+    assert ct2_hold != ct2, "Error - Unable to compare atoms in Coul"
+
+
+if __name__ == "__main__":
+    run_unit_tests()
