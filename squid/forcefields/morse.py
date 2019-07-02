@@ -80,7 +80,8 @@ class Morse(object):
             A Morse object.
     '''
 
-    def __init__(self, indices=None, D0=None, alpha=None, r0=None, rc=None, line=None):
+    def __init__(self, indices=None, D0=None, alpha=None,
+                 r0=None, rc=None, line=None):
         # Assign default bounds
         # For the programmer: The bounds need reconsidering.
         self.D0_bounds = D0_BOUNDS
@@ -91,16 +92,19 @@ class Morse(object):
         # How many parameters exist in this potential
         self.N_params = 4
 
-        if line is not None and all([x is None for x in [indices, D0, alpha, r0, rc]]):
+        values = (indices, D0, alpha, r0, rc)
+        if line is not None and all([x is None for x in values]):
             self.assign_line(line)
-        elif line is None and all([x is not None for x in [indices, D0, alpha, r0, rc]]):
-            assert isinstance(indices, list) or isinstance(indices, tuple), "In Morse, initialized with indices not being a list or tuple!"
+        elif line is None and all([x is not None for x in values]):
+            assert isinstance(indices, list) or isinstance(indices, tuple),\
+                "In Morse, initialized with indices not being a list or tuple!"
 
-            self.indices, self.D0, self.alpha, self.r0, self.rc = indices, D0, alpha, r0, rc
+            self.indices, self.D0, self.alpha, self.r0, self.rc = values
 
             self.validate()
         else:
-            raise Exception("Either specify all Morse parameters, or the line to be parsed, but not both.")
+            raise Exception("Either specify all Morse parameters, or the line \
+to be parsed, but not both.")
 
     def __repr__(self):
         '''
@@ -117,9 +121,13 @@ class Morse(object):
     def __eq__(self, other):
 
         if isinstance(other, tuple) or isinstance(other, list):
-            indices = [str(o) if str(o) != "*" else str(i) for o, i in zip(other, self.indices)]
+            indices = [
+                str(o) if str(o) != "*" else str(i)
+                for o, i in zip(other, self.indices)]
         elif hasattr(other, indices):
-            indices = [str(o) if str(o) != "*" else str(i) for o, i in zip(other.indices, self.indices)]
+            indices = [
+                str(o) if str(o) != "*" else str(i)
+                for o, i in zip(other.indices, self.indices)]
         else:
             return False
 
@@ -127,7 +135,8 @@ class Morse(object):
                 all([x == y for x, y in zip(self.indices, indices[::-1])]))
 
     def __hash__(self):
-        return hash(tuple(self.unpack(with_indices=True) + self.unpack(bounds=0) + self.unpack(bounds=1)))
+        # return hash(tuple(self.unpack(with_indices=True) + self.unpack(bounds=0) + self.unpack(bounds=1)))
+        return hash(self.indices)
 
     def _printer(self, with_indices=True, bounds=None):
         '''

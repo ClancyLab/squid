@@ -83,7 +83,10 @@ Either specify index and charge, or the line to be parsed, but not both.")
         return index == "*" or str(self.index) == index
 
     def __hash__(self):
-        return hash(tuple(self.unpack(with_indices=True)))
+        # We only care about the index here, as we should never have two Coul
+        # objects with the same index!
+        # return hash(tuple(self.unpack(with_indices=True)))
+        return hash(self.index)
 
     def _printer(self, bounds=None):
         """
@@ -252,7 +255,7 @@ Should be either 1 or 2!" % len(params)
     @classmethod
     def load_opls(cls, atom_types, pfptr=None, restrict=None):
         """
-        Given a parameter file, importthe Coulomb parameters if possible.
+        Given a parameter file, import the Coulomb parameters if possible.
         **Parameters**
             atom_types: *list, dict, ...*
                 Atom types from a parsed opls parameter file.
@@ -350,6 +353,20 @@ def run_unit_tests():
     # And these should not equate
     ct2.index = "32113"
     assert ct2_hold != ct2, "Error - Unable to compare atoms in Coul"
+
+    # Should unpack as index then charge
+    ct2.index = "12"
+    ct2.charge = -1.3
+    should_be = [ct2.index, ct2.charge]
+    assert all([x == y for x, y in zip(ct2.unpack(), should_be)]),\
+        "Error - Unpack is not correct!"
+
+    # Test parsing of a line
+    ct3 = Coul(line="2 0.1 He 2.012")
+    assert ct3.index == "2", "Error - Failed to parse index"
+    assert ct3.charge == 0.1, "Error - Failed to parse charge"
+    assert ct3.element == "He", "Error - Failed to parse element"
+    assert ct3.mass == 2.012, "Error - Failed to parse mass"
 
 
 if __name__ == "__main__":
