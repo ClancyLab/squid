@@ -13,6 +13,22 @@ BOUND_EPS = 1E-6
 TERSOFF_PFILE_ID = "TERSOFF"
 END_ID = "END"
 
+# DEFAULT BOUNDS
+LAMBDA3_BOUNDS = (0.0, 2.0)
+C_BOUNDS = (0.1, 150000.0)
+D_BOUNDS = (0.1, 50.0)
+COSTHETA0_BOUNDS = (-1.0, 1.0)
+R_CUT_BOUNDS = (0.0002, 5.0)
+R_GEN_BOUNDS = (1.1, 4.0)
+D_CUT_BOUNDS = (0.0001, 1.1)
+D_GEN_BOUNDS = (0.1, 1.0)
+N_BOUNDS = (0.1, 2.0)
+LAMBDA2_BOUNDS = (0.5, 5.0)
+B_BOUNDS = (200.0, 300000.0)
+B_GEN_BOUNDS = (200.0, 50000.0)
+LAMBDA1_BOUNDS = (0.5, 5.0)
+A_BOUNDS = (200.0, 300000.0)
+
 """
 The Tersoff class contains:
 - :func:`__init__`
@@ -290,18 +306,18 @@ class Tersoff(object):
         Lambda3 appears to normally be set to 0 in the literature; however, the highest I
         found was around 1.8.  As such, lambda3 is set here from 0.0 to 2.0.
         '''
-        self.lambda3_bounds = (0.0, 2.0)
-        self.c_bounds = (0.1, 150000.0)
-        self.d_bounds = (0.1, 50.0)
-        self.costheta0_bounds = (-1.0, 1.0)
-        self.R_bounds = (0.0002, 5.0)
-        self.D_bounds = (0.0001, 1.1)
+        self.lambda3_bounds = LAMBDA3_BOUNDS
+        self.c_bounds = C_BOUNDS
+        self.d_bounds = D_BOUNDS
+        self.costheta0_bounds = COSTHETA0_BOUNDS
+        self.R_bounds = R_CUT_BOUNDS
+        self.D_bounds = D_CUT_BOUNDS
         if self.indices is None or self.indices[-1] == self.indices[-2]:
-            self.n_bounds = (0.1, 2.0)
-            self.lambda2_bounds = (0.5, 5.0)
-            self.B_bounds = (200.0, 300000.0)
-            self.lambda1_bounds = (0.5, 5.0)
-            self.A_bounds = (200.0, 300000.0)
+            self.n_bounds = N_BOUNDS
+            self.lambda2_bounds = LAMBDA2_BOUNDS
+            self.B_bounds = B_BOUNDS
+            self.lambda1_bounds = LAMBDA1_BOUNDS
+            self.A_bounds = A_BOUNDS
         elif self.indices[-1] != self.indices[-2]:
             self.n_bounds = (1.0, 1.0)
             self.lambda2_bounds = (1.0, 1.0)
@@ -783,19 +799,19 @@ class Tersoff(object):
                 beta = 1
                 gamma = random_in_range((0.0, 1.0))
 
-            lambda3 = random_in_range((0, 2.0))
-            c = random_in_range((0.1, 150000.0))
-            d = random_in_range((0.1, 50.0))
-            costheta0 = random_in_range((-1.0, 1.0))
-            n = random_in_range((0.1, 2.0))
-            lambda2 = random_in_range((0.5, 5.0))
+            lambda3 = random_in_range(LAMBDA3_BOUNDS)
+            c = random_in_range(C_BOUNDS)
+            d = random_in_range(D_BOUNDS)
+            costheta0 = random_in_range(COSTHETA0_BOUNDS)
+            n = random_in_range(N_BOUNDS)
+            lambda2 = random_in_range(LAMBDA2_BOUNDS)
             # We expect A >> B, so we randomly generate B to being smaller.
             # However, we do have a B_bounds that goes up to 300,000.0
-            B = random_in_range((200.0, 50000.0))
-            R = random_in_range((1.1, 3.0))
-            D = random_in_range((0.1, 1.0))
-            lambda1 = random_in_range((0.5, 5.0))
-            A = random_in_range((200.0, 300000.0))
+            B = random_in_range(B_GEN_BOUNDS)
+            R = random_in_range(R_GEN_BOUNDS)
+            D = random_in_range(D_GEN_BOUNDS)
+            lambda1 = random_in_range(LAMBDA_1_BOUNDS)
+            A = random_in_range(A_BOUNDS)
 
             Tersoff_Objs.append(
                 cls(

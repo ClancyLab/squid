@@ -24,6 +24,7 @@ procrustes [file.xyz] [Options]
 -nframes, -n     :            :  If specified, interpolate to exactly n frames.
 -between, -b     :            :  If specified, then interpolation is only run between
                                  the two frames.  Note, this is [x, y) inclusive.
+-np              :            :  If flag is used, no procrustes is run.
 
 Default behaviour is to use procrustes on an xyz to best align
 the coordinates, and then to save a new xyz file with the name
@@ -60,6 +61,7 @@ rmax = 0.5
 fmax = 25
 nframes = None
 b_start, b_stop = None, None
+run_procrustes = True
 
 if ".xyz" in file_name:
     file_name = file_name.split(".xyz")[0]
@@ -100,6 +102,9 @@ if "-rmax" in argv[2:]:
 if "-fmax" in argv[2:]:
     fmax = int(argv[argv.index('-fmax') + 1])
 
+if "-np" in argv[2:]:
+    run_procrustes = False
+
 frames = files.read_xyz(path + file_name + ".xyz")
 
 if interpolate:
@@ -107,7 +112,7 @@ if interpolate:
     if b_start is not None:
         frames = frames[b_start:b_stop]
     frames = geometry.smooth_xyz(frames, R_MAX=rmax, F_MAX=fmax,
-                                 PROCRUSTES=True, N_FRAMES=nframes)
+                                 PROCRUSTES=run_procrustes, N_FRAMES=nframes)
     if b_start is not None:
         a = frames_hold[:b_start]
         b = frames
@@ -120,5 +125,6 @@ if interpolate:
             c = [c]
         frames = a + b + c
 
-_ = geometry.procrustes(frames)
+if run_procrustes:
+    _ = geometry.procrustes(frames)
 files.write_xyz(frames, path + file_name + append + ".xyz")
