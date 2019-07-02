@@ -16,7 +16,7 @@ from forcefields.connectors import Bond, Angle, Dihedral
 from forcefields.smooth_sin import SmoothSin
 import forcefields.helper as ffh
 
-SUPPORTED_STYLES = ["lj/cut/coul/cut", "morse", "tersoff", "opls", "smooth"]
+SUPPORTED_STYLES = ["lj/cut/coul/long", "lj/cut/coul/cut", "morse", "tersoff", "opls", "smooth"]
 SMRFF_DICT = {
     "lj": ["sigma", "epsilon"],
     "coul": ["charge"],
@@ -367,7 +367,7 @@ class Parameters(object):
         assert mask in SUPPORTED_STYLES, "Error - style (%s) is not recognized!" % mask
         if mask == "morse":
             self.morse_mask = True
-        if mask == "lj/cut/coul/cut":
+        if mask in ["lj/cut/coul/cut", "lj/cut/coul/long"]:
             self.lj_mask = True
             self.coul_mask = True
         if mask == "tersoff":
@@ -678,10 +678,16 @@ class Parameters(object):
         script = []
 
         self.write_tfile = write_file
+        local_style = self.get_smrff_style()
 
         if style in ["lj/cut/coul/cut", 'all'] and all([self.lj_mask, self.coul_mask]):
-            script.append(self.dump_lj_cut_coul_cut())
-            script.append(self.dump_set_charge())
+            if "lj/cut/coul/cut" in local_style:
+                script.append(self.dump_lj_cut_coul_cut())
+                script.append(self.dump_set_charge())
+        if style in ["lj/cut/coul/long", 'all'] and all([self.lj_mask, self.coul_mask]):
+            if "lj/cut/coul/long" in local_style:
+                script.append(self.dump_lj_cut_coul_long())
+                script.append(self.dump_set_charge())
         if style in ["morse", 'all'] and self.morse_mask:
             script.append(self.dump_morse())
         if style in ["smooth", 'all'] and self.smooth_mask:
@@ -805,6 +811,40 @@ class Parameters(object):
             index += 1
 
         return "\n".join(lammps_command)
+
+    def dump_lj_cut_coul_long(self):
+        '''
+        This function will get the lammps command line argument for
+        lj/cut/coul/long of everything within the Parameters object.
+
+        **Parameters**
+
+            None
+
+        **Returns**
+
+            cmds: *str*
+                A string, separated with new lines, with pair_coeff for each
+                lj/cut/coul/long command possible within this parameter set.
+        '''
+
+        lammps_command = []
+
+        for i in range(len(self.lj_params)):
+            for j in range(i, len(self.lj_params)):
+                if not ffh.check_restriction(self.lj_params[i], self.restrict):
+                    continue
+                if not ffh.check_restriction(self.lj_params[j], self.restrict):
+                    continue
+                sigma_ij = (self.lj_params[i].sigma * self.lj_params[j].sigma) ** 0.5
+                epsilon_ij = (self.lj_params[i].epsilon * self.lj_params[j].epsilon) ** 0.5
+                type_i = int(self.restrict.index(self.lj_params[i].index) + 1)
+                type_j = int(self.restrict.index(self.lj_params[j].index) + 1)
+                type_i, type_j = sorted([type_i, type_j])
+                lammps_command.append('pair_coeff %d %d lj/cut/coul/long %f %f' % (type_i, type_j, epsilon_ij, sigma_ij))
+
+        lammps_command = "\n".join(lammps_command)
+        return lammps_command
 
     def dump_lj_cut_coul_cut(self):
         '''
