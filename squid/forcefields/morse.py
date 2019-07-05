@@ -1,6 +1,7 @@
 '''
 The Morse object. This stores the indices and MORSE parameters.
 '''
+import copy
 from itertools import combinations_with_replacement
 from squid.forcefields.helper import check_restriction
 
@@ -124,7 +125,7 @@ to be parsed, but not both.")
             indices = [
                 str(o) if str(o) != "*" else str(i)
                 for o, i in zip(other, self.indices)]
-        elif hasattr(other, indices):
+        elif hasattr(other, "indices"):
             indices = [
                 str(o) if str(o) != "*" else str(i)
                 for o, i in zip(other.indices, self.indices)]
@@ -147,7 +148,8 @@ to be parsed, but not both.")
                 Whether to also include the indices in the output.
             bounds: *int, optional*
                 Whether to output the lower bounds (0), or upper bounds (1).
-                If None, then the parameters themselves are output instead (default).
+                If None, then the parameters themselves are output instead
+                (default).
         **Returns**
             Morse: *str*
                 A string representation of Morse parameters.
@@ -155,7 +157,9 @@ to be parsed, but not both.")
         '''
         self.validate()
         return (" ".join(list(self.indices)) +
-                "      %.7f   %.7f   %.7f   %.7f" % tuple(self.unpack(with_indices=with_indices, bounds=bounds)[1:]))
+                "      %.7f   %.7f   %.7f   %.7f"
+                % tuple(self.unpack(
+                    with_indices=with_indices, bounds=bounds)[1:]))
 
     def print_lower(self):
         '''
@@ -187,7 +191,8 @@ to be parsed, but not both.")
                 Whether to also include the indices in the list.
             bounds: *int, optional*
                 Whether to output the lower bounds (0), or upper bounds (1).
-                If None, then the parameters themselves are output instead (default).
+                If None, then the parameters themselves are output instead
+                (default).
         **Returns**
             Morse: *list, str/float*
                 A list, holding the string of the indices, D0, alpha, r0, rc.
@@ -199,28 +204,28 @@ to be parsed, but not both.")
         if bounds is not None:
             if with_indices:
                 pkg.append([self.indices,
-                        self.D0_bounds[bounds], self.alpha_bounds[bounds],
-                        self.r0_bounds[bounds], self.rc_bounds[bounds]])
+                            self.D0_bounds[bounds], self.alpha_bounds[bounds],
+                            self.r0_bounds[bounds], self.rc_bounds[bounds]])
             else:
                 pkg.append([self.D0_bounds[bounds], self.alpha_bounds[bounds],
-                        self.r0_bounds[bounds], self.rc_bounds[bounds]])
+                            self.r0_bounds[bounds], self.rc_bounds[bounds]])
         else:
             if with_indices:
-                pkg.append([self.indices,
-                        self.D0, self.alpha, self.r0, self.rc])
+                pkg.append([self.indices, self.D0,
+                            self.alpha, self.r0, self.rc])
             else:
                 pkg.append([self.D0, self.alpha, self.r0, self.rc])
 
         if with_bounds:
             # Get all lower and upper bounds added to pkg
             # After this, pkg = [params, lower, upper]
-            for bnd in zip(zip(self.D0_bounds, self.alpha_bounds, self.r0_bounds, self.rc_bounds)):
+            for bnd in zip(zip(self.D0_bounds, self.alpha_bounds,
+                               self.r0_bounds, self.rc_bounds)):
                 pkg.append(*bnd)
 
             return pkg
 
         return pkg[0]
-
 
     def pack(self, params):
         '''
@@ -231,11 +236,12 @@ to be parsed, but not both.")
         **Returns**
             None
         '''
-        assert len(params) in [4, 5], "In Morse, tried packing %d parameters.  Should be either 4 or 5!" % len(params)
+        assert len(params) in [4, 5], "In Morse, tried packing %d parameters. \
+Should be either 4 or 5!" % len(params)
 
         if len(params) == 5:
             offset = 0
-            self.indices = params[0 + offset]
+            self.indices = list(params[0 + offset])
         else:
             offset = -1
         self.D0 = params[1 + offset]
@@ -256,10 +262,14 @@ to be parsed, but not both.")
         self.r0 = float(self.r0)
         self.rc = float(self.rc)
         params = [self.D0, self.alpha, self.r0, self.rc]
-        bounds = [self.D0_bounds, self.alpha_bounds, self.r0_bounds, self.rc_bounds]
+        bounds = [self.D0_bounds, self.alpha_bounds,
+                  self.r0_bounds, self.rc_bounds]
         names = ["D0", "alpha", "r0", "rc"]
         for param, bound, name in zip(params, bounds, names):
-            assert param >= (bound[0] - BOUND_EPS) and param <= (bound[1] + BOUND_EPS), "In Morse %s, parameter %s = %.2f is outside of it's range = [%.2f, %.2f]!" % (str(self.indices), name, param, bound[0], bound[1])
+            assert param >= (bound[0] - BOUND_EPS) and\
+                param <= (bound[1] + BOUND_EPS),\
+                "In Morse %s, parameter %s = %.2f is outside of it's range = \
+[%.2f, %.2f]!" % (str(self.indices), name, param, bound[0], bound[1])
 
     @staticmethod
     def parse_line(line):
@@ -282,18 +292,24 @@ to be parsed, but not both.")
         return indices, D0, alpha, r0, rc
 
     def assign_line(self, line):
-        self.indices, self.D0, self.alpha, self.r0, self.rc = self.parse_line(line)
+        self.indices, self.D0, self.alpha, self.r0, self.rc =\
+            self.parse_line(line)
         self.validate()
 
     def fix(self, params='all', value=None):
         '''
-        This will fix these parameters by assigning bounds to the values themselves.
+        This will fix these parameters by assigning bounds to the values
+        themselves.
         '''
         if params == 'all':
             if value is not None:
-                assert isinstance(value, list) or isinstance(value, tuple), "Error - Trying to set all Morse params without passing list/tuple (passed %s)." % str(value)
-                assert len(value) == 4, "Error - Not the right number of parameters (4) passed to fix all in Morse (passed %s)." % str(value)
-                self.D0, self.alpha, self.r0, self.rc = [float(f) for f in value]
+                assert isinstance(value, list) or isinstance(value, tuple),\
+                    "Error - Trying to set all Morse params without passing \
+list/tuple (passed %s)." % str(value)
+                assert len(value) == 4, "Error - Not the right number of \
+parameters (4) passed to fix all in Morse (passed %s)." % str(value)
+                self.D0, self.alpha, self.r0, self.rc = [
+                    float(f) for f in value]
             self.D0_bounds = (self.D0, self.D0)
             self.alpha_bounds = (self.alpha, self.alpha)
             self.r0_bounds = (self.r0, self.r0)
@@ -301,33 +317,39 @@ to be parsed, but not both.")
         elif params == 'D0':
             if value is not None:
                 if isinstance(value, list) or isinstance(value, tuple):
-                    assert len(value) == 1, "Error - passed more than one value when fixing D0 in Morse (passed %s)." % str(value)
+                    assert len(value) == 1, "Error - passed more than one value \
+when fixing D0 in Morse (passed %s)." % str(value)
                     value = value[0]
                 self.D0 = float(value)
             self.D0_bounds = (self.D0, self.D0)
         elif params == 'alpha':
             if value is not None:
                 if isinstance(value, list) or isinstance(value, tuple):
-                    assert len(value) == 1, "Error - passed more than one value when fixing alpha in Morse (passed %s)." % str(value)
+                    assert len(value) == 1, "Error - passed more than one value \
+when fixing alpha in Morse (passed %s)." % str(value)
                     value = value[0]
                 self.alpha = float(value)
             self.alpha_bounds = (self.alpha, self.alpha)
         elif params == "r0":
             if value is not None:
                 if isinstance(value, list) or isinstance(value, tuple):
-                    assert len(value) == 1, "Error - passed more than one value when fixing r0 in Morse (passed %s)." % str(value)
+                    assert len(value) == 1, "Error - passed more than one value \
+when fixing r0 in Morse (passed %s)." % str(value)
                     value = value[0]
                 self.r0 = float(value)
             self.r0_bounds = (self.r0, self.r0)
         elif params == "rc":
             if value is not None:
                 if isinstance(value, list) or isinstance(value, tuple):
-                    assert len(value) == 1, "Error - passed more than one value when fixing rc in Morse (passed %s)." % str(value)
+                    assert len(value) == 1, "Error - passed more than one \
+value when fixing rc in Morse (passed %s)." % str(value)
                     value = value[0]
                 self.rc = float(value)
             self.rc_bounds = (self.rc, self.rc)
         else:
-            raise Exception("In Morse, tried fixing %s parameter (does not exist)!" % params)
+            raise Exception(
+                "In Morse, tried fixing %s parameter (does not exist)!"
+                % params)
 
     def set_binder(self):
         '''
@@ -338,7 +360,8 @@ to be parsed, but not both.")
         '''
         self.r0_bounds = (0.5, 4.0)
         if self.r0 > self.r0_bounds[-1] or self.r0 < self.r0_bounds[0]:
-            self.r0 = (self.r0_bounds[-1] - self.r0_bounds[0]) / 2.0 + self.r0_bounds[0]
+            self.r0 = (self.r0_bounds[-1] - self.r0_bounds[0]) / 2.0 +\
+                self.r0_bounds[0]
 
     def set_nonbinder(self):
         '''
@@ -351,46 +374,51 @@ to be parsed, but not both.")
         '''
         self.r0_bounds = (4.0, 10.0)
         if self.r0 > self.r0_bounds[-1] or self.r0 < self.r0_bounds[0]:
-            self.r0 = (self.r0_bounds[-1] - self.r0_bounds[0]) / 2.0 + self.r0_bounds[0]
+            self.r0 = (self.r0_bounds[-1] - self.r0_bounds[0]) / 2.0 +\
+                self.r0_bounds[0]
         self.D0_bounds = (0.1, 50.0)
         if self.D0 > self.D0_bounds[-1] or self.D0 < self.D0_bounds[0]:
-            self.D0 = (self.D0_bounds[-1] - self.D0_bounds[0]) / 2.0 + self.D0_bounds[0]
+            self.D0 = (self.D0_bounds[-1] - self.D0_bounds[0]) / 2.0 +\
+                self.D0_bounds[0]
         self.alpha_bounds = (0.1, 1.0)
-        if self.alpha > self.alpha_bounds[-1] or self.alpha < self.alpha_bounds[0]:
-            self.alpha = (self.alpha_bounds[-1] - self.alpha_bounds[0]) / 2.0 + self.alpha_bounds[0]
+        if self.alpha > self.alpha_bounds[-1] or\
+                self.alpha < self.alpha_bounds[0]:
+            self.alpha = (
+                self.alpha_bounds[-1] - self.alpha_bounds[0]) / 2.0 +\
+                self.alpha_bounds[0]
 
     @classmethod
-    def load_smrff(cls, pfile, pfptr=None, restrict=None):
+    def load_smrff(cls, parsed_file, pfile_name=None, restrict=None):
         '''
         Given a parameter file, import the Morse parameters if possible.
         **Parameters**
-            pfile: *str*
+            parsed_file: *str*
                 A parsed smrff parameter file input string.
                 (no comments or trailing white spaces)
-            pfptr: *str*
+            pfile_name: *str*
                 The name of a parameter file to be parsed.
-                If specified, then pfile is ignored.
-                (you may simply pass None as pfile)
-                (For programmer: The name of this parameter must be changed. It is hard to understand.)
+                If specified, then parsed_file is ignored.
+                (you may simply pass None as parsed_file)
         **Returns**
             Morse_objs: *list, Morse*, or *None*
                 Returns a list of Morse objects if possible, else None.
         '''
         import squid.forcefields.smrff as smrff_utils
 
-        # Ensure correct pfile format, and that we even need to parse it.
-        if pfptr is not None:
-            pfile = smrff_utils.parse_pfile(pfptr)
-        if MORSE_PFILE_ID not in pfile:
+        # Ensure correct parsed_file format, and that we even need to parse it.
+        if pfile_name is not None:
+            parsed_file = smrff_utils.parse_pfile(pfile_name)
+        if MORSE_PFILE_ID not in parsed_file:
             return []
-        pfile = pfile[pfile.index(MORSE_PFILE_ID):]
-        pfile = pfile[:pfile.index(END_ID)].split("\n")[1:-1]
+        parsed_file = parsed_file[parsed_file.index(MORSE_PFILE_ID):]
+        parsed_file = parsed_file[:parsed_file.index(END_ID)].split("\n")[1:-1]
 
-        pfile = [cls.parse_line(line) for line in pfile]
+        parsed_file = [cls.parse_line(line) for line in parsed_file]
 
         return [
             cls(indices=indices, D0=D0, alpha=alpha, r0=r0, rc=rc, line=None)
-            for indices, D0, alpha, r0, rc in pfile if check_restriction(indices, restrict)
+            for indices, D0, alpha, r0, rc in parsed_file
+            if check_restriction(indices, restrict)
         ]
 
     @classmethod
@@ -421,3 +449,64 @@ to be parsed, but not both.")
 
         return morse_objs
 
+
+def run_unit_tests():
+    # Ensure we do not allow a blank Coul
+    try:
+        _ = Morse(
+            indices=None, D0=None, alpha=None,
+            r0=None, rc=None, line=None)
+        raise ValueError("Morse initialization failed!")
+    except Exception:
+        pass
+    # Ensure we do not allow a blank Morse (which should be None on all
+    # by default)
+    try:
+        _ = Morse()
+        raise ValueError("Morse initialization failed!")
+    except Exception:
+        pass
+
+    # Ensure strings have not changed
+    ct1 = Morse(
+        indices=(1, 2), D0=75.0, alpha=1.8,
+        r0=3.1, rc=3.6, line=None
+    )
+    ct1_s = "1 2      75.0000000   1.8000000   3.1000000   3.6000000"
+    assert ct1_s == str(ct1).strip(), "Error - String formatting has changed"
+    ct2 = Morse(
+        indices=("123", "8"), D0=75.0, alpha=1.8,
+        r0=3.1, rc=3.6, line=None
+    )
+    ct2_s = "123 8      75.0000000   1.8000000   3.1000000   3.6000000"
+    assert ct2_s == str(ct2).strip(), "Error - String formatting has changed"
+
+    ct2_hold = copy.deepcopy(ct2)
+    ct2.pack(ct2.unpack())
+    assert ct2_hold == ct2, "Error - Packing and Unpacking has failed"
+
+    # Comparison is done only by index.  Thus, these should still equate!
+    ct2.D0 = 10.0
+    assert ct2_hold == ct2, "Error - Unable to compare atoms in Morse"
+    # And these should not equate
+    ct2.indices = ["32113", "sldjkf"]
+    assert ct2_hold != ct2, "Error - Unable to compare atoms in Morse"
+
+    # Should unpack as index then charge
+    should_be = [ct2.indices, ct2.D0,
+                 ct2.alpha, ct2.r0, ct2.rc]
+    assert all([x == y for x, y in zip(ct2.unpack(), should_be)]),\
+        "Error - Unpack is not correct!"
+
+    # Test parsing of a line
+    ct3 = Morse(line="2 3      75.0000000   1.8000000   3.1000000   3.6000000")
+    assert ct3.indices == ["2", "3"],\
+        "Error - Unable to parse indices from line."
+    assert ct3.D0 == 75, "Error - Unable to parse D0 from line."
+    assert ct3.alpha == 1.8, "Error - Unable to parse alpha from line."
+    assert ct3.r0 == 3.1, "Error - Unable to parse r0 from line."
+    assert ct3.rc == 3.6, "Error - Unable to parse rc from line."
+
+
+if __name__ == "__main__":
+    run_unit_tests()
