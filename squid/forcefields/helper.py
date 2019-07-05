@@ -1,26 +1,4 @@
 import random
-#from squid.structures import Struct
-
-def is_struct(p):
-    '''
-    This function essentially does isinstance(p, struct) without needing
-    to import squid.structures.  Currently there is a cyclic import that would
-    make the later annoying to deal with.  NOTE - HOT FIX - REMOVE ASAP.
-
-    **Parameters**
-
-        p: *obj*
-            Some parameter object, such as Coulomb, Morse, etc.
-
-    **Returns**
-
-        isStruct: *bool*
-            Whether p is a Struct (True) or not (False).
-    '''
-    try:
-        return p.__dict__['__module__'] == 'squid.structures'
-    except:
-        return False
 
 
 def check_restriction(p, restrict):
@@ -64,39 +42,47 @@ def check_restriction(p, restrict):
         if aj is None:
             aj = "*"
         return ai in restrict and aj in restrict
-    elif is_struct(p):
+    elif isinstance(dict, p):
         return all([str(i) in restrict for i in p.index2s])
     else:
         print(type(p))
         print(p)
-        raise Exception("Error - Incorrect object type passed to check_restrict")
+        raise Exception(
+            "Error - Incorrect object type passed to check_restrict")
 
 
 def map_to_lmp_index(p, restrict):
-    assert restrict is not None, "Error - Without restrict we cannot map to lmp index!"
+    assert restrict is not None,\
+        "Error - Without restrict we cannot map to lmp index!"
 
     rkeys = restrict.keys()
 
     if isinstance(p, int) or isinstance(p, str):
-        assert str(p) in rkeys, "Error - %s is not in the restrict list!" % str(p)
+        assert str(p) in rkeys,\
+            "Error - %s is not in the restrict list!" % str(p)
         return restrict[str(p)]
     elif isinstance(p, list) or isinstance(p, tuple):
-        assert all([str(i) in rkeys for i in p]), "Error - %s is not in the restrict list!" % str(p)
+        assert all([str(i) in rkeys for i in p]),\
+            "Error - %s is not in the restrict list!" % str(p)
         return [rkeys[str(i)] for i in p]
     elif hasattr(p, "index") and type(p.index) in [int, str]:
         # Note - we need to also ensure p.index is not a function, as
         # a lot of other objects such as lists have this as a function!
-        assert str(p.index) in rkeys, "Error - %s is not in the restrict list!" % str(p.index)
+        assert str(p.index) in rkeys,\
+            "Error - %s is not in the restrict list!" % str(p.index)
         return restrict[str(p.index)]
     elif hasattr(p, "indices"):
-        assert all([str(i) in rkeys for i in p.indices]), "Error - %s is not in the restrict list!" % str(p.indices)
+        assert all([str(i) in rkeys for i in p.indices]),\
+            "Error - %s is not in the restrict list!" % str(p.indices)
         return [restrict[str(i)] for i in p.indices]
-#    elif isinstance(p, Struct):
-    elif is_struct(p):
-        assert all([str(i) in rkeys for i in p.index2s]), "Error - %s is not in the restrict list!" % str(p.index2s)
+    elif isinstance(dict, p):
+        assert all([str(i) in rkeys for i in p.index2s]),\
+            "Error - %s is not in the restrict list!" % str(p.index2s)
         return [restrict[str(i)] for i in p.index2s]
     else:
-        raise Exception("Error - Incorrect object type passed to check_restrict")
+        raise Exception(
+            "Error - Incorrect object type passed to check_restrict")
+
 
 def random_in_range(bounds):
     '''
@@ -118,5 +104,3 @@ def random_in_range(bounds):
         bounds = (bounds[1] * 0.5, bounds[1])
 
     return random.random() * (bounds[1] - bounds[0]) + bounds[0]
-
-

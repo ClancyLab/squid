@@ -49,6 +49,8 @@ def parse_pfile(fname):
     '''
     # Parse the input file to clean out comments, empty lines, and
     # trailing whitespace
-    parsed = map(lambda x: x.strip(), open(fname, 'r').read().strip().split("\n"))
+    parsed = map(
+        lambda x: x.strip(),
+        open(fname, 'r').read().strip().split("\n"))
     parsed = map(remove_comments, parsed)
     return '\n'.join([r for r in parsed if r != ''])

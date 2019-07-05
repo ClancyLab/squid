@@ -483,7 +483,8 @@ def run_unit_tests():
 
     ct2_hold = copy.deepcopy(ct2)
     ct2.pack(ct2.unpack())
-    assert ct2_hold == ct2, "Error - Packing and Unpacking has failed"
+    assert hash(str(ct2_hold)) == hash(str(ct2)),\
+        "Error - Packing and Unpacking has failed"
 
     # Comparison is done only by index.  Thus, these should still equate!
     ct2.D0 = 10.0
@@ -492,7 +493,7 @@ def run_unit_tests():
     ct2.indices = ["32113", "sldjkf"]
     assert ct2_hold != ct2, "Error - Unable to compare atoms in Morse"
 
-    # Should unpack as index then charge
+    # Should unpack as follows
     should_be = [ct2.indices, ct2.D0,
                  ct2.alpha, ct2.r0, ct2.rc]
     assert all([x == y for x, y in zip(ct2.unpack(), should_be)]),\

@@ -1,8 +1,7 @@
 '''
 The Tersoff object.  This stores the indices and TERSOFF parameters.
 '''
-import sys
-import random
+import copy
 from itertools import product
 import squid.forcefields.smrff as smrff_utils
 from squid.forcefields.helper import check_restriction
@@ -113,12 +112,15 @@ class Tersoff(object):
         tersoff: :class:`Tersoff`
             A Tersoff object.
     '''
-    def __init__(self, indices=None, m=None, gamma=None, lambda3=None, c=None, d=None,
-                 costheta0=None, n=None, beta=None, lambda2=None, B=None, R=None,
-                 D=None, lambda1=None, A=None, line=None, form="original"):
+
+    def __init__(self, indices=None, m=None, gamma=None, lambda3=None, c=None,
+                 d=None, costheta0=None, n=None, beta=None, lambda2=None,
+                 B=None, R=None, D=None, lambda1=None, A=None, line=None,
+                 form="original"):
 
         form = form.lower()
-        assert form in ["original", "albe"], "Error - Form must be either original or albe"
+        assert form in ["original", "albe"],\
+            "Error - Form must be either original or albe"
 
         P = [indices, m, gamma, lambda3, c, d, costheta0,
              n, beta, lambda2, B, R, D, lambda1, A]
@@ -138,7 +140,8 @@ class Tersoff(object):
                 self.gamma_bounds = (0, 1)
             self.assign_line(line, validate=False)
         elif line is None and all([x is not None for x in P]):
-            assert isinstance(indices, list) or isinstance(indices, tuple), "In Tersoff, initialized with indices not being a list or tuple!"
+            assert isinstance(indices, list) or isinstance(indices, tuple),\
+                "In Tersoff, initialized indices are not list/tuple!"
 
             if form == "original":
                 assert m == 3, "Error - In original form, m must be 3."
@@ -147,8 +150,10 @@ class Tersoff(object):
                 self.gamma_bounds = (1, 1)
                 self.beta_bounds = (0.0, 1.0)
             elif form == "albe":
-                assert m == 1, "Error - In Albe et al. form, m must be 1."
-                assert beta == 1, "Error - In Albe et al. form, beta must be 1."
+                assert m == 1,\
+                    "Error - In Albe et al. form, m must be 1."
+                assert beta == 1,\
+                    "Error - In Albe et al. form, beta must be 1."
                 self.m_bounds = (1, 1)
                 self.beta_bounds = (1, 1)
                 self.gamma_bounds = (0, 1)
@@ -170,11 +175,10 @@ class Tersoff(object):
             self.A = A
 
         else:
-            raise Exception("Either specify all Tersoff parameters, or the line to be parsed, but not both.")
+            raise Exception("Either specify all Tersoff parameters, or the \
+line to be parsed, but not both.")
 
         self.set_default_bounds()
-
-
         self.validate()
 
     def __repr__(self):
@@ -195,9 +199,11 @@ class Tersoff(object):
     def __eq__(self, other):
 
         if isinstance(other, tuple) or isinstance(other, list):
-            indices = [str(o) if str(o) != "*" else str(i) for o, i in zip(other, self.indices)]
-        elif hasattr(other, indices):
-            indices = [str(o) if str(o) != "*" else str(i) for o, i in zip(other.indices, self.indices)]
+            indices = [str(o) if str(o) != "*" else str(i)
+                       for o, i in zip(other, self.indices)]
+        elif hasattr(other, "indices"):
+            indices = [str(o) if str(o) != "*" else str(i)
+                       for o, i in zip(other.indices, self.indices)]
         else:
             return False
 
@@ -206,7 +212,8 @@ class Tersoff(object):
 #                all([x == y for x, y in zip(self.indices, indices[::-1])]))
 
     def __hash__(self):
-        return hash(tuple(self.unpack(with_indices=True) + self.unpack(bounds=0) + self.unpack(bounds=1)))
+        # return hash(tuple(self.unpack(with_indices=True) + self.unpack(bounds=0) + self.unpack(bounds=1)))
+        return hash(self.indices)
 
     def _printer(self, with_indices=True, bounds=None):
         '''
@@ -220,7 +227,8 @@ class Tersoff(object):
 
             bounds: *int, optional*
                 Whether to output the lower bounds (0), or upper bounds (1).
-                If None, then the parameters themselves are output instead (default).
+                If None, then the parameters themselves are output instead
+                (default).
 
         **Returns**
 
@@ -274,21 +282,6 @@ class Tersoff(object):
         Assign default bounds.  Further, if this is the case of A-B-B vs A-B-C
         we can simplify the bounds as only in the case of A-B-B are two body
         parameters n, Beta, lambda2, lambda1, and A read in.
-
-        Note - we change the A_bounds and B_bounds to be 200.0 - 300,000.0 kcal/mol
-        This is because, in literature, tersoff A and B bounds (reported in eV) are
-        minimum around 40 eV and maximum around 10,000 eV.  We add a little buffer
-        for the lower and upper, and get the given bounds.
-
-        Similarly, lambda1 and lambda2 are consistently between 1.0 and 4.0, so we have
-        Set the bounds to be 0.5 to 5.0.
-
-        Similarly, n was found to be primarily around 0.75 in literature, and at times just
-        fixed to 1.0.  There was one odd case of being 22; however, it seems like an outlier
-        as most cases shows 0.1 < n < 2.0.  As such, that is was n was set to being.
-
-        Lambda3 appears to normally be set to 0 in the literature; however, the highest I
-        found was around 1.8.  As such, lambda3 is set here from 0.0 to 2.0.
         '''
         self.lambda3_bounds = (0.0, 2.0)
         self.c_bounds = (0.1, 150000.0)
@@ -318,8 +311,8 @@ class Tersoff(object):
         else:
             raise Exception("This should never happen!")
 
-
-    def unpack(self, with_indices=True, bounds=None, with_bounds=False, for_output=False):
+    def unpack(self, with_indices=True, bounds=None,
+               with_bounds=False, for_output=False):
         '''
         This function unpacks the tersoff object into a list.
 
@@ -330,13 +323,15 @@ class Tersoff(object):
 
             bounds: *int, optional*
                 Whether to output the lower bounds (0), or upper bounds (1).
-                If None, then the parameters themselves are output instead (default).
+                If None, then the parameters themselves are output
+                instead (default).
 
             with_bounds: *bool, optional*
                 Whether to output the bounds or not.
 
             for_output: *bool, optional*
-                Whether this is for output (in which case we disregard 2-body sym flag)
+                Whether this is for output (in which case we disregard
+                2-body sym flag)
 
         **Returns**
 
@@ -353,34 +348,40 @@ class Tersoff(object):
             tag_for_2body = False
 
         if bounds is not None:
-            pkg.append([self.indices if with_indices else None,
-                    self.m_bounds[bounds], self.gamma_bounds[bounds], self.lambda3_bounds[bounds],
-                    self.c_bounds[bounds], self.d_bounds[bounds], self.costheta0_bounds[bounds],
-                    self.n_bounds[bounds] if not tag_for_2body else None,
-                    self.beta_bounds[bounds] if not tag_for_2body else None,
-                    self.lambda2_bounds[bounds] if not tag_for_2body else None,
-                    self.B_bounds[bounds] if not tag_for_2body else None,
-                    self.R_bounds[bounds], self.D_bounds[bounds],
-                    self.lambda1_bounds[bounds] if not tag_for_2body else None,
-                    self.A_bounds[bounds] if not tag_for_2body else None])
+            pkg.append([
+                self.indices if with_indices else None,
+                self.m_bounds[bounds], self.gamma_bounds[bounds],
+                self.lambda3_bounds[bounds],
+                self.c_bounds[bounds], self.d_bounds[bounds],
+                self.costheta0_bounds[bounds],
+                self.n_bounds[bounds] if not tag_for_2body else None,
+                self.beta_bounds[bounds] if not tag_for_2body else None,
+                self.lambda2_bounds[bounds] if not tag_for_2body else None,
+                self.B_bounds[bounds] if not tag_for_2body else None,
+                self.R_bounds[bounds], self.D_bounds[bounds],
+                self.lambda1_bounds[bounds] if not tag_for_2body else None,
+                self.A_bounds[bounds] if not tag_for_2body else None])
             pkg[-1] = [p for p in pkg[-1] if p is not None]
         else:
-            pkg.append([self.indices if with_indices else None,
-                    self.m, self.gamma, self.lambda3, self.c, self.d, self.costheta0,
-                    self.n if not tag_for_2body else None,
-                    self.beta if not tag_for_2body else None,
-                    self.lambda2 if not tag_for_2body else None,
-                    self.B if not tag_for_2body else None,
-                    self.R, self.D,
-                    self.lambda1 if not tag_for_2body else None,
-                    self.A if not tag_for_2body else None])
+            pkg.append([
+                self.indices if with_indices else None,
+                self.m, self.gamma, self.lambda3,
+                self.c, self.d, self.costheta0,
+                self.n if not tag_for_2body else None,
+                self.beta if not tag_for_2body else None,
+                self.lambda2 if not tag_for_2body else None,
+                self.B if not tag_for_2body else None,
+                self.R, self.D,
+                self.lambda1 if not tag_for_2body else None,
+                self.A if not tag_for_2body else None])
             pkg[-1] = [p for p in pkg[-1] if p is not None]
 
         if with_bounds:
             # Get all lower and upper bounds added to pkg
             # After this, pkg = [params, lower, upper]
             bnds = [
-                self.m_bounds, self.gamma_bounds, self.lambda3_bounds, self.c_bounds, self.d_bounds,
+                self.m_bounds, self.gamma_bounds, self.lambda3_bounds,
+                self.c_bounds, self.d_bounds,
                 self.costheta0_bounds,
                 self.n_bounds if not tag_for_2body else None,
                 self.beta_bounds if not tag_for_2body else None,
@@ -412,7 +413,9 @@ class Tersoff(object):
 
             None
         '''
-        assert len(params) in [8, 9, 14, 15], "In Tersoff, tried packing %d parameters.  Should be either 8, 9, 14, or 15!" % len(params)
+        assert len(params) in [8, 9, 14, 15],\
+            "In Tersoff, tried packing %d parameters. \
+Should be either 8, 9, 14, or 15!" % len(params)
 
         if len(params) in [9, 15]:
             offset = 0
@@ -434,7 +437,7 @@ class Tersoff(object):
 
         self.R = params[11 + offset - int(self.sym_2body_tag) * 4]
         self.D = params[12 + offset - int(self.sym_2body_tag) * 4]
-        
+
         if not self.sym_2body_tag:
             self.lambda1 = params[13 + offset]
             self.A = params[14 + offset]
@@ -448,26 +451,38 @@ class Tersoff(object):
         '''
         self.indices = [str(x) for x in self.indices]
         self.m = int(self.m)
-        assert self.m in [1, 3], "In Tersoff %s, m = %.2f must be either 1 or 3!" % (str(self.indices), self.m)
+        assert self.m in [1, 3],\
+            "In Tersoff %s, m = %.2f must be either 1 or 3!"\
+            % (str(self.indices), self.m)
         self.gamma = float(self.gamma)
-        assert self.gamma >= 0 and self.gamma <= 1, "In Tersoff %s, gamma = %.2f must be [0, 1] inclusive!" % (str(self.indices), self.gamma)
+        assert self.gamma >= 0 and self.gamma <= 1,\
+            "In Tersoff %s, gamma = %.2f must be [0, 1] inclusive!"\
+            % (str(self.indices), self.gamma)
         self.lambda3 = float(self.lambda3)
         self.costheta0 = float(self.costheta0)
-        assert abs(self.costheta0) <= 1.0, "In Tersoff %s, costheta0 = %.2f must be [-1, 1] inclusive!" % (str(self.indices), self.costheta0)
+        assert abs(self.costheta0) <= 1.0,\
+            "In Tersoff %s, costheta0 = %.2f must be [-1, 1] inclusive!"\
+            % (str(self.indices), self.costheta0)
         self.n = float(self.n)
         self.beta = float(self.beta)
         self.lambda2 = float(self.lambda2)
         self.B = float(self.B)
         self.R = float(self.R)
         self.D = float(self.D)
-        assert self.R >= self.D and self.D > 0, "In Tersoff %s, R = %.2f and D = %.2f; however, they should be positive such that R >= D!" % (str(self.indices), self.R, self.D)
+        assert self.R >= self.D and self.D > 0,\
+            "In Tersoff %s, R = %.2f and D = %.2f; however, they should be \
+positive such that R >= D!" % (str(self.indices), self.R, self.D)
         self.lambda1 = float(self.lambda1)
         self.A = float(self.A)
 
-        params = [self.m, self.gamma, self.lambda3, self.c, self.d, self.costheta0,
-                  self.n, self.beta, self.lambda2, self.B, self.R, self.D, self.lambda1, self.A]
-        bounds = [self.m_bounds, self.gamma_bounds, self.lambda3_bounds, self.c_bounds, self.d_bounds, self.costheta0_bounds,
-                  self.n_bounds, self.beta_bounds, self.lambda2_bounds, self.B_bounds, self.R_bounds, self.D_bounds, self.lambda1_bounds, self.A_bounds]
+        params = [self.m, self.gamma, self.lambda3, self.c, self.d,
+                  self.costheta0, self.n, self.beta, self.lambda2,
+                  self.B, self.R, self.D, self.lambda1, self.A]
+        bounds = [self.m_bounds, self.gamma_bounds, self.lambda3_bounds,
+                  self.c_bounds, self.d_bounds, self.costheta0_bounds,
+                  self.n_bounds, self.beta_bounds, self.lambda2_bounds,
+                  self.B_bounds, self.R_bounds, self.D_bounds,
+                  self.lambda1_bounds, self.A_bounds]
         names = ["m", "gamma", "lambda3", "c", "d", "costheta0",
                  "n", "beta", "lambda2", "B", "R", "D", "lambda1", "A"]
 
@@ -478,7 +493,8 @@ class Tersoff(object):
         '''
         Two possibilities exist when turning off 3-body only.  First is to
         set beta to 0, and n to 1.  This would set b_ij = 1, effectively
-        simplifying parameters such that we get Ae^{-lambda1r} - Be^{-lambda2r}.
+        simplifying parameters such that we get
+            Ae^{-lambda1r} - Be^{-lambda2r}.
         The other is to set gamma to 1, c to 0, and lambda3 to 0.  This would
         have the effect of leaving beta and n active; however, wouldn't really
         make much difference as we could simply redefine:
@@ -569,23 +585,32 @@ class Tersoff(object):
         lambda1 = float(line[15])
         A = float(line[16])
 
-        return indices, m, gamma, lambda3, c, d, costheta0, n, beta, lambda2, B, R, D, lambda1, A
+        return indices, m, gamma, lambda3, c, d, costheta0,\
+            n, beta, lambda2, B, R, D, lambda1, A
 
     def assign_line(self, line, validate=True):
-        (self.indices, self.m, self.gamma, self.lambda3, self.c, self.d, self.costheta0,
-         self.n, self.beta, self.lambda2, self.B, self.R, self.D, self.lambda1, self.A) = self.parse_line(line)
+        (self.indices, self.m, self.gamma, self.lambda3, self.c, self.d,
+         self.costheta0, self.n, self.beta, self.lambda2, self.B, self.R,
+         self.D, self.lambda1, self.A) = self.parse_line(line)
         if validate:
             self.validate()
 
     def fix(self, params='all', value=None):
         '''
-        This will fix these parameters by assigning bounds to the values themselves.
+        This will fix these parameters by assigning bounds to the
+        values themselves.
         '''
         if params == 'all':
             if value is not None:
-                assert isinstance(value, list) or isinstance(value, tuple), "Error - Neither a list or tuple was passed when fixing all tersoff params (passed %s)." % str(value)
-                assert len(value) == 14, "Error - Needed 14 values in fix tersoff, but %s was passed instead." % str(value)
-                self.m, self.gamma, self.lambda3, self.c, self.d, self.costheta0, self.n, self.beta, self.lambda2, self.B, self.R, self.D, self.lambda1, self.A = value
+                assert isinstance(value, list) or isinstance(value, tuple),\
+                    "Error - Neither a list or tuple was passed when fixing \
+all tersoff params (passed %s)." % str(value)
+                assert len(value) == 14,\
+                    "Error - Needed 14 values in fix tersoff, but %s was \
+passed instead." % str(value)
+                self.m, self.gamma, self.lambda3, self.c, self.d,\
+                    self.costheta0, self.n, self.beta, self.lambda2,\
+                    self.B, self.R, self.D, self.lambda1, self.A = value
             self.m_bounds = (self.m, self.m)
             self.gamma_bounds = (self.gamma, self.gamma)
             self.lambda3_bounds = (self.lambda3, self.lambda3)
@@ -603,103 +628,133 @@ class Tersoff(object):
         elif params == 'm':
             if value is not None:
                 if isinstance(value, list) or isinstance(value, tuple):
-                    assert len(value) == 1, "Error - Tried fixing m in Tersoff with %s." % str(value)
+                    assert len(value) == 1,\
+                        "Error - Tried fixing m in Tersoff with %s."\
+                        % str(value)
                     value = value[0]
                 self.m = float(value)
             self.m_bounds = (self.m, self.m)
         elif params == 'gamma':
             if value is not None:
                 if isinstance(value, list) or isinstance(value, tuple):
-                    assert len(value) == 1, "Error - Tried fixing gamma in Tersoff with %s." % str(value)
+                    assert len(value) == 1,\
+                        "Error - Tried fixing gamma in Tersoff with %s."\
+                        % str(value)
                     value = value[0]
                 self.gamma = float(value)
             self.gamma_bounds = (self.gamma, self.gamma)
         elif params == "lambda3":
             if value is not None:
                 if isinstance(value, list) or isinstance(value, tuple):
-                    assert len(value) == 1, "Error - Tried fixing lambda3 in Tersoff with %s." % str(value)
+                    assert len(value) == 1,\
+                        "Error - Tried fixing lambda3 in Tersoff with %s."\
+                        % str(value)
                     value = value[0]
                 self.lambda3 = float(value)
             self.lambda3_bounds = (self.lambda3, self.lambda3)
         elif params == "c":
             if value is not None:
                 if isinstance(value, list) or isinstance(value, tuple):
-                    assert len(value) == 1, "Error - Tried fixing c in Tersoff with %s." % str(value)
+                    assert len(value) == 1,\
+                        "Error - Tried fixing c in Tersoff with %s."\
+                        % str(value)
                     value = value[0]
                 self.c = float(value)
             self.c_bounds = (self.c, self.c)
         elif params == "d":
             if value is not None:
                 if isinstance(value, list) or isinstance(value, tuple):
-                    assert len(value) == 1, "Error - Tried fixing d in Tersoff with %s." % str(value)
+                    assert len(value) == 1,\
+                        "Error - Tried fixing d in Tersoff with %s."\
+                        % str(value)
                     value = value[0]
                 self.d = float(value)
             self.d_bounds = (self.d, self.d)
         elif params == "costheta0":
             if value is not None:
                 if isinstance(value, list) or isinstance(value, tuple):
-                    assert len(value) == 1, "Error - Tried fixing costheta0 in Tersoff with %s." % str(value)
+                    assert len(value) == 1,\
+                        "Error - Tried fixing costheta0 in Tersoff with %s."\
+                        % str(value)
                     value = value[0]
                 self.costheta0 = float(value)
             self.costheta0_bounds = (self.costheta0, self.costheta0)
         elif params == "n":
             if value is not None:
                 if isinstance(value, list) or isinstance(value, tuple):
-                    assert len(value) == 1, "Error - Tried fixing n in Tersoff with %s." % str(value)
+                    assert len(value) == 1,\
+                        "Error - Tried fixing n in Tersoff with %s."\
+                        % str(value)
                     value = value[0]
                 self.n = float(value)
             self.n_bounds = (self.n, self.n)
         elif params == "beta":
             if value is not None:
                 if isinstance(value, list) or isinstance(value, tuple):
-                    assert len(value) == 1, "Error - Tried fixing beta in Tersoff with %s." % str(value)
+                    assert len(value) == 1,\
+                        "Error - Tried fixing beta in Tersoff with %s."\
+                        % str(value)
                     value = value[0]
                 self.beta = float(value)
             self.beta_bounds = (self.beta, self.beta)
         elif params == "lambda2":
             if value is not None:
                 if isinstance(value, list) or isinstance(value, tuple):
-                    assert len(value) == 1, "Error - Tried fixing lambda2 in Tersoff with %s." % str(value)
+                    assert len(value) == 1,\
+                        "Error - Tried fixing lambda2 in Tersoff with %s."\
+                        % str(value)
                     value = value[0]
                 self.lambda2 = float(value)
             self.lambda2_bounds = (self.lambda2, self.lambda2)
         elif params == "B":
             if value is not None:
                 if isinstance(value, list) or isinstance(value, tuple):
-                    assert len(value) == 1, "Error - Tried fixing B in Tersoff with %s." % str(value)
+                    assert len(value) == 1,\
+                        "Error - Tried fixing B in Tersoff with %s."\
+                        % str(value)
                     value = value[0]
                 self.B = float(value)
             self.B_bounds = (self.B, self.B)
         elif params == "R":
             if value is not None:
                 if isinstance(value, list) or isinstance(value, tuple):
-                    assert len(value) == 1, "Error - Tried fixing R in Tersoff with %s." % str(value)
+                    assert len(value) == 1,\
+                        "Error - Tried fixing R in Tersoff with %s."\
+                        % str(value)
                     value = value[0]
                 self.R = float(value)
             self.R_bounds = (self.R, self.R)
         elif params == "D":
             if value is not None:
                 if isinstance(value, list) or isinstance(value, tuple):
-                    assert len(value) == 1, "Error - Tried fixing D in Tersoff with %s." % str(value)
+                    assert len(value) == 1,\
+                        "Error - Tried fixing D in Tersoff with %s."\
+                        % str(value)
                     value = value[0]
                 self.D = float(value)
             self.D_bounds = (self.D, self.D)
         elif params == "lambda1":
             if value is not None:
                 if isinstance(value, list) or isinstance(value, tuple):
-                    assert len(value) == 1, "Error - Tried fixing lambda1 in Tersoff with %s." % str(value)
+                    assert len(value) == 1,\
+                        "Error - Tried fixing lambda1 in Tersoff with %s."\
+                        % str(value)
                     value = value[0]
                 self.lambda1 = float(value)
             self.lambda1_bounds = (self.lambda1, self.lambda1)
         elif params == "A":
             if value is not None:
                 if isinstance(value, list) or isinstance(value, tuple):
-                    assert len(value) == 1, "Error - Tried fixing A in Tersoff with %s." % str(value)
+                    assert len(value) == 1,\
+                        "Error - Tried fixing A in Tersoff with %s."\
+                        % str(value)
                     value = value[0]
                 self.A = float(value)
             self.A_bounds = (self.A, self.A)
         else:
-            raise Exception("In Tersoff, tried fixing %s parameter (does not exist)!" % params)
+            raise Exception(
+                "In Tersoff, tried fixing %s parameter (does not exist)!"
+                % params)
 
     @classmethod
     def load_smrff(cls, pfile, pfptr=None, restrict=None):
@@ -729,22 +784,28 @@ class Tersoff(object):
         pfile = pfile[pfile.index(TERSOFF_PFILE_ID):]
         pfile = pfile[:pfile.index(END_ID)].split("\n")[1:-1]
 
-        # Because Tersoff may be split into two lines, we need additional parsing
-        # Each line should have 17 things in it:
+        # Because Tersoff may be split into two lines, we need additional
+        # parsing.  Each line should have 17 things in it:
         #    3 indices, 14 tersoff parameters
         pfile = ' '.join(pfile).strip().split()
-        assert len(pfile) % 17 == 0, "Error - there appears to be an issue in how the Tersoff parameters are defined."
+        assert len(pfile) % 17 == 0,\
+            "Error - there appears to be an issue in how the Tersoff \
+parameters are defined."
 
-        pfile = [' '.join(pfile[i * 17: (i + 1) * 17]) for i in range(int(len(pfile) / 17))]
-        pfile = [cls.parse_line(line) for line in pfile]
+        pfile = [
+            ' '.join(pfile[i * 17: (i + 1) * 17])
+            for i in range(int(len(pfile) / 17))]
+        pfile = [
+            cls.parse_line(line) for line in pfile]
 
-        # indices, m, gamma, lambda3, c, d, costheta0, n, beta, lambda2, B, R, D, lambda1, A
-
+        # indices, m, gamma, lambda3, c, d, costheta0, n,
+        # beta, lambda2, B, R, D, lambda1, A
         return [
             cls(indices=indices, m=m, gamma=gamma, lambda3=lambda3, c=c, d=d,
                 costheta0=costheta0, n=n, beta=beta, lambda2=lambda2, B=B,
                 R=R, D=D, lambda1=lambda1, A=A)
-            for indices, m, gamma, lambda3, c, d, costheta0, n, beta, lambda2, B, R, D, lambda1, A in pfile
+            for indices, m, gamma, lambda3, c, d, costheta0, n,
+            beta, lambda2, B, R, D, lambda1, A in pfile
             if check_restriction(indices, restrict)
         ]
 
@@ -769,7 +830,8 @@ class Tersoff(object):
         from helper import random_in_range
 
         form = form.lower()
-        assert form in ["original", "albe"], "Error - form must be either original or albe."
+        assert form in ["original", "albe"],\
+            "Error - form must be either original or albe."
 
         Tersoff_Objs = []
 
@@ -860,7 +922,7 @@ def verify_tersoff_2body_symmetry(tersoff_params):
                 ters_A.indices[0] == ters_B.indices[1],
                 ters_A.indices[1] == ters_B.indices[0],
                 ters_A.indices[1] == ters_A.indices[2],
-                ters_B.indices[1] == ters_B.indices[2]]):
+                    ters_B.indices[1] == ters_B.indices[2]]):
                 assert all([
                     ters_A.n == ters_B.n,
                     ters_A.beta == ters_B.beta,
@@ -868,7 +930,8 @@ def verify_tersoff_2body_symmetry(tersoff_params):
                     ters_A.lambda2 == ters_B.lambda2,
                     ters_A.A == ters_B.A,
                     ters_A.B == ters_B.B
-                ]), "Error: 2-body symmetry requirements failed for %s" % str(ters_A.indices[:2])
+                ]), "Error: 2-body symmetry requirements failed for %s"\
+                    % str(ters_A.indices[:2])
 
 
 def _unique_grab_2body(tersoff_params):
@@ -885,10 +948,12 @@ def _unique_grab_2body(tersoff_params):
     **Returns**
 
         two_bodies: *list, tuple, str*
-            A list of tuples holding the unique indices for 2-body interactions.
+            A list of tuples holding the unique indices for
+            2-body interactions.
     '''
     # Get a sorted list of all atom types to ensure reproducability
-    all_atom_types = sorted(list(set([a for t in tersoff_params for a in t.indices])))
+    all_atom_types = sorted(list(set([
+        a for t in tersoff_params for a in t.indices])))
 
     # Get a list of two-body interactions without symmetry
     two_body = []
@@ -901,6 +966,7 @@ def _unique_grab_2body(tersoff_params):
     del all_atom_types
 
     return two_body
+
 
 def sorted_force_2body_symmetry(tersoff_params):
     '''
@@ -915,7 +981,8 @@ def sorted_force_2body_symmetry(tersoff_params):
     **Returns**
 
         corrected_tersoff_params: *list,* :class:`Tersoff`
-            A list of Tersoff objects with the 2body symmetry condition ensured.
+            A list of Tersoff objects with the 2body symmetry
+            condition ensured.
     '''
 
     two_body = _unique_grab_2body(tersoff_params)
@@ -926,13 +993,12 @@ def sorted_force_2body_symmetry(tersoff_params):
         index2 = tersoff_params.index((b, a, a))
         tersoff_params[index2].update_2body(tersoff_params[index1])
 
-#    return tersoff_params
-
 
 def tag_tersoff_for_duplicate_2bodies(tersoff_params):
     '''
-    This function will mimic the sorted_force_2body_symmetry and tag the duplicates
-    that would be set by sorted_force_2body_symmetry.
+    This function will mimic the sorted_force_2body_symmetry
+    and tag the duplicates that would be set by
+    sorted_force_2body_symmetry.
 
     **Parameters**
 
@@ -952,7 +1018,104 @@ def tag_tersoff_for_duplicate_2bodies(tersoff_params):
     for a, b in two_body:
         index = tersoff_params.index((b, a, a))
         tersoff_params[index].sym_2body_tag = True
-        tersoff_params[index].N_params = 8  # Essentially, we no longer recognize the other params here.
+        # Essentially, we no longer recognize the other params here.
+        tersoff_params[index].N_params = 8
 
-#    return tersoff_params
 
+def run_unit_tests():
+    # Ensure we do not allow a blank Coul
+    try:
+        _ = Tersoff(
+            indices=None, m=None, gamma=None, lambda3=None, c=None,
+            d=None, costheta0=None, n=None, beta=None, lambda2=None,
+            B=None, R=None, D=None, lambda1=None, A=None, line=None)
+        raise ValueError("Tersoff initialization failed!")
+    except Exception:
+        pass
+    # Ensure we do not allow a blank Tersoff (which should be None on all
+    # by default)
+    try:
+        _ = Tersoff()
+        raise ValueError("Tersoff initialization failed!")
+    except Exception:
+        pass
+
+    # Ensure strings have not changed
+    # In this case, because we do not have a 2-body interaction (x-y-y in indices),
+    # many parameters take on a default.  Ensure this is true!
+    ct1 = Tersoff(
+        indices=["1", "1", "2"], m=3, gamma=1.0, lambda3=1.2, c=80000.0,
+        d=20.0, costheta0=0.2, n=0.5, beta=0.8, lambda2=4.9,
+        B=12000.0, R=3.0, D=0.5, lambda1=1.1, A=60000.0, line=None
+    )
+    ct1_s_a = "1 1 2      3   1.0000   1.2000   80000.0000   20.0000   0.2000"
+    ct1_s_b = "1.0000   1.0000   1.0000   1.0000   3.0000   0.5000   1.0000   1.0000"
+    chk_s_a, chk_s_b = str(ct1).strip().split("\n")
+    assert ct1_s_a == chk_s_a.strip(), "Error - String formatting has changed"
+    assert ct1_s_b == chk_s_b.strip(), "Error - String formatting has changed"
+
+    ct1 = Tersoff(
+        indices=["1", "1", "1"], m=3, gamma=1.0, lambda3=1.2, c=80000.0,
+        d=20.0, costheta0=0.2, n=0.5, beta=0.8, lambda2=4.9,
+        B=12000.0, R=3.0, D=0.5, lambda1=1.1, A=60000.0, line=None
+    )
+    ct1_s_a = "1 1 1      3   1.0000   1.2000   80000.0000   20.0000   0.2000"
+    ct1_s_b = "0.5000   0.8000   4.9000   12000.0000   3.0000   0.5000   1.1000   60000.0000"
+    chk_s_a, chk_s_b = str(ct1).strip().split("\n")
+    assert ct1_s_a == chk_s_a.strip(), "Error - String formatting has changed"
+    assert ct1_s_b == chk_s_b.strip(), "Error - String formatting has changed"
+
+    ct2 = Tersoff(
+        indices=["1", "1", "1"], m=3, gamma=1.0, lambda3=1.2, c=10000.0,
+        d=20.0, costheta0=-0.2, n=0.9, beta=0.92, lambda2=4.9,
+        B=3000.0, R=3.0, D=0.5, lambda1=1.1, A=100000.0, line=None
+    )
+    ct2_s_a = "1 1 1      3   1.0000   1.2000   10000.0000   20.0000   -0.2000"
+    ct2_s_b = "0.9000   0.9200   4.9000   3000.0000   3.0000   0.5000   1.1000   100000.0000"
+    chk_s_a, chk_s_b = str(ct2).strip().split("\n")
+    assert ct2_s_a == chk_s_a.strip(), "Error - String formatting has changed"
+    assert ct2_s_b == chk_s_b.strip(), "Error - String formatting has changed"
+
+    ct2_hold = copy.deepcopy(ct2)
+    ct2.pack(ct2.unpack())
+    assert hash(str(ct2_hold)) == hash(str(ct2)),\
+        "Error - Packing and Unpacking has failed"
+
+    # Comparison is done only by index.  Thus, these should still equate!
+    ct2.B = 1000.0
+    assert ct2_hold == ct2, "Error - Unable to compare atoms in Tersoff"
+    # And these should not equate
+    ct2.indices = ["32113", "sldjkf", "sldjkf"]
+    assert ct2_hold != ct2, "Error - Unable to compare atoms in Tersoff"
+
+    # Should unpack as follows
+    should_be = [ct2.indices, ct2.m, ct2.gamma, ct2.lambda3, ct2.c, ct2.d,
+                 ct2.costheta0, ct2.n, ct2.beta, ct2.lambda2, ct2.B, ct2.R,
+                 ct2.D, ct2.lambda1, ct2.A]
+    assert all([x == y for x, y in zip(ct2.unpack(), should_be)]),\
+        "Error - Unpack is not correct!"
+
+    # Test parsing of a line
+    ct3 = Tersoff(line='''1 1 1      3   1.0000   1.2000   10000.0000   20.0000   -0.2000
+        0.9000   0.9200   4.9000   3000.0000   3.0000   0.5000   1.1000   100000.0000''')
+    assert ct3.indices == ["1", "1", "1"],\
+        "Error - Unable to parse indices from line."
+    assert ct3.m == 3, "Error - Unable to parse m from line."
+    assert ct3.gamma == 1, "Error - Unable to parse gamma from line."
+    assert ct3.lambda3 == 1.2, "Error - Unable to parse lambda3 from line."
+    assert ct3.c == 10000, "Error - Unable to parse c from line."
+    assert ct3.d == 20, "Error - Unable to parse d from line."
+    assert ct3.costheta0 == -0.2,\
+        "Error - Unable to parse costheta0 from line."
+    assert ct3.n == 0.9, "Error - Unable to parse n from line."
+    assert ct3.beta == 0.92, "Error - Unable to parse beta from line."
+    assert ct3.lambda2 == 4.9, "Error - Unable to parse lambda2 from line."
+    assert ct3.B == 3000.0, "Error - Unable to parse B from line."
+    assert ct3.R == 3.0, "Error - Unable to parse R from line."
+    assert ct3.D == 0.5, "Error - Unable to parse D from line."
+    assert ct3.lambda1 == 1.1, "Error - Unable to parse lambda1 from line."
+    assert ct3.A == 100000, "Error - Unable to parse A from line."
+
+
+if __name__ == "__main__":
+    run_unit_tests()

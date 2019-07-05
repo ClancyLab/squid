@@ -1,7 +1,36 @@
 '''
-Class object for the sin_l/sin_r/sin_inout smooths.
+Class object for the sin_l/sin_r/sin_inout smooths.  To handle this, we will
+acknowledge the most general case:
+
+    A -SIN- B -SIN- C
+
+In this case, B is "sin_inout" smoothed to A and C respectively.  We will call
+this Left Smoothing (to A) and Right Smoothing (to C).  As such, we see that
+there is a R/D pair for each smooth.  Thus, we end up with two R/D values that
+need storing.  We define:
+
+    r_in, d_in hold smoothing parameters for the left smooth.
+    r_out, d_out hold smoothing parameters for the right smooth.
+
+When defining a smooth, we need to know the following:
+
+    1. sin_l, sin_r, or sin_inout
+    2. All necessary R/D pairs.  In the case of sin_l/sin_r, we only use
+       r_in and d_in.
+
+smooth_index is used to identify which smooth a set of parameters is applied
+to.  For example, assume we have the following input script:
+
+    pair_style smrff morse 4.51 lj/cut/coul/long 12.0 smooth sin_r sin_l
+
+sin_r will have smooth_index 0, and sin_l will have smooth_index 1.
+
+
+
+0           xPb       xPb      4.0  0.5 None   None  None  None   4.0    12.0    r   l       1
+smooth_index, atom_i, atom_j, r_in d_in r_out d_out  c_r   d_r   gcut  c_gcut   lr  c_lr  c_s_index
+
 '''
-import sys
 from itertools import combinations_with_replacement
 from squid.forcefields.helper import check_restriction
 
@@ -33,9 +62,11 @@ class SmoothSin(object):
         smooth_index: *int*
             Which smooth function this is applied to (0th, 1st, etc).
         atom_i: *int*
-            Which atom type this applies to.  Note, using None is the same as *.
+            Which atom type this applies to.  Note, using None is
+            the same as *.
         atom_j: *int*
-            Which atom type this applies to.  Note, using None is the same as *.=
+            Which atom type this applies to.  Note, using None is
+            the same as *.=
         r_in: *float*
             The inner cutoff.
         d_in: *float*
@@ -47,20 +78,23 @@ class SmoothSin(object):
         d_out: *float, optional*
             The outer cutoff radius.
         lr: *str, optional*
-            If r_out and d_out are NOT specified, you MUST specify this. It is either
-            l or r to specify which direction this smooth is.
+            If r_out and d_out are NOT specified, you MUST specify
+            this. It is either l or r to specify which direction
+            this smooth is.
         c_r: *float*
             Coupled cutoff.  Only necessary if inout was used.
         c_d: *float*
             Coupled cutoff radius.  Only necessary if inout was used.
         c_lr: *str*
-            If c_r and c_d are NOT specified, you MUST specify this. It is either
-            l or r to specify which direction this smooth is.
+            If c_r and c_d are NOT specified, you MUST specify this.
+            It is either l or r to specify which direction this smooth is.
         c_gcut: *float*
-            Coupled global cutoff, to never be exceeded.  Only necessary if inout is used.
+            Coupled global cutoff, to never be exceeded.  Only necessary
+            if inout is used.
         c_s_index: *int*
-            Which smooth funciton this applies to (0th, 1st, etc).
+            Which smooth function this applies to (0th, 1st, etc).
     '''
+
     def __init__(self, smooth_index, atom_i, atom_j, r_in, d_in, gcut,
                  r_out=None, d_out=None, lr=None,
                  c_r=None, c_d=None, c_lr=None,
@@ -82,9 +116,11 @@ class SmoothSin(object):
         self.c_s_index = c_s_index
         self.coupled = c_s_index is not None
 
-        self.N_params = 2 + int(r_out is not None) * 2 + int(c_r is not None) * 2
+        self.N_params = 2 + \
+            int(r_out is not None) * 2 + \
+            int(c_r is not None) * 2
 
-        #########################################################################
+        #######################################################################
         # Generate the bounds based on input cuts
         R_IN_BOUNDS = (gcut * RADII_OFFSET, gcut * (1.0 - RADII_OFFSET))
         D_IN_BOUNDS = (LOWER_CUT, gcut * RADII_OFFSET - EPSILON)
@@ -92,9 +128,9 @@ class SmoothSin(object):
         # In the case of inout, we need the outer bounds.  Further, if
         # we are coupling with inout and lr is not None, we STILL needs
         # the outer bounds
-        if lr is None or (c_lr is None and coupled):
+        if lr is None or (c_lr is None and self.coupled):
             # gcut for bounds will depend on which smooth is further out
-            if coupled:
+            if self.coupled:
                 local_gcut = coupled_lr_cut
             else:
                 local_gcut = gcut
@@ -105,7 +141,7 @@ class SmoothSin(object):
             D_OUT_BOUNDS = (LOWER_CUT, gcut * RADII_OFFSET - EPSILON)
 
             # In the case when both are inout, we need to also use C_
-            if lr is None and coupled and c_lr is None:
+            if lr is None and self.coupled and c_lr is None:
                 R_IN_BOUNDS = (gcut * RADII_OFFSET, gcut / 3.0)
                 D_IN_BOUNDS = (LOWER_CUT, gcut * RADII_OFFSET - EPSILON)
                 C_R_BOUNDS = (gcut * RADII_OFFSET, gcut * 2.0 / 3.0)
