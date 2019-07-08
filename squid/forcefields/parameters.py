@@ -15,7 +15,9 @@ from forcefields.tersoff import verify_tersoff_2body_symmetry
 from forcefields.tersoff import sorted_force_2body_symmetry
 from forcefields.tersoff import tag_tersoff_for_duplicate_2bodies
 from forcefields.connectors import Bond, Angle, Dihedral
-from forcefields.smooth_sin import SmoothSin
+from forcefields.sinSmooth.lr import SmoothSinLR
+from forcefields.sinSmooth.inout import SmoothSinInOut
+from forcefields.sinSmooth.coupled import SmoothSinCoupled
 import forcefields.helper as ffh
 
 SUPPORTED_STYLES = [
