@@ -33,6 +33,7 @@ class Coul(object):
         coulomb: :class:`Coul`
             A Coul object.
     """
+
     def __init__(self, index=None, charge=None,
                  mass=None, element=None, line=None):
         # How many parameters exist in this potential
@@ -53,9 +54,9 @@ Either specify index and charge, or the line to be parsed, but not both.")
         self.charge_bounds = tuple(
             sorted(
                 [np.sign(self.charge) * max(abs(self.charge) * 0.5,
-                 CHARGE_LOWER_LIMIT),
+                                            CHARGE_LOWER_LIMIT),
                  np.sign(self.charge) * min(abs(self.charge) * 1.5,
-                 CHARGE_UPPER_LIMIT)]))
+                                            CHARGE_UPPER_LIMIT)]))
 
         # Set a default mass if mass is None
         if self.mass is None and self.element is not None:
@@ -219,16 +220,17 @@ Should be either 1 or 2!" % len(params)
                 % params)
 
     @classmethod
-    def load_smrff(cls, pfile, pfptr=None, restrict=None):
+    def load_smrff(cls, parsed_file, pfile_name=None, restrict=None):
         """
         Given a parameter file, inport the coulomb parameters if possible.
         **Parameters**
-            pfile: *str*
+            parsed_file: *str*
                 A parsed smrff parameter file input string (no comments or
                 trailing white spaces)
-            pfptr: *str*
+            pfile_name: *str*
                 The name of a parameter file to be parsed.  If specified,
-                then pfile is ignored (you may simply pass None as pfile).
+                then parsed_file is ignored (you may simply pass None as
+                parsed_file).
         **Returns**
             coul_objs: *list, Coul*, or *None*
                 Returns a list of Coul objects if possible, else None.
@@ -236,19 +238,19 @@ Should be either 1 or 2!" % len(params)
         import squid.forcefields.smrff as smrff_utils
 
         # Ensure correct pfile format, and that we even need to parse it.
-        if pfptr is not None:
-            pfile = smrff_utils.parse_pfile(pfptr)
-        if COUL_PFILE_ID not in pfile:
+        if pfile_name is not None:
+            parsed_file = smrff_utils.parse_pfile(pfile_name)
+        if COUL_PFILE_ID not in parsed_file:
             return []
 
-        pfile = pfile[pfile.index(COUL_PFILE_ID):]
-        pfile = pfile[:pfile.index(END_ID)].split("\n")[1:-1]
+        parsed_file = parsed_file[parsed_file.index(COUL_PFILE_ID):]
+        parsed_file = parsed_file[:parsed_file.index(END_ID)].split("\n")[1:-1]
 
-        pfile = [cls.parse_line(line) for line in pfile]
+        parsed_file = [cls.parse_line(line) for line in parsed_file]
 
         return [
             cls(index=index, charge=charge, element=element, mass=mass)
-            for index, charge, element, mass in pfile
+            for index, charge, element, mass in parsed_file
             if check_restriction(index, restrict)
         ]
 

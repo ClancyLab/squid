@@ -757,18 +757,18 @@ passed instead." % str(value)
                 % params)
 
     @classmethod
-    def load_smrff(cls, pfile, pfptr=None, restrict=None):
+    def load_smrff(cls, parsed_file, pfile_name=None, restrict=None):
         '''
-        Given a parameter file, inport the tersoff parameters if possible.
+        Given a parameter file, inport the coulomb parameters if possible.
 
         **Parameters**
-
-            pfile: *str*
+            parsed_file: *str*
                 A parsed smrff parameter file input string (no comments or
                 trailing white spaces)
-            pfptr: *str*
+            pfile_name: *str*
                 The name of a parameter file to be parsed.  If specified,
-                then pfile is ignored (you may simply pass None as pfile).
+                then parsed_file is ignored (you may simply pass None as
+                parsed_file).
 
         **Returns**
 
@@ -776,27 +776,27 @@ passed instead." % str(value)
                 Returns a list of Tersoff objects if possible, else None.
         '''
         # Ensure correct pfile format, and that we even need to parse it.
-        if pfptr is not None:
-            pfile = smrff_utils.parse_pfile(pfptr)
-        if TERSOFF_PFILE_ID not in pfile:
+        if pfile_name is not None:
+            parsed_file = smrff_utils.parse_pfile(pfile_name)
+        if TERSOFF_PFILE_ID not in parsed_file:
             return []
 
-        pfile = pfile[pfile.index(TERSOFF_PFILE_ID):]
-        pfile = pfile[:pfile.index(END_ID)].split("\n")[1:-1]
+        parsed_file = parsed_file[parsed_file.index(TERSOFF_PFILE_ID):]
+        parsed_file = parsed_file[:parsed_file.index(END_ID)].split("\n")[1:-1]
 
         # Because Tersoff may be split into two lines, we need additional
         # parsing.  Each line should have 17 things in it:
         #    3 indices, 14 tersoff parameters
-        pfile = ' '.join(pfile).strip().split()
-        assert len(pfile) % 17 == 0,\
+        parsed_file = ' '.join(parsed_file).strip().split()
+        assert len(parsed_file) % 17 == 0,\
             "Error - there appears to be an issue in how the Tersoff \
 parameters are defined."
 
-        pfile = [
-            ' '.join(pfile[i * 17: (i + 1) * 17])
-            for i in range(int(len(pfile) / 17))]
-        pfile = [
-            cls.parse_line(line) for line in pfile]
+        parsed_file = [
+            ' '.join(parsed_file[i * 17: (i + 1) * 17])
+            for i in range(int(len(parsed_file) / 17))]
+        parsed_file = [
+            cls.parse_line(line) for line in parsed_file]
 
         # indices, m, gamma, lambda3, c, d, costheta0, n,
         # beta, lambda2, B, R, D, lambda1, A
@@ -805,7 +805,7 @@ parameters are defined."
                 costheta0=costheta0, n=n, beta=beta, lambda2=lambda2, B=B,
                 R=R, D=D, lambda1=lambda1, A=A)
             for indices, m, gamma, lambda3, c, d, costheta0, n,
-            beta, lambda2, B, R, D, lambda1, A in pfile
+            beta, lambda2, B, R, D, lambda1, A in parsed_file
             if check_restriction(indices, restrict)
         ]
 

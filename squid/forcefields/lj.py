@@ -273,16 +273,17 @@ larger than 0! It is %f" % (self.index, self.epsilon)
                 "In LJ, tried fixing %s parameter (does not exist)!" % params)
 
     @classmethod
-    def load_smrff(cls, pfile, pfptr=None, restrict=None):
+    def load_smrff(cls, parsed_file, pfile_name=None, restrict=None):
         '''
-        Given a parameter file, inport the LJ parameters if possible.
+        Given a parameter file, inport the coulomb parameters if possible.
         **Parameters**
-            pfile: *str*
+            parsed_file: *str*
                 A parsed smrff parameter file input string (no comments or
                 trailing white spaces)
-            pfptr: *str*
+            pfile_name: *str*
                 The name of a parameter file to be parsed.  If specified,
-                then pfile is ignored (you may simply pass None as pfile).
+                then parsed_file is ignored (you may simply pass None as
+                parsed_file).
         **Returns**
             lj_objs: *list, LJ*, or *None*
                 Returns a list of LJ objects if possible, else None.
@@ -290,19 +291,19 @@ larger than 0! It is %f" % (self.index, self.epsilon)
         import squid.forcefields.smrff as smrff_utils
 
         # Ensure correct pfile format, and that we even need to parse it.
-        if pfptr is not None:
-            pfile = smrff_utils.parse_pfile(pfptr)
-        if LJ_PFILE_ID not in pfile:
+        if pfile_name is not None:
+            parsed_file = smrff_utils.parse_pfile(pfile_name)
+        if LJ_PFILE_ID not in parsed_file:
             return []
 
-        pfile = pfile[pfile.index(LJ_PFILE_ID):]
-        pfile = pfile[:pfile.index(END_ID)].split("\n")[1:-1]
+        parsed_file = parsed_file[parsed_file.index(LJ_PFILE_ID):]
+        parsed_file = parsed_file[:parsed_file.index(END_ID)].split("\n")[1:-1]
 
-        pfile = [cls.parse_line(line) for line in pfile]
+        parsed_file = [cls.parse_line(line) for line in parsed_file]
 
         return [
             cls(index=index, sigma=sigma, epsilon=epsilon)
-            for index, sigma, epsilon in pfile
+            for index, sigma, epsilon in parsed_file
             if check_restriction(index, restrict)
         ]
 
