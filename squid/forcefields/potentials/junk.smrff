@@ -1,0 +1,101 @@
+# SMRFF Parameter file
+# NOTE! THESE PARAMETERS ARE NOT GOOD! THIS IS A TEST STRUCTURE FOR DEBUGGING CODE!
+
+###########################################################################################
+
+COULOMB
+# atom_index   charge   element     mass
+      xA        1.12      A       207.2000
+      xB       -1.12      B       32.0650
+END
+
+###########################################################################################
+
+LENNARD-JONES
+# atom_index   sigma    epsilon
+     xA       4.73011    0.12
+     xB       4.07339    1.0
+END
+
+###########################################################################################
+
+MORSE
+#  i    j    D0  alpha    r0    rc
+xA     xA   100    2     1.6     3
+xA     xB   100    2     1.7     3
+xB     xB   100    2     1.8     3
+END
+
+###########################################################################################
+
+TERSOFF
+# i, j, k,       m        gamma lambda3     c        d      costheta0
+#                n        beta  lambda2     B        R         D       lambda1      A
+xA xA xA         3         1.0   2.0000  21218.2  35.9740   -0.5722
+              2.0000    0.9321   5.0000 300000.0   4.00     0.50       0.5000   2013.0619
+
+
+xA xA xB         3         1.0   2.0000  50125.5  1.5467   -0.7817
+              1.0000    1.0000   1.0000    200.00   4.00     0.50      1.0000    200.0000
+
+
+xA xB xA         3         1.0   2.0000  138928.4  1.8615   -0.7895
+              1.0000    1.0000   1.0000    200.00   4.00     0.50      1.0000    200.0000
+
+
+xA xB xB         3         1.0   0.0000  137831.5  25.2881   0.5199
+              2.0000    0.1228   0.5212  32831.95   4.00     0.50      3.8233   300000.00
+
+
+xB xA xA         3         1.0   0.2508  6137.3  4.9407   -0.8608
+              2.0000    0.1228   0.5212  32831.95   4.00     0.50      3.8233   300000.00
+
+
+xB xA xB         3         1.0   2.0000  150000.0  0.6242   0.1138
+              1.0000    1.0000   1.0000    200.00   4.00     0.50      1.0000    200.0000
+
+
+xB xB xA         3         1.0   2.0000  96962.7  28.1901   0.2540
+              1.0000    1.0000   1.0000    200.00   4.00     0.50      1.0000    200.0000
+
+
+xB xB xB         3         1.0   2.0000  7389.8  6.6376   -0.8337
+              2.0000    0.0261   5.0000  300000.0  4.00     0.50       5.0000   190979.5870
+
+
+END
+
+###########################################################################################
+
+SMOOTHS
+# There are various smooths that exist.
+##############
+# Coupled methods will smooth potential 0 in one way and potential 1 in another
+# cN   smooth_index_1 smooth_index_2 atom_i atom_j r1 d1 g1 r2 d2 g2 r3 d3 g3
+#  N indicates (0) if both are inout
+#              (1) if smooth_index_1 is inout
+#              (2) if smooth_index_2 is inout
+#  r and d are used as cutoff ranges, and g is the global cutoff.
+##############
+# Method 0 - Smooth xA-xB energies and forces using sin_inout and sin_inout
+c0  0   1   xA  xB  2.5 0.5 3.0 4.5 0.5 5.0 6.5 0.5 7.0
+# Method 1 - Smooth xA-xB energies and forces using sin_inout and sin_l
+c1  0   1   xA  xB  2.5 0.5 3.0 4.5 0.5 5.0
+# Method 2 - Smooth xA-xB energies and forces using sin_r and sin_inout
+c2  0   1   xA  xB  2.5 0.5 3.0 4.5 0.5 5.0
+##############
+# Standard smooths will just smooth a single potential
+# smooth_index_1 atom_i atom_j r1 d1 g1 lr
+# lr indicates if this is sin_r or sin_l.  If neither is specified, then the following
+# format is used instead for sin_inout:
+# smooth_index_1 atom_i atom_j r1 d1 g1 r2 d2 g2
+##############
+# Method 0 - Smooth xA-xB energies and forces using sin_r
+0   xA xB  4.0 0.5 4.5 r
+# Method 1 - Smooth xA-xB energies and forces using sin_l
+0   xA xB  4.0 0.5 4.5 l
+# Method 2 - Smooth xA-xB energies and forces using sin_inout
+0   xA xB  4.0 0.5 4.5 9.0 0.4 9.4
+END
+
+###########################################################################################

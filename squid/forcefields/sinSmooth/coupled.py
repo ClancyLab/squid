@@ -153,6 +153,9 @@ class SmoothSinCoupled(object):
         self.regenerate()
 
     def __repr__(self):
+        return self.print_coupled_line()
+
+    def print_individual_smooths(self):
         self.regenerate()
         return "\n".join([
             str(self.smooth_1),
@@ -323,15 +326,15 @@ class SmoothSinCoupled(object):
             pkg.append(
                 [self.smooth_index_1, self.smooth_index_2,
                  self.atom_i, self.atom_j,
-                 self.r_1, self.d_1,
-                 self.r_2, self.d_2,
-                 self.r_3, self.d_3]
+                 self.r_1, self.d_1]
             )
         else:
             pkg.append([
-                self.r_1, self.d_1,
-                self.r_2, self.d_2,
-                self.r_3, self.d_3])
+                self.r_1, self.d_1])
+        if self.r_2 is not None:
+            pkg[-1] += [self.r_2, self.d_2]
+        if self.r_3 is not None:
+            pkg[-1] += [self.r_3, self.d_3]
 
         if with_bounds:
             # Get all lower and upper bounds added to pkg
@@ -362,22 +365,27 @@ class SmoothSinCoupled(object):
         '''
         if not isinstance(params, list):
             params = list(params)
-        assert len(params) in [6, 9],\
+        assert len(params) in [2, 5, 4, 7, 6, 9],\
             "Error - Smooth packing array length is wrong! \
 (tried packing %s)" % str(params)
 
-        # Auto flip with_indices if len(params) > 6
-        with_indices = with_indices or len(params) > 6
+        # Auto flip with_indices if we detect indices are here
+        with_indices = with_indices or len(params) % 2 == 1
 
         if not with_indices:
-            self.r_1, self.d_1,\
-                self.r_2, self.d_2,\
-                self.r_3, self.d_3 = params
+            self.r_1, self.d_1 = params[:2]
+            if len(params) > 4:
+                self.r_2, self.d_2 = params[2:5]
+            if len(params) > 6:
+                self.r_3, self.d_3 = params[5:7]
         else:
-            self.smooth_index, self.atom_i, self.atom_j,\
-                self.r_1, self.d_1,\
-                self.r_2, self.d_2,\
-                self.r_3, self.d_3 = params
+            self.smooth_index, self.atom_i, self.atom_j =\
+                params[:3]
+            self.r_1, self.d_1 = params[3:5]
+            if len(params) > 6:
+                self.r_2, self.d_2 = params[5:7]
+            if len(params) > 8:
+                self.r_3, self.d_3 = params[7:9]
 
         self.regenerate()
 
@@ -504,14 +512,14 @@ class SmoothSinCoupled(object):
         parsed_file = [
             cls.parse_line(line)
             for line in parsed_file
-            if not is_numeric(line.split()[0]) and len(line.split()) == 8]
+            if not is_numeric(line.split()[0]) and
+            len(line.split()) in [11, 14]]
 
         return [
-            cls(smooth_index, atom_i, atom_j, r_in, d_in, gcut, lr)
-            for smooth_index, atom_i, atom_j,
-            r_in, d_in, gcut, lr in parsed_file
-            if check_restriction(atom_i, restrict) and
-            check_restriction(atom_j, restrict)
+            cls(*values) for
+            values in parsed_file
+            if check_restriction(values[2], restrict) and
+            check_restriction(values[3], restrict)
         ]
 
 
@@ -531,10 +539,7 @@ def run_unit_tests():
     assert all([x == y for x, y in zip(a1_s.split(), a1_s_chk.split())]),\
         "Error - print_coupled_line failed."
 
-    a1_s = '\t'.join('''
-0   xPb xS  4.0 0.5 4.5 r
-1   xPb xS  4.0 0.5 4.5 l
-'''.strip().split())
+    a1_s = "\t".join("c   0   1   xPb xS  4.0 0.5 4.5".split())
     assert a1_s == '\t'.join(str(a1).strip().split()),\
         "Error - Changed string formatting."
 
@@ -555,10 +560,7 @@ pair_coeff 1 2 sin_l 1 4.00 0.50
         r_3=None, d_3=None, gcut_3=None,
         inout_index=1
     )
-    a1_s = '\t'.join('''
-1   xA  xB  2.5 0.5 3.0 4.5 0.5 5.0
-2   xA  xB  4.5 0.5 5.0 l
-'''.strip().split())
+    a1_s = "\t".join("c1  1   2   xA  xB  2.5 0.5 3.0 4.5 0.5 5.0".split())
     assert a1_s == '\t'.join(str(a1).strip().split()),\
         "Error - Changed string formatting."
 
@@ -576,10 +578,7 @@ pair_coeff 1 2 sin_l 1 4.00 0.50
         r_3=None, d_3=None, gcut_3=None,
         inout_index=2
     )
-    a1_s = '\t'.join('''
-1   xA  xB  2.5 0.5 3.0 r
-2   xA  xB  2.5 0.5 3.0 4.5 0.5 5.0
-'''.strip().split())
+    a1_s = "\t".join("c2  1   2   xA  xB  2.5 0.5 3.0 4.5 0.5 5.0".split())
     assert a1_s == '\t'.join(str(a1).strip().split()),\
         "Error - Changed string formatting."
 
@@ -597,10 +596,8 @@ pair_coeff 1 2 sin_l 1 4.00 0.50
         r_3=6.5, d_3=0.5, gcut_3=7.0,
         inout_index=0
     )
-    a1_s = '\t'.join('''
-1   xA  xB  2.5 0.5 3.0 4.5 0.5 5.0
-2   xA  xB  4.5 0.5 5.0 6.5 0.5 7.0
-'''.strip().split())
+    a1_s = "\t".join(
+        "c0  1   2   xA  xB  2.5 0.5 3.0 4.5 0.5 5.0 6.5 0.5 7.0".split())
     assert a1_s == '\t'.join(str(a1).strip().split()),\
         "Error - Changed string formatting."
 

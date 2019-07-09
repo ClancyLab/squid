@@ -6,19 +6,20 @@ The Parameters class contains:
 ------------
 
 """
-from squid import sysconst
-from forcefields.lj import LJ
-from forcefields.morse import Morse
-from forcefields.coulomb import Coul
-from forcefields.tersoff import Tersoff
-from forcefields.tersoff import verify_tersoff_2body_symmetry
-from forcefields.tersoff import sorted_force_2body_symmetry
-from forcefields.tersoff import tag_tersoff_for_duplicate_2bodies
-from forcefields.connectors import Bond, Angle, Dihedral
-from forcefields.sinSmooth.lr import SmoothSinLR
-from forcefields.sinSmooth.inout import SmoothSinInOut
-from forcefields.sinSmooth.coupled import SmoothSinCoupled
-import forcefields.helper as ffh
+from squid.forcefields.lj import LJ
+import squid.forcefields.helper as ffh
+from squid.forcefields.morse import Morse
+from squid.forcefields.coulomb import Coul
+from squid.forcefields.tersoff import Tersoff
+from squid.forcefields import opls as opls_utils
+from squid.forcefields import smrff as smrff_utils
+from squid.forcefields.tersoff import verify_tersoff_2body_symmetry
+from squid.forcefields.tersoff import sorted_force_2body_symmetry
+from squid.forcefields.tersoff import tag_tersoff_for_duplicate_2bodies
+from squid.forcefields.connectors import Bond, Angle, Dihedral
+from squid.forcefields.sinSmooth.lr import SmoothSinLR
+from squid.forcefields.sinSmooth.inout import SmoothSinInOut
+from squid.forcefields.sinSmooth.coupled import SmoothSinCoupled
 
 SUPPORTED_STYLES = [
     "lj/cut/coul/cut",
@@ -26,7 +27,15 @@ SUPPORTED_STYLES = [
     "morse",
     "tersoff",
     "opls",
-    "smooth"
+    "smooth",
+]
+SUPPORTED_SMOOTHS = [
+    "null",
+    "ters_l",
+    "ters_r",
+    "sin_l",
+    "sin_r",
+    "sin_inout",
 ]
 SMRFF_DICT = {
     "lj": ["sigma", "epsilon"],
@@ -63,7 +72,7 @@ class Parameters(object):
             This object.
     """
 
-    def __init__(self, fptr=[("OPLS", sysconst.opls_path)], restrict=None):
+    def __init__(self, restrict, fptr=[("OPLS", OPLS_FILE)]):
         #####################################
         # Initialize empty data lists
         self.lj_params = []
@@ -77,7 +86,7 @@ class Parameters(object):
 
         self.smooth_params = []
         #####################################
-        # Set all masks to False.  Masks are used to set whether a parameter
+        # Set all masks to True.  Masks are used to set whether a parameter
         # will be output or not when requested.
         self.lj_mask = False
         self.coul_mask = False
@@ -91,8 +100,8 @@ class Parameters(object):
         self.smooth_mask = False
         #####################################
         # Default cutoffs are None
-        self.sr_cut = None
-        self.lr_cut = None
+        self.short_gcut = None
+        self.long_gcut = None
         self.smrff_types = None
 
         self.system_name = None
@@ -115,7 +124,7 @@ class Parameters(object):
                     self.load_smrff(path)
                 elif ff == "OPLS":
                     if path is None:
-                        path = sysconst.opls_path
+                        path = OPLS_FILE
                     self.load_opls(path)
 
     def __repr__(self):
@@ -156,8 +165,7 @@ class Parameters(object):
 
         return params.strip()
 
-    def forcefield(self, short_range, sr_cut, sr_smooth,
-                   long_range, lr_cut, lr_smooth):
+    def set_smoothed_pair_potentials(self, local_potentials):
         '''
         This will assign masks appropriately for the input forcefield.  It
         will also assign any necessary parameters for the desired forcefield.
@@ -168,54 +176,46 @@ class Parameters(object):
 
         **Parameters**
 
-            short_range: *str*
-                What potential to use in the short range region.  NOTE! This
-                MUST be different than the long_range potential.
-            sr_cut: *float*
-                The global cutoff for the short_range potential.
-            sr_smooth: *str*
-                What type of smoothing function to assign the short_range
-                potential (NULL, ters_r, ters_l, sin_r, sin_l, sin_inout).
-            long_range: *str*
-                What potential to use in the long range region.  NOTE! This
-                MUST be different than the short_range potential.
-            lr_cut: *float*
-                The global cutoff for the long_range potential.
-            lr_smooth: *str*
-                What type of smoothing function to assign the long_range
-                potential (NULL, ters_r, ters_l, sin_r, sin_l, sin_inout).
+            local_potentials: *list, tuple, ...*
+                A list of tuples, each holding three values.  The first is the
+                potential (such as morse or tersoff).  The second is the
+                global cutoff (likely in Angstroms).  The final is the smooth
+                function to apply to this potential (such as NULL for none,
+                or some sin_X smooth).
 
         **Returns**
 
             None
         '''
 
-        # Ensure styles are supported
-        assert short_range in SUPPORTED_STYLES,\
-            "%s not supported!" % short_range
-        assert long_range in SUPPORTED_STYLES,\
-            "%s not supported!" % long_range
-        # Ensure we are not transitioning to/from OPLS (not possible)
-        assert short_range != "OPLS", "OPLS not supported as short/long range"
-        assert long_range != "OPLS", "OPLS not supported as short/long range"
+        # Ensure correctly passed local_potentials
+        assert isinstance(local_potentials, list),\
+            "Error - local_potentials should be a list."
+        assert all([isinstance(x, tuple) for x in local_potentials]),\
+            "Error - not all values in local_potentials are tuples!"
+        assert all([len(x) % 3 == 0 for x in local_potentials]),\
+            "Error - Some potentials have been incorrectly defined."
+        assert all([x[0].lower() in SUPPORTED_STYLES
+                    for x in local_potentials]),\
+            "Error - Unsupported potential specified."
+        assert all([x[2].lower() in SUPPORTED_SMOOTHS
+                    for x in local_potentials]),\
+            "Error - Unsupported smooth specified."
+
+        assert "opls" not in [x[0].lower() for x in local_potentials],\
+            "Error - OPLS not supported in forcefield specification as it \
+is not a pair potential."
 
         # Set masks
         self.set_mask("smooth")
-        self.set_mask(short_range)
-        self.set_mask(long_range)
+        for potential, _, _ in local_potentials:
+            self.set_mask(potential)
 
-        self.short_range = short_range
-        self.long_range = long_range
-
-        self.sr_smooth = sr_smooth
-        self.lr_smooth = lr_smooth
-
-        # Set cutoffs
-        self.sr_cut = sr_cut
-        self.lr_cut = lr_cut
+        # Save potentials
+        self.smoothed_pair_potentials = local_potentials
 
     def generate(self, elems, signs=None,
-                 couple_smooths=True, form="original"):
+                 couple_smooths=True, tersoff_form="original"):
         '''
         For every mask that is true, we will generate random data.
 
@@ -234,9 +234,9 @@ class Parameters(object):
                 you have a situation in which, say, sin_l and sin_r match
                 up, then this will ensure that these two overlap perfectly.
 
-            form: *str*
-                Whether to use the original form (m=3, gamma=1) or the
-                Albe et al form (m=1, beta=1) for tersoff parameters.
+            tersoff_form: *str*
+                Whether to use the original tersoff_form (m=3, gamma=1) or the
+                Albe et al tersoff_form (m=1, beta=1) for tersoff parameters.
                 Must be original or albe.
 
         **Returns**
@@ -247,28 +247,84 @@ class Parameters(object):
         assert self.smrff_types is not None,\
             "Error - you must define smrff_types first!"
 
+        if couple_smooths:
+            assert len(self.smoothed_pair_potentials) == 2,\
+                "Error - coupled smooth only works for exactly 2 potentials"
+
         # Generate our smooth functions
         if self.smooth_mask:
-            if self.sr_smooth == "NULL" or self.sr_smooth.startswith("ters"):
-                self.smooth_params = []
-            elif self.sr_smooth.startswith("sin"):
-                couple_smooths = couple_smooths and\
-                    self.lr_smooth.startswith("sin")
-                self.smooth_params = SmoothSin.generate(
-                    self.smrff_types, self.sr_smooth,
-                    self.sr_cut, 0, coupled=couple_smooths,
-                    coupled_lr_smooth=self.lr_smooth,
-                    coupled_lr_cut=self.lr_cut,
-                    coupled_smooth_index=1)
-            if self.lr_smooth == "NULL" or self.lr_smooth.startswith("ters"):
-                self.LR_SMOOTHS = []
-            elif self.lr_smooth.startswith("sin"):
-                # If already coupled, we don't need LR_SMOOTHS
+            self.smooth_params = []
+            for i, left in enumerate(self.smoothed_pair_potentials):
+                if couple_smooths and i > 0:
+                    continue
+                lhs_potential, lhs_gcut, lhs_smooth = left
+
+                # If we aren't smoothing here, then don't smooth
+                # But keep in mind, if we are coupling we may still be
+                # smoothing
+                if lhs_potential.lower() == "null" or\
+                    lhs_potential.startswith("ters") and\
+                        not couple_smooths:
+                    continue
+
+                # In case we are coupling, then grab the "right" potential
+                rhs_potential, rhs_gcut, rhs_smooth = None, None, None
                 if couple_smooths:
-                    self.LR_SMOOTHS = []
+                    rhs_potential, rhs_gcut, rhs_smooth =\
+                        self.smoothed_pair_potentials[i + 1]
+
+                # Check again if we are smoothing RHS
+                if rhs_smooth is not None and any([
+                    rhs_smooth.lower() == "null",
+                        rhs_smooth.startswith("ters")]):
+                    continue
+
+                # If we are smoothing, determine if it's coupled or not and
+                # handle accordingly
+                if all([
+                    couple_smooths,
+                    lhs_smooth.startswith("sin"),
+                        rhs_smooth.startswith("sin")]):
+                    # Determine cutoffs and which inout_index this is
+                    inout_index = [
+                        all(["inout" in lhs_smooth,
+                             "inout" in rhs_smooth]),
+                        "inout" in lhs_smooth,
+                        "inout" in rhs_smooth,
+                        True
+                    ].index(True)
+                    # Assign additional gcut values appropriately
+                    gcut_1, gcut_2, gcut_3 = [
+                        (lhs_gcut, lhs_gcut, rhs_gcut),
+                        (lhs_gcut, lhs_gcut, rhs_gcut),
+                        (lhs_gcut, rhs_gcut, rhs_gcut),
+                        (lhs_gcut, None, None)
+                    ][inout_index]
+                    if inout_index == 3:
+                        inout_index = None
+
+                    self.smooth_params +=\
+                        SmoothSinCoupled.generate(
+                            self.smrff_types, i, i + 1, gcut_1,
+                            gcut_2=gcut_2, gcut_3=gcut_3,
+                            inout_index=inout_index
+                        )
+                elif lhs_smooth == "sin_inout":
+                    self.smooth_params +=\
+                        SmoothSinInOut.generate(
+                            self.smrff_types,
+                            lhs_gcut * 0.8, lhs_gcut, i
+                        )
+                elif lhs_smooth in ["sin_l", "sin_r"]:
+                    self.smooth_params +=\
+                        SmoothSinLR.generate(
+                            self.smrff_types,
+                            lhs_smooth.split("_")[-1],
+                            lhs_gcut, i
+                        )
                 else:
-                    self.LR_SMOOTHS = SmoothSin.generate(
-                        self.smrff_types, self.lr_smooth, self.lr_cut, 1)
+                    raise Exception("Error - Invalide smooth (%s)"
+                                    % lhs_smooth)
 
         if self.lj_mask:
             self.lj_params = LJ.generate(self.smrff_types)
@@ -279,7 +335,8 @@ class Parameters(object):
         if self.morse_mask:
             self.morse_params = Morse.generate(self.smrff_types)
         if self.tersoff_mask:
-            self.tersoff_params = Tersoff.generate(self.smrff_types, form=form)
+            self.tersoff_params = Tersoff.generate(
+                self.smrff_types, form=tersoff_form)
             sorted_force_2body_symmetry(self.tersoff_params)
             verify_tersoff_2body_symmetry(self.tersoff_params)
 
@@ -326,7 +383,7 @@ class Parameters(object):
             "Error - style (%s) is not recognized!" % mask
         if mask == "morse":
             self.morse_mask = True
-        if mask == "lj/cut/coul/cut":
+        if mask in ["lj/cut/coul/cut", "lj/cut/coul/long"]:
             self.lj_mask = True
             self.coul_mask = True
         if mask == "tersoff":
@@ -419,8 +476,6 @@ class Parameters(object):
 
             None
         '''
-
-        import forcefields.opls as opls_utils
         # Read in and parse the opls parameter file
         atom_types, bond_types, angle_types, dihedral_types =\
             opls_utils.parse_pfile(fname)
@@ -448,7 +503,7 @@ class Parameters(object):
 
         # For each possible param type, check if it exists and load it
         lj_params = LJ.load_opls(
-            atom_types, pfptr=None, restrict=self.restrict)
+            atom_types, pfile_name=None, restrict=self.restrict)
         for lj in lj_params:
             if lj not in self.lj_params:
                 self.lj_params.append(lj)
@@ -457,7 +512,7 @@ class Parameters(object):
                 self.lj_params[lj_index].pack(lj.unpack())
 
         coul_params = Coul.load_opls(
-            atom_types, pfptr=None, restrict=self.restrict)
+            atom_types, pfile_name=None, restrict=self.restrict)
         for coul in coul_params:
             if coul not in self.coul_params:
                 self.coul_params.append(coul)
@@ -472,11 +527,11 @@ class Parameters(object):
                 v for _, v in self.opls_structure_dict.items()]
 
         self.bond_params += Bond.load_opls(
-            bond_types, pfptr=None, restrict=restrict_structures)
+            bond_types, pfile_name=None, restrict=restrict_structures)
         self.angle_params += Angle.load_opls(
-            angle_types, pfptr=None, restrict=restrict_structures)
+            angle_types, pfile_name=None, restrict=restrict_structures)
         self.dihedral_params += Dihedral.load_opls(
-            dihedral_types, pfptr=None, restrict=restrict_structures)
+            dihedral_types, pfile_name=None, restrict=restrict_structures)
 
     def load_smrff(self, fname):
         '''
@@ -494,12 +549,10 @@ class Parameters(object):
         '''
         # Parse the input file to clean out comments, empty lines, and
         # trailing whitespace
-        import forcefields.smrff as smrff_utils
-
         raw = smrff_utils.parse_pfile(fname)
 
         # For each possible param type, check if it exists and load it
-        lj_params = LJ.load_smrff(raw, pfptr=None, restrict=self.restrict)
+        lj_params = LJ.load_smrff(raw, pfile_name=None, restrict=self.restrict)
         for lj in lj_params:
             if lj not in self.lj_params:
                 self.lj_params.append(lj)
@@ -507,7 +560,8 @@ class Parameters(object):
                 lj_index = self.lj_params.index(lj)
                 self.lj_params[lj_index].pack(lj.unpack())
 
-        coul_params = Coul.load_smrff(raw, pfptr=None, restrict=self.restrict)
+        coul_params = Coul.load_smrff(raw, pfile_name=None,
+                                      restrict=self.restrict)
         for coul in coul_params:
             if coul not in self.coul_params:
                 self.coul_params.append(coul)
@@ -516,12 +570,16 @@ class Parameters(object):
                 self.coul_params[coul_index].pack(coul.unpack())
 
         self.tersoff_params += Tersoff.load_smrff(
-            raw, pfptr=None, restrict=self.restrict)
+            raw, pfile_name=None, restrict=self.restrict)
         verify_tersoff_2body_symmetry(self.tersoff_params)
         self.morse_params += Morse.load_smrff(
-            raw, pfptr=None, restrict=self.restrict)
-        self.smooth_params += SmoothSin.load_smrff(
-            raw, pfptr=None, restrict=self.restrict)
+            raw, pfile_name=None, restrict=self.restrict)
+        self.smooth_params += SmoothSinLR.load_smrff(
+            raw, pfile_name=None, restrict=self.restrict)
+        self.smooth_params += SmoothSinInOut.load_smrff(
+            raw, pfile_name=None, restrict=self.restrict)
+        self.smooth_params += SmoothSinCoupled.load_smrff(
+            raw, pfile_name=None, restrict=self.restrict)
 
     def write_smrff(self, fname):
         '''
@@ -662,11 +720,16 @@ class Parameters(object):
         script = []
 
         self.write_tfile = write_file
+        local_style = self.get_smrff_style()
 
-        if all([style in ["lj/cut/coul/cut", 'all'],
-                all([self.lj_mask, self.coul_mask])]):
-            script.append(self.dump_lj_cut_coul_cut())
-            script.append(self.dump_set_charge())
+        if style in ["lj/cut/coul/cut", 'all'] and all([self.lj_mask, self.coul_mask]):
+            if "lj/cut/coul/cut" in local_style:
+                script.append(self.dump_lj_cut_coul_cut())
+                script.append(self.dump_set_charge())
+        if style in ["lj/cut/coul/long", 'all'] and all([self.lj_mask, self.coul_mask]):
+            if "lj/cut/coul/long" in local_style:
+                script.append(self.dump_lj_cut_coul_long())
+                script.append(self.dump_set_charge())
         if style in ["morse", 'all'] and self.morse_mask:
             script.append(self.dump_morse())
         if style in ["smooth", 'all'] and self.smooth_mask:
@@ -803,6 +866,40 @@ class Parameters(object):
 
         return "\n".join(lammps_command)
 
+    def dump_lj_cut_coul_long(self):
+        '''
+        This function will get the lammps command line argument for
+        lj/cut/coul/long of everything within the Parameters object.
+
+        **Parameters**
+
+            None
+
+        **Returns**
+
+            cmds: *str*
+                A string, separated with new lines, with pair_coeff for each
+                lj/cut/coul/long command possible within this parameter set.
+        '''
+
+        lammps_command = []
+
+        for i in range(len(self.lj_params)):
+            for j in range(i, len(self.lj_params)):
+                if not ffh.check_restriction(self.lj_params[i], self.restrict):
+                    continue
+                if not ffh.check_restriction(self.lj_params[j], self.restrict):
+                    continue
+                sigma_ij = (self.lj_params[i].sigma * self.lj_params[j].sigma) ** 0.5
+                epsilon_ij = (self.lj_params[i].epsilon * self.lj_params[j].epsilon) ** 0.5
+                type_i = int(self.restrict.index(self.lj_params[i].index) + 1)
+                type_j = int(self.restrict.index(self.lj_params[j].index) + 1)
+                type_i, type_j = sorted([type_i, type_j])
+                lammps_command.append('pair_coeff %d %d lj/cut/coul/long %f %f' % (type_i, type_j, epsilon_ij, sigma_ij))
+
+        lammps_command = "\n".join(lammps_command)
+        return lammps_command
+
     def dump_lj_cut_coul_cut(self):
         '''
         This function will get the lammps command line argument for
@@ -827,17 +924,12 @@ class Parameters(object):
                     continue
                 if not ffh.check_restriction(self.lj_params[j], self.restrict):
                     continue
-                sigma_ij = (
-                    self.lj_params[i].sigma * self.lj_params[j].sigma) ** 0.5
-                epsilon_ij = (
-                    self.lj_params[i].epsilon *
-                    self.lj_params[j].epsilon) ** 0.5
+                sigma_ij = (self.lj_params[i].sigma * self.lj_params[j].sigma) ** 0.5
+                epsilon_ij = (self.lj_params[i].epsilon * self.lj_params[j].epsilon) ** 0.5
                 type_i = int(self.restrict.index(self.lj_params[i].index) + 1)
                 type_j = int(self.restrict.index(self.lj_params[j].index) + 1)
                 type_i, type_j = sorted([type_i, type_j])
-                lammps_command.append(
-                    'pair_coeff %d %d lj/cut/coul/cut %f %f'
-                    % (type_i, type_j, epsilon_ij, sigma_ij))
+                lammps_command.append('pair_coeff %d %d lj/cut/coul/cut %f %f' % (type_i, type_j, epsilon_ij, sigma_ij))
 
         lammps_command = "\n".join(lammps_command)
         return lammps_command
@@ -947,9 +1039,13 @@ class Parameters(object):
             alpha = self.morse_params[k].alpha
             r0 = self.morse_params[k].r0
             rc = self.morse_params[k].rc
+            if rc is not None:
+                end_of_cmd = ' morse %f %f %f %f' % (D0, alpha, r0, rc)
+            else:
+                end_of_cmd = ' morse %f %f %f' % (D0, alpha, r0)
             lammps_command.append(
                 'pair_coeff ' + str(index_i) + ' ' + str(index_j) +
-                ' morse %f %f %f %f' % (D0, alpha, r0, rc))
+                end_of_cmd)
         lammps_command = "\n".join(lammps_command)
         return lammps_command
 
@@ -984,17 +1080,14 @@ class Parameters(object):
         '''
         This will return the smrff style.
         '''
-        if self.short_range.startswith("ters"):
-            sr = "tersoff"
-        else:
-            sr = self.short_range + " " + str(self.sr_cut)
-        if self.long_range.startswith("ters"):
-            lr = "tersoff"
-        else:
-            lr = self.long_range + " " + str(self.lr_cut)
+        # Expand ters to tersoff
+        get = lambda s: "tersoff" if str(s).startswith("ters") else str(s)
 
-        return "pair_style smrff %s %s smooth %s %s"\
-            % (sr, lr, self.sr_smooth, self.lr_smooth)
+        return "pair_style smrff " +\
+            " ".join([get(s1) + " " + str(s2)
+                      for s1, s2, _ in self.smoothed_pair_potentials]) +\
+            " smooth " +\
+            " ".join([str(s) for _, _, s in self.smoothed_pair_potentials])
 
     def fix(self, style, label, params='all', value=None):
         '''
@@ -1055,11 +1148,148 @@ class Parameters(object):
 
 
 def run_unit_tests():
+    TEST_SMRFF_FILE = "./potentials/junk.smrff"
     params = Parameters(
-        fptr=[("OPLS", sysconst.opls_path)],
-        restrict=None
+        ["82", "86", "xA", "xB"],
+        fptr=[("OPLS", OPLS_FILE), ("SMRFF", TEST_SMRFF_FILE)]
     )
-    pass
+    params.set_all_masks(True)
+    params_s = """
+COULOMB
+82 -0.06 C 12.0110
+86 0.00 C 12.0110
+xA 1.12 A 207.2000
+xB -1.12 B 32.0650
+END
+LENNARD-JONES
+82 3.5000 0.0660
+86 3.5500 0.0760
+xA 4.7301 0.1200
+xB 4.0734 1.0000
+END
+TERSOFF
+xA xA xA      3   1.0000   2.0000   21218.2000   35.9740   -0.5722
+         2.0000   0.9321   5.0000   300000.0000   4.0000   0.5000   0.5000   2013.0619
+
+
+xA xA xB      3   1.0000   2.0000   50125.5000   1.5467   -0.7817
+         1.0000   1.0000   1.0000   1.0000   4.0000   0.5000   1.0000   1.0000
+
+
+xA xB xA      3   1.0000   2.0000   138928.4000   1.8615   -0.7895
+         1.0000   1.0000   1.0000   1.0000   4.0000   0.5000   1.0000   1.0000
+
+
+xA xB xB      3   1.0000   0.0000   137831.5000   25.2881   0.5199
+         2.0000   0.1228   0.5212   32831.9500   4.0000   0.5000   3.8233   300000.0000
+
+
+xB xA xA      3   1.0000   0.2508   6137.3000   4.9407   -0.8608
+         2.0000   0.1228   0.5212   32831.9500   4.0000   0.5000   3.8233   300000.0000
+
+
+xB xA xB      3   1.0000   2.0000   150000.0000   0.6242   0.1138
+         1.0000   1.0000   1.0000   1.0000   4.0000   0.5000   1.0000   1.0000
+
+
+xB xB xA      3   1.0000   2.0000   96962.7000   28.1901   0.2540
+         1.0000   1.0000   1.0000   1.0000   4.0000   0.5000   1.0000   1.0000
+
+
+xB xB xB      3   1.0000   2.0000   7389.8000   6.6376   -0.8337
+         2.0000   0.0261   5.0000   300000.0000   4.0000   0.5000   5.0000   190979.5870
+
+
+END
+MORSE
+xA xA      100.0000000   2.0000000   1.6000000   3.0000000
+xA xB      100.0000000   2.0000000   1.7000000   3.0000000
+xB xB      100.0000000   2.0000000   1.8000000   3.0000000
+END
+BONDS
+13 13 268.000 1.529
+13 47 317.000 1.510
+47 47 549.000 1.340
+END
+ANGLES
+13 13 13 58.350 112.700
+13 13 47 63.000 111.100
+47 13 47 63.000 112.400
+13 47 13 70.000 130.000
+13 47 47 70.000 124.000
+END
+DIHEDRALS
+13 13 13 13 1.300 -0.050 0.200 0.000
+13 13 47 13 2.817 -0.169 0.543 0.000
+13 13 47 47 0.346 0.405 -0.904 0.000
+47 13 47 13 0.000 -8.000 0.000 0.000
+13 47 47 13 0.000 14.000 0.000 0.000
+13 13 13 47 1.300 -0.050 0.200 0.000
+END
+SMOOTHS
+0   xA  xB  4.0 0.5 4.5 r
+0   xA  xB  4.0 0.5 4.5 l
+0   xA  xB  4.0 0.5 4.5 9.0 0.4 9.4
+c0  0   1   xA  xB  2.5 0.5 3.0 4.5 0.5 5.0 6.5 0.5 7.0
+c1  0   1   xA  xB  2.5 0.5 3.0 4.5 0.5 5.0
+c2  0   1   xA  xB  2.5 0.5 3.0 4.5 0.5 5.0
+END
+""".strip().split()
+    params_s_chk = str(params).strip().split()
+    assert all([a == b for a, b in zip(params_s, params_s_chk)]),\
+        "Error - String format output of Parameters has changed."
+
+    # Generate a random parameter set 1
+    P = Parameters(["xPb", "xS", "xSe"])
+    P.smrff_types = ["xPb", "xS", "xSe"]
+    P.set_smoothed_pair_potentials([
+        ("morse", 4.5, "sin_r"),
+        ("lj/cut/coul/long", 12.0, "sin_l")
+    ])
+    P.generate(
+        ["Pb", "S", "Se"],
+        signs=[1, -1, -1],
+        couple_smooths=True,
+        tersoff_form="original"
+    )
+    t1 = P.unpack()
+    P.pack(P.unpack())
+    t2 = P.unpack()
+    P.pack(P.unpack())
+    t3 = P.unpack()
+    EPS = 1E-4
+    assert all([abs(a - b) < EPS for a, b in zip(t1, t2)]),\
+        "Error - Failed to pack and unpack."
+    assert all([abs(a - b) < EPS for a, b in zip(t1, t3)]),\
+        "Error - Failed to pack and unpack."
+    assert all([abs(a - b) < EPS for a, b in zip(t2, t3)]),\
+        "Error - Failed to pack and unpack."
+
+    # Generate a random parameter set 2
+    P = Parameters(["xPb", "xS"])
+    P.smrff_types = ["xPb", "xS"]
+    P.set_smoothed_pair_potentials([
+        ("tersoff", 4.5, "NULL"),
+        ("lj/cut/coul/long", 12.0, "ters_l")
+    ])
+    P.generate(
+        ["Pb", "S", "Se"],
+        signs=[1, -1],
+        couple_smooths=True,
+        tersoff_form="original"
+    )
+    t1 = P.unpack()
+    P.pack(P.unpack())
+    t2 = P.unpack()
+    P.pack(P.unpack())
+    t3 = P.unpack()
+    EPS = 1E-4
+    assert all([abs(a - b) < EPS for a, b in zip(t1, t2)]),\
+        "Error - Failed to pack and unpack."
+    assert all([abs(a - b) < EPS for a, b in zip(t1, t3)]),\
+        "Error - Failed to pack and unpack."
+    assert all([abs(a - b) < EPS for a, b in zip(t2, t3)]),\
+        "Error - Failed to pack and unpack."
 
 
 if __name__ == "__main__":

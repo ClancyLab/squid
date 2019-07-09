@@ -274,7 +274,7 @@ class SmoothSinLR(object):
             atom_types: *list, str*
                 A list of all the atom types to have parameters generated for.
             lr: *str*
-                Whether this is sin_l, sin_r, or sin_inout.
+                Whether this is sin_l or sin_r (l or r).
             gcut: *float*
                 The global cutoff, to not be exceeded.
             smooth_index: *int*

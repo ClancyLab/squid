@@ -33,7 +33,7 @@ ALPHA_BOUNDS = (0.1, 5.0)
 # someone appreciate if something binds or not, and assign R0 to a low
 # range (0.5 - 4.0) or a high range(4.0 - 10.0)
 R0_BOUNDS = (0.5, 10.0)
-RC_BOUNDS = (0.1, 15.0)
+RC_BOUNDS = (0.1, 7.0)
 ##############################################################################
 
 """
@@ -96,7 +96,7 @@ class Morse(object):
         values = (indices, D0, alpha, r0, rc)
         if line is not None and all([x is None for x in values]):
             self.assign_line(line)
-        elif line is None and all([x is not None for x in values]):
+        elif line is None and all([x is not None for x in values[:-1]]):
             assert isinstance(indices, list) or isinstance(indices, tuple),\
                 "In Morse, initialized with indices not being a list or tuple!"
 
@@ -136,7 +136,6 @@ to be parsed, but not both.")
                 all([x == y for x, y in zip(self.indices, indices[::-1])]))
 
     def __hash__(self):
-        # return hash(tuple(self.unpack(with_indices=True) + self.unpack(bounds=0) + self.unpack(bounds=1)))
         return hash(self.indices)
 
     def _printer(self, with_indices=True, bounds=None):
@@ -156,10 +155,13 @@ to be parsed, but not both.")
                 It is in the following order: indices D0 alpha r0 rc
         '''
         self.validate()
-        return (" ".join(list(self.indices)) +
-                "      %.7f   %.7f   %.7f   %.7f"
-                % tuple(self.unpack(
-                    with_indices=with_indices, bounds=bounds)[1:]))
+        values = tuple(self.unpack(
+            with_indices=with_indices, bounds=bounds)[1:]
+        )
+        s = "      %.7f   %.7f   %.7f   %.7f"
+        if len(values) == 3:
+            s = "      %.7f   %.7f   %.7f"
+        return (" ".join(list(self.indices)) + s % values)
 
     def print_lower(self):
         '''
@@ -212,16 +214,23 @@ to be parsed, but not both.")
         else:
             if with_indices:
                 pkg.append([self.indices, self.D0,
-                            self.alpha, self.r0, self.rc])
+                            self.alpha, self.r0])
             else:
-                pkg.append([self.D0, self.alpha, self.r0, self.rc])
+                pkg.append([self.D0, self.alpha, self.r0])
+            if self.rc is not None:
+                pkg[-1].append(self.rc)
 
         if with_bounds:
             # Get all lower and upper bounds added to pkg
             # After this, pkg = [params, lower, upper]
-            for bnd in zip(zip(self.D0_bounds, self.alpha_bounds,
-                               self.r0_bounds, self.rc_bounds)):
-                pkg.append(*bnd)
+            if self.rc is not None:
+                for bnd in zip(zip(self.D0_bounds, self.alpha_bounds,
+                                   self.r0_bounds, self.rc_bounds)):
+                    pkg.append(*bnd)
+            else:
+                for bnd in zip(zip(self.D0_bounds, self.alpha_bounds,
+                                   self.r0_bounds)):
+                    pkg.append(*bnd)
 
             return pkg
 
@@ -236,8 +245,8 @@ to be parsed, but not both.")
         **Returns**
             None
         '''
-        assert len(params) in [4, 5], "In Morse, tried packing %d parameters. \
-Should be either 4 or 5!" % len(params)
+        assert len(params) in [3, 4, 5], "In Morse, tried packing %d parameters. \
+Should be either 3, 4, or 5!" % len(params)
 
         if len(params) == 5:
             offset = 0
@@ -247,7 +256,8 @@ Should be either 4 or 5!" % len(params)
         self.D0 = params[1 + offset]
         self.alpha = params[2 + offset]
         self.r0 = params[3 + offset]
-        self.rc = params[4 + offset]
+        if len(params) == 6:
+            self.rc = params[4 + offset]
 
         self.validate()
 
@@ -260,12 +270,21 @@ Should be either 4 or 5!" % len(params)
         self.D0 = float(self.D0)
         self.alpha = float(self.alpha)
         self.r0 = float(self.r0)
-        self.rc = float(self.rc)
+        if self.rc is not None:
+            self.rc = float(self.rc)
+
+        # In the case of rc being None, change N-params
+        self.N_params = 4
+        if self.rc is None:
+            self.N_params = 3
+
         params = [self.D0, self.alpha, self.r0, self.rc]
         bounds = [self.D0_bounds, self.alpha_bounds,
                   self.r0_bounds, self.rc_bounds]
         names = ["D0", "alpha", "r0", "rc"]
         for param, bound, name in zip(params, bounds, names):
+            if param is None:
+                continue
             assert param >= (bound[0] - BOUND_EPS) and\
                 param <= (bound[1] + BOUND_EPS),\
                 "In Morse %s, parameter %s = %.2f is outside of it's range = \
@@ -282,12 +301,16 @@ Should be either 4 or 5!" % len(params)
             None
         """
         line = line.strip().split()
+        assert len(line) in [5, 6],\
+            "Error - Invalid line to parse!"
 
         indices = (line[0], line[1])
         D0 = float(line[2])
         alpha = float(line[3])
         r0 = float(line[4])
-        rc = float(line[5])
+        rc = None
+        if len(line) == 6:
+            rc = float(line[5])
 
         return indices, D0, alpha, r0, rc
 
@@ -422,7 +445,7 @@ value when fixing rc in Morse (passed %s)." % str(value)
         ]
 
     @classmethod
-    def generate(cls, atom_types):
+    def generate(cls, atom_types, gen_rc=False):
         '''
         Randomly generate parameters for morse.
 
@@ -444,7 +467,9 @@ value when fixing rc in Morse (passed %s)." % str(value)
             D0 = random_in_range(D0_BOUNDS)
             alpha = random_in_range(ALPHA_BOUNDS)
             r0 = random_in_range(R0_BOUNDS)
-            rc = random_in_range(RC_BOUNDS)
+            rc = None
+            if gen_rc:
+                rc = random_in_range(RC_BOUNDS)
             morse_objs.append(cls(indices, D0, alpha, r0, rc))
 
         return morse_objs
@@ -507,6 +532,9 @@ def run_unit_tests():
     assert ct3.alpha == 1.8, "Error - Unable to parse alpha from line."
     assert ct3.r0 == 3.1, "Error - Unable to parse r0 from line."
     assert ct3.rc == 3.6, "Error - Unable to parse rc from line."
+
+    ct3 = Morse.generate(["xA", "xB"])
+    print(ct3)
 
 
 if __name__ == "__main__":

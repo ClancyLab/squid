@@ -308,13 +308,13 @@ larger than 0! It is %f" % (self.index, self.epsilon)
         ]
 
     @classmethod
-    def load_opls(cls, atom_types, pfptr=None, restrict=None):
+    def load_opls(cls, atom_types, pfile_name=None, restrict=None):
         '''
         Given a parameter file, inport the LJ parameters if possible.
         **Parameters**
             atom_types: *list, dict, ...*
                 Atom types from a parsed opls parameter file.
-            pfptr: *str*
+            pfile_name: *str*
                 The name of a parameter file to be parsed.  If specified,
                 then pfile is ignored (you may simply pass None as pfile).
         **Returns**
@@ -324,8 +324,8 @@ larger than 0! It is %f" % (self.index, self.epsilon)
         # Ensure correct pfile format, and that we even need to parse it.
         import squid.forcefields.opls as opls_utils
 
-        if pfptr is not None:
-            atom_types, _, _, _ = opls_utils.parse_pfile(pfptr)
+        if pfile_name is not None:
+            atom_types, _, _, _ = opls_utils.parse_pfile(pfile_name)
 
         return [
             cls(index=t["index"], sigma=t["vdw_r"], epsilon=t["vdw_e"])

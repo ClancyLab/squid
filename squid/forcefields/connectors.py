@@ -167,14 +167,14 @@ class HarmonicConnector(object):
         raise Exception("Error - Function has not been done yet.")
 
     @classmethod
-    def load_smrff(cls, pfile, pfptr=None):
+    def load_smrff(cls, pfile, pfile_name=None):
         """
         Given a parameter file, inport the LJ parameters if possible.
         **Parameters**
             pfile: *str*
                 A parsed smrff parameter file input string (no comments or
                 trailing white spaces)
-            pfptr: *str*
+            pfile_name: *str*
                 The name of a parameter file to be parsed.  If specified,
                 then pfile is ignored (you may simply pass None as pfile).
         **Returns**
@@ -185,14 +185,14 @@ class HarmonicConnector(object):
         raise Exception("Error - load_smrff in Connector currently doesn't make sense!")
 
     @classmethod
-    def load_opls(cls, info, pfptr=None, restrict=None):
+    def load_opls(cls, info, pfile_name=None, restrict=None):
         """
         Given a parameter file, inport the LJ parameters if possible.
         **Parameters**
             pfile: *str*
                 A parsed smrff parameter file input string (no comments or
                 trailing white spaces)
-            pfptr: *str*
+            pfile_name: *str*
                 The name of a parameter file to be parsed.  If specified,
                 then pfile is ignored (you may simply pass None as pfile).
         **Returns**
@@ -206,13 +206,13 @@ class HarmonicConnector(object):
 class Bond(HarmonicConnector):
 
     @classmethod
-    def load_opls(cls, bond_types, pfptr=None, restrict=None):
+    def load_opls(cls, bond_types, pfile_name=None, restrict=None):
         """
         Given a parameter file, inport the Bond parameters if possible.
         **Parameters**
             bond_types: *list,* :class:`structures.Struct`
                 Bond types from a parsed opls parameter file.
-            pfptr: *str*
+            pfile_name: *str*
                 The name of a parameter file to be parsed.  If specified,
                 then pfile is ignored (you may simply pass None as pfile).
         **Returns**
@@ -220,8 +220,8 @@ class Bond(HarmonicConnector):
                 Returns a list of Bond objects if possible, else None.
         """
         import squid.forcefields.opls as opls_utils
-        if pfptr is not None:
-            _, bond_types, _, _ = opls_utils.parse_pfile(pfptr)
+        if pfile_name is not None:
+            _, bond_types, _, _ = opls_utils.parse_pfile(pfile_name)
 
         return [
             cls(indices=t["index2s"], energies=[t["e"]], equilibs=[t["r"]])
@@ -232,13 +232,13 @@ class Bond(HarmonicConnector):
 class Angle(HarmonicConnector):
 
     @classmethod
-    def load_opls(cls, angle_types, pfptr=None, restrict=None):
+    def load_opls(cls, angle_types, pfile_name=None, restrict=None):
         """
         Given a parameter file, inport the Angle parameters if possible.
         **Parameters**
             angle_types: *list,* :class:`structures.Struct`
                 Angle types from a parsed opls parameter file.
-            pfptr: *str*
+            pfile_name: *str*
                 The name of a parameter file to be parsed.  If specified,
                 then pfile is ignored (you may simply pass None as pfile).
         **Returns**
@@ -246,8 +246,8 @@ class Angle(HarmonicConnector):
                 Returns a list of Angle objects if possible, else None.
         """
         import squid.forcefields.opls as opls_utils
-        if pfptr is not None:
-            _, _, angle_types, _ = opls_utils.parse_pfile(pfptr)
+        if pfile_name is not None:
+            _, _, angle_types, _ = opls_utils.parse_pfile(pfile_name)
 
         return [
             cls(indices=t["index2s"], energies=[t["e"]], equilibs=[t["angle"]])
@@ -258,13 +258,13 @@ class Angle(HarmonicConnector):
 class Dihedral(HarmonicConnector):
 
     @classmethod
-    def load_opls(cls, dihedral_types, pfptr=None, restrict=None):
+    def load_opls(cls, dihedral_types, pfile_name=None, restrict=None):
         """
         Given a parameter file, inport the Dihedral parameters if possible.
         **Parameters**
             dihedral_types: *list,* :class:`structures.Struct`
                 Dihedral types from a parsed opls parameter file.
-            pfptr: *str*
+            pfile_name: *str*
                 The name of a parameter file to be parsed.  If specified,
                 then pfile is ignored (you may simply pass None as pfile).
         **Returns**
@@ -272,8 +272,8 @@ class Dihedral(HarmonicConnector):
                 Returns a list of Dihedral objects if possible, else None.
         """
         import squid.forcefields.opls as opls_utils
-        if pfptr is not None:
-            _, _, _, dihedral_types = opls_utils.parse_pfile(pfptr)
+        if pfile_name is not None:
+            _, _, _, dihedral_types = opls_utils.parse_pfile(pfile_name)
 
         return [
             cls(indices=t["index2s"], energies=t["e"], equilibs=[])

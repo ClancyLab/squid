@@ -24,17 +24,28 @@ def check_restriction(p, restrict):
     if '*' not in restrict:
         restrict = ['*'] + restrict[:]
 
+    # Handle mundane objects
     if isinstance(p, int) or isinstance(p, str):
         return str(p) in restrict
     elif isinstance(p, list) or isinstance(p, tuple):
         return all([str(i) in restrict for i in p])
-    elif hasattr(p, "index") and type(p.index) in [int, str]:
-        # Note - we need to also ensure p.index is not a function, as
-        # a lot of other objects such as lists have this as a function!
+    # Handle dictionaries, which are given by opls parsing
+    elif isinstance(p, dict):
+        if "index2s" in p:
+            return all([str(i) in restrict for i in p["index2s"]])
+        elif "index" in p:
+            return str(p["index"]) in restrict
+        elif "indices" in p:
+            return all([str(i) in restrict for i in p["indices"]])
+        else:
+            raise Exception(
+                "Error - Incorrectly parsed OPLS file!")
+    # Handle special objects
+    elif hasattr(p, "index") and any(
+            [isinstance(p.index, int), isinstance(p.index, str)]):
         return str(p.index) in restrict
     elif hasattr(p, "indices"):
         return all([str(i) in restrict for i in p.indices])
-#    elif isinstance(p, Struct):
     elif hasattr(p, "atom_i") and hasattr(p, "atom_j"):
         ai, aj = p.atom_i, p.atom_j
         if ai is None:
@@ -42,8 +53,6 @@ def check_restriction(p, restrict):
         if aj is None:
             aj = "*"
         return ai in restrict and aj in restrict
-    elif isinstance(dict, p):
-        return all([str(i) in restrict for i in p.index2s])
     else:
         print(type(p))
         print(p)

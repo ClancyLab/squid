@@ -14,11 +14,10 @@ files before ever importing frc_opls.
 
 # System imports
 import re
-# Squid imports
-from squid import sysconst
+OPLS_FILE = "./potentials/oplsaa.prm"
 
 
-def parse_pfile(parameter_file=sysconst.opls_path, pair_style='lj/cut'):
+def parse_pfile(parameter_file=OPLS_FILE, pair_style='lj/cut'):
     """
     Reads an opls parameter file written in the Tinker file format.
 
