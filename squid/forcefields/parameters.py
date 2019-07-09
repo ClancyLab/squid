@@ -6,7 +6,7 @@ The Parameters class contains:
 ------------
 
 """
-import sysconst
+from squid import sysconst
 from forcefields.lj import LJ
 from forcefields.morse import Morse
 from forcefields.coulomb import Coul
@@ -37,11 +37,14 @@ SMRFF_DICT = {
         "n", "beta", "lambda2", "B", "R", "D", "lambda1", "A"]
 }
 OPLS_STRUCTURES = ["BONDS", "ANGLES", "DIHEDRALS"]
+OPLS_FILE = "./potentials/oplsaa.prm"
 
 
 class Parameters(object):
     """
-    A Parameters object that holds all parameters pointed out by fptr.
+    A Parameters object that holds force field parameters.  It requires the
+    input of which atom types to get parameters for, so as to not read in an
+    entire force field.
 
     **Parameters**
 
@@ -1049,3 +1052,15 @@ class Parameters(object):
         pkg = self.unpack(with_indices=False, with_bounds=True)
         return len(pkg[0]) - sum([
             int(low == val == up) for val, low, up in zip(*pkg)])
+
+
+def run_unit_tests():
+    params = Parameters(
+        fptr=[("OPLS", sysconst.opls_path)],
+        restrict=None
+    )
+    pass
+
+
+if __name__ == "__main__":
+    run_unit_tests()
