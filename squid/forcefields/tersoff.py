@@ -3,6 +3,7 @@ The Tersoff object.  This stores the indices and TERSOFF parameters.
 '''
 import copy
 from itertools import product
+from squid.utils.cast import is_numeric
 import squid.forcefields.smrff as smrff_utils
 from squid.forcefields.helper import check_restriction
 
@@ -128,16 +129,23 @@ class Tersoff(object):
         # How many parameters exist in this potential
         self.N_params = 14
         self.sym_2body_tag = False
+        self.skip_m, self.skip_gamma, self.skip_beta = False, False, False
 
         if line is not None and all([x is None for x in P]):
             if form == "original":
                 self.m_bounds = (3, 3)
                 self.gamma_bounds = (1, 1)
                 self.beta_bounds = (0.0, 1.0)
+                self.N_params = 12
+                self.skip_m = True
+                self.skip_gamma = True
             elif form == "albe":
                 self.m_bounds = (1, 1)
                 self.beta_bounds = (1, 1)
                 self.gamma_bounds = (0, 1)
+                self.N_params = 12
+                self.skip_m = True
+                self.skip_beta = True
             self.assign_line(line, validate=False)
         elif line is None and all([x is not None for x in P]):
             assert isinstance(indices, list) or isinstance(indices, tuple),\
@@ -149,6 +157,9 @@ class Tersoff(object):
                 self.m_bounds = (3, 3)
                 self.gamma_bounds = (1, 1)
                 self.beta_bounds = (0.0, 1.0)
+                self.N_params = 12
+                self.skip_m = True
+                self.skip_gamma = True
             elif form == "albe":
                 assert m == 1,\
                     "Error - In Albe et al. form, m must be 1."
@@ -157,6 +168,9 @@ class Tersoff(object):
                 self.m_bounds = (1, 1)
                 self.beta_bounds = (1, 1)
                 self.gamma_bounds = (0, 1)
+                self.N_params = 12
+                self.skip_m = True
+                self.skip_beta = True
 
             self.indices = indices
             self.m = m
@@ -239,9 +253,23 @@ line to be parsed, but not both.")
                             n beta  lambda2 B R     D     lambda1   A
         '''
         self.validate()
+        # Store these values to set after we get the full array
+        held_m, held_beta, held_gamma =\
+            self.skip_m, self.skip_beta, self.skip_gamma
+        self.skip_m, self.skip_beta, self.skip_gamma = False, False, False
+
+        first_row = tuple(self.unpack(
+            with_indices=with_indices, bounds=bounds, for_output=True)[1:7])
+        second_row = tuple(self.unpack(
+            with_indices=with_indices, bounds=bounds, for_output=True)[7:])
+
+        # Reset held values
+        self.skip_m, self.skip_beta, self.skip_gamma =\
+            held_m, held_beta, held_gamma
+
         return (" ".join(list(self.indices)) +
-                "      %d   %.4f   %.4f   %.4f   %.4f   %.4f" % tuple(self.unpack(with_indices=with_indices, bounds=bounds, for_output=True)[1:7]) +
-                "\n\t\t %.4f   %.4f   %.4f   %.4f   %.4f   %.4f   %.4f   %.4f\n\n" % tuple(self.unpack(with_indices=with_indices, bounds=bounds, for_output=True)[7:])
+                "      %d   %.4f   %.4f   %.4f   %.4f   %.4f" % first_row +
+                "\n\t\t %.4f   %.4f   %.4f   %.4f   %.4f   %.4f   %.4f   %.4f\n\n" % second_row
                 )
 
     def dump_line(self):
@@ -350,12 +378,14 @@ line to be parsed, but not both.")
         if bounds is not None:
             pkg.append([
                 self.indices if with_indices else None,
-                self.m_bounds[bounds], self.gamma_bounds[bounds],
+                self.m_bounds[bounds] if not self.skip_m else None,
+                self.gamma_bounds[bounds] if not self.skip_gamma else None,
                 self.lambda3_bounds[bounds],
                 self.c_bounds[bounds], self.d_bounds[bounds],
                 self.costheta0_bounds[bounds],
                 self.n_bounds[bounds] if not tag_for_2body else None,
-                self.beta_bounds[bounds] if not tag_for_2body else None,
+                self.beta_bounds[bounds] if not all([
+                    tag_for_2body, not self.skip_beta]) else None,
                 self.lambda2_bounds[bounds] if not tag_for_2body else None,
                 self.B_bounds[bounds] if not tag_for_2body else None,
                 self.R_bounds[bounds], self.D_bounds[bounds],
@@ -365,10 +395,13 @@ line to be parsed, but not both.")
         else:
             pkg.append([
                 self.indices if with_indices else None,
-                self.m, self.gamma, self.lambda3,
+                self.m if not self.skip_m else None,
+                self.gamma if not self.skip_gamma else None,
+                self.lambda3,
                 self.c, self.d, self.costheta0,
                 self.n if not tag_for_2body else None,
-                self.beta if not tag_for_2body else None,
+                self.beta if not all([
+                    tag_for_2body, not self.skip_beta]) else None,
                 self.lambda2 if not tag_for_2body else None,
                 self.B if not tag_for_2body else None,
                 self.R, self.D,
@@ -380,11 +413,14 @@ line to be parsed, but not both.")
             # Get all lower and upper bounds added to pkg
             # After this, pkg = [params, lower, upper]
             bnds = [
-                self.m_bounds, self.gamma_bounds, self.lambda3_bounds,
+                self.m_bounds if not self.skip_m else None,
+                self.gamma_bounds if not self.skip_gamma else None,
+                self.lambda3_bounds,
                 self.c_bounds, self.d_bounds,
                 self.costheta0_bounds,
                 self.n_bounds if not tag_for_2body else None,
-                self.beta_bounds if not tag_for_2body else None,
+                self.beta_bounds if not all([
+                    tag_for_2body, not self.skip_beta]) else None,
                 self.lambda2_bounds if not tag_for_2body else None,
                 self.B_bounds if not tag_for_2body else None,
                 self.R_bounds, self.D_bounds,
@@ -413,17 +449,27 @@ line to be parsed, but not both.")
 
             None
         '''
-        assert len(params) in [8, 9, 14, 15],\
+        assert len(params) in [6, 8, 7, 9, 12, 14, 13, 15],\
             "In Tersoff, tried packing %d parameters. \
 Should be either 8, 9, 14, or 15!" % len(params)
 
-        if len(params) in [9, 15]:
-            offset = 0
-            self.indices = params[0 + offset]
+        # In the case of the first parameter being the indices, we offset the
+        # indexing later on.
+        offset = 0
+        if not is_numeric(params[0]):
+            self.indices = params[0]
         else:
             offset = -1
-        self.m = params[1 + offset]
-        self.gamma = params[2 + offset]
+
+        if not self.skip_m:
+            self.m = params[1 + offset]
+        else:
+            offset -= 1
+        if not self.skip_gamma:
+            self.gamma = params[2 + offset]
+        else:
+            offset -= 1
+
         self.lambda3 = params[3 + offset]
         self.c = params[4 + offset]
         self.d = params[5 + offset]
@@ -431,7 +477,10 @@ Should be either 8, 9, 14, or 15!" % len(params)
 
         if not self.sym_2body_tag:
             self.n = params[7 + offset]
-            self.beta = params[8 + offset]
+            if not self.skip_beta:
+                self.beta = params[8 + offset]
+            else:
+                offset -= 1
             self.lambda2 = params[9 + offset]
             self.B = params[10 + offset]
 
@@ -1020,6 +1069,9 @@ def tag_tersoff_for_duplicate_2bodies(tersoff_params):
         tersoff_params[index].sym_2body_tag = True
         # Essentially, we no longer recognize the other params here.
         tersoff_params[index].N_params = 8
+        # Handle any other removals too
+        tersoff_params[index].N_params -= int(tersoff_params[index].skip_m)
+        tersoff_params[index].N_params -= int(tersoff_params[index].skip_gamma)
 
 
 def run_unit_tests():
@@ -1089,6 +1141,9 @@ def run_unit_tests():
     assert ct2_hold != ct2, "Error - Unable to compare atoms in Tersoff"
 
     # Should unpack as follows
+    ct2.skip_m = False
+    ct2.skip_gamma = False
+    ct2.skip_beta = False
     should_be = [ct2.indices, ct2.m, ct2.gamma, ct2.lambda3, ct2.c, ct2.d,
                  ct2.costheta0, ct2.n, ct2.beta, ct2.lambda2, ct2.B, ct2.R,
                  ct2.D, ct2.lambda1, ct2.A]
@@ -1115,6 +1170,40 @@ def run_unit_tests():
     assert ct3.D == 0.5, "Error - Unable to parse D from line."
     assert ct3.lambda1 == 1.1, "Error - Unable to parse lambda1 from line."
     assert ct3.A == 100000, "Error - Unable to parse A from line."
+
+    # Test packing and unpacking more robustly
+    # By default, if we have original, we do not need to unpack m and gamma!
+    ct1 = Tersoff(line='''1 1 1      3   1.0000   1.2000   10000.0000   20.0000   -0.2000
+        0.9000   0.9200   4.9000   3000.0000   3.0000   0.5000   1.1000   100000.0000''')
+    values = ct1.unpack()
+    values_stored = [
+        ['1', '1', '1'], 1.2, 10000.0, 20.0, -0.2, 0.9, 0.92,
+        4.9, 3000.0, 3.0, 0.5, 1.1, 100000.0
+    ]
+    assert all([v1 == v2 for v1, v2 in zip(values, values_stored)]),\
+        "Error - Unable to unpack original correctly."
+
+    # Should be able to pack with indices, skipping m and beta
+    # (as it is original tersoff)
+    new_values_1 = [
+        ['3', '3', '3'], 1.3, 10000.1, 20.1, -0.3, 0.95, 0.93,
+        4.8, 3000.1, 3.1, 0.4, 1.2, 100001.0
+    ]
+    ct1.pack(new_values_1)
+    values = ct1.unpack()
+    assert all([v1 == v2 for v1, v2 in zip(values, new_values_1)]),\
+        "Error - Unable to pack original correctly with indices."
+
+    # Should be able to pack without indices, skipping m and beta
+    # (as it is original tersoff)
+    new_values_1 = [
+        1.2, 10000.0, 20.0, -0.2, 0.9, 0.92,
+        4.9, 3000.0, 3.0, 0.5, 1.1, 100000.0
+    ]
+    ct1.pack(new_values_1)
+    values = ct1.unpack(with_indices=False)
+    assert all([v1 == v2 for v1, v2 in zip(values, new_values_1)]),\
+        "Error - Unable to pack original correctly without indices."
 
 
 if __name__ == "__main__":

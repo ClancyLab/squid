@@ -372,6 +372,26 @@ def run_unit_tests():
     assert ct3.element == "He", "Error - Failed to parse element"
     assert ct3.mass == 2.012, "Error - Failed to parse mass"
 
+    # More robust testing of packing and unpacking
+    ct1 = Coul(
+        index=1, charge=2, element="H"
+    )
+    values = ct1.unpack()
+    values_stored = ["1", 2.0]
+    assert all([v1 == v2 for v1, v2 in zip(values, values_stored)]),\
+        "Error - Unpacking failed."
+
+    new_values_1 = ["2", 3.0]
+    ct1.pack(new_values_1)
+    assert all([v1 == v2 for v1, v2 in zip(ct1.unpack(), new_values_1)]),\
+        "Error - Packing failed."
+
+    new_values_1 = [2.0]
+    ct1.pack(new_values_1)
+    assert all([v1 == v2 for v1, v2 in zip(ct1.unpack(with_indices=False),
+                                           new_values_1)]),\
+        "Error - Packing failed."
+
 
 if __name__ == "__main__":
     run_unit_tests()

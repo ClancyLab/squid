@@ -411,6 +411,24 @@ def run_unit_tests():
     assert lj3.sigma == 1.4, "Error - Failed to parse sigma"
     assert lj3.epsilon == 1.1, "Error - Failed to parse epsilon"
 
+    # Test lj packing and unpacking more robustly
+    lj1 = LJ(
+        index=1, sigma=1.3, epsilon=0.2
+    )
+    values = lj1.unpack()
+    assert values == ["1", 1.3, 0.2],\
+        "Error - Failed to unpack."
+    lj1.pack([1.4, 0.3])
+    assert lj1.sigma == 1.4 and lj1.epsilon == 0.3,\
+        "Error - Failed to pack."
+
+    lj1.pack(["2", 1.5, 0.4])
+    assert all([
+        lj1.index == "2",
+        lj1.sigma == 1.5,
+        lj1.epsilon == 0.4]),\
+        "Error - Failed to pack."
+
 
 if __name__ == "__main__":
     run_unit_tests()

@@ -1273,12 +1273,13 @@ END
         ("lj/cut/coul/long", 12.0, "ters_l")
     ])
     P.generate(
-        ["Pb", "S", "Se"],
+        ["Pb", "S"],
         signs=[1, -1],
         couple_smooths=True,
         tersoff_form="original"
     )
     t1 = P.unpack()
+    P.pack(t1)
     P.pack(P.unpack())
     t2 = P.unpack()
     P.pack(P.unpack())
@@ -1290,6 +1291,16 @@ END
         "Error - Failed to pack and unpack."
     assert all([abs(a - b) < EPS for a, b in zip(t2, t3)]),\
         "Error - Failed to pack and unpack."
+
+    values, lower, upper = P.unpack(with_bounds=True)
+    t1 = P.unpack(with_bounds=False)
+    for i, v, l, u in zip(range(len(values)), values, lower, upper):
+        if u != l:
+            t1[i] = v + 0.001
+    P.pack(values)
+    t2 = P.unpack()
+    assert all([x == y for x, y in zip(values, t2)]),\
+        "Error - pack/unpack failed."
 
 
 if __name__ == "__main__":
