@@ -126,13 +126,20 @@ class Atom(object):
         """
         Ensure all data types are correctly assigned.
         """
-        assert all(map(cast.is_numeric, [self.x, self.y, self.z])),\
-            "Error - x, y, and z should be numeric."
-
-        self.element = str(self.element)
-        self.x = float(self.x)
-        self.y = float(self.y)
-        self.z = float(self.z)
+        if self.element is not None:
+            self.element = str(self.element)
+        if self.x is not None:
+            assert cast.is_numeric(self.x),\
+                "Error - x should be numeric."
+            self.x = float(self.x)
+        if self.y is not None:
+            self.y = float(self.y)
+            assert cast.is_numeric(self.x),\
+                "Error - y should be numeric."
+        if self.z is not None:
+            self.z = float(self.z)
+            assert cast.is_numeric(self.x),\
+                "Error - z should be numeric."
         if self.index is not None:
             self.index = int(self.index)
         if self.molecule_index is not None:

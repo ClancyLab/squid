@@ -1,6 +1,9 @@
+import os
+from squid import files
+from squid import units
 
 
-def packmol(molecules, molecule_ratio=(1,), new_method=False,
+def packmol(system_obj, molecules, molecule_ratio=(1,),
             density=1.0, seed=1, persist=True, number=None,
             additional="", custom=None, extra_block_at_end='',
             extra_block_at_beginning='', tolerance=2.0):
@@ -17,7 +20,9 @@ def packmol(molecules, molecule_ratio=(1,), new_method=False,
 
     **Parameters**
 
-        molecules: *list,* :class:`structures.Molecule`
+        system_obj: :class:`structures.system.System`
+            The system object to pack the molecules into.
+        molecules: *list,* :class:`structures.molecule.Molecule`
             Molecules to be added to this system.
         molecule_ratio: *tuple, float, optional*
             The ration that each molecule in *molecules* will be added to
@@ -60,7 +65,7 @@ def packmol(molecules, molecule_ratio=(1,), new_method=False,
         os.mkdir('sys_packmol')
     os.chdir('sys_packmol')
 
-    f = open(self.name + '.packmol', 'w')
+    f = open(system_obj.name + '.packmol', 'w')
 
     if custom is not None:
         f.write(custom)
@@ -69,32 +74,32 @@ def packmol(molecules, molecule_ratio=(1,), new_method=False,
         f.write('''
 tolerance ''' + str(tolerance) + '''
 filetype xyz
-output ''' + self.name + '''.packed.xyz
+output ''' + system_obj.name + '''.packed.xyz
 seed ''' + str(seed) + '''
 ''')
 
         # If the system already has atoms, then set them
-        if self.atoms is not None and len(self.atoms) > 0:
-            files.write_xyz(self.atoms, "%s_fixed.xyz" % self.name)
+        if system_obj.atoms is not None and len(system_obj.atoms) > 0:
+            files.write_xyz(system_obj.atoms, "%s_fixed.xyz" % system_obj.name)
             f.write('''
 structure %s_fixed.xyz
 number 1
 fixed 0. 0. 0. 0. 0. 0.
 centerofmass
 end structure
-''' % self.name)
+''' % system_obj.name)
 
         # convert density to amu/angstrom^3. 1 g/mL = 0.6022 amu/angstrom^3
         density *= 0.6022
         average_molecular_weight = sum(
-            [(a.type.mass if not new_method else a.coul_type.mass) *
+            [(units.elem_weight(a.element)) *
              molecule_ratio[i]
              for i in range(len(molecules))
              for a in molecules[i].atoms]) / sum(molecule_ratio)
         count = (density *
-                 self.box_size[0] *
-                 self.box_size[1] *
-                 self.box_size[2] /
+                 system_obj.box_size[0] *
+                 system_obj.box_size[1] *
+                 system_obj.box_size[2] /
                  average_molecular_weight)
         molecule_counts = [int(round(count * x / sum(molecule_ratio)))
                            for x in molecule_ratio]
@@ -104,10 +109,10 @@ end structure
                 molecule_counts = [molecule_counts]
 
         f.write(extra_block_at_beginning)
-        lower = tuple([-x / 2.0 for x in self.box_size])
-        upper = tuple([x / 2.0 for x in self.box_size])
+        lower = tuple([-x / 2.0 for x in system_obj.box_size])
+        upper = tuple([x / 2.0 for x in system_obj.box_size])
         for i, m in enumerate(molecules):
-            xyz_file = open('%s_%d.xyz' % (self.name, i), 'w')
+            xyz_file = open('%s_%d.xyz' % (system_obj.name, i), 'w')
             xyz_file.write(str(len(m.atoms)) + '\nAtoms\n')
             for a in m.atoms:
                 xyz_file.write('%s%d %f %f %f\n'
@@ -117,7 +122,7 @@ end structure
             f.write('''
 structure %s_%d.xyz
 number %d
-inside box %f %f %f %f %f %f''' % ((self.name, i, molecule_counts[i]) + lower + upper) + '''
+inside box %f %f %f %f %f %f''' % ((system_obj.name, i, molecule_counts[i]) + lower + upper) + '''
 ''' + additional + '''
 end structure
 ''')
@@ -127,15 +132,15 @@ end structure
     # Run packmol
     os.system(sysconst.packmol_path +
               ' < ' +
-              self.name +
+              system_obj.name +
               '.packmol > packmol.log')
-    atoms = files.read_xyz(self.name + '.packed.xyz')
+    atoms = files.read_xyz(system_obj.name + '.packed.xyz')
     os.chdir('..')
 
     # Now have a list of atoms with element = H0 for molecule 0,
     # H1 for molecule 1, etc
     i = 0
-    offset = len(self.atoms)
+    offset = len(system_obj.atoms)
     while i < len(atoms):
         ints_in_element = [j for j, h in enumerate(atoms[i].element) if h.isdigit()]
         if len(ints_in_element) == 0:
@@ -144,11 +149,10 @@ end structure
             continue
         # More robust, now we handle > 10 molecules!
         molecule_number = int(atoms[i].element[min(ints_in_element):])
-        #molecule_number = int(atoms[i].element[-1])
         molecule = molecules[molecule_number]
-        self.add(molecule)
+        system_obj.add(molecule)
         # Update positions of latest molecule
-        for a in self.atoms[-len(molecule.atoms):]:
+        for a in system_obj.atoms[-len(molecule.atoms):]:
             a.x, a.y, a.z = atoms[i].x, atoms[i].y, atoms[i].z
             i += 1
 
@@ -157,6 +161,17 @@ end structure
 
 
 def run_unit_tests():
+    from squid.structures.system import System
+    from squid.unittests.examples import get_THF
+
+    sys_obj = System("solvation_box")
+    THF = get_THF()
+
+    packmol(
+        sys_obj, THF,
+        density=1.0,
+    )
+
     raise Exception("TO DO")
     print("squid.geometry.procrustes - All unit tests passed!")
 
