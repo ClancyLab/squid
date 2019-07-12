@@ -374,6 +374,11 @@ value when fixing rc in Morse (passed %s)." % str(value)
                 "In Morse, tried fixing %s parameter (does not exist)!"
                 % params)
 
+    def pair_coeff_dump(self):
+        if self.rc is None:
+            return "%.4f %.4f %.4f" % (self.D0, self.alpha, self.r0)
+        return "%.4f %.4f %.4f %.4f" % (self.D0, self.alpha, self.r0, self.rc)
+
     def set_binder(self):
         '''
         This will adjust bounds such that the parameters are in a range of a

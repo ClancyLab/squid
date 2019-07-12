@@ -4,8 +4,11 @@ import copy
 from squid.utils import cast
 from squid.geometry import misc
 from squid.structures.molecule import Molecule
+from squid.forcefields.parameters import Parameters
 # External imports
 import numpy as np
+
+OPLS_FILE = "./../forcefields/potentials/oplsaa.prm"
 
 
 class System(object):
@@ -39,6 +42,8 @@ class System(object):
         self.angles = []
         self.dihedrals = []
         self.molecules = []
+        self.parameters = None
+        self.atom_labels = None
 
         cast.assert_vec(box_size)
         cast.assert_vec(box_angles)
@@ -166,6 +171,11 @@ class System(object):
             "Error - Cannot divide by 0!"
         cast.assert_vec(other, length=3, numeric=True)
         return self.__mul__(np.array(1.0 / np.array(other, dtype=float)))
+
+    def i2t(self, index):
+        assert self.atom_labels is not None,\
+            "Error - You must first run set_types before this works."
+        return self.atom_labels.index(index) + 1
 
     def add(self, molecule, mol_offset=1, deepcopy=True):
         """
@@ -306,7 +316,7 @@ class System(object):
         """
         misc.rotate_atoms(self.atoms, m, around=around)
 
-    def set_types(self, params=None):
+    def set_types(self, opls_file=OPLS_FILE, smrff_file=None):
         '''
         Given the atoms, bonds, angles, and dihedrals in a system object,
         generate a list of the unique atom, bond, angle, dihedral types
@@ -314,61 +324,58 @@ class System(object):
 
         **Parameters**
 
-            params: :class:`squid.ff_params.Parameters`, optional
-                A parameters object holding all the possible parameters.
+            opls_file: *str, optional*
+                A path to an opls file.  By default, this points to the stored
+                values in squid.  If None, then no OPLS file is read.
+                Otherwise, a custom file is read.
+            smrff_file: *str, optional*
+                A path to a smrff file.  By default, none is read.
         '''
-        raise Exception("TO DO!")
-        # # Step 1 - Get a list of all unique bonds, angles, and dihedrals and
-        # # assign this to atom_types, bond_types, angle_types, and
-        # # dihedral_types
-        # self.atom_coul_types = list(set([t.coul_type for t in atoms]))
-        # self.atom_lj_types = list(set([t.lj_type for t in atoms]))
-        # self.bond_types = list(set([t.type for t in bonds]))
-        # self.angle_types = list(set([t.type for t in angles]))
-        # self.dihedral_types = list(set([t.type for t in dihedrals]))
 
-        # # To be consistent, we'll sort by atom indices.  Note, these are strings!
-        # # But they will be consistent for all things, so atom_coul_types would now
-        # # be guaranteed same order as atom_lj_types
-        # self.atom_coul_types.sort(key=lambda a: a.index)
-        # self.atom_lj_types.sort(key=lambda a: a.index)
-        # self.bond_types.sort(key=lambda a: a.indices)
-        # self.angle_types.sort(key=lambda a: a.indices)
-        # self.dihedral_types.sort(key=lambda a: a.indices)
-
-        # # Assign the lammps types to the actual types!
-        # for type_obj in [
-        #     self.atom_coul_types,
-        #     self.atom_lj_types,
-        #     self.bond_types,
-        #     self.angle_types,
-        #         self.dihedral_types]:
-        #     for i, a in enumerate(type_obj):
-        #         a.lammps_type = i + 1
-
-        # # Step 2 - Ensure each type now is ordered via lammps output (1, 2, 3, 4...)
-        # for a in self.atoms:
-        #     a.lammps_type = self.atom_coul_types.index(a.coul_type) + 1
-        # for b in self.bonds:
-        #     b.lammps_type = self.bond_types.index(b.type) + 1
-        # for b in self.angles:
-        #     b.lammps_type = self.angle_types.index(b.type) + 1
-        # for b in self.dihedrals:
-        #     b.lammps_type = self.dihedral_types.index(b.type) + 1
+        # First, get a set of all atom types
+        self.atom_labels = sorted(list(set([
+            a.label if a.label is not None else a.element
+            for a in self.atoms]
+        )))
+        # Next, we must get the parameters from files
+        self.parameters = Parameters(
+            self.atom_labels,
+            opls_file=opls_file,
+            smrff_file=smrff_file
+        )
+        self.parameters.set_all_masks(True)
 
     def dump_pair_coeffs(self):
-        raise Exception("TO DO!")
-        # lammps_command = []
+        """
+        Will try to dump all available pair coefficients.  Currently, this
+        means that Coulomb, Lennard-Jones, and Morse will be attempted.
+        If you prefer that one or another not be output, you must set the
+        appropriate masks to your parameter object.  For example, assume this
+        System object is called "solv_box", you can do the following prior to
+        dumping the pair coeffs:
 
-        # for t in self.atom_coul_types:
-        #     lammps_command.append('set type %d charge %f' % (t.lammps_type, t.charge))
+            solv_box.parameters.coul_mask = True
+            solv_box.parameters.lj_mask = False
+            solv_box.parameters.morse_mask = False
 
-        # for t in self.atom_lj_types:
-        #     lammps_command.append('pair_coeff %d %d %f %f' % (t.lammps_type, t.lammps_type, t.epsilon, t.sigma))
+        """
+        assert self.atom_labels is not None,\
+            "Error - You must first run set_types before this works."
 
-        # return '\n'.join(lammps_command)
+        return '\n'.join([
+            'set type %d charge %f'
+            % (self.i2t(coul.index), coul.charge)
+            for coul in self.parameters.coul_params] + [
+            'pair_coeff %d %d %s'
+            % (self.i2t(lj.index), self.i2t(lj.index), lj.pair_coeff_dump())
+            for lj in self.parameters.lj_params] + [
+            'pair_coeff %d %d %s'
+            % (self.i2t(morse.indices[0]), self.i2t(morse.indices[1]),
+               morse.pair_coeff_dump())
+            for morse in self.parameters.morse_params
+        ])
 
-    def get_elements(self, params=None):
+    def get_elements(self):
         '''
         This simplifies using dump_modify by getting a list of the elements in
         this system, sorted by their weight.  Note, duplicates will exist if
@@ -380,25 +387,24 @@ class System(object):
                 A list of the elements, sorted appropriately for something
                 like dump_modify.
         '''
-        raise Exception("TO DO!")
+        assert self.atom_labels is not None,\
+            "Error - You must first run set_types before this works."
 
-        # atom_types = []
-        # elems = []
-        # if params is None:
-        #     for molec in self.molecules:
-        #         for atom in molec.atoms:
-        #             if atom.type.index not in atom_types:
-        #                 atom_types.append(atom.type.index)
-        #                 elems.append(atom.element)
-        #     elem_mass = [units.elem_weight(e) for e in elems]
-        #     return [x for (y, x) in sorted(zip(elem_mass, elems))][::-1]
-        # else:
-        #     self.set_types(params=params)
-        #     return [a.element for a in self.atom_coul_types]
+        elems = []
+        for a in self.atom_labels:
+            if a in self.parameters.coul_params:
+                index = self.parameters.coul_params.index(a)
+                element = self.parameters.coul_params[index].element
+                elems.append(element)
+            else:
+                elems.append(a)
+
+        return elems
 
 
 def run_unit_tests():
     # Get various molecules to play with
+    from squid.unittests.examples import get_THF
     from squid.unittests.examples import get_unit_test_structures
     m1a, m1b, m2, chex, copied_chex = get_unit_test_structures()
     m1aa = copy.deepcopy(m1a)
@@ -552,6 +558,12 @@ DIHERALS (molecule_index: index)
         "Error - get_center_of_mass failed."
     assert np.linalg.norm(cog - test_system.get_center_of_geometry()) < EPS,\
         "Error - get_center_of_geometry failed."
+
+    # Test out generating a solvation box using OPLS parameters
+    # THF = get_THF()
+    # test_system = System("solvent_box")
+    # test_system.add(THF)
+    # test_system.set_types()
 
 
 if __name__ == "__main__":

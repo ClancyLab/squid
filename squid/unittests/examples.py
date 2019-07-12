@@ -284,3 +284,38 @@ def get_test_frames():
             Atom("H", *[7.77036198, 8.17370623, 11.19785154])
         ]
     ]
+
+
+def get_THF():
+    atoms = [
+        Atom("C", -1.736497, -4.767184, -0.351683, label="81"),
+        Atom("C", -0.498357, -3.928215, -0.165400, label="81"),
+        Atom("C", 0.560821, -4.984799, 0.058288, label="124"),
+        Atom("H", -0.570292, -3.213718, 0.658726, label="85"),
+        Atom("H", -0.454341, -2.990383, -0.925335, label="85"),
+        Atom("C", -1.198636, -5.959340, -1.113897, label="124"),
+        Atom("H", -2.542882, -4.251468, -0.879709, label="85"),
+        Atom("H", -2.117077, -5.088863, 0.624875, label="85"),
+        Atom("O", 0.169308, -6.127693, -0.714742, label="122"),
+        Atom("H", -1.212040, -5.779072, -2.193940, label="127"),
+        Atom("H", -1.757611, -6.876188, -0.906203, label="127"),
+        Atom("H", 0.600011, -5.290579, 1.109260, label="127"),
+        Atom("H", 1.557569, -4.654603, -0.247261, label="127")
+    ]
+
+    bonds = [
+        Connector((atoms[1 - 1], atoms[2 - 1])),
+        Connector((atoms[2 - 1], atoms[3 - 1])),
+        Connector((atoms[2 - 1], atoms[4 - 1])),
+        Connector((atoms[2 - 1], atoms[5 - 1])),
+        Connector((atoms[1 - 1], atoms[6 - 1])),
+        Connector((atoms[1 - 1], atoms[7 - 1])),
+        Connector((atoms[1 - 1], atoms[8 - 1])),
+        Connector((atoms[9 - 1], atoms[6 - 1])),
+        Connector((atoms[6 - 1], atoms[10 - 1])),
+        Connector((atoms[6 - 1], atoms[11 - 1])),
+        Connector((atoms[9 - 1], atoms[3 - 1])),
+        Connector((atoms[3 - 1], atoms[12 - 1])),
+        Connector((atoms[3 - 1], atoms[13 - 1]))
+    ]
+    return Molecule(atoms, bonds)

@@ -6,6 +6,7 @@ The Parameters class contains:
 ------------
 
 """
+import os
 from squid.forcefields.lj import LJ
 import squid.forcefields.helper as ffh
 from squid.forcefields.morse import Morse
@@ -72,7 +73,7 @@ class Parameters(object):
             This object.
     """
 
-    def __init__(self, restrict, fptr=[("OPLS", OPLS_FILE)]):
+    def __init__(self, restrict, opls_file=OPLS_FILE, smrff_file=None):
         #####################################
         # Initialize empty data lists
         self.lj_params = []
@@ -115,17 +116,10 @@ class Parameters(object):
         self.write_tfile = True
 
         # Load in all the parameters
-        if fptr is not None:
-            for ff, path in fptr:
-                ff = ff.upper()
-                assert ff in ["SMRFF", "OPLS"],\
-                    "Error - %s is unsupported." % ff
-                if ff == "SMRFF":
-                    self.load_smrff(path)
-                elif ff == "OPLS":
-                    if path is None:
-                        path = OPLS_FILE
-                    self.load_opls(path)
+        if opls_file is not None:
+            self.load_opls(opls_file)
+        if smrff_file is not None:
+            self.load_smrff(smrff_file)
 
     def __repr__(self):
         '''
@@ -476,6 +470,9 @@ is not a pair potential."
 
             None
         '''
+        assert os.path.exists(fname),\
+            "Error - Path (%s) does not exist!" % fname
+
         # Read in and parse the opls parameter file
         atom_types, bond_types, angle_types, dihedral_types =\
             opls_utils.parse_pfile(fname)
@@ -547,6 +544,8 @@ is not a pair potential."
 
             None
         '''
+        assert os.path.exists(fname),\
+            "Error - Path (%s) does not exist!" % fname
         # Parse the input file to clean out comments, empty lines, and
         # trailing whitespace
         raw = smrff_utils.parse_pfile(fname)
@@ -1151,7 +1150,8 @@ def run_unit_tests():
     TEST_SMRFF_FILE = "./potentials/junk.smrff"
     params = Parameters(
         ["82", "86", "xA", "xB"],
-        fptr=[("OPLS", OPLS_FILE), ("SMRFF", TEST_SMRFF_FILE)]
+        opls_file=OPLS_FILE,
+        smrff_file=TEST_SMRFF_FILE
     )
     params.set_all_masks(True)
     params_s = """
