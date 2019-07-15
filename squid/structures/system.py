@@ -3,6 +3,7 @@ import copy
 # Squid imports
 from squid.utils import cast
 from squid.geometry import misc
+from squid.utils.units import elem_weight
 from squid.structures.molecule import Molecule
 from squid.forcefields.parameters import Parameters
 # External imports
@@ -331,7 +332,7 @@ class System(object):
             smrff_file: *str, optional*
                 A path to a smrff file.  By default, none is read.
         '''
-
+        self.reassign_indices(mol_offset=1, atom_offset=1)
         # First, get a set of all atom types
         self.atom_labels = sorted(list(set([
             a.label if a.label is not None else a.element
@@ -358,6 +359,9 @@ class System(object):
             solv_box.parameters.lj_mask = False
             solv_box.parameters.morse_mask = False
 
+        Note - this function dumps pair coeffs for the input script, NOT the
+        data file.  If you wish for the alternative, see
+        dump_pair_coeffs_data()
         """
         assert self.atom_labels is not None,\
             "Error - You must first run set_types before this works."
@@ -374,6 +378,37 @@ class System(object):
                morse.pair_coeff_dump())
             for morse in self.parameters.morse_params
         ])
+
+    def dump_pair_coeffs_data(self):
+        """
+        Will try to dump all available pair coefficients.  Currently, this
+        means that Coulomb, Lennard-Jones, and Morse will be attempted.
+        If you prefer that one or another not be output, you must set the
+        appropriate masks to your parameter object.  For example, assume this
+        System object is called "solv_box", you can do the following prior to
+        dumping the pair coeffs:
+
+            solv_box.parameters.coul_mask = True
+            solv_box.parameters.lj_mask = False
+            solv_box.parameters.morse_mask = False
+
+        Note - this function dumps pair coeffs for the data file, NOT the
+        input script.  If you wish for the alternative, see dump_pair_coeffs()
+        """
+        assert self.atom_labels is not None,\
+            "Error - You must first run set_types before this works."
+
+        return '\n'.join(sorted([
+            '%d %d %s'
+            % (self.i2t(lj.index), self.i2t(lj.index), lj.pair_coeff_dump())
+            for lj in self.parameters.lj_params],
+            key=lambda s: int(s.split()[0])) + sorted([
+                '%d %d %s'
+                % (self.i2t(morse.indices[0]), self.i2t(morse.indices[1]),
+                   morse.pair_coeff_dump())
+                for morse in self.parameters.morse_params
+            ],
+            key=lambda s: int(s.split()[0])))
 
     def get_elements(self):
         '''
@@ -400,6 +435,132 @@ class System(object):
                 elems.append(a)
 
         return elems
+
+    def get_atom_masses(self):
+        '''
+        This simplifies using data file writing by getting the masses of all
+        the atoms in the correct order.
+
+        **Returns**
+
+            masses: *list, float*
+                A list of the masses for each atom type.
+        '''
+        assert self.atom_labels is not None,\
+            "Error - You must first run set_types before this works."
+
+        masses = []
+        for a in self.atom_labels:
+            if a in self.parameters.coul_params:
+                index = self.parameters.coul_params.index(a)
+                mass = self.parameters.coul_params[index].mass
+                masses.append(mass)
+            else:
+                masses.append(elem_weight(a))
+
+        return masses
+
+    def dump_atoms_data(self):
+        '''
+        This function will dump all the atom information to a LAMMPS data
+        file.
+
+            atom_index mol_index type charge x y z
+
+        **Returns**
+
+            atomic_info: *str*
+                A string of all the atomic information with proper data.
+        '''
+        return "\n".join([
+            "%d %d %d %f %f %f %f"
+            % (
+                a.index, a.molecule_index, self.i2t(a.label),
+                self.parameters.coul_params[
+                    self.parameters.coul_params.index(a.label)
+                ].charge,
+                a.x, a.y, a.z
+            )
+            for i, a in enumerate(self.atoms)
+        ])
+
+    def dump_bonds_data(self):
+        '''
+        This function will dump all the bond information to a LAMMPS data
+        file.
+
+            bond_index bond_type_index atoms...atoms
+
+        **Returns**
+
+            connection_info: *str*
+                A string of all the connector information with proper data.
+        '''
+        return "\n".join([
+            "%d %d %d %d"
+            % (
+                index + 1,
+                self.parameters.bond_params.index(
+                    list(map(
+                        self.parameters.mapper,
+                        [a.label for a in connect.atoms]))
+                ) + 1,
+                *map(lambda x: x.index, connect.atoms)
+            )
+            for index, connect in enumerate(self.bonds)
+        ])
+
+    def dump_angles_data(self):
+        '''
+        This function will dump all the bond information to a LAMMPS data
+        file.
+
+            bond_index bond_type_index atoms...atoms
+
+        **Returns**
+
+            connection_info: *str*
+                A string of all the connector information with proper data.
+        '''
+        return "\n".join([
+            "%d %d %d %d %d"
+            % (
+                index + 1,
+                self.parameters.angle_params.index(
+                    list(map(
+                        self.parameters.mapper,
+                        [a.label for a in connect.atoms]))
+                ) + 1,
+                *map(lambda x: x.index, connect.atoms)
+            )
+            for index, connect in enumerate(self.angles)
+        ])
+
+    def dump_dihedrals_data(self):
+        '''
+        This function will dump all the bond information to a LAMMPS data
+        file.
+
+            bond_index bond_type_index atoms...atoms
+
+        **Returns**
+
+            connection_info: *str*
+                A string of all the connector information with proper data.
+        '''
+        return "\n".join([
+            "%d %d %d %d %d %d"
+            % (
+                index + 1,
+                self.parameters.dihedral_params.index(
+                    list(map(
+                        self.parameters.mapper,
+                        [a.label for a in connect.atoms]))
+                ) + 1,
+                *map(lambda x: x.index, connect.atoms)
+            )
+            for index, connect in enumerate(self.dihedrals)
+        ])
 
 
 def run_unit_tests():
@@ -576,6 +737,20 @@ DIHERALS (molecule_index: index)
     assert len(test_system.molecules) == 50,\
         "Error - packmol should have packed 13 molecules (packed %d)."\
         % len(test_system.molecules)
+
+    test_system.set_types()
+    held_masses = [15.999, 12.011, 1.008, 12.011, 1.008]
+    assert all([
+        x == y for x, y in zip(test_system.get_atom_masses(), held_masses)]),\
+        "Error - get_atom_masses failed."
+
+    # import squid.files as files
+    # from squid.lammps.io.data import write_lammps_data
+    # test_system = System("test", box_size=(100, 100, 100))
+    # simple = files.read_cml("/home/hherbol/programs/squid2/examples/md/equilibration_solvent_box/acetone.cml")[0]
+    # test_system.add(simple)
+    # test_system.set_types()
+    # write_lammps_data(test_system)
 
 
 if __name__ == "__main__":

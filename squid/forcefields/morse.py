@@ -539,7 +539,7 @@ def run_unit_tests():
     assert ct3.rc == 3.6, "Error - Unable to parse rc from line."
 
     ct3 = Morse.generate(["xA", "xB"])
-    print(ct3)
+    # print(ct3)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
 import os
+from squid.utils.units import elem_weight
 
 
 # Imports the full atom style lammps data file.
@@ -160,9 +161,7 @@ def read_lammps_data(name, read_atoms=True, read_bonds=True,
     return atoms, bonds, angles, dihedrals
 
 
-def write_lammps_data(system, name=None, params=None,
-                      pair_coeffs_included=False,
-                      hybrid_angle=False, hybrid_pair=False):
+def write_lammps_data(system, **kwargs):
     """
     Writes a lammps data file from the given system.
 
@@ -198,167 +197,78 @@ def write_lammps_data(system, name=None, params=None,
 
         None
     """
+    # Set the types of the system before generating the data file
+    system.set_types(**{
+        k: kwargs[k] for k in ["opls_file", "smrff_file"] if k in kwargs
+    })
 
-    new_method = params is not None
+    pair_coeffs_included = True
+    if "pair_coeffs_included" in kwargs:
+        pair_coeffs_included = kwargs["pair_coeffs_included"]
 
-    if new_method:
-        hybrid_angle = False
-        hybrid_pair = False
-
-        assert params is not None, "Error - You must pass a parameters object!"
-        system.set_types(params)
-    else:
-        system.set_types()
-
-    if not name:
-        # default filename is out.xyz
-        name = system.name
-
-    if name is None:
-        name = "out"
-
-    # To handle different methods
-    local_atom_types = system.atom_coul_types if new_method else system.atom_types
-    local_atom_lj_types = system.atom_lj_types if new_method else system.atom_types
-
-    # Ensure mass exists, if not then try to assign it, else error
-    for t in local_atom_types:
-        if t.mass is None:
-            t.mass = units.elem_weight(t.element)
+    # Ensure a system name exists
+    assert system.name is not None,\
+        "Error - System name cannot be None!"
 
     # start writing file
-    f = open(name + '.data', 'w')
+    f = open(system.name + '.data', 'w')
     f.write('LAMMPS Description\n\n%d atoms\n%d bonds\n%d angles\n\
 %d dihedrals\n0  impropers\n\n'
             % (len(system.atoms),
                len(system.bonds),
                len(system.angles),
                len(system.dihedrals)))
+
     f.write('%d atom types\n%d bond types\n%d angle types\n%d dihedral types\n\
 0  improper types\n'
-            % (len(local_atom_types),
-               len(system.bond_types),
-               len(system.angle_types),
-               len(system.dihedral_types)))
+            % (len(system.atom_labels),
+               len(system.parameters.bond_params),
+               len(system.parameters.angle_params),
+               len(system.parameters.dihedral_params)))
+
     f.write('%3.5f %3.5f xlo xhi\n' % (system.xlo, system.xhi))
     f.write('%3.5f %3.5f ylo yhi\n' % (system.ylo, system.yhi))
     f.write('%3.5f %3.5f zlo zhi\n' % (system.zlo, system.zhi))
+
     # If the system is triclinic box
     if (abs(system.box_angles[0] - 90) > 0.001 or
             abs(system.box_angles[1] - 90) > 0.001 or
             abs(system.box_angles[2] - 90) > 0.001):
-        f.write('%3.5f %3.5f %3.5f xy xz yz\n' % (system.xy, system.xz, system.yz))
+        f.write('%3.5f %3.5f %3.5f xy xz yz\n'
+                % (system.xy, system.xz, system.yz))
 
     f.write('''
 Masses
 
-''' + ('\n'.join(["%d\t%f" % (t.lammps_type, t.mass)
-                  for t in local_atom_types])) + '\n')
+''' + ('\n'.join(["%d\t%f" % (i + 1, m)
+                  for i, m in enumerate(system.get_atom_masses())])) + '\n')
 
     if pair_coeffs_included:
         f.write('\nPair Coeffs\n\n')
-        if hybrid_pair:
-            for t in local_atom_lj_types:
-                if (hasattr(t, "pair_type") and t.pair_type == "nm/cut"):
-                    # hybrid with nm/cut
-                    f.write("%d %s %f %f %f %f " % (t.lammps_type, "nm/cut",
-                            t.vdw_e, t.r0, t.n, t.m) + "\n")
-                # Update here with elif statements for the syntax of different
-                # pair_styles. Currently only nm and lj are implemented.
-                else:
-                    # Assume lj/cut potential
-                    f.write(("%d %s %f %f" % (t.lammps_type, "lj/cut",
-                             t.vdw_e, t.vdw_r)) + "\n")
-        else:
-            # Assume lj/cut potential since no hybrids are included
-            for t in local_atom_lj_types:
-                if (hasattr(t, "pair_type") and t.pair_type == "nm/cut"):
-                    f.write("%d %f %f %f %f " % (t.lammps_type,
-                            t.vdw_e, t.r0, t.n, t.m) + "\n")
-                else:
-                    if not new_method:
-                        f.write(("%d\t%f\t%f" % (t.lammps_type,
-                                 t.vdw_e, t.vdw_r)) + "\n")
-                    else:
-                        f.write("%d %s\n" % (t.lammps_type, str(t.pair_coeff_dump())))
+
+        # Assume lj/cut potential since no hybrids are included
+        f.write(system.dump_pair_coeffs_data())
 
     if system.bonds:
         f.write("\n\nBond Coeffs\n\n")
-        if not new_method:
-            f.write('\n'.join(["%d\t%f\t%f"
-                               % (t.lammps_type, t.e, t.r)
-                               for t in system.bond_types]))
-        else:
-            f.write('\n'.join([str(i + 1) + " " + b.printer() for i, b in enumerate(system.bond_types)]))
+        f.write(system.parameters.dump_bonds(in_input_file=False))
     if system.angles:
         f.write("\n\nAngle Coeffs\n\n")
-        if not new_method:
-            if hybrid_angle:
-                f.write('\n'.join(["%d\t%s\t%f\t%f"
-                                   % (t.lammps_type, t.style, t.e, t.angle)
-                                   for t in system.angle_types]))
-            else:
-                f.write('\n'.join(["%d\t%f\t%f"
-                                   % (t.lammps_type, t.e, t.angle)
-                                   for t in system.angle_types]))
-        else:
-            f.write('\n'.join([str(i + 1) + " " + b.printer() for i, b in enumerate(system.angle_types)]))
+        f.write(system.parameters.dump_angles(in_input_file=False))
     if system.dihedrals:
         f.write("\n\nDihedral Coeffs\n\n")
-        if not new_method:
-            f.write('\n'.join(["%d\t%f\t%f\t%f\t%f"
-                               % ((t.lammps_type,) +
-                                   tuple(t.e) +
-                                   ((0.0,) if len(t.e) == 3 else ()))
-                               for t in system.dihedral_types]))
-        else:
-            f.write('\n'.join([str(i + 1) + " " + b.printer() for i, b in enumerate(system.dihedral_types)]))
+        f.write(system.parameters.dump_dihedrals(in_input_file=False))
 
     f.write("\n\nAtoms\n\n")
-
-    # atom (molecule type charge x y z)
-    if not new_method:
-        f.write('\n'.join(['\t'.join([str(q)
-                                     for q in [a.index,
-                                               a.molecule_index,
-                                               a.type.lammps_type,
-                                               a.type.charge,
-                                               a.x,
-                                               a.y,
-                                               a.z]]) for a in system.atoms]))
-    else:
-        f.write('\n'.join(['\t'.join([str(q)
-                                     for q in [a.index,
-                                               a.molecule_index,
-                                               a.lammps_type,
-                                               a.coul_type.charge,
-                                               a.x,
-                                               a.y,
-                                               a.z]]) for a in system.atoms]))
+    f.write(system.dump_atoms_data())
     if system.bonds:
-        # bond (type a b)
-        f.write('\n\nBonds\n\n' +
-                '\n'.join(['\t'.join([str(q)
-                                      for q in [i + 1,
-                                                b.type.lammps_type,
-                                                b.atoms[0].index,
-                                                b.atoms[1].index]])
-                          for i, b in enumerate(system.bonds)]))
+        f.write('\n\nBonds\n\n')
+        f.write(system.dump_bonds_data())
     if system.angles:
-        # ID type atom1 atom2 atom3
-        f.write('\n\nAngles\n\n' +
-                '\n'.join(['\t'.join([str(q)
-                                      for q in [i + 1,
-                                                a.type.lammps_type] +
-                                     [atom.index for atom in a.atoms]])
-                          for i, a in enumerate(system.angles)]))
+        f.write('\n\nAngles\n\n')
+        f.write(system.dump_angles_data())
     if system.dihedrals:
-        # ID type a b c d
-        f.write('\n\nDihedrals\n\n' +
-                '\n'.join(['\t'.join([str(q)
-                                      for q in [i + 1,
-                                                d.type.lammps_type] +
-                                     [atom.index for atom in d.atoms]])
-                          for i, d in enumerate(system.dihedrals)]))
+        f.write('\n\nDihedrals\n\n')
+        f.write(system.dump_dihedrals_data())
     f.write('\n\n')
     f.close()

@@ -692,7 +692,8 @@ is not a pair potential."
         sorted_force_2body_symmetry(self.tersoff_params)
 
     def dump_style(self, style=None, tfile_name=None,
-                   tstyle_smrff=False, write_file=False):
+                   tstyle_smrff=False, write_file=False,
+                   in_input_file=True):
         '''
         This function will dump LAMMPS commands "pair_coeff" for chosen
         styles.
@@ -740,9 +741,9 @@ is not a pair potential."
                     tfile_name = "ters_params"
             script.append(self.dump_tersoff(tfile_name, tstyle_smrff))
         if style in ["opls"]:
-            script.append(self.dump_bonds())
-            script.append(self.dump_angles())
-            script.append(self.dump_dihedrals())
+            script.append(self.dump_bonds(in_input_file=in_input_file))
+            script.append(self.dump_angles(in_input_file=in_input_file))
+            script.append(self.dump_dihedrals(in_input_file=in_input_file))
 
         return '\n'.join(script)
 
@@ -766,9 +767,15 @@ is not a pair potential."
         '''
         return ffh.map_to_lmp_index(x, self.opls_structure_dict)
 
-    def dump_bonds(self):
+    def dump_bonds(self, in_input_file=True):
         '''
         Get a string for lammps input in regards to assigning bond coeffs.
+
+        **Parameters**
+
+            in_input_file: *bool, optional*
+                Whether to dump the bonds in the input file style format
+                (True) or the data file style format (False)
 
         **Returns**
 
@@ -793,15 +800,21 @@ is not a pair potential."
                 continue
             # Get the bond coeff string
             lammps_command.append(
-                "bond_coeff %d %s"
-                % (index, bond.printer(map_indices=self.mapper)))
+                "bond_coeff" if in_input_file else "" + "  %d %s"
+                % (index, bond.printer()))
             index += 1
 
         return "\n".join(lammps_command)
 
-    def dump_angles(self):
+    def dump_angles(self, in_input_file=True):
         '''
         Get a string for lammps input in regards to assigning angle coeffs.
+
+        **Parameters**
+
+            in_input_file: *bool, optional*
+                Whether to dump the bonds in the input file style format
+                (True) or the data file style format (False)
 
         **Returns**
 
@@ -826,15 +839,21 @@ is not a pair potential."
                 continue
             # Get the angle coeff string
             lammps_command.append(
-                "angle_coeff %d %s"
-                % (index, angle.printer(map_indices=self.mapper)))
+                "angle_coeff" if in_input_file else "" + " %d %s"
+                % (index, angle.printer()))
             index += 1
 
         return "\n".join(lammps_command)
 
-    def dump_dihedrals(self):
+    def dump_dihedrals(self, in_input_file=True):
         '''
         Get a string for lammps input in regards to assigning dihedral coeffs.
+
+        **Parameters**
+
+            in_input_file: *bool, optional*
+                Whether to dump the bonds in the input file style format
+                (True) or the data file style format (False)
 
         **Returns**
 
@@ -859,8 +878,8 @@ is not a pair potential."
                 continue
             # Get the dihedral coeff string
             lammps_command.append(
-                "dihedral_coeff %d %s"
-                % (index, dihedral.printer(map_indices=self.mapper)))
+                "dihedral_coeff" if in_input_file else "" + " %d %s"
+                % (index, dihedral.printer()))
             index += 1
 
         return "\n".join(lammps_command)

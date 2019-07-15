@@ -50,11 +50,18 @@ class HarmonicConnector(object):
 
     def __eq__(self, other):
         if isinstance(other, tuple) or isinstance(other, list):
-            indices = [str(o) if str(o) != "*" else str(i) for o, i in zip(other, self.indices)]
+            indices = [
+                str(o) if str(o) != "*" else str(i)
+                for o, i in zip(other, self.indices)]
         else:
-            indices = [str(o) if str(o) != "*" else str(i) for o, i in zip(other.indices, self.indices)]
-        return (all([str(x) == str(y) for x, y in zip(self.indices, indices)]) or
-                all([str(x) == str(y) for x, y in zip(self.indices, indices[::-1])]))
+            indices = [
+                str(o) if str(o) != "*" else str(i)
+                for o, i in zip(other.indices, self.indices)]
+
+        return (
+            all([str(x) == str(y) for x, y in zip(self.indices, indices)]) or
+            all([str(x) == str(y) for x, y in zip(self.indices, indices[::-1])]
+                ))
 
     def __hash__(self):
         return hash(tuple(self.unpack(with_indices=True)))

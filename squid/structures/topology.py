@@ -202,8 +202,6 @@ class Connector(object):
 
 
 def run_unit_tests():
-    from squid.structures import Atom
-
     a1 = Atom("H", 0, 0, 0)
     a2 = Atom("He", 0, 0, 0)
     a3 = Atom("Br", 0, 0, 0)
