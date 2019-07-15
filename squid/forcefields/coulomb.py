@@ -6,7 +6,7 @@ The coulomb object.  This stores the index and charge.
 import copy
 import numpy as np
 
-from squid.units import elem_i2s, elem_weight
+from squid.utils.units import elem_i2s, elem_weight
 from squid.forcefields.helper import check_restriction
 
 # These are the identifiers in the parameter file that we seek out
