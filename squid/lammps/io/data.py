@@ -1,3 +1,5 @@
+import os
+
 
 # Imports the full atom style lammps data file.
 # Default is to import everything but you might get better performance if you
@@ -37,8 +39,8 @@ def read_lammps_data(name, read_atoms=True, read_bonds=True,
         name += '.data'
     # If file does not exist, return empty lammpstrj object
     if not os.path.isfile(name):
-        warn('Expected lammps data file does not exist at %s/%s'
-             % (os.getcwd(), name))
+        raise Exception('Expected lammps data file does not exist at %s/%s'
+                        % (os.getcwd(), name))
 
     # Initialize variables
     atom_types, bond_types, angle_types, dihedral_types = [], [], [], []

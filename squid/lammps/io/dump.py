@@ -1,6 +1,9 @@
+import os
+import copy
+from squid.structures.atom import Atom
 
-# A function to read in a generic dump file
-def read_dump(fptr, ext=".dump", coordinates=["x", "y", "z"], extras=[]):
+
+def read_dump_gen(fptr, ext=".dump", coordinates=["x", "y", "z"], extras=[]):
     """
     Function to read in a generic dump file.  Currently it (1) requires
     element, x, y, z in the dump.  You can also use xu, yu, and zu if
@@ -67,7 +70,6 @@ def read_dump(fptr, ext=".dump", coordinates=["x", "y", "z"], extras=[]):
     # If we are getting coordinates, specify
     s_x, s_y, s_z = coordinates
 
-    frames = []
     while s_find in raw_out:
         # Set pointer to start of an output line
         raw_out = raw_out[raw_out.find(s_find) + n:]
@@ -102,17 +104,59 @@ def read_dump(fptr, ext=".dump", coordinates=["x", "y", "z"], extras=[]):
             else:
                 index = None
             if "type" in column:
-                a_type = int(b[column["type"]])
+                label = int(b[column["type"]])
             else:
-                a_type = None
+                label = None
             for e in extras:
                 if e in column:
                     values_of_extras[e] = b[column[e]]
                 else:
                     values_of_extras[e] = None
-            a = structures.Atom(elem, x, y, z, index=index, type_index=a_type)
+            a = Atom(elem, x, y, z, index=index, label=label)
             a.extras = copy.deepcopy(values_of_extras)
             frame.append(a)
         frame = sorted(frame, key=lambda x: x.index)
-        frames.append(frame)
+        yield frame
+
+
+def read_dump(fptr, ext=".dump", coordinates=["x", "y", "z"], extras=[]):
+    """
+    Function to read in a generic dump file.  Currently it (1) requires
+    element, x, y, z in the dump.  You can also use xu, yu, and zu if
+    the unwraped flag is set to True.
+
+    Due to individual preference, the extension was separated.  Thus,
+    if you dump to .xyz, have ext=".xyz", etc.
+
+    **Parameters**
+
+        fptr: *str*
+            Name of the dump file with NO extension (ex. 'run' instead
+            of 'run.dump').  This can also be a relative path.  If no relative
+            path is given, and the file cannot be found, it will default
+            check in lammps/fptr/fptr+ext.
+        ext: *str, optional*
+            The extension for the dump file.  Note, this is default ".dump"
+            but can be anything (ensure you have the ".").
+        coordinates: *list, str, optional*
+            A list of strings describing how the coordinates are
+            specified (x vs xs vs xu vs xsu)
+        extras: *list, str, optional*
+            An additional list of things you want to read in from the dump
+            file.
+
+    **Returns**
+
+        frames: *list, list* :class:`structures.Atom`
+            A list of lists, each holding atom structures.
+    """
+    frames = [
+        frame for frame in read_dump_gen(
+            fptr, ext=ext, coordinates=coordinates, extras=extras)]
+    if len(frames) == 1:
+        return frames[0]
     return frames
+
+
+if __name__ == "__main__":
+    pass
