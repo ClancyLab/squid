@@ -1,10 +1,10 @@
 """
-The lammps_log code is code from the pizza.py toolkit
+The LMP_Parser code is code from the pizza.py toolkit
 (www.cs.sandia.gov/~sjplimp/pizza.html) developed by Steve Plimpton
 (sjplimp@sandia.gov) with some additional warning interspersed through
 the thermo output.
 
-- :class:`lammps_log`
+- :class:`LMP_Parser`
 
 ------------
 
@@ -74,7 +74,7 @@ except NameError:
 
 
 # Class definition
-class lammps_log(object):
+class LMP_Parser(object):
     """
     Class object to assist in parsing lammps outputs.
 
@@ -114,7 +114,7 @@ class lammps_log(object):
 
     **Returns**
 
-        This :class:`lammps_log` object.
+        This :class:`LMP_Parser` object.
     """
     # --------------------------------------------------------------------
 
