@@ -2,10 +2,16 @@ import sys
 import time
 import getpass
 import subprocess
-from squid.container import Job
 from squid.files.misc import which
 from squid.jobs.misc import close_pipes
+from squid.jobs.queue_manager import JobObject
 from squid.utils.cast import simplify_numerical_array
+
+
+class Job(JobObject):
+    def get_all_jobs(detail=3):
+        return get_job("RUNNING", detail=detail) +\
+            get_job("PENDING", detail=detail)
 
 
 def get_slurm_queues():
@@ -129,7 +135,7 @@ def submit_job(name, job_to_submit, **kwargs):
     params = {
         "queue": "shared",
         "ntasks": 1,
-        "cpus-per-task": 1,
+        "cpus_per_task": 1,
         "nodes": 1,
         "walltime": "00:30:00",
         "sub_flag": "",
@@ -153,7 +159,7 @@ def submit_job(name, job_to_submit, **kwargs):
     param_types = {
         "queue": lambda s: str(s).strip(),
         "ntasks": int,
-        "cpus-per-task": int,
+        "cpus_per_task": int,
         "nodes": int,
         "unique_name": bool,
         "redundancy": bool,
@@ -170,15 +176,15 @@ def submit_job(name, job_to_submit, **kwargs):
         "Error - Invalid queue (%s) requested.  Options: %s"\
         % (params["queue"], ", ".join(slurm_queues))
     # Check ntasks and nodes
-    if params["cpus-per-task"] * params["ntasks"] > 24 * params["nodes"]:
-        print("Warning - You requested %d tasks and %d cpus-per-task.  This \
+    if params["cpus_per_task"] * params["ntasks"] > 24 * params["nodes"]:
+        print("Warning - You requested %d tasks and %d cpus_per_task.  This \
 equates to %d nodes on marcc; however, you only requested %d nodes."
-              % (params["cpus-per-task"], params["ntasks"],
-                 (params["cpus-per-task"] * params["ntasks"] - 1) // 24 + 1,
+              % (params["cpus_per_task"], params["ntasks"],
+                 (params["cpus_per_task"] * params["ntasks"] - 1) // 24 + 1,
                  params["nodes"]))
         print("\tWill adjust nodes accordingly...")
         params["nodes"] =\
-            (params["cpus-per-task"] * params["ntasks"] - 1) // 24 + 1
+            (params["cpus_per_task"] * params["ntasks"] - 1) // 24 + 1
 
     # We need to remove gpu nodes from available nodes on SLURM/MARCC
     gpu_flag_slurm = "#SBATCH --exclude=gpu004,gpu005"
@@ -191,7 +197,7 @@ equates to %d nodes on marcc; however, you only requested %d nodes."
         gpu_flag_slurm = "#SBATCH --gres=gpu:%d" % params["gpu"]
         # On MARCC we need gpu tasks, and 6 cores per task
         params["ntasks"] = params["gpu"]
-        params["cpus-per-task"] = 6
+        params["cpus_per_task"] = 6
 
     if params["allocation"] is None:
         slurm_allocation = ""
@@ -216,7 +222,7 @@ equates to %d nodes on marcc; however, you only requested %d nodes."
 #SBATCH --output="''' + params["outfile_name"] + '''"
 #SBATCH --nodes=''' + params["nodes"] + '''
 #SBATCH --ntasks=''' + params["ntasks"] + ('''
-#SBATCH --cpus-per-task=''' + str(params["cpus-per-task"]) if params["cpus-per-task"] > 1 else "") + '''
+#SBATCH --cpus-per-task=''' + str(params["cpus_per_task"]) if params["cpus_per_task"] > 1 else "") + '''
 #SBATCH --partition=''' + params["queue"] + '''
 #SBATCH --time=''' + params["walltime"] + '''
 ''' + slurm_allocation + '''

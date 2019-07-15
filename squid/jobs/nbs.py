@@ -2,10 +2,16 @@ import re
 import sys
 import getpass
 import subprocess
-from squid.container import Job
 from squid.files.misc import which
-from squid.utils.cast import is_numeric, is_array
 from squid.jobs.misc import close_pipes
+from squid.jobs.container import JobObject
+from squid.utils.cast import is_numeric, is_array
+
+
+class Job(JobObject):
+    def get_all_jobs(detail=3):
+        return get_job("RUNNING", detail=detail) +\
+            get_job("PENDING", detail=detail)
 
 
 def get_nbs_queues():

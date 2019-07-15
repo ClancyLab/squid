@@ -1,7 +1,7 @@
 import time
 
 
-class Job(object):
+class JobObject(object):
     """
     Job class to wrap simulations for queue submission.
 
@@ -41,6 +41,9 @@ class Job(object):
                 else:
                     break
 
+    def get_all_jobs(detail=3):
+        return []
+
     def is_finished(self):
         """
         Check if simulation has finished or not.
@@ -53,7 +56,8 @@ class Job(object):
         if self.process_handle is not None:
             return self.process_handle.poll() == 0
         if self.job_id is not None:
-            running = any([self.job_id in j for j in get_all_jobs(detail=3)])
+            running = any([
+                self.job_id in j for j in self.get_all_jobs(detail=3)])
         else:
-            running = self.name in get_all_jobs(detail=0)
+            running = self.name in self.get_all_jobs(detail=0)
         return not running
