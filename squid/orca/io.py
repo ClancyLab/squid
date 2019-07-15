@@ -1,9 +1,9 @@
 import os
 import re
 import copy
-from squid import units
-from squid.structures.atom import Atom
+from squid.utils import units
 from squid.structures import results
+from squid.structures.atom import Atom
 
 
 def read(input_file):

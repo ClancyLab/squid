@@ -1,5 +1,5 @@
 import numpy as np
-from squid import units
+from squid.utils import units
 
 
 def get_center_of_geometry(atoms, skip_H=False):

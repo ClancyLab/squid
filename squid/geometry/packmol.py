@@ -1,5 +1,5 @@
 import os
-from squid import units
+from squid.utils import units
 from squid.files.xyz_io import *
 from squid.files.misc import which
 

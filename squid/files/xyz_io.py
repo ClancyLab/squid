@@ -1,4 +1,4 @@
-from squid import units
+from squid.utils import units
 from squid.structures.atom import Atom
 
 
