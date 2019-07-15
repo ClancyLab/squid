@@ -150,3 +150,36 @@ def write_xyz(frames, name="out", ID='Atoms'):
             f.write('%s %f %f %f\n' % (a.element, a.x, a.y, a.z))
 
     f.close()
+
+
+def run_unit_tests():
+    import os
+    import hashlib
+
+    # Generate an xyz file of various frames
+    frames = [
+        [
+            Atom("H", i + j, 2 * i + j, 3 * i + j)
+            for i in range(10)
+        ]
+        for j in range(5)
+    ]
+    write_xyz(frames, "test.xyz")
+    frames_2 = read_xyz("test.xyz")
+
+    assert all([x == y for x, y in zip(frames, frames_2)]),\
+        "Error - Incorrectly wrote and read in frames in xyz."
+
+    write_xyz(frames_2, "test_2.xyz")
+
+    h1 = hashlib.md5(open('test.xyz', 'rb').read()).hexdigest()
+    h2 = hashlib.md5(open('test_2.xyz', 'rb').read()).hexdigest()
+    assert h1 == h2,\
+        "Error - Writing files has failed!"
+
+    # Cleanup at the end
+    os.system("rm test.xyz test_2.xyz")
+
+
+if __name__ == "__main__":
+    run_unit_tests()

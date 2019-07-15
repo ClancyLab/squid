@@ -560,10 +560,22 @@ DIHERALS (molecule_index: index)
         "Error - get_center_of_geometry failed."
 
     # Test out generating a solvation box using OPLS parameters
-    # THF = get_THF()
-    # test_system = System("solvent_box")
-    # test_system.add(THF)
-    # test_system.set_types()
+    from squid.geometry.packmol import packmol
+    THF = get_THF()
+    packmol(test_system, [THF], density=1.0,
+            seed=1, persist=False, number=None, custom=None,
+            tolerance=2.0)
+    assert len(test_system.molecules) == 13,\
+        "Error - packmol should have packed 13 molecules (packed %d)."\
+        % len(test_system.molecules)
+
+    test_system = System("test", box_size=(100, 100, 100))
+    packmol(test_system, [THF], density=1.0,
+            seed=1, persist=False, number=50, custom=None,
+            tolerance=2.0)
+    assert len(test_system.molecules) == 50,\
+        "Error - packmol should have packed 13 molecules (packed %d)."\
+        % len(test_system.molecules)
 
 
 if __name__ == "__main__":

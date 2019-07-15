@@ -73,6 +73,7 @@ class DFT_out(object):
         warnings: *list, str*
             Warnings output by the simulation.
     """
+
     def __init__(self, name, dft='orca'):
         self.name = name
         self.dft = dft.lower()
@@ -133,6 +134,7 @@ class sim_out(object):
         box_bounds: :class:`structures.Struct`
             List of box bounds for the final timestep.
     """
+
     def __init__(self, name, program='lammps'):
         self.name = name
         self.program = program.lower()

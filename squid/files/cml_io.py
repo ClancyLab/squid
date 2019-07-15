@@ -2,11 +2,12 @@ import copy
 import xml.etree.ElementTree as xml
 
 from squid.structures.atom import Atom
+from squid.structures.system import System
 from squid.structures.molecule import Molecule
 from squid.structures.topology import Connector
 
 
-def read(name):
+def read_cml(name):
     """
     Read in a file written in the Chemical Markup Language (CML) format.
     As cml files may hold more than simple atomic coordinates, we return a
@@ -142,25 +143,22 @@ def read(name):
 
 # 1st param: either a list of Atom objects, a
 # Molecule object or a structures.System object
-def write(atoms_or_molecule_or_system, bonds=[], name=None):
+def write_cml(atoms, name=None, bonds=None):
     """
-    Write data in (list, :class:`Atom`), or
-    :class:`Molecule`, or :class:`structures.System` to a file
-    written in the Chemical Markup Language (CML) format. If a list of
-    :class:`Molecule` is passed, then a CML file is written in
-    which each molecule is its own section.  Note, this cannot be read into
-    Avogadro, and it is recommended that if you plan to use Avogadro to
-    combine these into one :class:`structures.System`.
+    Write atomic coordinates and any other relevant information into a file
+    using the Chemical Markup Language (CML) format.
 
     **Parameters**
 
-        atoms_or_molecule_or_system: :class:`Atom` *or* :class:`Molecule` *or* :class:`structures.System`
-            Atomic data to be written to a CML file.
-        bonds: *list,* :class:`structures.Bond` *, optional*
-            A list of bonds within the system.  This is useful when the input
-            is a list of :class:`Atom` .
+        atoms: *...*
+            A list of atomic coordinates to be stored.  Note, you may also
+            input a molecule object which stores relevant bonding information.
+            You may further pass a System object that has further information.
         name: *str, optional*
             The name of the output file (either ending or not in .cml).
+        bonds: *list,* :class:`structures.topology.Connector` *, optional*
+            A list of bonds within the system.  This is useful when the input
+            is a list of :class:`structures.atom.Atom`.
 
     **Returns**
 
@@ -171,26 +169,35 @@ def write(atoms_or_molecule_or_system, bonds=[], name=None):
     if not name.endswith('.cml'):
         name += '.cml'
 
+    # Handle odd situations of list[list[list[...[atoms]]]]
+    while isinstance(atoms, list) and len(atoms) == 1\
+            and isinstance(atoms[0], list):
+        atoms = atoms[0]
+
     # Determine whether input is an atom list or a system object
     # If it is a system object, compile information to write cml file
     child_flag = False
-    if isinstance(atoms_or_molecule_or_system, structures.System):
-        system = atoms_or_molecule_or_system
+    if isinstance(atoms, System):
+        system = atoms
         atoms, bonds, periodic = system.atoms, system.bonds, system.periodic
-    elif isinstance(atoms_or_molecule_or_system, Molecule):
-        molecule = atoms_or_molecule_or_system
+    elif isinstance(atoms, Molecule):
+        molecule = atoms
         atoms = molecule.atoms
         bonds = bonds or molecule.bonds
         periodic = False
-    elif isinstance(atoms_or_molecule_or_system[0], Atom):
-        atoms = atoms_or_molecule_or_system
+    elif isinstance(atoms, list) and isinstance(atoms[0], Atom):
         periodic = False
-    elif isinstance(atoms_or_molecule_or_system[0], Molecule):
-        molecules = atoms_or_molecule_or_system
+    elif isinstance(atoms, list) and isinstance(atoms[0], Molecule):
+        molecules = atoms
+        child_flag = True
+        periodic = False
+    elif isinstance(atoms, list) and isinstance(atoms[0], list):
+        molecules = [Molecule(a) for a in atoms]
         child_flag = True
         periodic = False
     else:
-        raise Exception('Unable to write cml file = %s' % (name))
+        print(atoms)
+        raise Exception("write_cml got an odd input for atoms.")
 
     f = open(name, 'w')
     f.write('<molecule>\n')
@@ -274,8 +281,37 @@ def write(atoms_or_molecule_or_system, bonds=[], name=None):
 
 
 def run_unit_tests():
-    thf = read("./../unittests/misc/THF.cml")[0]
-    print(thf)
+    import os
+    import hashlib
+
+    thf = read_cml("./../unittests/misc/THF.cml")[0]
+    write_cml(thf, "test.cml")
+    h1 = hashlib.md5(open(
+        'test.cml', 'rb').read()).hexdigest()
+    h2 = hashlib.md5(open(
+        './../unittests/misc/THF.cml', 'rb').read()).hexdigest()
+    assert h1 == h2,\
+        "Error - Writing files has failed!"
+
+    # Generate a cml file of various frames
+    frames = [
+        [
+            Atom("H", i + j, 2 * i + j, 3 * i + j)
+            for i in range(10)
+        ]
+        for j in range(5)
+    ]
+    write_cml(frames, "test.cml")
+    frames_2 = read_cml("test.cml")
+    write_cml(frames_2, "test_2.cml")
+
+    h1 = hashlib.md5(open('test.cml', 'rb').read()).hexdigest()
+    h2 = hashlib.md5(open('test_2.cml', 'rb').read()).hexdigest()
+    assert h1 == h2,\
+        "Error - Writing files has failed!"
+
+    # Cleanup at the end
+    os.system("rm test.cml test_2.cml")
 
 
 if __name__ == "__main__":

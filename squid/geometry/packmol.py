@@ -1,6 +1,21 @@
 import os
-from squid import files
 from squid import units
+from squid.files.xyz_io import *
+from squid.files.misc import which
+
+
+def get_packmol_obj():
+    '''
+    This function will find the packmol executable and handle errors
+    accordingly.
+    '''
+    packmol_path = which("packmol")
+
+    assert packmol_path is not None and packmol_path != "",\
+        "Error - Unable to access Packmol.  Please ensure it is in your PATH \
+environment variable!"
+
+    return packmol_path
 
 
 def packmol(system_obj, molecules, molecule_ratio=(1,),
@@ -65,6 +80,8 @@ def packmol(system_obj, molecules, molecule_ratio=(1,),
         os.mkdir('sys_packmol')
     os.chdir('sys_packmol')
 
+    packmol_path = get_packmol_obj()
+
     f = open(system_obj.name + '.packmol', 'w')
 
     if custom is not None:
@@ -80,7 +97,7 @@ seed ''' + str(seed) + '''
 
         # If the system already has atoms, then set them
         if system_obj.atoms is not None and len(system_obj.atoms) > 0:
-            files.write_xyz(system_obj.atoms, "%s_fixed.xyz" % system_obj.name)
+            write_xyz(system_obj.atoms, "%s_fixed.xyz" % system_obj.name)
             f.write('''
 structure %s_fixed.xyz
 number 1
@@ -130,11 +147,11 @@ end structure
         f.close()
 
     # Run packmol
-    os.system(sysconst.packmol_path +
+    os.system(packmol_path +
               ' < ' +
               system_obj.name +
               '.packmol > packmol.log')
-    atoms = files.read_xyz(system_obj.name + '.packed.xyz')
+    atoms = read_xyz(system_obj.name + '.packed.xyz')
     os.chdir('..')
 
     # Now have a list of atoms with element = H0 for molecule 0,
@@ -161,19 +178,8 @@ end structure
 
 
 def run_unit_tests():
-    from squid.structures.system import System
-    from squid.unittests.examples import get_THF
-
-    sys_obj = System("solvation_box")
-    THF = get_THF()
-
-    packmol(
-        sys_obj, THF,
-        density=1.0,
-    )
-
-    raise Exception("TO DO")
-    print("squid.geometry.procrustes - All unit tests passed!")
+    # This unit test exists in the structures.system.System unit test.
+    pass
 
 
 if __name__ == "__main__":
