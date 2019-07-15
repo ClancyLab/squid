@@ -4,7 +4,7 @@ import time
 import shutil
 import itertools
 import subprocess
-import squid.jobs as jobs
+from squid import jobs
 import squid.orca.io as orca_io
 from squid.files.misc import which
 

@@ -3,7 +3,7 @@ import re
 import copy
 from squid import units
 from squid.structures.atom import Atom
-from squid.structures.results import results
+from squid.structures import results
 
 
 def read(input_file):
@@ -38,7 +38,7 @@ def read(input_file):
     # Get the route line
     try:
         route = [line[5:] for line in data_lines
-                 if line.startswith('|  1>')][0]
+                 if line.startswith('|  1>')][0].strip()
     except IndexError:
         raise IOError('Could not find route line in %s: \
 job most likely crashed.' % input_path)
@@ -274,9 +274,15 @@ Lowest energy orbital is empty.")
 
     data = results.DFT_out(input_file, 'orca')
 
+    if isinstance(route, str):
+        route = route.strip()
+    if isinstance(extra_section, str):
+        extra_section = extra_section.strip()
     data.route = route
     data.extra_section = extra_section
-    data.charge_and_multiplicity = charge_and_multiplicity.strip()
+    data.charge, data.multiplicity = map(
+        float,
+        charge_and_multiplicity.strip().split())
     data.frames = frames
     data.atoms = atoms
     data.gradients = gradients

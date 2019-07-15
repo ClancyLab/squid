@@ -2,6 +2,7 @@
 This script holds simple functions to handle data types and common errors
 while returning error messages that should explain the error to the user.
 """
+import itertools
 
 
 def is_numeric(x):
@@ -15,6 +16,13 @@ def is_numeric(x):
         return False
 
 
+def is_array(v):
+    """
+    Simply check if v is array like
+    """
+    return hasattr(v, "__len__")
+
+
 def check_vec(v, length=3, numeric=True):
     """
     Given what should be a vector of N values, we check that they
@@ -22,7 +30,7 @@ def check_vec(v, length=3, numeric=True):
     """
     if not hasattr(v, "__len__"):
         return False
-    if not len(v) == length:
+    if length is not None and len(v) != length:
         return False
     if numeric and not all(map(is_numeric, v)):
         return False
@@ -91,12 +99,57 @@ def _u_assert_vec():
             pass
 
 
+def simplify_numerical_array(values):
+    '''
+    Given integer values, simplify to a numerical array.  Note, values may
+    also be given as a comma separated string.  This is used in jobarray.
+    '''
+    # Step 1 - Appropriately parse out values so we have one long int array
+    if isinstance(values, str):
+        values = values.strip().split(",")
+
+    held_values = []
+    for value in values:
+        if isinstance(value, int):
+            held_values.append(value)
+        elif "-" in value:
+            lower, upper = map(int, value.split("-"))
+            value_array = list(range(lower, upper + 1))
+            held_values += value_array
+        else:
+            held_values.append(int(value))
+    values = sorted(held_values)
+
+    # Step 2 - Start concatenating as best as possible
+    # https://stackoverflow.com/a/4629241
+    # User: Graham
+    def ranges(i):
+        for a, b in itertools.groupby(enumerate(i), lambda x: x[1] - x[0]):
+            b = list(b)
+            yield b[0][1], b[-1][1]
+
+    values = list(ranges(values))
+
+    simplified_strings = [
+        "%d-%d" % (a, b)
+        if len("%d-%d" % (a, b)) < len(",".join(map(str, range(a, b + 1))))
+        else ",".join(map(str, range(a, b + 1)))
+        for a, b in values
+    ]
+
+    return ",".join(simplified_strings)
+
+
 def run_unit_tests():
     assert list(map(is_numeric, [
         "123", "12.321", "lsdj"
     ])) == [True, True, False], "Failed - is_numeric failed."
 
     _u_assert_vec()
+
+    check = simplify_numerical_array([1, 2, 3, 4, 5, 7, 8, 11, 12, 13, 14])
+    assert check == "1-5,7,8,11-14",\
+        "Error - Simplification of a numerical array has failed!"
 
     print("squid.utils.cast - All unit tests passed!")
 
