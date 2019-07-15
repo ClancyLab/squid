@@ -71,7 +71,7 @@ Should be openmpi %s (found %s) for orca %s."\
 def jobarray(run_name, route, frames, n_frames=None, extra_section='',
              grad=False,
              queue=None, walltime="00:30:00", sandbox=False,
-             procs=1, ntasks=1, nodes=1, adjust_nodes=True,
+             procs=1, ntasks=1, nodes=1,
              charge=None, multiplicity=None, charge_and_multiplicity='0 1',
              redundancy=False, unique_name=True,
              previous=None, mem=2000, priority=None, xhost=None,
@@ -118,9 +118,6 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
             (For SLURM) The number of nodes this job requires.  If requesting
             ntasks * procs < 24 * nodes, a warning is printed, as on MARCC
             each node has only 24 cores.
-        adjust_nodes: *bool, optional*
-            Whether to automatically calculate how many nodes is necessary
-            when the user underspecifies nodes.
         charge: *float, optional*
             Charge of the system.  If this is used, then
             charge_and_multiplicity is ignored. If multiplicity is used,
@@ -180,7 +177,6 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
         "procs": procs,
         "ntasks": ntasks,
         "nodes": nodes,
-        "adjust_nodes": adjust_nodes,
         "charge": charge,
         "multiplicity": multiplicity,
         "charge_and_multiplicity": charge_and_multiplicity,
@@ -261,7 +257,7 @@ Serializing job submission instead." % queue_system)
 
     return jobs.submit_job(
         run_name, job_to_submit,
-        ntasks=ntasks, procs=procs, nodes=nodes, adjust_nodes=adjust_nodes,
+        ntasks=ntasks, procs=procs, nodes=nodes,
         queue=queue, mem=mem, priority=priority,
         walltime=walltime, xhosts=xhost,
         unique_name=unique_name, redundancy=redundancy,
@@ -275,7 +271,7 @@ Serializing job submission instead." % queue_system)
 # A function to run an Orca DFT Simulation
 def job(run_name, route=None, atoms=[], extra_section='', grad=False,
         queue=None, walltime="00:30:00", sandbox=False,
-        procs=1, ntasks=1, nodes=1, adjust_nodes=True,
+        procs=1, ntasks=1, nodes=1,
         charge=0, multiplicity=1,
         redundancy=False, use_NBS_sandbox=False, unique_name=True,
         previous=None, mem=2000, priority=None, xhost=None,
@@ -318,9 +314,6 @@ def job(run_name, route=None, atoms=[], extra_section='', grad=False,
             (For SLURM) The number of nodes this job requires.  If requesting
             ntasks * procs < 24 * nodes, a warning is printed, as on MARCC
             each node has only 24 cores.
-        adjust_nodes: *bool, optional*
-            Whether to automatically calculate how many nodes is necessary
-            when the user underspecifies nodes.
         charge: *int, optional*
             Charge of the system.  The default charge of 0 is used.
         multiplicity: *int, optional*
@@ -556,7 +549,7 @@ less than 2 atoms!")
             sandbox = None
         job_obj = jobs.submit_job(
             run_name, job_to_submit,
-            ntasks=ntasks, procs=procs, nodes=nodes, adjust_nodes=adjust_nodes,
+            ntasks=ntasks, procs=procs, nodes=nodes,
             queue=queue, mem=mem, priority=priority,
             walltime=walltime, xhosts=xhost,
             unique_name=unique_name, redundancy=redundancy,
