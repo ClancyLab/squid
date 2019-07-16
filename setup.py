@@ -14,10 +14,18 @@ setuptools.setup(
     url="https://github.com/clancylab/squid",
     include_package_data=True,
     install_requires=[
-          'pyDOE',
-          'numpy',
-          'scipy'
+        'pyDOE',
+        'numpy',
+        'scipy'
     ],
+    entry_points={
+        'console_scripts': [
+            'chkDFT=squid.console_scripts.chkDFT.chkDFT',
+            'scanDFT=squid.console_scripts.scanDFT.scanDFT',
+            'pysub=squid.console_scripts.pysub.pysub',
+            'procrustes=squid.console_scripts.procrustes.procrustes',
+        ]
+    },
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
