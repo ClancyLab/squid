@@ -1,28 +1,19 @@
-from squid import g09
 from squid import orca
 from squid import files
 
 
-# Run water simulation
-def opt_water():
+if __name__ == "__main__":
+    # First, calculate relevant information
     frames = files.read_xyz('water.xyz')
-    return g09.job('water',
-                   'HSEH1PBE/cc-pVTZ OPT=() SCRF(Solvent=Toluene)',
-                   atoms=frames,
-                   queue=None,
-                   force=True)
-
-
-def opt_water_orca():
-    frames = files.read_xyz('water.xyz')
-    return orca.job('water',
-                    '! pw6b95 def2-TZVP D3BJ OPT NumFreq',
-                    atoms=frames,
-                    queue=None)
-
-
-# job = opt_water()
-# job.wait()
-# g09.cubegen_analysis("water", orbital=3)
-
-opt_water_orca()
+    job_handle = orca.job(
+        'water',
+        '! pw6b95 def2-TZVP D3BJ OPT NumFreq',
+        atoms=frames,
+        queue=None)
+    job_handle.wait()
+    # Next, post process it
+    orca.mo_analysis(
+        "water", orbital=None,
+        HOMO=True, LUMO=True,
+        wireframe=True, hide=True, iso=0.04
+    )

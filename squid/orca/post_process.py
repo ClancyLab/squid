@@ -41,7 +41,8 @@ def gbw_to_cube(name, mo, spin=0, grid=40, local=False):
     #  10 - Generate the plot
     #  11 - exit this program
 
-    orca_path = get_orca_obj(parallel=False)[0] + "_plot"
+    orca_path = get_orca_obj(parallel=False) + "_plot"
+    print(orca_path)
 
     # Default is for specifying mo and cube file
     cmds = [1, 1, 5, 7]
