@@ -47,7 +47,8 @@ SMRFF_DICT = {
         "n", "beta", "lambda2", "B", "R", "D", "lambda1", "A"]
 }
 OPLS_STRUCTURES = ["BONDS", "ANGLES", "DIHEDRALS"]
-OPLS_FILE = "./potentials/oplsaa.prm"
+OPLS_FILE = "/".join(os.path.realpath(__file__).split("/")[:-1]) +\
+    "/potentials/oplsaa.prm"
 
 
 class Parameters(object):

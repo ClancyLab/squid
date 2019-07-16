@@ -2,6 +2,7 @@ import os
 from squid.utils import units
 from squid.files.xyz_io import *
 from squid.files.misc import which
+from squid.utils.cast import is_array
 
 
 def get_packmol_obj():
@@ -79,6 +80,9 @@ def packmol(system_obj, molecules, molecule_ratio=(1,),
     if not os.path.exists('sys_packmol'):
         os.mkdir('sys_packmol')
     os.chdir('sys_packmol')
+
+    assert is_array(molecules),\
+        "Error - Molecules must be an array!"
 
     packmol_path = get_packmol_obj()
 

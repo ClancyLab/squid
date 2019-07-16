@@ -14,7 +14,9 @@ files before ever importing frc_opls.
 
 # System imports
 import re
-OPLS_FILE = "./potentials/oplsaa.prm"
+import os
+OPLS_FILE = "/".join(os.path.realpath(__file__).split("/")[:-1]) +\
+    "/potentials/oplsaa.prm"
 
 
 def parse_pfile(parameter_file=OPLS_FILE, pair_style='lj/cut'):
@@ -102,3 +104,8 @@ def parse_pfile(parameter_file=OPLS_FILE, pair_style='lj/cut'):
             pass
 
     return atom_types, bond_types, angle_types, dihedral_types
+
+
+if __name__ == "__main__":
+    assert os.path.exists(OPLS_FILE),\
+        "Error - Cannot identify OPLS_FILE."

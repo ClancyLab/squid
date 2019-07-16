@@ -1,4 +1,5 @@
 # System imports
+import os
 import copy
 # Squid imports
 from squid.utils import cast
@@ -9,7 +10,8 @@ from squid.forcefields.parameters import Parameters
 # External imports
 import numpy as np
 
-OPLS_FILE = "./../forcefields/potentials/oplsaa.prm"
+OPLS_FILE = "/".join(os.path.realpath(__file__).split("/")[:-1]) +\
+    "/../forcefields/potentials/oplsaa.prm"
 
 
 class System(object):
@@ -751,6 +753,8 @@ DIHERALS (molecule_index: index)
     # test_system.add(simple)
     # test_system.set_types()
     # write_lammps_data(test_system)
+    assert os.path.exists(OPLS_FILE),\
+        "Error - Cannot identify OPLS_FILE."
 
 
 if __name__ == "__main__":
