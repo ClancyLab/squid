@@ -19,7 +19,8 @@ An example of using this is as follows:
 """
 import os
 import files
-import sysconst
+
+from squid.files.misc import which
 
 
 def ovito_xyz_to_image(
@@ -61,6 +62,10 @@ def ovito_xyz_to_image(
 
         None
     """
+
+    ovitos_path = which("ovitos")
+    assert ovitos_path is not None,\
+        "Error - Cannot find ovitos in the PATH env var."
 
     # Default settings for the renderers
     tach_rend_set = {
@@ -133,7 +138,7 @@ vp.render(rs)
     fptr.close()
 
     # Call the ovitos python interpreter
-    os.system("%ss %s" % (sysconst.ovito_path, "tmp_imgGen.py"))
+    os.system("%s %s" % (ovitos_path, "tmp_imgGen.py"))
     os.system("rm tmp_imgGen.py")
 
 
@@ -183,6 +188,10 @@ def ovito_xyz_to_gif(
         None
     """
 
+    convert_path = which("convert")
+    assert convert_path is not None,\
+        "Error - Cannot find convert in the PATH env var."
+
     # First ensure we have frames and things in the correct format
     if isinstance(frames, str):
         frames = open(frames)
@@ -203,7 +212,8 @@ def ovito_xyz_to_gif(
     # For each frame, generate an image
     for i, frame in enumerate(frames):
         files.write_xyz(frame, "tmp.xyz")
-        ovito_xyz_to_image("tmp.xyz", scratch,
+        ovito_xyz_to_image(
+            "tmp.xyz", scratch,
             fname="%04d" % i,
             camera_pos=camera_pos,
             camera_dir=camera_dir,
