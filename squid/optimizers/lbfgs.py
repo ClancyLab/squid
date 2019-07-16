@@ -102,7 +102,7 @@ def lbfgs(params,
     max_step = 0.04
     target_function = None
     armijo_line_search_factor = 1E-4
-    linesearch = 'backtrack'
+    linesearch = None  # 'backtrack'
     reset_when_in_trouble = True
     reset_step_size = 20
     accelerate = True
@@ -205,7 +205,7 @@ def lbfgs(params,
         However, there are some correction added to the algorithm.
         '''
         r = copy.deepcopy(grad) * scale
-        indices = xrange(len(s))
+        indices = range(len(s))
         # Compute right product
         alpha = np.zeros(len(s))
         for i in reversed(indices):

@@ -164,9 +164,9 @@ def g09_results(NEB, step_to_use, i, state):
             if (abs(a1.x - a2.x) > precision or
                 abs(a1.y - a2.y) > precision or
                     abs(a1.z - a2.z) > precision):
-                print i, 'atoms not in same frame:', a1.x, a1.y, a1.z,
-                print 'vs', a2.x, a2.y, a2.z
-                print abs(a1.x - a2.x), abs(a1.y - a2.y), abs(a1.z - a2.z)
+                print(i, 'atoms not in same frame:', a1.x, a1.y, a1.z,)
+                print('vs', a2.x, a2.y, a2.z)
+                print(abs(a1.x - a2.x), abs(a1.y - a2.y), abs(a1.z - a2.z))
                 exit()
 
     if i != 0 and i != len(NEB.states) - 1:
@@ -234,10 +234,6 @@ def orca_start_job(NEB,
         orca_job: :class:`jobs.Job`
             A job container holding the orca simulation.
     """
-    orca4 = True
-    if "orca4" in extra_keywords:
-        orca4 = extra_keywords["orca4"]
-
     NEB.calls_to_force += 1
     if NEB.step > 0:
         previous = '%s-%d-%d' % (NEB.name, NEB.step - 1, i)
@@ -260,8 +256,7 @@ def orca_start_job(NEB,
                     queue=queue,
                     previous=previous,
                     mem=mem,
-                    priority=NEB.priority,
-                    orca4=orca4)
+                    priority=NEB.priority)
 
 
 def orca_results(NEB, step_to_use, i, state):
@@ -379,8 +374,6 @@ class NEB:
             of the tangent is based on only the force, and not the energy.
             Note, the code still expects the get_results function to return
             two things, so just have it return (None, atoms + forces).
-        orca4: *bool, optional*
-            Whether to use orca4 (True) or 3 (False).
 
     **Returns**
 
@@ -418,8 +411,7 @@ class NEB:
                  callback=None,
                  ci_neb=False,
                  ci_N=5,
-                 no_energy=False,
-                 orca4=True):
+                 no_energy=False):
         self.name = name
         self.states = states
         self.theory = theory
@@ -504,11 +496,6 @@ g09.  If not, you need to manually specify start_job and get_results.")
         if self.ci_neb and self.no_energy:
             raise Exception("\nERROR\nUnable to do climbing image without energy. Let no_energy be False.")
 
-        # Setup extra_keywords variable
-        self.extra_keywords = {
-            "orca4": orca4
-        }
-
 
     def calculate(self, coords):
         self.calls_to_calculate += 1
@@ -540,8 +527,7 @@ g09.  If not, you need to manually specify start_job and get_results.")
                                    self.initial_guess,
                                    self.extra_section,
                                    self.mem,
-                                   self.priority,
-                                   self.extra_keywords)
+                                   self.priority)
                 )
         # Wait for jobs to finish
         if self.job_hang_time is not None:
@@ -672,7 +658,7 @@ g09.  If not, you need to manually specify start_job and get_results.")
         # Calculate RMS Force and Max force
         force_mags = [(a.fx**2 + a.fy**2 + a.fz**2)**0.5
                       for state in self.states[1:-1] for a in state]
-        RMS_force = geometry.rms(force_mags)
+        RMS_force = np.sqrt(np.mean(np.square(force_mags)))
         self.RMS_force = RMS_force
         MAX_force = max(force_mags)
         self.MAX_force = MAX_force
@@ -715,15 +701,13 @@ g09.  If not, you need to manually specify start_job and get_results.")
                 max_e = print_helper.color_set(
                     float("%.1f" % MAX_energy), 'RED')
 
-
         if not self.no_energy:
             if self.step == 0:
                 print("Step\tRMS_F (eV/Ang)\tMAX_F (eV/Ang)\tMAX_E (kT_300)\
 \tEnergies (kT_300)\n----")
             print("%d\t%s\t\t%s\t\t%s"
-                  % (self.step, rms, max_f, max_e)),
-            print '    \t\t\t\t', '%7.5g +'\
-                  % V[0], ('%5.1f ' * len(V[1:])) % tuple(V[1:])
+                  % (self.step, rms, max_f, max_e) + '\t\t%7.5g +'
+                  % V[0], ('%5.1f ' * len(V[1:])) % tuple(V[1:]))
         else:
             if self.step == 0:
                 print("Step\tRMS_F (eV/Ang)\tMAX_F (eV/Ang)\n----")

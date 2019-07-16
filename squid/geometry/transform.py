@@ -268,7 +268,7 @@ def smooth_xyz(frames,
                 print("Currently Frames = %d\tr2 = %lg" % (len(frames), r2))
 
         # Now, split the list, interpolate, and regenerate
-        i = mpf.index(max(mpf))
+        i = np.nanargmax(mpf)
         if i > 0 and i < len(frames) - 1:
             f_low = copy.deepcopy(frames[:i])
             f_high = copy.deepcopy(frames[i + 1:])
@@ -289,22 +289,22 @@ def smooth_xyz(frames,
             print("\tInterpolated %d,%d ... %lg"
                   % (i - 1, i + 1, max(motion_per_frame(frames))))
 
-        if N_FRAMES is not None:
-            if len(frames) == N_FRAMES:
+        if N_frames is not None:
+            if len(frames) == N_frames:
                 break
-            if len(frames) > N_FRAMES:
-                while len(frames[1:-1]) > N_FRAMES - 2:
+            if len(frames) > N_frames:
+                while len(frames[1:-1]) > N_frames - 2:
                     mpf = motion_per_frame(frames[1:-1])
-                    to_kill = mpf.index(min(mpf)) + 1
+                    to_kill = np.nanargmin(mpf) + 1
                     del frames[to_kill]
                 break
 
-    while len(frames) > N_FRAMES:
+    while len(frames) > N_frames:
         # Get smallest motion and remove
         if use_procrustes:
             procrustes(frames)
         mpf = motion_per_frame(frames[:-1])
-        i = mpf.index(min(mpf[1:]))
+        i = np.nanargmin(mpf[1:])
         del frames[i]
 
     if use_procrustes:

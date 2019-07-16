@@ -189,7 +189,7 @@ def g_lbfgs(params,
         However, there are some correction added to the algorithm.
         '''
         r = copy.deepcopy(grad)
-        indices = xrange(len(s))
+        indices = range(len(s))
         # Compute right product
         alpha = np.zeros(len(s))
         for i in reversed(indices):

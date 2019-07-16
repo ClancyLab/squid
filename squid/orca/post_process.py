@@ -1,6 +1,6 @@
 import os
-from squid import vmd
 from squid.orca.io import read
+from squid.post_process import vmd
 from squid.orca.utils import get_orca_obj
 from squid.orca.mep import electrostatic_potential_cubegen
 

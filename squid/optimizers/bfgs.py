@@ -99,7 +99,7 @@ def bfgs(params,
     max_step = 0.2
     target_function = None
     armijo_line_search_factor = 1E-4
-    linesearch = 'backtrack'
+    linesearch = None  # 'backtrack'
     reset_when_in_trouble = True
     reset_step_size = 20
     accelerate = True

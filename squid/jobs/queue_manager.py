@@ -4,19 +4,19 @@ from squid.files.misc import which
 from squid.jobs.container import JobObject
 
 
-def Job(**kwargs):
+def Job(name, **kwargs):
     queueing_system = get_queue_manager()
     if queueing_system is None:
-        return JobObject(kwargs)
+        return JobObject(name, **kwargs)
     elif queueing_system == "nbs":
-        return nbs.Job(kwargs)
+        return nbs.Job(name, **kwargs)
     elif queueing_system == "pbs":
         # Do This
         raise Exception("THIS CODE NOT WRITTEN YET.")
     elif queueing_system == "slurm":
-        return slurm.Job(kwargs)
+        return slurm.Job(name, **kwargs)
     elif queueing_system == "slurm-xsede":
-        return slurm.Job(kwargs)
+        return slurm.Job(name, **kwargs)
     else:
         raise Exception("Unknown queueing system (%s) encountered."
                         % str(queueing_system))

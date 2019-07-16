@@ -28,11 +28,11 @@ from squid.utils import print_helper
 
 from scipy.optimize import minimize
 
-from constants import FAIL_CONVERGENCE
-from constants import STEP_SIZE_TOO_SMALL
-from constants import MAXITER_CONVERGENCE
-from constants import G_MAX_CONVERGENCE
-from constants import G_RMS_CONVERGENCE
+from squid.constants import FAIL_CONVERGENCE
+from squid.constants import STEP_SIZE_TOO_SMALL
+from squid.constants import MAXITER_CONVERGENCE
+from squid.constants import G_MAX_CONVERGENCE
+from squid.constants import G_RMS_CONVERGENCE
 
 # Squid curve smooting method using the Nudged Elastic Band package
 # Currently supports g09
@@ -155,9 +155,9 @@ def g09_results(spline_NEB, step_to_use, i, state):
             if (abs(a1.x - a2.x) > precision or
                 abs(a1.y - a2.y) > precision or
                     abs(a1.z - a2.z) > precision):
-                print i, 'atoms not in same frame:', a1.x, a1.y, a1.z,
-                print 'vs', a2.x, a2.y, a2.z
-                print abs(a1.x - a2.x), abs(a1.y - a2.y), abs(a1.z - a2.z)
+                print(i, 'atoms not in same frame:', a1.x, a1.y, a1.z,)
+                print('vs', a2.x, a2.y, a2.z)
+                print(abs(a1.x - a2.x), abs(a1.y - a2.y), abs(a1.z - a2.z))
                 exit()
 
     if i != 0 and i != len(spline_NEB.states) - 1:
@@ -672,8 +672,8 @@ g09.  If not, you need to manually specify start_job and get_results.")
         print("%d\t%s\t\t%s\t\t%s\t\t%.4f"
               % (self.step, rms, max_f, max_e, max_translation_force)),
 
-        print '    \t\t\t\t', '%7.5g +'\
-              % V[0], ('%5.1f ' * len(V[1:])) % tuple(V[1:])
+        print('    \t\t\t\t', '%7.5g +'\
+              % V[0], ('%5.1f ' * len(V[1:])) % tuple(V[1:]))
 
         sys.stdout.flush()
 
