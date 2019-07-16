@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import os
 from sys import argv, exit
 import copy
 
@@ -22,10 +23,13 @@ procrustes [file.xyz] [Options]
 -append, -a      :   _proc    :  Change the appended name alteration
 -interpolate, -i :            :  This will turn on linear interpolation
 -rmax            :    0.5     :  The default max rms for interpolation
--fmax            :     25     :  The default max number of frames for interpolation
--nframes, -n     :            :  If specified, interpolate to exactly n frames.
--between, -b     :            :  If specified, then interpolation is only run between
-                                 the two frames.  Note, this is [x, y) inclusive.
+-fmax            :     25     :  The default max number of frames for
+                                 interpolation
+-nframes, -n     :            :  If specified, interpolate to exactly n
+                                 frames.
+-between, -b     :            :  If specified, then interpolation is only
+                                 run between the two frames.  Note, this
+                                 is [x, y) inclusive.
 
 Default behaviour is to use procrustes on an xyz to best align
 the coordinates, and then to save a new xyz file with the name
@@ -43,20 +47,18 @@ procrustes demo.xyz -i -b 5 8 -n 6
 '''
 
     # Parse Arguments
-    if '-h' in argv or '-help' in argv or len(argv) < 3:
+    if '-h' in argv or '-help' in argv or len(argv) < 2:
         print(help_info)
         exit()
 
     # Parse Arguments
     append = "_proc"
 
-    path = argv[1]
+    path = os.getcwd()
     if not path.endswith("/"):
         path += "/"
 
-    file_name = argv[2]
-    args = None
-    priority = None
+    file_name = argv[1]
     interpolate = False
     rmax = 0.5
     fmax = 25

@@ -53,7 +53,7 @@ lead to errors).
 '''
 
     # Parse Arguments
-    if '-h' in argv or '-help' in argv or len(argv) < 3:
+    if '-h' in argv or '-help' in argv or len(argv) < 2:
         print(help_info)
         exit()
 
@@ -63,7 +63,7 @@ lead to errors).
     xhost = None
     rss = True
     walltime = '00:30:00'
-    job_name = argv[2]
+    job_name = argv[1]
     args = None
     priority = None
     unique = False

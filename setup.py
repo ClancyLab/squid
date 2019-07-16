@@ -20,10 +20,11 @@ setuptools.setup(
     ],
     entry_points={
         'console_scripts': [
-            'chkDFT=squid.console_scripts.chkDFT.chkDFT',
-            'scanDFT=squid.console_scripts.scanDFT.scanDFT',
-            'pysub=squid.console_scripts.pysub.pysub',
-            'procrustes=squid.console_scripts.procrustes.procrustes',
+            'chko=squid.console_scripts.chkDFT:chkDFT',
+            'chkDFT=squid.console_scripts.chkDFT:chkDFT',
+            'scanDFT=squid.console_scripts.scanDFT:scanDFT',
+            'pysub=squid.console_scripts.pysub:pysub',
+            'procrustes=squid.console_scripts.procrustes:procrustes',
         ]
     },
     packages=setuptools.find_packages(),
