@@ -1,0 +1,10 @@
+# To build the wheel, you must ensure you have the following installed:
+pip install --upgrade pip setuptools wheel
+pip install tqdm
+pip install --user --upgrade twine
+
+# Next, do this:
+python setup.py bdist_wheel
+
+# Finally, test out the wheel locally if you want:
+pip install dist/squid_whatever.whl
