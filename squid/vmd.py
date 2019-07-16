@@ -9,8 +9,17 @@ The vmd package automates various vmd post-processing tasks.
 
 from subprocess import Popen
 
-import sysconst
-import print_helper
+from squid.files.misc import which
+from squid.utils import print_helper
+
+
+def _get_vmd_path():
+    vmd_path = which("vmd")
+    assert vmd_path is not None,\
+        "Error - Unable to access VMD.  Please ensure it is in your PATH \
+environment variable!"
+
+    return vmd_path
 
 
 def _get_base_name(fptr):
@@ -45,6 +54,8 @@ def plot_MO_from_cube(fptrs, wireframe=True, hide=True, iso=0.04):
 
         None
     '''
+
+    vmd_path = _get_vmd_path()
 
     # Get cubefile ranges if needed
     def get_cube_range(fptr):
@@ -185,9 +196,7 @@ def plot_MO_from_cube(fptrs, wireframe=True, hide=True, iso=0.04):
     disp = print_helper.color_set(disp, 'BLUE')
     disp = print_helper.color_set(disp, 'BOLD')
 
-    print disp
-
-    Popen('%s -e tmp.vmd' % sysconst.vmd_path, shell=True)
+    Popen('%s -e tmp.vmd' % vmd_path, shell=True)
 
 
 def plot_electrostatic_from_cube(fptr_rho, fptr_pot, wireframe=True):
@@ -239,4 +248,4 @@ def plot_electrostatic_from_cube(fptr_rho, fptr_pot, wireframe=True):
     f.write(vmd_file)
     f.close()
 
-    Popen('%s -e tmp.vmd' % sysconst.vmd_path, shell=True)
+    Popen('%s -e tmp.vmd' % _get_vmd_path(), shell=True)
