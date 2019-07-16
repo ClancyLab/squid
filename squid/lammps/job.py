@@ -5,7 +5,7 @@ import subprocess
 from squid import jobs
 from squid.files.misc import which
 from squid.jobs.misc import close_pipes
-from squid.lammps.io import write_data_file
+from squid.lammps.io.data import write_lammps_data
 
 
 def get_lmp_obj(parallel=True):
@@ -157,7 +157,7 @@ length is 31." % len(run_name))
 
     # Generate the lammps data file
     if system is not None:
-        write_data_file(system)
+        write_lammps_data(system)
 
     # Write the lammps input script. Expects lines of lammps code
     f = open(run_name + '.in', 'w')

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-The Linux Helper module contains functionality to aid linux users to automate some tasks.
+The Linux Helper module contains functionality to aid linux users
+to automate some tasks.
 
 - :func:`color_set`
 - :func:`colour_set`
@@ -14,13 +15,11 @@ The Linux Helper module contains functionality to aid linux users to automate so
 """
 
 # System imports
-import os
 import re
 import sys
-import psutil
 from subprocess import Popen, PIPE
 # Squid imports
-import constants
+from squid import constants
 
 
 def color_set(s, c):
@@ -71,8 +70,9 @@ strip_colour = strip_color
 
 def spaced_print(sOut, delim=['\t', ' '], buf=4):
     """
-    Given a list of strings, or a string with new lines, this will reformat the string with spaces
-    to split columns.  Note, this only works if there are no headers to the input string/list of strings.
+    Given a list of strings, or a string with new lines, this will
+    reformat the string with spaces to split columns.  Note, this
+    only works if there are no headers to the input string/list of strings.
 
     **Parameters**
 
@@ -99,7 +99,8 @@ def spaced_print(sOut, delim=['\t', ' '], buf=4):
         for j, sss in enumerate(s):
             ss = strip_colour(sss)
             try:
-                # This makes the part of the list for each column the longest length
+                # This makes the part of the list for each column the
+                # longest length
                 s_len[j] = len(ss) if len(ss) > s_len[j] else s_len[j]
             except:
                 # If we are creating a new column this happens
@@ -118,9 +119,11 @@ def spaced_print(sOut, delim=['\t', ' '], buf=4):
     return '\n'.join(sOut)
 
 
-def printProgressBar(iteration, total, prefix='', suffix='', decimals=1, length=20, fill='+', buf=None, pad=False):
+def printProgressBar(iteration, total, prefix='', suffix='', decimals=1,
+                     length=20, fill='+', buf=None, pad=False):
     """
-    NOTE! THIS IS COPIED FROM STACK OVERFLOW (with minor changes), USER Greenstick
+    NOTE! THIS IS COPIED FROM STACK OVERFLOW (with minor changes),
+    USER Greenstick
     Link: https://stackoverflow.com/a/34325723
 
     Call in a loop to create terminal progress bar.
@@ -153,15 +156,16 @@ def printProgressBar(iteration, total, prefix='', suffix='', decimals=1, length=
             printProgressBar.buf -= 1
             return
 
-    assert "stty" not in prefix and "stty" not in suffix, "Don't have 'stty' in prefix or suffix."
+    assert "stty" not in prefix and "stty" not in suffix,\
+        "Don't have 'stty' in prefix or suffix."
 
-    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    percent = ("{0:." + str(decimals) + "f}").format(
+        100 * (iteration / float(total)))
     filledLength = int(length * iteration // total)
     bar = fill * filledLength + '-' * (length - filledLength)
     bar = '\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix)
     if pad:
         try:
-#            cols = int(os.popen('stty size', 'r').read().split()[-1])
             p = Popen("stty size".split(), stdout=PIPE, stderr=PIPE)
             cols, stderr = p.communicate()
             if stderr.strip() is not "":
@@ -169,7 +173,9 @@ def printProgressBar(iteration, total, prefix='', suffix='', decimals=1, length=
             else:
                 cols = int(cols.strip().split()[-1])
         except IndexError:
-            cols = 300  # This is a backup in the case that this code is run on the queue or something.
+            # This is a backup in the case that this code is
+            # run on the queue or something.
+            cols = 300
         cols = max([cols, len(bar) + 1])  # Ensure we are always long enough
         bar = bar + "".join([" " for i in range(cols - len(bar))])
     sys.stdout.write(bar)
@@ -195,5 +201,3 @@ def bytes2human(n):
             value = float(n) / prefix[s]
             return '%.1f%s' % (value, s)
     return "%sB" % n
-
-
