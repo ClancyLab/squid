@@ -179,8 +179,6 @@ length is 31." % len(run_name))
     if no_echo:
         cmd_to_run += " > " + os.getcwd() + "/" + run_name + ".term.log"
 
-    print(cmd_to_run)
-
     if queue is None:
         process_handle = subprocess.Popen(cmd_to_run, shell=True)
         job_handle = jobs.Job(run_name, process_handle)
