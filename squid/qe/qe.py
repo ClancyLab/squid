@@ -25,7 +25,7 @@ def read(input_file):
             Generic DFT output object containing all parsed results.
 
     """
-    pass
+    raise Exception("THIS HAS NOT BEEN WRITTEN YET!")
 
 
 def job(run_name, cards,
@@ -59,13 +59,13 @@ def job(run_name, cards,
             Which processor to run the simulation on(queueing system
             dependent).
         redundancy: *bool, optional*
-            With redundancy on, if the job is submitted and unique_name is on, then
-            if another job of the same name is running, a pointer to that job will
-            instead be returned.
+            With redundancy on, if the job is submitted and unique_name is on,
+            then if another job of the same name is running, a pointer to that
+            job will instead be returned.
 
     **Returns**
 
         job: :class:`jobs.Job`
             Teturn the job container.
     """
-    pass
+    raise Exception("THIS HAS NOT BEEN WRITTEN YET!")

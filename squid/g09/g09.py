@@ -19,13 +19,13 @@ import shutil
 import copy
 from subprocess import Popen
 # Squid imports
-import geometry
-import constants
-import structures
-import results
-import jobs
-import print_helper
-import sysconst
+from squid import jobs
+from squid import results
+from squid import constants
+from squid import structures
+from squid.files.misc import which
+from squid.utils import print_helper
+from squid.g09.utils import get_g09_obj
 
 
 def parse_route(route):
@@ -143,8 +143,7 @@ def job(run_name,
             [('\n'.join(
                 [("%s %f %f %f"
                   % (a.element, a.x, a.y, a.z))
-                 for a in atom_list]) +
-             '\n\n') for atom_list in atoms])
+                 for a in atom_list]) + '\n\n') for atom_list in atoms])
     else:
         # Single list of atoms
         if 'oniom' in route.lower():
@@ -677,8 +676,8 @@ def binding_energy(job_total,
     #       Subtract the following
     #       job_A = Molecule A in the basis set it was done in
     #       job_B = Molecule B in the basis set it was done in
-    print 'E_binding = %s - %s - %s + %s + %s - %s - %s'\
-          % (job_total, name1, name2, name3, name4, job_A, job_B)
+    print('E_binding = %s - %s - %s + %s + %s - %s - %s'
+          % (job_total, name1, name2, name3, name4, job_A, job_B))
 
     if bind_tck_name is None:
         i = 0
@@ -717,7 +716,7 @@ for s in job_names:
     try:
         e,atoms = g09.parse_atoms(s)
         energies.append(e)
-        print '\t%20s\t%lg' % (s,e), ' '.join([a.element for a in atoms])
+        print('\t%20s\t%lg %s' % (s,e, ' '.join([a.element for a in atoms])))
     except:
         raise Exception('Error, could not get data from %s.' % s)
 
@@ -843,20 +842,20 @@ def cubegen_analysis(old_job,
         path += "/"
 
     if not os.path.exists('%s%s.chk' % (path, old_job)):
-        print 'Fatal error: file "%s%s.chk" does not exist.' % (path, old_job)
-        exit()
+        raise Exception(
+            'Fatal error: file "%s%s.chk" does not exist.'
+            % (path, old_job))
     if chk_conv and not parse_atoms(path + old_job):
-        print 'Fatal error: "%s" is not converged. gcube does not work on \
-    unconverged jobs.' % old_job
-        exit()
+        raise Exception('Fatal error: "%s" is not converged. gcube does not work on \
+    unconverged jobs.' % old_job)
     if orbital is not None:
         orbital = str(orbital)
 
     # Get the file to check
     if not os.path.exists('%s%s.fchk' % (path, old_job)):
-        print 'Making %s%s.fchk' % (path, old_job)
+        print('Making %s%s.fchk' % (path, old_job))
         Popen('%s %s%s.chk %s%s.fchk'
-              % (sysconst.g09_formchk,
+              % (get_g09_obj("g09_formchk"),
                  path,
                  old_job,
                  path,
@@ -879,9 +878,9 @@ def cubegen_analysis(old_job,
         b.append("MO=%s" % orbital)
     for append, orbit in zip(a, b):
         if not os.path.exists('%s%s.cube' % (path, old_job + append)):
-            print 'Making %s%s.cube' % (path, old_job + append)
+            print('Making %s%s.cube' % (path, old_job + append))
             Popen('%s 0 %s %s%s.fchk %s%s.cube 0 h'
-                  % (sysconst.g09_cubegen,
+                  % (get_g09_obj("g09_cubegen"),
                      orbit,
                      path,
                      old_job,
@@ -892,8 +891,7 @@ def cubegen_analysis(old_job,
     # Error handling
     for tail in a:
         if not os.path.exists("%s/%s%s.cube" % (path, old_job, tail)):
-            print 'Fatal error: cube files not created'
-            exit()
+            raise Exception('Fatal error: cube files not created')
 
     # Get cubefile ranges if needed
     def get_cube_range(fptr):
@@ -975,7 +973,7 @@ def cubegen_analysis(old_job,
     if orbital is not None:
         low3, high3 = get_cube_range("%s%s_MO%s.cube"
                                      % (path, old_job, orbital))
-        print low3, high3
+        print("%f %f" % (low3, high3))
         vmd_file += '''
     # Adding in extra MO
     mol addfile $$PATH$$$$FPTR$$_MO$$ORBITAL$$.cube
@@ -1036,6 +1034,6 @@ def cubegen_analysis(old_job,
     disp = print_helper.color_set(disp, 'BLUE')
     disp = print_helper.color_set(disp, 'BOLD')
 
-    print disp
+    print(disp)
 
-    Popen('%s -e tmp.vmd' % sysconst.vmd_path, shell=True)
+    Popen('%s -e tmp.vmd' % which("vmd"), shell=True)

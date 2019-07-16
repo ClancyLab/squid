@@ -13,6 +13,7 @@ cards used within quantum espresso.
 
 """
 
+
 class QeControl:
     """
     The control card.  This is where the simulation type and background
@@ -113,15 +114,14 @@ class QeControl:
     def __init__(self, calculation="scf", title="", verbosity="low",
                  restart_mode="from_scratch", wf_collect=False, nstep=None,
                  iprint=None, tstress=None):
-        pass 
+        raise Exception("THIS HAS NOT BEEN WRITTEN YET!")
 
 
-def class QeAtomicCoords:
+class QeAtomicCoords:
     """
     This card combines the ATOMIC_SPECIES, ATOMIC_POSITIONS, and K_POINTS
     cards.
     """
 
     def __init__(self):
-        pass
-
+        raise Exception("THIS HAS NOT BEEN WRITTEN YET!")

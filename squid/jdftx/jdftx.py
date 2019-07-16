@@ -14,13 +14,12 @@ import time
 import shutil
 import subprocess
 
-import jobs
-import units
-import files
-import results
-import geometry
-import sysconst
-import structures
+from squid import jobs
+from squid import files
+from squid import geometry
+from squid import structures
+from squid.utils import units
+from squid.structures import results
 
 
 def read(input_file, atom_units="Ang"):
@@ -40,6 +39,7 @@ def read(input_file, atom_units="Ang"):
             Generic DFT output object containing all parsed results.
 
     """
+    raise Exception("NEEDS TO BE DONE!")
     # Check file exists, and open
     # Allow absolute paths as filenames
     if not input_file.startswith('/') and not os.path.isfile(input_file):
@@ -63,11 +63,12 @@ def read(input_file, atom_units="Ang"):
         frame, gradient = [], []
         for i, line in enumerate(atom_block):
             a = line.split()
-            frame.append(structures.Atom(a[1],
-                         units.convert_dist("Bohr", atom_units, float(a[2])),
-                         units.convert_dist("Bohr", atom_units, float(a[3])),
-                         units.convert_dist("Bohr", atom_units, float(a[4])),
-                         index=i))
+            frame.append(structures.Atom(
+                a[1],
+                units.convert_dist("Bohr", atom_units, float(a[2])),
+                units.convert_dist("Bohr", atom_units, float(a[3])),
+                units.convert_dist("Bohr", atom_units, float(a[4])),
+                index=i))
         frames.append(frame)
 
         # If we also have forces, read those in
@@ -76,10 +77,14 @@ def read(input_file, atom_units="Ang"):
             force_block = section[:section.find('\n\n')].split('\n')[1:]
             for i, line in enumerate(force_block):
                 a = line.split()
-                frames[-1][i].fx = units.convert("Ha/Bohr", "Ha/%s" % atom_units, float(a[2]))
-                frames[-1][i].fy = units.convert("Ha/Bohr", "Ha/%s" % atom_units, float(a[3]))
-                frames[-1][i].fz = units.convert("Ha/Bohr", "Ha/%s" % atom_units, float(a[4]))
-                gradient.append([frames[-1][i].fx, frames[-1][i].fy, frames[-1][i].fz])
+                frames[-1][i].fx = units.convert(
+                    "Ha/Bohr", "Ha/%s" % atom_units, float(a[2]))
+                frames[-1][i].fy = units.convert(
+                    "Ha/Bohr", "Ha/%s" % atom_units, float(a[3]))
+                frames[-1][i].fz = units.convert(
+                    "Ha/Bohr", "Ha/%s" % atom_units, float(a[4]))
+                gradient.append(
+                    [frames[-1][i].fx, frames[-1][i].fy, frames[-1][i].fz])
             gradients.append(gradient)
 
     atoms = None
@@ -96,19 +101,27 @@ def read(input_file, atom_units="Ang"):
     convergence = None
     if len(energies) > 2:
         section = data[data.find("ionic-minimize"):]
-        de_criteria = float(section[section.find("energyDiffThreshold"):].split("\n")[0].strip().split()[1])
-        k_criteria = float(section[section.find("knormThreshold"):].split("\n")[0].strip().split()[1])
+        de_criteria = float(section[
+            section.find("energyDiffThreshold"):].split("\n")[0].strip().split()[1])
+        k_criteria = float(section[
+            section.find("knormThreshold"):].split("\n")[0].strip().split()[1])
         de1 = abs(energies[-2] - energies[-3])
         de2 = abs(energies[-1] - energies[-2])
         convergence = [
-            ["Change in Energy 1", "%.2e" % de1, de_criteria, ["NO", "YES"][de_criteria > de1]],
-            ["Change in Energy 2", "%.2e" % de2, de_criteria, ["NO", "YES"][de_criteria > de2]],
-            ["K Norm", "%.2e" % abs(grad_k), k_criteria, ["NO", "YES"][k_criteria > abs(grad_k)]]
+            ["Change in Energy 1",
+             "%.2e" % de1,
+             de_criteria,
+             ["NO", "YES"][de_criteria > de1]],
+            ["Change in Energy 2",
+             "%.2e" % de2,
+             de_criteria,
+             ["NO", "YES"][de_criteria > de2]],
+            ["K Norm",
+             "%.2e" % abs(grad_k),
+             k_criteria,
+             ["NO", "YES"][k_criteria > abs(grad_k)]]
         ]
-        # convergence = [
-        #     ["dE 1 (%.2e)" % de_criteria, "dE 2 (%.2e)" % de_criteria, "K Norm (%.2e)" % k_criteria],
-        #     ["%.4e" % abs(energies[-2] - energies[-3]), "%.4e" % abs(energies[-1] - energies[-2]), "%.4e" % abs(grad_k)]
-        # ]
+
     energy = None
     if energies:
         energy = energies[-1]
@@ -160,7 +173,7 @@ def job(run_name, atoms, ecut, ecutrho=None, atom_units="Ang", route=None,
         queue=None, walltime="00:30:00", procs=1, threads=None,
         redundancy=False,
         previous=None, mem=2000, priority=None, xhost=None,
-        slurm_allocation=sysconst.slurm_default_allocation):
+        slurm_allocation=None):
     """
     Wrapper to submitting a JDFTx simulation.
 
@@ -170,20 +183,22 @@ def job(run_name, atoms, ecut, ecutrho=None, atom_units="Ang", route=None,
             Name of the simulation to be run.
         atoms: *list,* :class:`structures.Atom` *, or str*
             A list of atoms for the simulation.  If a string is passed, it is
-            assumed to be an xyz file (relative or full path).  If None is passed,
-            then it is assumed that previous was specified.
+            assumed to be an xyz file (relative or full path).  If None is
+            passed, then it is assumed that previous was specified.
         ecut: *float*
             The planewave cutoff energy in Hartree.
         ecutrho: *float, optional*
             The charge density cutoff in Hartree.  By default this is 4 * ecut.
         atom_units: *str, optional*
-            What units your atoms are in.  JDFTx expects bohr; however, typically
-            most work in Angstroms.  Whatever units are converted to bohr here.
+            What units your atoms are in.  JDFTx expects bohr; however,
+            typically most work in Angstroms.  Whatever units are converted to
+            bohr here.
         route: *str, optional*
             Any additional script to add to the JDFTx simulation.
         pseudopotentials: *list, str, optional*
-            The pseudopotentials to use in this simulation.  If nothing is passed,
-            a default set of ultra-soft pseudo potentials will be chosen.
+            The pseudopotentials to use in this simulation.  If nothing is
+            passed, a default set of ultra-soft pseudo potentials will be
+            chosen.
         periodic_distance: *float, optional*
             The periodic box distance in Bohr.
         dumps: *str, optional*
@@ -193,11 +208,12 @@ def job(run_name, atoms, ecut, ecutrho=None, atom_units="Ang", route=None,
         procs: *int, optional*
             How many processors to run the simulation on.
         threads: *int, optional*
-            How many threads to run the simulation on.  By default this is procs.
+            How many threads to run the simulation on.  By default this
+            is procs.
         redundancy: *bool, optional*
-            With redundancy on, if the job is submitted and unique_name is on, then
-            if another job of the same name is running, a pointer to that job will
-            instead be returned.
+            With redundancy on, if the job is submitted and unique_name is
+            on, then if another job of the same name is running, a pointer
+            to that job will instead be returned.
         previous: *str, optional*
             Name of a previous simulation for which to try reading in
             information using the MORead method.
@@ -211,13 +227,15 @@ def job(run_name, atoms, ecut, ecutrho=None, atom_units="Ang", route=None,
             Which processor to run the simulation on(queueing system
             dependent).
         slurm_allocation: *str, optional*
-            Whether to use a slurm allocation for this job or not.  If so, specify the name.
+            Whether to use a slurm allocation for this job or not.
+            If so, specify the name.
 
     **Returns**
 
         job: :class:`jobs.Job`
             Teturn the job container.
     """
+    raise Exception("NEEDS TO BE DONE!")
 
     if len(run_name) > 31 and queue is not None:
         raise Exception("Job name too long (%d) for NBS. \
@@ -227,10 +245,18 @@ Max character length is 31." % len(run_name))
     os.system('mkdir -p jdftx/%s' % run_name)
 
     if previous is not None:
-        shutil.copyfile("jdftx/%s/%s.xyz" % (previous, previous), "jdftx/%s/%s.xyz" % (run_name, previous))
-        shutil.copyfile("jdftx/%s/%s.xyz" % (previous, previous), "jdftx/%s/%s.xyz" % (run_name, run_name))
-        shutil.copyfile("jdftx/%s/%s.ionpos" % (previous, previous), "jdftx/%s/%s.ionpos" % (run_name, previous))
-        shutil.copyfile("jdftx/%s/%s.lattice" % (previous, previous), "jdftx/%s/%s.lattice" % (run_name, previous))
+        shutil.copyfile(
+            "jdftx/%s/%s.xyz" % (previous, previous),
+            "jdftx/%s/%s.xyz" % (run_name, previous))
+        shutil.copyfile(
+            "jdftx/%s/%s.xyz" % (previous, previous),
+            "jdftx/%s/%s.xyz" % (run_name, run_name))
+        shutil.copyfile(
+            "jdftx/%s/%s.ionpos" % (previous, previous),
+            "jdftx/%s/%s.ionpos" % (run_name, previous))
+        shutil.copyfile(
+            "jdftx/%s/%s.lattice" % (previous, previous),
+            "jdftx/%s/%s.lattice" % (run_name, previous))
 
     os.chdir('jdftx/%s' % run_name)
 
@@ -264,7 +290,8 @@ Max character length is 31." % len(run_name))
         run_name = run_name.split(".xyz")[0]
 
     # NOTE! xyzToIonposOpt will convert xyz Angstroms to Bohr
-    os.system("%s/xyzToIonposOpt %s.xyz %d > xyzToIonpos.log" % (path_jdftx_scripts, run_name, periodic_distance))
+    os.system("%s/xyzToIonposOpt %s.xyz %d > xyzToIonpos.log"
+              % (path_jdftx_scripts, run_name, periodic_distance))
 
     previous_name = None
     if previous:
@@ -275,16 +302,22 @@ Max character length is 31." % len(run_name))
     if pseudopotentials is None and atoms is not None:
         pseudopotentials = []
         elements = geometry.reduce_list([a.element.lower() for a in atoms])
-        all_pps = [fname for fname in os.listdir("%s/pseudopotentials/GBRV" % path_jdftx) if fname.endswith("uspp") and "pbe" in fname]
+        all_pps = [fname for fname in os.listdir(
+            "%s/pseudopotentials/GBRV" % path_jdftx)
+            if fname.endswith("uspp") and "pbe" in fname]
         for e in elements:
             potential_pps = []
             for pp in all_pps:
                 if pp.startswith("%s_" % e):
                     potential_pps.append(pp)
             if len(potential_pps) < 1:
-                raise Exception("Unable to automatically grab potential for element %s." % e)
+                raise Exception(
+                    "Unable to automatically grab potential for element %s."
+                    % e)
             else:
-                potential_pps.sort()  # In theory this should be the "largest" number based on the naming convention.
+                # In theory this should be the "largest" number based on
+                # the naming convention.
+                potential_pps.sort()
                 pseudopotentials.append("GBRV/" + potential_pps[0])
 
     if atoms is None:
@@ -292,7 +325,8 @@ Max character length is 31." % len(run_name))
 ion-species GBRV/$ID_pbe_v1.01.uspp
 ion-species GBRV/$ID_pbe_v1.uspp'''
     else:
-        pseudopotentials = "\n".join(["ion-species %s" % pp for pp in pseudopotentials])
+        pseudopotentials = "\n".join([
+            "ion-species %s" % pp for pp in pseudopotentials])
 
     script = '''
 # --------------- Molecular Structure ----------------
@@ -357,9 +391,11 @@ include $$NAME$$.ionpos'''
             % (path_jdftx, run_name, run_name), shell=True
         )
     elif queue == 'debug':
-        print 'Would run', run_name
+        print('Would run %s' % run_name)
     else:
-        job_to_submit = "source ~/.zshrc\nmpirun -n %d jdftx -c %d -i %s.in -o %s.out" % (procs, threads, run_name, run_name)
+        job_to_submit =\
+            "source ~/.zshrc\nmpirun -n %d jdftx -c %d -i %s.in -o %s.out"\
+            % (procs, threads, run_name, run_name)
 
         jobs.submit_job(run_name, job_to_submit,
                         procs=procs,
