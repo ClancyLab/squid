@@ -35,9 +35,9 @@ print("================================================\n\n")
 # print bfgs(params, grad, new_opt_params={'dimensions': 1,
 #                                          'step_size': 0.01,
 #                                          'maxiter': 10000})
-print lbfgs(params, grad, new_opt_params={'dimensions': 1,
+print(lbfgs(params, grad, new_opt_params={'dimensions': 1,
                                           'step_size': 0.01,
-                                          'maxiter': 10000})
+                                          'maxiter': 10000}))
 # print steepest_descent(params, grad, new_opt_params={'dimensions': 1,
 #                                                      'alpha': 0.01,
 #                                                      'maxiter': 10000})
@@ -53,9 +53,9 @@ print("================================================\n\n")
 # print bfgs(params2, grad2, new_opt_params={'dimensions': 2,
 #                                            'step_size': 0.01,
 #                                            'maxiter': 10000})
-print lbfgs(params2, grad2, new_opt_params={'dimensions': 2,
+print(lbfgs(params2, grad2, new_opt_params={'dimensions': 2,
                                             'step_size': 0.01,
-                                            'maxiter': 10000})
+                                            'maxiter': 10000}))
 # print steepest_descent(params2, grad2, new_opt_params={'dimensions': 2,
 #                                                        'alpha': 0.01,
 #                                                        'maxiter': 10000})
