@@ -142,9 +142,10 @@ lead to errors).
         jobarray = map(int, [argv[i + 1], argv[i + 2]])
 
     jobs.pysub(
-        job_name, nprocs=nprocs, ntasks=tasks, omp=omp,
-        queue=queue, xhost=xhost, args=args,
-        path=getcwd(), remove_sub_script=rss, priority=priority,
+        job_name,
+        ntasks=tasks, nprocs=nprocs, ompi_threads=omp,
+        queue=queue, xhosts=xhost, args=args,
+        path=getcwd(), priority=priority,
         walltime=walltime, unique_name=unique, py3=py3, use_mpi=use_mpi,
         modules=use_these_mods, slurm_allocation=slurm_allocation,
         jobarray=jobarray, gpu=gpu)

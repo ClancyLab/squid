@@ -167,7 +167,7 @@ def submit_job(name, job_to_submit, **kwargs):
         "sub_flag": lambda s: str(s).strip()
     }
     for k, f in param_types.items():
-        params[k] = f(k)
+        params[k] = f(params[k])
 
     # Ensure default values make sense
     # Check Queue

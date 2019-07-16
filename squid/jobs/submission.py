@@ -102,10 +102,6 @@ def pysub(name, **kwargs):
         "args": None,
         "modules": None,
     }
-    # Ensure we are passing only the above
-    for key, value in kwargs.items():
-        assert key in params,\
-            "Error - Unknown variable (%s) passed to nbs.submit_job." % key
     params.update(kwargs)
 
     # Ensure variables of correct types
@@ -116,8 +112,9 @@ def pysub(name, **kwargs):
         "preface_mpi": bool,
         "path": lambda s: s if not s.endswith("/") else s[:-1]
     }
+
     for k, f in param_types.items():
-        params[k] = f(k)
+        params[k] = f(params[k])
 
     if name.endswith(".py"):
         name = '.py'.join(name.split(".py")[:-1])
@@ -166,10 +163,6 @@ export OMPI_NUM_THREADS=%d
 
     if local_ja:
         cmd += " $JA1$"
-    cmd += " > %s/%s%s.log 2>&1" % (
-        params["path"],
-        ".$JA2$" if local_ja else "",
-        name)
 
     if params["queue"] is None or queueing_system is None:
         cmd += " & disown"
@@ -179,13 +172,25 @@ export OMPI_NUM_THREADS=%d
         return Job(None)
 
     if queueing_system is None or params["queue"] is None:
+        stdout_file = open(
+            "%s/%s%s.log"
+            % (params["path"], ".$JA2$" if local_ja else "", name),
+            "wb"
+        )
+        stderr_file = open(
+            "%s/%s%s.err"
+            % (params["path"], ".$JA2$" if local_ja else "", name),
+            "wb"
+        )
         # RUN LOCALLY
         all_jobs = []
         if params["jobarray"] is None:
             return Job(
                 name,
                 process_handle=subprocess.Popen(
-                    cmd.strip().split(), shell=False
+                    cmd.strip().split(),
+                    stdout=stdout_file, stderr=stderr_file,
+                    shell=False
                 )
             )
         else:
@@ -193,14 +198,24 @@ export OMPI_NUM_THREADS=%d
             for i in range(lower, upper + 1):
                 local_cmd = cmd.replace("$JA1$", str(i))
                 local_cmd = local_cmd.replace("$JA2$", str(i))
+                stdout_file_local = stdout_file.replace("$JA2$", str(i))
+                stderr_file_local = stderr_file.replace("$JA2$", str(i))
                 all_jobs.append(Job(
                     name,
                     process_handle=subprocess.Popen(
-                        cmd.strip().split(), shell=False
+                        cmd.strip().split(),
+                        stdout=stdout_file_local, stderr=stderr_file_local,
+                        shell=False
                     )
                 ))
         return all_jobs
-    elif queueing_system == "nbs":
+
+    cmd += " > %s/%s%s.log 2>&1" % (
+        params["path"],
+        ".$JA2$" if local_ja else "",
+        name)
+
+    if queueing_system == "nbs":
         if all(["ntasks" in kwargs, "nprocs" in kwargs]):
             kwargs["nprocs"] = int(kwargs["nprocs"]) * int(kwargs["ntasks"])
         elif "ntasks" in kwargs:

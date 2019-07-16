@@ -153,7 +153,7 @@ have the default time of the given queue.")
         "sandbox": bool,
     }
     for k, f in param_types.items():
-        params[k] = f(k)
+        params[k] = f(params[k])
 
     # Ensure default values make sense
     # Check Queue
