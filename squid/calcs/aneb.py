@@ -54,16 +54,14 @@ import sys
 from scipy.linalg import block_diag
 import numpy as np
 import copy
-# Squid imports
-import geometry
-import print_helper
-import orca
-import g09
-import units
 
-# from steepest_descent import steepest_descent
-# from bfgs import bfgs
-from optimizers.lbfgs import lbfgs
+# Squid imports
+from squid import g09
+from squid import orca
+from squid import geometry
+from squid.utils import units
+from squid.optimizers import *
+from squid.utils import print_helper
 
 # from quick_min import quick_min
 # from fire import fire

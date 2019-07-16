@@ -16,27 +16,22 @@ from scipy.linalg import block_diag
 import numpy as np
 import copy
 import time
-# Squid imports
-import geometry
-import print_helper
-import orca
-import g09
-import units
 
-from optimizers.steepest_descent import steepest_descent
-from optimizers.bfgs import bfgs
-from optimizers.lbfgs import lbfgs
-from optimizers.quick_min import quick_min
-from optimizers.fire import fire
-from optimizers.conjugate_gradient import conjugate_gradient
+# Squid imports
+from squid import g09
+from squid import orca
+from squid import geometry
+from squid.utils import units
+from squid.optimizers import *
+from squid.utils import print_helper
 
 from scipy.optimize import minimize
 
-from constants import FAIL_CONVERGENCE
-from constants import STEP_SIZE_TOO_SMALL
-from constants import MAXITER_CONVERGENCE
-from constants import G_MAX_CONVERGENCE
-from constants import G_RMS_CONVERGENCE
+from squid.constants import FAIL_CONVERGENCE
+from squid.constants import STEP_SIZE_TOO_SMALL
+from squid.constants import MAXITER_CONVERGENCE
+from squid.constants import G_MAX_CONVERGENCE
+from squid.constants import G_RMS_CONVERGENCE
 
 # Squid Nudged Elastic Band package
 # Currently supports g09
