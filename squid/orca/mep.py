@@ -14,43 +14,25 @@ Source: https://gist.github.com/mretegan/5501553
 Notes: Slight modifications made to incorporate into Squid.
 
 Disclaimer:
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
-STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
 """
 
 import os
-import shutil
 import numpy as np
 
-import files
-import units
-import sysconst
-
-
-def read_xyz(xyz):
-    '''
-    '''
-    atoms = []
-    x = []
-    y = []
-    z = []
-    f = open(xyz, "r")
-    f.next()
-    f.next()
-    for line in f:
-        data = line.split()
-        atoms.append(data[0])
-        x.append(float(data[1]))
-        y.append(float(data[2]))
-        z.append(float(data[3]))
-    f.close()
-    return atoms, np.array(x), np.array(y), np.array(z)
+from squid.utils import units
+from squid.files.xyz_io import read_xyz
+from squid.orca.job import get_orca_obj
 
 
 def read_vpot(vpot):
@@ -66,7 +48,7 @@ def read_vpot(vpot):
     return np.array(v)
 
 
-def electrostatic_potential_cubegen(fname, npoints=80, orca4=sysconst.use_orca4):
+def electrostatic_potential_cubegen(fname, npoints=80):
     '''
     '''
     os.chdir("orca/%s" % fname)
@@ -77,33 +59,21 @@ def electrostatic_potential_cubegen(fname, npoints=80, orca4=sysconst.use_orca4)
         fptr.write("%s\n" % str(cmd))
     fptr.close()
 
-    orcaPath = sysconst.orca_path
-    if orca4:
-        orcaPath = sysconst.orca4_path
+    orcaPath = get_orca_obj(parallel=False)[0]
 
     print("GENERATING CUBE FILE...\n")
 
-    #os.system("%s_plot orca/%s/%s.orca.gbw -i < tmp.plt"
-    #          % (orcaPath, fname, fname))
-    
     os.system("%s_plot %s.orca.gbw -i < tmp.plt"
               % (orcaPath, fname))
     os.system("rm tmp.plt")
 
     print("DONE")
 
-    pot_name = "%s.orca.scfp" % fname
-    #shutil.move(pot_name, "orca/%s/%s" % (fname, pot_name))
-
-    rho_name = "%s.orca.eldens.cube" % fname
-    #shutil.move(rho_name, "orca/%s/%s" % (fname, rho_name))
-
     # Shorten command for unit conversion
     conv = lambda x: units.convert_dist("Ang", "Bohr", x)
 
     # Read in atoms and set units to bohr
-    atoms = files.read_xyz("%s.orca.xyz" % fname)
-    #atoms = files.read_xyz("orca/%s/%s.orca.xyz" % (fname, fname))
+    atoms = read_xyz("%s.orca.xyz" % fname)
     for a in atoms:
         a.x = conv(a.x)
         a.y = conv(a.y)
@@ -111,13 +81,18 @@ def electrostatic_potential_cubegen(fname, npoints=80, orca4=sysconst.use_orca4)
 
     # Get range for grid, with some buffer
     buf = 7.0
-    x_range = [conv(min([a.x for a in atoms]) - buf), conv(max([a.x for a in atoms]) + buf)]
-    y_range = [conv(min([a.y for a in atoms]) - buf), conv(max([a.y for a in atoms]) + buf)]
-    z_range = [conv(min([a.z for a in atoms]) - buf), conv(max([a.z for a in atoms]) + buf)]
+    x_range = [
+        conv(min([a.x for a in atoms]) - buf),
+        conv(max([a.x for a in atoms]) + buf)]
+    y_range = [
+        conv(min([a.y for a in atoms]) - buf),
+        conv(max([a.y for a in atoms]) + buf)]
+    z_range = [
+        conv(min([a.z for a in atoms]) - buf),
+        conv(max([a.z for a in atoms]) + buf)]
 
     # Open file for electrostatic potential
     pot = open("%s_pot.inp" % fname, 'w')
-    #pot = open("orca/%s/%s_pot.inp" % (fname, fname), 'w')
     pot.write("{0:d}\n".format(npoints**3))
     for ix in np.linspace(x_range[0], x_range[1], npoints, True):
         for iy in np.linspace(y_range[0], y_range[1], npoints, True):
@@ -126,18 +101,15 @@ def electrostatic_potential_cubegen(fname, npoints=80, orca4=sysconst.use_orca4)
     pot.close()
 
     # Use built in orca command to generate potential output from gbw file
-    #cmd = "%s_vpot orca/%s/%s.orca.gbw orca/%s/%s.orca.scfp orca/%s/%s_pot.inp orca/%s/%s_pot.out"\
     cmd = "%s_vpot %s.orca.gbw %s.orca.scfp %s_pot.inp %s_pot.out"\
           % (orcaPath, fname, fname, fname, fname)
     os.system(cmd)
 
     # Read in the electrostatic potential
     vpot = read_vpot("%s_pot.out" % fname)
-    #vpot = read_vpot("orca/%s/%s_pot.out" % (fname, fname))
 
     # Start generating the cube file
     cube = open("%s.orca.pot.cube" % fname, 'w')
-    #cube = open("orca/%s/%s.orca.pot.cube" % (fname, fname), 'w')
     cube.write("Generated with ORCA\n")
     cube.write("Electrostatic potential for " + fname + "\n")
     cube.write("{0:5d}{1:12.6f}{2:12.6f}{3:12.6f}\n".format(
@@ -170,4 +142,3 @@ def electrostatic_potential_cubegen(fname, npoints=80, orca4=sysconst.use_orca4)
     cube.close()
 
     os.chdir("../../")
-

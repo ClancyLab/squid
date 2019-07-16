@@ -1,7 +1,11 @@
+import os
+from squid import vmd
+from squid.orca.io import read
+from squid.orca.job import get_orca_obj
+from squid.orca.mep import electrostatic_potential_cubegen
 
 
-
-def gbw_to_cube(name, mo, spin=0, grid=40, local=False, orca4=True):
+def gbw_to_cube(name, mo, spin=0, grid=40, local=False):
     '''
     Pipe in flags to orca_plot to generate a cube file for the given
     molecular orbital.  Note, this is assumed to be running from the parent
@@ -37,6 +41,8 @@ def gbw_to_cube(name, mo, spin=0, grid=40, local=False, orca4=True):
     #  10 - Generate the plot
     #  11 - exit this program
 
+    orca_path = get_orca_obj(parallel=False)[0] + "_plot"
+
     # Default is for specifying mo and cube file
     cmds = [1, 1, 5, 7]
     cmds += [2, int(mo)]
@@ -49,12 +55,7 @@ def gbw_to_cube(name, mo, spin=0, grid=40, local=False, orca4=True):
     fptr.write("10\n11\n")
     fptr.close()
 
-    if orca4:
-        orca_path = sysconst.orca4_path
-    else:
-        orca_path = sysconst.orca_path
-
-    os.system("%s_plot orca/%s/%s.orca.gbw -i < tmp.plt"
+    os.system("%s orca/%s/%s.orca.gbw -i < tmp.plt"
               % (orca_path, name, name))
     os.system("rm tmp.plt")
     mo_name = "%s.orca.mo%d%s.cube" % (name, int(mo), ['a', 'b'][int(spin)])
@@ -67,8 +68,7 @@ def mo_analysis(name,
                 LUMO=True,
                 wireframe=True,
                 hide=True,
-                iso=0.04,
-                orca4=sysconst.use_orca4):
+                iso=0.04):
     '''
     Post process an orca job using orca_plot and vmd to display molecular
     orbitals and the potential surface.  NOTE! By default Orca does not take
@@ -117,15 +117,15 @@ def mo_analysis(name,
     MOs = []
 
     if HOMO:
-        MOs.append(gbw_to_cube(name, N_HOMO, spin=0, grid=40, local=False, orca4=orca4))
+        MOs.append(gbw_to_cube(name, N_HOMO, spin=0, grid=40, local=False))
     if LUMO:
-        MOs.append(gbw_to_cube(name, N_LUMO, spin=0, grid=40, local=False, orca4=orca4))
+        MOs.append(gbw_to_cube(name, N_LUMO, spin=0, grid=40, local=False))
 
     if orbital is not None:
         if type(orbital) is int:
             orbital = [orbital]
         for mo in orbital:
-            MOs.append(gbw_to_cube(name, mo, spin=0, grid=40, local=False, orca4=orca4))
+            MOs.append(gbw_to_cube(name, mo, spin=0, grid=40, local=False))
 
     for i, mo in enumerate(MOs):
         MOs[i] = "orca/" + name + "/" + mo
@@ -133,10 +133,10 @@ def mo_analysis(name,
     vmd.plot_MO_from_cube(MOs, wireframe=wireframe, hide=hide, iso=iso)
 
 
-def pot_analysis(name, wireframe=True, npoints=80, orca4=sysconst.use_orca4):
+def pot_analysis(name, wireframe=True, npoints=80):
     '''
-    Post process an orca job using orca_plot and vmd to display the electrostatic
-    potential mapped onto the electron density surface.
+    Post process an orca job using orca_plot and vmd to display the
+    electrostatic potential mapped onto the electron density surface.
 
     **Parameters**
 
@@ -155,7 +155,7 @@ def pot_analysis(name, wireframe=True, npoints=80, orca4=sysconst.use_orca4):
 
         None
     '''
-    orca_mep.electrostatic_potential_cubegen(name, npoints, orca4)
+    electrostatic_potential_cubegen(name, npoints)
     fptr_rho = "orca/%s/%s.orca.eldens.cube" % (name, name)
     fptr_pot = "orca/%s/%s.orca.pot.cube" % (name, name)
     vmd.plot_electrostatic_from_cube(fptr_rho, fptr_pot, wireframe)
