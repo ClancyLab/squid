@@ -12,7 +12,7 @@ from squid.utils import units
 
 # Plot energies
 def plot(yy, start_val, x_label, y_label, title, x_range, y_range,
-         x_low=0, save=False):
+         x_low=0, save=False, x_vals=None, u2="Ha"):
     import matplotlib.pyplot as plt
 
     low_x, high_x = x_low, x_low + len(yy[0]) - 1
@@ -40,6 +40,11 @@ def plot(yy, start_val, x_label, y_label, title, x_range, y_range,
     plt.xlabel(x_label, fontsize=18)
     plt.ylabel('%s (%s)' % (y_label, u2), fontsize=18)
     plt.title(title, fontsize=20)
+
+    if isinstance(x_range, str) and x_range.strip() == "":
+        x_range = None
+    if isinstance(y_range, str) and y_range.strip() == "":
+        y_range = None
 
     if x_range is None:
         x_range = [low_x, high_x]
@@ -192,8 +197,8 @@ ex: scanDFT water_opt_%d 1 10 -t "Water Optimization" -xrange 0,5
                 sys.exit()
         else:
             while os.path.isfile(
-                    "%s/%s-%d-%d/%s-%d-%d.out"
-                    % (directory, run_name, N, M, run_name, N, M)):
+                    "%s/%s-0-%d/%s-0-%d.out"
+                    % (directory, run_name, M, run_name, M)):
                 M += 1
             max_frame = M - 1
             while os.path.isfile("%s/%s-%d-1/%s-%d-1.out"
@@ -206,7 +211,7 @@ ex: scanDFT water_opt_%d 1 10 -t "Water Optimization" -xrange 0,5
                 try:
                     _ = read("%s-%d-%d" % (run_name, max_iter, i)).energies[-1]
                 except:
-                   peak.append(i)
+                    peak.append(i)
             if len(peak) == 1:
                 peak = float(peak[0])
                 spline = 'y'
@@ -227,17 +232,19 @@ ex: scanDFT water_opt_%d 1 10 -t "Water Optimization" -xrange 0,5
 
         plot_all = input(
             "Would you like to plot them all (y/n)? ").lower()
+
         if plot_all in ['y', 'yes', 'sure', 'ok', 'do it', 'i dare you']:
-            iterations_to_plot = range(max_iter + 1)
-            frames_to_plot = range(max_frame + 1)
+            iterations_to_plot = list(range(max_iter + 1))
+            frames_to_plot = list(range(max_frame + 1))
         else:
             try:
-                iterations_to_plot = input("\nWhich iterations would you like to \
-    plot? Input as a python range (ex. range(3,6) for iterations 3,4,5): ")
+                iterations_to_plot = eval(input(
+                    "\nWhich iterations would you like to \
+    plot? Input as a python range (ex. range(3,6) for iterations 3,4,5): "))
             except:
                 print("\tDefaulting, only plotting last iteration...\n")
                 iterations_to_plot = [max_iter]
-            frames_to_plot = range(max_frame + 1)
+            frames_to_plot = list(range(max_frame + 1))
 
         if type(iterations_to_plot) is not list:
             print("Error - iterations_to_plot must be a list!")
@@ -273,16 +280,17 @@ ex: scanDFT water_opt_%d 1 10 -t "Water Optimization" -xrange 0,5
         except:
             print("\tDefaulting, Y Axis label is \"%s\"...\n" % y_label)
 
+        x_range, y_range = None, None
         try:
-            plotting_flags = input(
-                "\nX Range as an inclusive tuple (xmin,xmax): ")
+            plotting_flags = eval(input(
+                "\nX Range as an inclusive tuple (xmin,xmax): "))
             x_range = plotting_flags
         except:
             print("\tDefaulting, X Range is [0:%d]...\n" % max_frame)
 
         try:
-            plotting_flags = input(
-                "\nY Range as an inclusive tuple (ymin,ymax): ")
+            plotting_flags = eval(input(
+                "\nY Range as an inclusive tuple (ymin,ymax): "))
             y_range = plotting_flags
         except:
             print("\tDefaulting, Y Range is [min_E, max_E*1.05]...\n")
@@ -359,7 +367,9 @@ ex: scanDFT water_opt_%d 1 10 -t "Water Optimization" -xrange 0,5
              x_range,
              y_range,
              x_low=frames_to_plot[0],
-             save=save)
+             save=save,
+             x_vals=x_vals,
+             u2=u2)
 
     else:
         start = int(sys.argv[2])
@@ -406,6 +416,7 @@ Consider using -scale.")
         if '-ly' in sys.argv:
             y_label = sys.argv[sys.argv.index('-ly') + 1]
 
+        x_range, y_range = None, None
         if '-xrange' in sys.argv:
             x_range = sys.argv[sys.argv.index('-xrange') + 1].split(',')
             x_range = [float(x) for x in x_range]
@@ -481,7 +492,8 @@ Consider using -scale.")
         if comp[0] is not None:
             start -= 1
         plot(energies, start, x_label, y_label,
-             title, x_range, y_range, save=save)
+             title, x_range, y_range, save=save,
+             x_vals=x_vals, u2=u2)
 
         # Write files
         files.write_xyz(frames, out_name[:-4])
