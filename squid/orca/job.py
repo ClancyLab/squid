@@ -6,66 +6,7 @@ import itertools
 import subprocess
 from squid import jobs
 import squid.orca.io as orca_io
-from squid.files.misc import which
-
-
-def get_orca_obj(parallel=True):
-    '''
-    This function will find the orca executable and the corresponding openmpi
-    executable.  It will handle errors accordingly.
-    '''
-    # This is to ensure we read in ORCA correctly
-    orca_string_id = "An Ab Initio, DFT and Semiempirical electronic structure"
-    # This is to find the version
-    version_string_id = "Program Version"
-
-    orca_path = which("orca")
-    # Determine orca version
-    p = subprocess.Popen(
-        [orca_path, "FAKE_FILE"], shell=False,
-        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout = str(p.stdout.read().strip())
-    # stderr = str(p.stderr.read().strip())
-
-    assert orca_string_id in stdout,\
-        "Error - Unable to access Orca.  Please ensure it is in your PATH \
-environment variable!"
-    assert version_string_id in stdout,\
-        "Error - Unable to assess Orca version!"
-
-    orca_version = stdout.split(version_string_id)[1].strip().split()[0]
-
-    # If running in parallel, ensure we have the correct version of openmpi
-    if parallel:
-        ompi_version_should_be = {
-            "4.1.2": "3.1.3"
-        }
-        assert orca_version in ompi_version_should_be,\
-            "Error - Please contact squid dev. We do not have stored the \
-required openmpi version for Orca %s" % orca_version
-
-        # Find openmpi
-        ompi_path = which("mpiexec")
-        p = subprocess.Popen(
-            [ompi_path, "--V"], shell=False,
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout = str(p.stdout.read().strip())
-        # stderr = str(p.stderr.read().strip())
-
-        # Simple check for openmpi
-        assert "open" in stdout.lower(),\
-            "Error - Unable to access openmpi.  Please ensure it is in your \
-PATH environment variable!"
-
-        ompi_version = stdout.strip().split("\\")[0].split()[-1]
-        ompi_version_held = ompi_version_should_be[orca_version]
-
-        assert ompi_version_held == ompi_version,\
-            "Error - Incorrect openmpi version for the loaded orca version. \
-Should be openmpi %s (found %s) for orca %s."\
-        % (ompi_version_held, ompi_version, orca_version)
-
-    return orca_path
+from squid.orca.utils import get_orca_obj
 
 
 def jobarray(run_name, route, frames, n_frames=None, extra_section='',

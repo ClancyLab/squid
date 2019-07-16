@@ -32,7 +32,7 @@ import numpy as np
 
 from squid.utils import units
 from squid.files.xyz_io import read_xyz
-from squid.orca.job import get_orca_obj
+from squid.orca.utils import get_orca_obj
 
 
 def read_vpot(vpot):
