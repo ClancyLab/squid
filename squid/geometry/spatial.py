@@ -7,7 +7,8 @@ from scipy.linalg.decomp_svd import svd
 def motion_per_frame(frames):
     """
     Determine the root mean squared difference between atomic positions
-    of adjacent frames.
+    of adjacent frames.  Note, as we have differences between frames, this
+    means that we return len(frames) - 1 values.
 
     **Parameters**
 
@@ -18,18 +19,17 @@ def motion_per_frame(frames):
 
         motion: *np.array, float*
             List of motion between consecutive frames (frame_i vs
-            frame_(i - 1)).  As len(motion) = len(frames), this means that
-            motion[0] = 0.
+            frame_(i - 1)).
     """
-    per_state_avg = [0.0 for s in frames]
+    per_state_avg = [0.0 for s in frames[1:]]
     for atom_list in zip(*frames):
         for i in range(1, len(atom_list)):
             a = atom_list[i - 1]
             b = atom_list[i]
-            per_state_avg[i] += np.linalg.norm(a.flatten() - b.flatten())
+            per_state_avg[i - 1] += np.linalg.norm(a.flatten() - b.flatten())
     motion = []
     for x in per_state_avg:
-        motion.append(x / len(frames[0]))
+        motion.append(x / float(len(frames[0])))
     return np.array(motion)
 
 
@@ -331,7 +331,7 @@ def run_unit_tests():
     EPS = 1E-6
     mpf = motion_per_frame(frames)
     mpf_bench = np.array([
-        0.000000, 2.647889, 3.001952, 3.032599, 3.683384, 3.130709,
+        2.647889, 3.001952, 3.032599, 3.683384, 3.130709,
         3.694779, 3.197487, 3.130007, 2.972059])
     assert np.linalg.norm(mpf - mpf_bench) < EPS,\
         "Error - motion_per_frame frailed."

@@ -1,3 +1,4 @@
+import sys
 import copy
 import scipy
 import numpy as np
@@ -242,11 +243,7 @@ def smooth_xyz(frames,
         "Error - Either N_frames or F_max was set too large (>%d)." % UPPER
 
     # Loop till we're below R_max
-    while 1:
-        # If len(frames) > N_frames, break out of while and trim
-        if len(frames) > N_frames:
-            break
-
+    while len(frames) < N_frames:
         # Find largest motion_per_frame
         if use_procrustes:
             procrustes(frames)
@@ -256,34 +253,14 @@ def smooth_xyz(frames,
         if max(mpf) < R_max:
             break
 
-        if len(frames) > F_max:
-            print("-------------------------------------------------------")
-            print(mpf)
-            print("-------------------------------------------------------")
-            print("\n\nError - Could not lower motion below %lg in %d frames."
-                  % (R_max, F_max), sys.exc_info()[0])
-            exit()
-        else:
-            if verbose:
-                print("Currently Frames = %d\tr2 = %lg" % (len(frames), r2))
-
         # Now, split the list, interpolate, and regenerate
         i = np.nanargmax(mpf)
-        if i > 0 and i < len(frames) - 1:
-            f_low = copy.deepcopy(frames[:i])
-            f_high = copy.deepcopy(frames[i + 1:])
-            f_mid = interpolate(frames[i], frames[i + 1], 1)[:-1]
-            frames = f_low + f_mid + f_high
-        elif i == 0:
-            f_low = copy.deepcopy(frames[i])
-            f_mid = interpolate(frames[i], frames[i + 1], 1)[:-1]
-            f_high = copy.deepcopy(frames[i + 1:])
-            frames = [f_low] + f_mid + f_high
-        else:
-            f_low = copy.deepcopy(frames[:i])
-            f_mid = interpolate(frames[i - 1], frames[i], 1)[:-1]
-            f_high = copy.deepcopy(frames[i])
-            frames = f_low + f_mid + [f_high]
+
+        f_low = copy.deepcopy(frames[:i])
+        f_mid = interpolate(frames[i], frames[i + 1], 1)
+        f_high = copy.deepcopy(frames[i + 1:])
+
+        frames = f_low + f_mid + f_high
 
         if verbose:
             print("\tInterpolated %d,%d ... %lg"
@@ -311,6 +288,19 @@ def smooth_xyz(frames,
         procrustes(frames)
     if verbose:
         print("\tThere are now a total of %d frames" % len(frames))
+
+    # In the case that F_max is not inf, check if r_max was met or not
+    max_rms = max(motion_per_frame(frames))
+    if F_max != float("inf") and max_rms > R_max:
+        print("-------------------------------------------------------")
+        print("Max RMS = %f" % max_rms)
+        print("-------------------------------------------------------")
+        print("\n\nError - Could not lower motion below %lg in %d frames."
+              % (R_max, F_max), sys.exc_info()[0])
+        sys.exit()
+    else:
+        if verbose:
+            print("Currently Frames = %d\tr2 = %lg" % (len(frames), r2))
 
     return frames
 

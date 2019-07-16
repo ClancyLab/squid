@@ -21,7 +21,7 @@ if __name__ == "__main__":
     # Step 2 - Smooth out the band to 10 frames
     print("Step 2 - Smooth out the band...")
     CNH_frames = geometry.smooth_xyz(
-        CNH_frames, R_max=0.01, F_max=100,
+        CNH_frames, R_max=0.1, F_max=50,
         use_procrustes=True
     )
     # Save smoothed band
