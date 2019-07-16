@@ -1,6 +1,6 @@
 import numpy as np
 
-from squid import units
+from squid.utils import units
 from squid.constants import FAIL_CONVERGENCE
 from squid.constants import MAXITER_CONVERGENCE
 from squid.constants import G_MAX_CONVERGENCE

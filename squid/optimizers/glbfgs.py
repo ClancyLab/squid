@@ -1,7 +1,7 @@
 import numpy as np
 import copy
 
-from squid import units
+from squid.utils import units
 from squid.optimizers.backtrack import backtrack
 from squid.constants import FAIL_CONVERGENCE
 from squid.constants import STEP_SIZE_TOO_SMALL
