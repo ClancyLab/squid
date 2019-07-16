@@ -7,7 +7,7 @@ from squid import g09
 from squid import orca
 from squid import files
 from squid import constants
-from squid import units
+from squid.utils import units
 
 
 # Plot energies

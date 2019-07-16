@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # System imports
 import os
 import sys
@@ -6,11 +8,13 @@ import sys
 from squid import g09
 from squid import orca
 from squid import jdftx
-from squid import units
-from squid import sysconst
-from squid import constants
 from squid import files
-from squid import print_helper
+from squid import constants
+from squid.files.misc import which
+
+from squid.utils import units
+from squid.utils import print_helper
+
 from getpass import getuser
 
 USERNAME = getuser()
@@ -157,9 +161,15 @@ try:
 
         files.write_xyz(data.frames, me + out_name[:-4])
         if vmd:
-            os.system('"' + sysconst.vmd_path + '" ' + me + out_name)
+            vmd_path = which("vmd")
+            assert vmd_path is not None,\
+                "Error - Cannot find VMD in PATH env var."
+            os.system('"' + vmd_path + '" ' + me + out_name)
         elif ovito:
-            os.system('"' + sysconst.ovito_path + '" ' + me + out_name)
+            ovito_path = which("ovito")
+            assert ovito_path is not None,\
+                "Error - Cannot find ovito in PATH env var."
+            os.system('"' + ovito_path + '" ' + me + out_name)
 except TypeError:
     print("No atomic coordinates available yet...")
 except:

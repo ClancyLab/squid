@@ -1,8 +1,8 @@
 import os
 import sys
 
-from squid.units import elem_sym_from_weight
-from squid.sysconst import vmd_path, ovito_path
+from squid.files.misc import which
+from squid.utils.units import elem_sym_from_weight
 
 run_name = sys.argv[1]
 
@@ -54,6 +54,12 @@ f.close()
 
 if display is not None:
     if display == "ovito":
+        ovito_path = which("ovito")
+        assert ovito_path is not None,\
+            "Error - Cannot find ovito in PATH env var."
         os.system('%s out.xyz > /dev/null' % ovito_path)
     else:
+        vmd_path = which("vmd")
+        assert vmd_path is not None,\
+            "Error - Cannot find VMD in PATH env var."
         os.system('%s out.xyz > /dev/null' % vmd_path)

@@ -7,7 +7,7 @@ from squid import files
 from squid import geometry
 
 # Default Documentation
-help = '''
+help_info = '''
 procrustes
 ---------
 A command line tool to run procrustes along an xyz file.
@@ -42,7 +42,7 @@ procrustes demo.xyz -i -b 5 8 -n 6
 
 # Parse Arguments
 if '-h' in argv or '-help' in argv or len(argv) < 3:
-    print help
+    print(help_info)
     exit()
 
 # Parse Arguments

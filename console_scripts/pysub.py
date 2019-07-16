@@ -1,12 +1,11 @@
 #!/usr/bin/env python
-from sys import argv, exit
 from os import getcwd
+from sys import argv, exit
 
-from squid import sysconst
 from squid.jobs import pysub
 
 # Default Documentation
-help = '''
+help_info = '''
 pysub
 ---------
 A command line tool to submit jobs to the queue.
@@ -31,9 +30,7 @@ pysub [script.py] [Options]
 
 -xhost, -x     :            :  If needed, specify computer
 -args, -a      :            :  A list of arguments for the python code
--mods, -m      :            :  Specify the modules you wish to use here.  This
-                               appends to the ones in sysconst that you set
-                               as defaults.
+-mods, -m      :            :  Specify the modules you wish to use here.
 -mo            :   False    :  Whether to override the default modules.
 -keep, -k      :            :  Whether to keep the submission file
 
@@ -55,13 +52,13 @@ lead to errors).
 
 # Parse Arguments
 if '-h' in argv or '-help' in argv or len(argv) < 3:
-    print(help)
+    print(help_info)
     exit()
 
 # Parse Arguments
 mo = False
 nprocs = '1'
-queue = sysconst.default_queue
+queue = None
 xhost = None
 debug = False
 rss = True
@@ -79,10 +76,7 @@ slurm_allocation = None
 jobarray = None
 gpu = None
 
-if not hasattr(sysconst, "default_pysub_modules"):
-    use_these_mods = []
-else:
-    use_these_mods = sysconst.default_pysub_modules
+use_these_mods = []
 
 if ".py" in job_name:
     job_name = job_name.split(".py")[0]
