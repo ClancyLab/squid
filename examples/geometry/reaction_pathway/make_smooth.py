@@ -1,33 +1,28 @@
-# System imports
-import os
-import copy
-
-# Squid imports
 from squid import files
 from squid import geometry
+from squid import structures
 
-# First we want to read in the manually made iterations
-fptrs = [int(f.split(".xyz")[0]) for f in os.listdir("reaction_coordinate")]
-fptrs.sort()
 
-# Now, we loop through all files in numerical order and append to our reaction coordinate
-rxn = []
-for f in fptrs:
-    rxn.append(files.read_xyz("reaction_coordinate/%d.xyz" % f))
+if __name__ == "__main__":
+    # In this example we will generate a smooth CNH-HCN guess
 
-# Save an example of this rough reaction we made
-files.write_xyz(rxn, "reaction_coordinate_rough")
+    # Step 1 - Generate the bad initial guess
+    print("Step 1 - Generate the bad initial guess...")
+    H_coords = [(2, 0), (2, 1), (1, 1), (0, 1), (-1, 1), (-1, 0)]
+    CNH_frames = [[
+        structures.Atom("C", 0, 0, 0),
+        structures.Atom("N", 1, 0, 0),
+        structures.Atom("H", x, y, 0)]
+        for x, y in H_coords
+    ]
+    # Save initial frames
+    files.write_xyz(CNH_frames, "bad_guess.xyz")
 
-# Now, we smooth it out.  There are many ways of doing so.  We'll only show the main two methods here
-# Here we just make a copy of the frames for the second method
-held_rough_reaction = copy.deepcopy(rxn)
-
-# Method 1 - Procrustes to minimize rotations and translations between consecutive frames
-geometry.procrustes(rxn)
-files.write_xyz(rxn, "reaction_coordinate_procrustes")
-
-# Method 2 - Procrustes plus linear interpolation
-# Note, R_MAX is the maximum average change in atomic positions between adjacent frames (in angstroms)
-#       F_MAX is the maximum number of frames we want in the final reaction coordinate
-rxn = copy.deepcopy(held_rough_reaction)  # Grab the previously rough reaction
-geometry.smooth_xyz(rxn, R_MAX=0.1, F_MAX=50, PROCRUSTES=True, outName="reaction_coordinate_smooth", write_xyz=True)
+    # Step 2 - Smooth out the band to 10 frames
+    print("Step 2 - Smooth out the band...")
+    CNH_frames = geometry.smooth_xyz(
+        CNH_frames, R_max=0.01, F_max=100,
+        use_procrustes=True
+    )
+    # Save smoothed band
+    files.write_xyz(CNH_frames, "smoothed_guess.xyz")
