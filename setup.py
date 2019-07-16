@@ -13,6 +13,11 @@ setuptools.setup(
     long_description_content_type="text/rst",
     url="https://github.com/clancylab/squid",
     include_package_data=True,
+    install_requires=[
+          'pyDOE',
+          'numpy',
+          'scipy'
+    ],
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
