@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
     # Step 1 - Generate the system
     world = structures.System(
-        "solvent_box", box_size=(15.0, 15.0, 15.0), periodic=True)
+        "solv_box", box_size=(15.0, 15.0, 15.0), periodic=True)
 
     # Step 2 - Get any molecules you want
     mol1 = files.read_cml("benzene.cml")[0]
@@ -21,7 +21,7 @@ if __name__ == "__main__":
     # Step 3 - Add them however you want
     world.add(mol1)
     world.add(mol2)
-    geometry.packmol(world, [solv], density=1.0)
+    geometry.packmol(world, [solv], persist=False, density=1.0)
 
     # Step 4 - Run a simulation
     world.set_types()
@@ -56,13 +56,12 @@ velocity all create 300.0 23123 rot yes dist gaussian
 timestep 1.0
 
 fix motion_npt all npt temp 300.0 300.0 100.0 iso 0.0 0.0 1000.0
-run 100
-#run 10000
+run 10000
 unfix motion_npt
 
-#fix motion_nvt all nvt temp 300.0 300.0 300.0
-#run 10000
-#unfix motion_nvt
+fix motion_nvt all nvt temp 300.0 300.0 300.0
+run 10000
+unfix motion_nvt
 """
-    job_handle = lammps.job("solv_box", input_script, system=world, procs=2)
+    job_handle = lammps.job("solv_box", input_script, system=world, procs=1)
     job_handle.wait()
