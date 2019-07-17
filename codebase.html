@@ -1600,7 +1600,7 @@ minor alterations made.</p>
 <li><a class="reference internal" href="optimizers.html#module-steepest_descent" title="steepest_descent"><code class="xref py py-func docutils literal notranslate"><span class="pre">steepest_descent()</span></code></a></li>
 <li><a class="reference internal" href="optimizers.html#module-bfgs" title="bfgs"><code class="xref py py-func docutils literal notranslate"><span class="pre">bfgs()</span></code></a></li>
 <li><a class="reference internal" href="optimizers.html#module-lbfgs" title="lbfgs"><code class="xref py py-func docutils literal notranslate"><span class="pre">lbfgs()</span></code></a></li>
-<li><code class="xref py py-func docutils literal notranslate"><span class="pre">quick_min()</span></code></li>
+<li><a class="reference internal" href="optimizers.html#module-quick_min" title="quick_min"><code class="xref py py-func docutils literal notranslate"><span class="pre">quick_min()</span></code></a></li>
 <li><a class="reference internal" href="optimizers.html#module-fire" title="fire"><code class="xref py py-func docutils literal notranslate"><span class="pre">fire()</span></code></a></li>
 <li><a class="reference internal" href="optimizers.html#module-conjugate_gradient" title="conjugate_gradient"><code class="xref py py-func docutils literal notranslate"><span class="pre">conjugate_gradient()</span></code></a></li>
 </ul>
@@ -1840,6 +1840,66 @@ If None, then the code runs indefinitely.</dd>
 <dt>dimensions: <em>int</em></dt>
 <dd>The number of dimensions for the optimizer to run in.
 By default this is 3 (for NEB atomic coordinates.)</dd>
+<dt>callback: <em>func, optional</em></dt>
+<dd>A function to be run after each optimization loop.</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+<p><em>Returns</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of the optimized parameters.</dd>
+<dt>code: <em>int</em></dt>
+<dd>An integer describing how the algorithm converged.  This can be
+identified in the constants file.</dd>
+<dt>iters: <em>int</em></dt>
+<dd>The number of iterations the optimizer ran for.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<span class="target" id="module-quick_min"></span><dl class="function">
+<dt id="quick_min.quick_min">
+<code class="descclassname">quick_min.</code><code class="descname">quick_min</code><span class="sig-paren">(</span><em>params</em>, <em>gradient</em>, <em>NEB_obj=None</em>, <em>new_opt_params={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/quick_min.html#quick_min"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#quick_min.quick_min" title="Permalink to this definition">¶</a></dt>
+<dd><p>A quick min optimizer, overloaded for NEB use.
+Note, this will ONLY work for use within the NEB code.</p>
+<p><em>Parameters</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of parameters to be optimized.</dd>
+<dt>gradient: <em>func</em></dt>
+<dd>A function that, given params, returns the gradient.</dd>
+<dt>NEB_obj: <code class="xref py py-class docutils literal notranslate"><span class="pre">neb.NEB</span></code></dt>
+<dd>An NEB object to use.</dd>
+<dt>new_opt_params: <em>dict</em></dt>
+<dd><p class="first">A dictionary holding any changes to the optimization algorithm’s
+parameters.  This includes the following -</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>dt: <em>float</em></dt>
+<dd>Time step size to take.</dd>
+<dt>max_step: <em>float</em></dt>
+<dd>The maximum step size to take.</dd>
+<dt>viscosity: <em>float</em></dt>
+<dd>The viscosity within a verlet step (used if euler is
+False).</dd>
+<dt>euler: <em>bool</em></dt>
+<dd>Whether to make an euler step or not.</dd>
+<dt>maxiter: <em>int</em></dt>
+<dd>Maximum number of iterations for the optimizer to run.
+If None, then the code runs indefinitely.</dd>
+<dt>g_rms: <em>float</em></dt>
+<dd>The RMS value for which to optimize the gradient to.</dd>
+<dt>g_max: <em>float</em></dt>
+<dd>The maximum gradient value to be allowed.</dd>
+<dt>fit_rigid: <em>bool</em></dt>
+<dd>Remove erroneous rotation and translations during NEB.</dd>
+<dt>verbose: <em>bool</em></dt>
+<dd>Whether to have additional output.</dd>
 <dt>callback: <em>func, optional</em></dt>
 <dd>A function to be run after each optimization loop.</dd>
 </dl>
