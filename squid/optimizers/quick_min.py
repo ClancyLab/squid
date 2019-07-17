@@ -112,7 +112,7 @@ def quick_min(params,
         """
         mag2 = np.linalg.norm(v2)**2
         if mag2 == 0:
-            print "Can't project onto a zero vector"
+            print("Can't project onto a zero vector")
             return v1
         return v2 * np.dot(v1, v2) / mag2
 
@@ -175,7 +175,7 @@ def quick_min(params,
         else:
             v *= 0.0
             if verbose:
-                print 'Zeroed Velocities'
+                print('Zeroed Velocities')
 
         if euler:
             v += dt * forces
