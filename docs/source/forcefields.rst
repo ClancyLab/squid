@@ -20,8 +20,8 @@ Supported Potentials:
 
 Helper Code:
 
-    - :func:`squid.opls.parse_pfile` - A function to parse the OPLS parameter file.
-    - :func:`squid.smrff.parse_pfile` - A function to parse the SMRFF parameter file.
+    - :func:`squid.forcefields.opls.parse_pfile` - A function to parse the OPLS parameter file.
+    - :func:`squid.forcefields.smrff.parse_pfile` - A function to parse the SMRFF parameter file.
 
 Module Files:
     - :doc:`coulomb <./module_docs/forcefields/coulomb>`
