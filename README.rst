@@ -1,7 +1,7 @@
 Squid
 ==============================
 
-Squid is an open-source molecular simulation codebase developed by the Clancy Lab at Cornell University. The codebase includes simplified Molecular Dynamics (MD) and Density Functional Theory (DFT) simulation submission, as well as other utilities such as file I/O and post-processing.
+Squid is an open-source molecular simulation codebase developed by the Clancy Lab at the Johns Hopkins University. The codebase includes simplified Molecular Dynamics (MD) and Density Functional Theory (DFT) simulation submission, as well as other utilities such as file I/O and post-processing.
 
 
 Installing
@@ -22,43 +22,7 @@ If you wish, you may also clone the repository though:
 Contributing
 ------------------------------
 
-If you would like to be a collaborator, first contact Henry Herbol (me) either through github or email and request permissions.
-
-Note, you MUST use a branch for code development and only merge to master when ready for deployment.  To make a new branch, use:
-
-.. code-block:: bash
-
-	[user@local]~% git branch <new_branch>
-	[user@local]~% git checkout <new_branch>
-	[user@local]~% git push origin <new_branch>
-
-To switch between branches, use:
-
-.. code-block:: bash
-
-	[user@local]~% git checkout <new_branch>
-
-Once in your new branch, work as you normally would.  You can push to your branch whenever you need.  When ready to merge, use:
-
-.. code-block:: bash
-
-	[user@local]~% git checkout master
-	[user@local]~% git pull origin master
-	[user@local]~% git merge <new_branch>
-	[user@local]~% git push origin master
-
-And finally, when done merging, delete the branch and make a new one:
-
-.. code-block:: bash
-
-	[user@local]~% git checkout master
-	[user@local]~% git branch -d <branch_name>
-	[user@local]~% git push origin --delete <branch_name>
-	[user@local]~% git branch <new_branch>
-	[user@local]~% git checkout <new_branch>
-	[user@local]~% git push origin <new_branch>
-
-For further information, checkout github's branch tutorial_.
+If you would like to be an active developer within the Clancy Group, please contact the project maintainer to be added as a collaborator on the project.  Otherwise, you are welcome to submit pull requests as you see fit, and they will be addressed.
 
 Documentation
 ------------------------------
