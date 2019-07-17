@@ -23,4 +23,15 @@ Helper Code:
     - :func:`opls.parse_pfile` - A function to parse the OPLS parameter file.
     - :func:`smrff.parse_pfile` - A function to parse the SMRFF parameter file.
 
+Module Files:
+    - :doc:`coulomb <./module_docs/coulomb>`
+    - :doc:`lj <./module_docs/lj>`
+    - :doc:`morse <./module_docs/morse>`
+    - :doc:`tersoff <./module_docs/tersoff>`
+    - :doc:`opls <./module_docs/opls>`
+    - :doc:`smrff <./module_docs/smrff>`
+    - :doc:`connectors <./module_docs/connectors>`
+    - :doc:`helper <./module_docs/helper>`
+    - :doc:`parameters <./module_docs/parameters>`
+
 ------------

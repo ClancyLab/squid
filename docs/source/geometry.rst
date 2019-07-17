@@ -41,4 +41,10 @@ Once again, all the above can be accessed directly from the geometry module, as 
     geometry.get_center_of_geometry(system_obj.atoms)
 
 
+Module Files:
+    - :doc:`misc <./module_docs/geom_misc>`
+    - :doc:`packmol <./module_docs/packmol>`
+    - :doc:`spatial <./module_docs/spatial>`
+    - :doc:`transform <./module_docs/transform>`
+
 ------------

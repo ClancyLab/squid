@@ -27,4 +27,9 @@ Finally, additional functionality exists within the misc module:
     - :func:`files.misc.last_modified` - Determine when a file was last modified.
     - :func:`files.misc.which` - Determine where a file is on a system.
 
+Module Files:
+    - :doc:`xyz_io <./module_docs/xyz_io>`
+    - :doc:`cml_io <./module_docs/cml_io>`
+    - :doc:`misc <./module_docs/files_misc>`
+
 ------------

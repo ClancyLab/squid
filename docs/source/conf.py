@@ -29,7 +29,7 @@ sys.path.insert(0, os.path.abspath('../../squid/geometry/'))
 sys.path.insert(0, os.path.abspath('../../squid/jobs/'))
 # sys.path.insert(0, os.path.abspath('../../squid/lammps/'))
 # sys.path.insert(0, os.path.abspath('../../squid/maths/'))
-# sys.path.insert(0, os.path.abspath('../../squid/optimizers/'))
+sys.path.insert(0, os.path.abspath('../../squid/optimizers/'))
 # sys.path.insert(0, os.path.abspath('../../squid/orca/'))
 # sys.path.insert(0, os.path.abspath('../../squid/post_process/'))
 # sys.path.insert(0, os.path.abspath('../../squid/qe/'))
@@ -53,6 +53,7 @@ extensions = [
     'sphinx.ext.imgmath',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
+    'sphinx.ext.intersphinx',
 ]
 
 # Add any paths that contain templates here, relative to this directory.

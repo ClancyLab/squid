@@ -16,4 +16,12 @@ The submission module holds two function that handle submitting a job:
     - :func:`jobs.submission.submit_job` - Submit a script as a job.
     - :func:`jobs.submission.pysub` - Submit a python script as a job.
 
+Module Files:
+    - :doc:`container <./module_docs/container>`
+    - :doc:`misc <./module_docs/jobs_misc>`
+    - :doc:`nbs <./module_docs/nbs>`
+    - :doc:`queue_manager <./module_docs/queue_manager>`
+    - :doc:`slurm <./module_docs/slurm>`
+    - :doc:`submission <./module_docs/submission>`
+
 ------------
