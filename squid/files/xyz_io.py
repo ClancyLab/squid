@@ -4,7 +4,7 @@ from squid.structures.atom import Atom
 
 def read_xyz_gen(name, cols=["element", "x", "y", "z"],
                  cast_elem_to_sym=True, fast=False):
-    """
+    '''
     This will yield a frame from an xyz file.
 
     **Parameters**
@@ -26,7 +26,7 @@ def read_xyz_gen(name, cols=["element", "x", "y", "z"],
 
         yield: *list,* :class:`structures.Atom`
             A frame from an xyz file.
-    """
+    '''
     if not name.endswith('.xyz') and '.' not in name:
         name += '.xyz'
 
@@ -83,7 +83,7 @@ def read_xyz_gen(name, cols=["element", "x", "y", "z"],
 
 def read_xyz(name, cols=["element", "x", "y", "z"],
              cast_elem_to_sym=True, fast=True):
-    """
+    '''
     Read in a file written in the XYZ file format.  This is an improved
     version, accounting for xyz files of varying atom numbers.
 
@@ -107,7 +107,7 @@ def read_xyz(name, cols=["element", "x", "y", "z"],
         frames: *list, list,* :class:`structures.Atom`
             A list of atoms read in from the xyz file.  If there is only one
             frame, then only a *list* of :class:`structures.Atom` is returned.
-    """
+    '''
     frames = [
         frame for frame in read_xyz_gen(
             name, cols=cols,
@@ -118,7 +118,7 @@ def read_xyz(name, cols=["element", "x", "y", "z"],
 
 
 def write_xyz(frames, name="out", ID='Atoms'):
-    """
+    '''
     Write frames of atomic conformations to a file written in the XYZ file
     format.
 
@@ -134,7 +134,7 @@ def write_xyz(frames, name="out", ID='Atoms'):
     **Returns**
 
         None
-    """
+    '''
 
     if not name.endswith('.xyz') and '.' not in name:
         name += '.xyz'

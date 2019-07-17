@@ -4,7 +4,7 @@ from warnings import warn
 
 
 def last_modified(name):
-    """
+    '''
     Determine when a file was last modified in seconds.
 
     **Parameters**
@@ -17,7 +17,7 @@ def last_modified(name):
         time: *datetime.datetime*
             The last time this file was modified in the standard python
             datetime format.
-    """
+    '''
     if not os.path.isfile(name):
         warn('Expected file does not exist at %s/%s'
              % (os.getcwd(), name))

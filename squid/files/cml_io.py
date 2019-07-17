@@ -8,7 +8,7 @@ from squid.structures.topology import Connector
 
 
 def read_cml(name):
-    """
+    '''
     Read in a file written in the Chemical Markup Language (CML) format.
     As cml files may hold more than simple atomic coordinates, we return a
     list of molecules instead.
@@ -22,7 +22,7 @@ def read_cml(name):
 
         molecules: *list,* :class:`squid.structures.molecule.Molecule`
             A list of molecules in read in from the CML file.
-    """
+    '''
 
     if not name.endswith('.cml'):
         name += '.cml'
@@ -144,7 +144,7 @@ def read_cml(name):
 # 1st param: either a list of Atom objects, a
 # Molecule object or a structures.System object
 def write_cml(atoms, name=None, bonds=None):
-    """
+    '''
     Write atomic coordinates and any other relevant information into a file
     using the Chemical Markup Language (CML) format.
 
@@ -163,7 +163,7 @@ def write_cml(atoms, name=None, bonds=None):
     **Returns**
 
         None
-    """
+    '''
     if name is None:
         name = 'out'
     if not name.endswith('.cml'):
