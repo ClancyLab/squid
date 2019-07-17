@@ -1,0 +1,206 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Molecular Dynamics Sovlent Box Equilibration &#8212; Squid 2.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="molecular-dynamics-sovlent-box-equilibration">
+<h1>Molecular Dynamics Sovlent Box Equilibration<a class="headerlink" href="#molecular-dynamics-sovlent-box-equilibration" title="Permalink to this headline">¶</a></h1>
+<p>In this example, we equilibrate an MD box of two benzene molecules (offset by 10, 10, 10) and acetone (packed to a density of 1.0 using packmol).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">squid</span> <span class="kn">import</span> <span class="n">files</span>
+<span class="kn">from</span> <span class="nn">squid</span> <span class="kn">import</span> <span class="n">lammps</span>
+<span class="kn">from</span> <span class="nn">squid</span> <span class="kn">import</span> <span class="n">geometry</span>
+<span class="kn">from</span> <span class="nn">squid</span> <span class="kn">import</span> <span class="n">structures</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># In this example, we discuss how to handle running MD using LAMMPS and</span>
+    <span class="c1"># squid.  We start by generating a System object, add in some molecules,</span>
+    <span class="c1"># and then pack this system object with solvents.  We then equilibrate</span>
+    <span class="c1"># the system.</span>
+
+    <span class="c1"># Step 1 - Generate the system</span>
+    <span class="n">world</span> <span class="o">=</span> <span class="n">structures</span><span class="o">.</span><span class="n">System</span><span class="p">(</span>
+        <span class="s2">&quot;solv_box&quot;</span><span class="p">,</span> <span class="n">box_size</span><span class="o">=</span><span class="p">(</span><span class="mf">15.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">),</span> <span class="n">periodic</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="c1"># Step 2 - Get any molecules you want</span>
+    <span class="n">mol1</span> <span class="o">=</span> <span class="n">files</span><span class="o">.</span><span class="n">read_cml</span><span class="p">(</span><span class="s2">&quot;benzene.cml&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">mol2</span> <span class="o">=</span> <span class="n">mol1</span> <span class="o">+</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">solv</span> <span class="o">=</span> <span class="n">files</span><span class="o">.</span><span class="n">read_cml</span><span class="p">(</span><span class="s2">&quot;acetone.cml&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Step 3 - Add them however you want</span>
+    <span class="n">world</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">mol1</span><span class="p">)</span>
+    <span class="n">world</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">mol2</span><span class="p">)</span>
+    <span class="n">geometry</span><span class="o">.</span><span class="n">packmol</span><span class="p">(</span><span class="n">world</span><span class="p">,</span> <span class="p">[</span><span class="n">solv</span><span class="p">],</span> <span class="n">persist</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="c1"># Step 4 - Run a simulation</span>
+    <span class="n">world</span><span class="o">.</span><span class="n">set_types</span><span class="p">()</span>
+
+    <span class="n">input_script</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;units real</span>
+<span class="s2">atom_style full</span>
+<span class="s2">pair_style lj/cut/coul/cut 10.0</span>
+<span class="s2">bond_style harmonic</span>
+<span class="s2">angle_style harmonic</span>
+<span class="s2">dihedral_style opls</span>
+
+<span class="s2">boundary p p p</span>
+<span class="s2">read_data solv_box.data</span>
+
+<span class="s2">pair_modify mix geometric</span>
+
+<span class="s2">&quot;&quot;&quot;</span> <span class="o">+</span> <span class="n">world</span><span class="o">.</span><span class="n">dump_pair_coeffs</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;&quot;&quot;</span>
+
+<span class="s2">dump 1 all xyz 100 solv_box.xyz</span>
+<span class="s2">dump_modify 1 element &quot;&quot;&quot;</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">get_elements</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;&quot;&quot;</span>
+
+<span class="s2">compute pe all pe/atom</span>
+<span class="s2">dump forces all custom 100 forces.dump id element x y z fx fy fz c_pe</span>
+<span class="s2">dump_modify forces element &quot;&quot;&quot;</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">get_elements</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;&quot;&quot;</span>
+
+<span class="s2">thermo_style custom ke pe temp press</span>
+<span class="s2">thermo 100</span>
+
+<span class="s2">minimize 1.0e-4 1.0e-6 1000 10000</span>
+
+<span class="s2">velocity all create 300.0 23123 rot yes dist gaussian</span>
+<span class="s2">timestep 1.0</span>
+
+<span class="s2">fix motion_npt all npt temp 300.0 300.0 100.0 iso 0.0 0.0 1000.0</span>
+<span class="s2">run 10000</span>
+<span class="s2">unfix motion_npt</span>
+
+<span class="s2">fix motion_nvt all nvt temp 300.0 300.0 300.0</span>
+<span class="s2">run 10000</span>
+<span class="s2">unfix motion_nvt</span>
+<span class="s2">&quot;&quot;&quot;</span>
+    <span class="n">job_handle</span> <span class="o">=</span> <span class="n">lammps</span><span class="o">.</span><span class="n">job</span><span class="p">(</span><span class="s2">&quot;solv_box&quot;</span><span class="p">,</span> <span class="n">input_script</span><span class="p">,</span> <span class="n">system</span><span class="o">=</span><span class="n">world</span><span class="p">,</span> <span class="n">procs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">job_handle</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>In this example, we want to write a lammps data file without knowing any parameters, so we strip away all relevant information and write the file.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">squid</span> <span class="kn">import</span> <span class="n">files</span>
+<span class="kn">from</span> <span class="nn">squid</span> <span class="kn">import</span> <span class="n">lammps</span>
+<span class="kn">from</span> <span class="nn">squid</span> <span class="kn">import</span> <span class="n">geometry</span>
+<span class="kn">from</span> <span class="nn">squid</span> <span class="kn">import</span> <span class="n">structures</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Step 1 - Generate the system</span>
+    <span class="n">world</span> <span class="o">=</span> <span class="n">structures</span><span class="o">.</span><span class="n">System</span><span class="p">(</span>
+        <span class="s2">&quot;solv_box&quot;</span><span class="p">,</span> <span class="n">box_size</span><span class="o">=</span><span class="p">(</span><span class="mf">15.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">),</span> <span class="n">periodic</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="c1"># Step 2 - Get any molecules you want</span>
+    <span class="n">mol1</span> <span class="o">=</span> <span class="n">files</span><span class="o">.</span><span class="n">read_cml</span><span class="p">(</span><span class="s2">&quot;benzene.cml&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">mol2</span> <span class="o">=</span> <span class="n">mol1</span> <span class="o">+</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">solv</span> <span class="o">=</span> <span class="n">files</span><span class="o">.</span><span class="n">read_cml</span><span class="p">(</span><span class="s2">&quot;acetone.cml&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Step 3 - In the case that we do not know the atom types, but we still</span>
+    <span class="c1"># want to generate a lammps data file, we can still do so!  We must first</span>
+    <span class="c1"># in this example strip away all relevant bonding information.  Further,</span>
+    <span class="c1"># and this is important: YOU MUST SET a.label and a.charge to the element</span>
+    <span class="c1"># and some value (in this example I set it to 0.0).</span>
+    <span class="k">for</span> <span class="n">mol</span> <span class="ow">in</span> <span class="p">[</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">,</span> <span class="n">solv</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span>
+            <span class="n">a</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">element</span>
+            <span class="n">a</span><span class="o">.</span><span class="n">charge</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">mol</span><span class="o">.</span><span class="n">bonds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">mol</span><span class="o">.</span><span class="n">angles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">mol</span><span class="o">.</span><span class="n">dihedrals</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Step 4 - Add them however you want</span>
+    <span class="n">world</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">mol1</span><span class="p">)</span>
+    <span class="n">world</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">mol2</span><span class="p">)</span>
+    <span class="n">geometry</span><span class="o">.</span><span class="n">packmol</span><span class="p">(</span><span class="n">world</span><span class="p">,</span> <span class="p">[</span><span class="n">solv</span><span class="p">],</span> <span class="n">persist</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="c1"># Step 5 - Run a simulation</span>
+    <span class="n">lammps</span><span class="o">.</span><span class="n">write_lammps_data</span><span class="p">(</span><span class="n">world</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../squid.html">Squid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codebase.html">Codebase</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../console_scripts.html">Console Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/examples/md_box.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Henry Herbol.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>
