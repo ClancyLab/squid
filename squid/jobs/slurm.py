@@ -9,12 +9,34 @@ from squid.utils.cast import simplify_numerical_array
 
 
 class Job(JobObject):
+    """
+    Job class to wrap simulations for queue submission.
+
+    **Parameters**
+
+        name: *str*
+            Name of the simulation on the queue.
+        process_handle: *process_handle, optional*
+            The process handle, returned by subprocess.Popen.
+
+    **Returns**
+
+        This :class:`Job` object.
+    """
     def get_all_jobs(detail=3):
         return get_job("RUNNING", detail=detail) +\
             get_job("PENDING", detail=detail)
 
 
 def get_slurm_queues():
+    """
+    Get a list of all available queues to submit a job to.
+
+    **Returns**
+
+        avail_queues: *list, str*
+            A list of available queues by name.
+    """
     sinfo_path = which("sinfo")
     assert sinfo_path is not None,\
         "Error - Unable to find sinfo in PATH."
@@ -33,6 +55,38 @@ def get_slurm_queues():
 
 
 def get_job(s_flag, detail=0):
+    """
+    Get a list of all jobs currently on your queue.  From this, only return
+    the values that have s_flag in them.  The *detail* variable can be used
+    to specify how much information you want returned.
+
+    **Parameters**
+
+        s_flag: *str*
+            A string to parse out job information with.
+        detail: *int, optional*
+            The amount of information you want returned.
+
+    **Returns**
+
+        all_jobs: *list*
+            Depending on *detail*, you get the following:
+
+                - *details* =0: *list, str*
+                    List of all jobs on the queue.
+
+                - *details* =1: *list, tuple, str*
+                    List of all jobs on the queue as:
+                        (job name, time run, job status)
+
+                - *details* =2: *list, tuple, str*
+                    List of all jobs on the queue as:
+                        (job name,
+                         time run,
+                         job status,
+                         queue,
+                         number of processors)
+    """
     detail = int(detail)
     sacct_path = which("sacct")
     sacct_format_string =\
@@ -131,6 +185,22 @@ def get_job(s_flag, detail=0):
 
 
 def submit_job(name, job_to_submit, **kwargs):
+    """
+    Code to submit a simulation to the specified queue and queueing system.
+
+    **Parameters**
+
+        name: *str*
+            Name of the job to be submitted to the queue.
+        job_to_submit: *str*
+            String holding code you wish to submit.
+        kwargs: *...*
+            Additional keyword arguments to SLURM for job submission.
+
+    **Returns**
+
+        None
+    """
     # Store the defaults
     params = {
         "queue": "shared",
