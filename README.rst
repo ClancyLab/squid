@@ -7,27 +7,17 @@ Squid is an open-source molecular simulation codebase developed by the Clancy La
 Installing
 ------------------------------
 
-Currently installation involves cloning this repository.
+For most, the easiest way to install squid is to use pip install:
+
+.. code-block:: bash
+
+    [user@local]~% pip install clancylab-squid
+
+If you wish, you may also clone the repository though:
 
 .. code-block:: bash
 
    [user@local]~% cd ~; git clone https://github.com/ClancyLab/squid.git
-
-NOTE! If you are going to also be contributing and you want to have the ssh link instead, first get access
-by contacting Henry Herbol, and then clone as follows:
-
-.. code-block:: bash
-
-   [user@local]~% cd ~; git clone git@github.com:clancylab/squid.git
-
-Aftewards, copy *install.py* to some other file (say, *install_local.py*) and adjust settings accordingly.
-Then, simply run:
-
-.. code-block:: bash
-
-   [user@local]~% python install_local.py
-
-and you are good to go with using Squid.
 
 Installation Variables
 ~~~~~~~~~~~~~~~~~~~~~~
