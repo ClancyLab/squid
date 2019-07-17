@@ -1,19 +1,3 @@
-"""
-The units package holds various functions that aid in unit conversion, as well
-as periodic table data management.
-
-- :func:`convert_energy`
-- :func:`convert_pressure`
-- :func:`convert_dist`
-- :func:`elem_i2s`
-- :func:`elem_s2i`
-- :func:`elem_weight`
-- :func:`elem_sym_from_weight`
-- :func:`convert`
-
-------------
-
-"""
 from squid import constants
 from squid.constants import ENERGY, PRESSURE, DISTANCE, PERIODIC_TABLE
 

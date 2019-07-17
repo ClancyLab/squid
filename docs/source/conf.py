@@ -28,14 +28,14 @@ sys.path.insert(0, os.path.abspath('../../squid/geometry/'))
 # sys.path.insert(0, os.path.abspath('../../squid/jdftx/'))
 sys.path.insert(0, os.path.abspath('../../squid/jobs/'))
 sys.path.insert(0, os.path.abspath('../../squid/lammps/'))
-# sys.path.insert(0, os.path.abspath('../../squid/maths/'))
+sys.path.insert(0, os.path.abspath('../../squid/maths/'))
 sys.path.insert(0, os.path.abspath('../../squid/optimizers/'))
-# sys.path.insert(0, os.path.abspath('../../squid/orca/'))
-# sys.path.insert(0, os.path.abspath('../../squid/post_process/'))
+sys.path.insert(0, os.path.abspath('../../squid/orca/'))
+sys.path.insert(0, os.path.abspath('../../squid/post_process/'))
 # sys.path.insert(0, os.path.abspath('../../squid/qe/'))
 sys.path.insert(0, os.path.abspath('../../squid/structures/'))
 # sys.path.insert(0, os.path.abspath('../../squid/unittests/'))
-# sys.path.insert(0, os.path.abspath('../../squid/utils/'))
+sys.path.insert(0, os.path.abspath('../../squid/utils/'))
 
 # -- General configuration ------------------------------------------------
 

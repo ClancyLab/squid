@@ -1,18 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-The Linux Helper module contains functionality to aid linux users
-to automate some tasks.
-
-- :func:`color_set`
-- :func:`colour_set`
-- :func:`printProgressBar`
-- :func:`strip_color`
-- :func:`strip_colour`
-- :func:`spaced_print`
-
-------------
-
-"""
 
 # System imports
 import re
