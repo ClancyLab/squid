@@ -1,6 +1,10 @@
 Squid
 ==============================
 
+NOTICE - SQUID IS CURRENTLY UNDERGOUND AN UPDATE!  The website and documentation is under development, with projected completion sometime Friday, July 19th, 2019.  Please bare with us.
+
+------------------------------
+
 Squid is an open-source molecular simulation codebase developed by the Clancy Lab at the Johns Hopkins University. The codebase includes simplified Molecular Dynamics (MD) and Density Functional Theory (DFT) simulation submission, as well as other utilities such as file I/O and post-processing.
 
 

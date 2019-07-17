@@ -13,6 +13,7 @@ Contents:
 
    squid
    codebase
+   console_scripts
    examples
 
 Indices and tables
