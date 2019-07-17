@@ -5,6 +5,22 @@ from squid.jobs.container import JobObject
 
 
 def Job(name, **kwargs):
+    """
+    This function will return a job object depending on the queue system.
+
+    **Parameters**
+
+        name: *str*
+            Name of simulation
+        kwargs: *...*
+            Any additional keywords.
+
+    **Returns**
+
+        jobContainer: :class:`squid.jobs.container.JobObject`
+            A job object, or a class built off of it, to handle job
+            submission to a given queue manager.
+    """
     queueing_system = get_queue_manager()
     if queueing_system is None:
         return JobObject(name, **kwargs)
@@ -26,6 +42,11 @@ def get_queue_manager():
     """
     This function will determine what the current queueing system is, and
     return relevant functionality.
+
+    **Returns**
+
+        queue_manager: *str*
+            The name of the queue manager as either slurm, nbs, or None.
     """
     # Determine the queuing system
     sbatch = which("sbatch")

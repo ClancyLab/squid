@@ -1,0 +1,2 @@
+.. automodule:: tersoff
+    :members:

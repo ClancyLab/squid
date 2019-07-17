@@ -18,9 +18,9 @@ def read_xyz_gen(name, cols=["element", "x", "y", "z"],
             Whether to cast the element into the symbol (ex. 2 becomes He).
         fast: *bool, optional*
             If specified, you are promising that this xyz file has the columns
-                element x y z
-            Further, if speed truly matters and you do not want to foce cast
-            element into symbols, we recommend setting cast_elem_to_sym=False.
+            [element x y z].  Further, if speed truly matters and you do not
+            want to foce cast element into symbols, we recommend setting
+            cast_elem_to_sym=False.
 
     **Returns**
 
@@ -98,9 +98,9 @@ def read_xyz(name, cols=["element", "x", "y", "z"],
             Whether to cast the element into the symbol (ex. 2 becomes He).
         fast: *bool, optional*
             If specified, you are promising that this xyz file has the columns
-                element x y z
-            Further, if speed truly matters and you do not want to foce cast
-            element into symbols, we recommend setting cast_elem_to_sym=False.
+            [element x y z].  Further, if speed truly matters and you do not
+            want to foce cast element into symbols, we recommend setting
+            cast_elem_to_sym=False.
 
     **Returns**
 

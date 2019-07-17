@@ -1,0 +1,2 @@
+.. automodule:: morse
+    :members:

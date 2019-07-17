@@ -1,6 +1,3 @@
-'''
-The Morse object. This stores the indices and MORSE parameters.
-'''
 import copy
 from itertools import combinations_with_replacement
 from squid.forcefields.helper import check_restriction
@@ -36,24 +33,6 @@ R0_BOUNDS = (0.5, 10.0)
 RC_BOUNDS = (0.1, 7.0)
 ##############################################################################
 
-"""
-The Morse class contains:
-- :func:`__init__`
-- :func:`__repr__`
-- :func:`__eq__`
-- :func:`__hash__`
-- :func:`_printer`
-- :func:`print_lower`
-- :func:`print_upper`
-- :func:`unpack`
-- :func:`pack`
-- :func:`validate`
-- :func:`assign_line`
-- :func:`fix`
-- :classmethod:`load_smrff`
-------------
-"""
-
 
 class Morse(object):
     '''
@@ -61,7 +40,25 @@ class Morse(object):
     LAMMPs webpage (http://lammps.sandia.gov/doc/pair_Morse.html).  Either
     specify all the parameters, or pass a string to line, but not both.  If
     both are specified, an error will be thrown.
+
+    This object contains the following:
+
+        - :func:`assign_line`
+        - :func:`fix`
+        - :func:`generate`
+        - :func:`load_smrff`
+        - :func:`pack`
+        - :func:`pair_coeff_dump`
+        - :func:`parse_line`
+        - :func:`print_lower`
+        - :func:`print_upper`
+        - :func:`set_binder`
+        - :func:`set_nonbinder`
+        - :func:`unpack`
+        - :func:`validate`
+
     **Parameters**
+
         indices: *list or tuple, str or int*
             The indices of the atom types in this pairwise interaction.
         D0: *float*
@@ -76,8 +73,10 @@ class Morse(object):
             rc describes the cutoff of the pairwise interaction.
         line: *str*
             A line from a parameter file to be parsed.
+
     **Returns**
-        Morse: :class:`Morse`
+
+        Morse: :class:`squid.structures.Morse`
             A Morse object.
     '''
 
@@ -111,7 +110,9 @@ to be parsed, but not both.")
         '''
         This prints out a representation of this Morse object, in the format
         that is output to the smrff parameter file.
+
         **Returns**
+
             Morse: *str*
                 A string representation of Morse parameters.
                 It is in the following order:
@@ -142,14 +143,18 @@ to be parsed, but not both.")
         '''
         This prints out a representation of this Morse object,
         in the format that is output to the smrff parameter file.
+
         **Parameters**
+
             with_indices: *bool, optional*
                 Whether to also include the indices in the output.
             bounds: *int, optional*
                 Whether to output the lower bounds (0), or upper bounds (1).
                 If None, then the parameters themselves are output instead
                 (default).
+
         **Returns**
+
             Morse: *str*
                 A string representation of Morse parameters.
                 It is in the following order: indices D0 alpha r0 rc
@@ -167,7 +172,9 @@ to be parsed, but not both.")
         '''
         This prints out a representation of this Morse object's lower bound,
         in the format that is output to the smrff parameter file.
+
         **Returns**
+
             Morse: *str*
                 A string representation of Morse parameters.
                 It is in the following order: indices D0 alpha r0 rc
@@ -178,7 +185,9 @@ to be parsed, but not both.")
         '''
         This prints out a representation of this Morse object's upper bound,
         in the format that is output to the smrff parameter file.
+
         **Returns**
+
             Morse: *str*
                 A string representation of Morse parameters.
                 It is in the following order: indices D0 alpha r0 rc
@@ -188,14 +197,18 @@ to be parsed, but not both.")
     def unpack(self, with_indices=True, bounds=None, with_bounds=False):
         '''
         This function unpacks the Morse object into a list.
+
         **Parameters**
+
             with_indices: *bool, optional*
                 Whether to also include the indices in the list.
             bounds: *int, optional*
                 Whether to output the lower bounds (0), or upper bounds (1).
                 If None, then the parameters themselves are output instead
                 (default).
+
         **Returns**
+
             Morse: *list, str/float*
                 A list, holding the string of the indices, D0, alpha, r0, rc.
         '''
@@ -239,10 +252,14 @@ to be parsed, but not both.")
     def pack(self, params):
         '''
         This function packs the Morse object from a list.
+
         **Parameters**
+
             params: *list*
                 A list holding the indices, D0, alpha, r0, rc.
+
         **Returns**
+
             None
         '''
         assert len(params) in [3, 4, 5], "In Morse, tried packing %d parameters. \
@@ -293,12 +310,25 @@ Should be either 3, 4, or 5!" % len(params)
     @staticmethod
     def parse_line(line):
         """
-        Parse line inputs and assign to this object.
+        Parse line inputs.
+
         **Parameters**
+
             line: *str*
                 A string that holds a three-body Morse parameter set.
+
         **Returns**
-            None
+
+            indices: *tuple, str*
+                The labels in the line corresponding to atom types.
+            D0: *float*
+                The depth of the potential well.
+            alpha: *float*
+                The width of the potential well.
+            r0: *float*
+                The interatomic distance associated with the minimum.
+            rc: *float*
+                The cutoff of the potential.
         """
         line = line.strip().split()
         assert len(line) in [5, 6],\
@@ -315,15 +345,41 @@ Should be either 3, 4, or 5!" % len(params)
         return indices, D0, alpha, r0, rc
 
     def assign_line(self, line):
+        """
+        Parse line inputs and assign to this object.
+
+        **Parameters**
+
+            line: *str*
+                A string that holds a three-body Morse parameter set.
+
+        **Returns**
+
+            None
+        """
         self.indices, self.D0, self.alpha, self.r0, self.rc =\
             self.parse_line(line)
         self.validate()
 
     def fix(self, params='all', value=None):
-        '''
-        This will fix these parameters by assigning bounds to the values
-        themselves.
-        '''
+        """
+        This will fix these parameters by assigning bounds to the
+        values themselves.
+
+        **Parameters**
+
+            params: *str, optional*
+                Whether to fix everything (all), or a specific value (D0,
+                alpha, r0, or rc).
+            value: *list, float, or float, optional*
+                The value to fix the charge to. If None, then it is fixed to
+                the current value.  If params is all, then value must be a
+                list of values.
+
+        **Returns**
+
+            None
+        """
         if params == 'all':
             if value is not None:
                 assert isinstance(value, list) or isinstance(value, tuple),\
@@ -419,7 +475,9 @@ value when fixing rc in Morse (passed %s)." % str(value)
     def load_smrff(cls, parsed_file, pfile_name=None, restrict=None):
         '''
         Given a parameter file, import the Morse parameters if possible.
+
         **Parameters**
+
             parsed_file: *str*
                 A parsed smrff parameter file input string.
                 (no comments or trailing white spaces)
@@ -427,8 +485,10 @@ value when fixing rc in Morse (passed %s)." % str(value)
                 The name of a parameter file to be parsed.
                 If specified, then parsed_file is ignored.
                 (you may simply pass None as parsed_file)
+
         **Returns**
-            Morse_objs: *list, Morse*, or *None*
+
+            Morse_objs: *list,* :class:`squid.structures.Morse`, or *None*
                 Returns a list of Morse objects if possible, else None.
         '''
         import squid.forcefields.smrff as smrff_utils
@@ -461,7 +521,7 @@ value when fixing rc in Morse (passed %s)." % str(value)
 
         **Returns**
 
-            morse_objs: *list, Morse*
+            morse_objs: *list,* :class:`squid.structures.Morse`
                 Returns a list of Morse objects.
         '''
         from helper import random_in_range

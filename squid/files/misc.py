@@ -19,7 +19,7 @@ def last_modified(name):
             datetime format.
     """
     if not os.path.isfile(name):
-        warn('Expected lammps trajectory file does not exist at %s/%s'
+        warn('Expected file does not exist at %s/%s'
              % (os.getcwd(), name))
         return 0
 

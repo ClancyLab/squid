@@ -1,17 +1,3 @@
-"""
-The OPLS Forcefield module contains functionality for parsing the OPLS
-forcefield and typing appropriately.  Note, you must first import
-files before ever importing frc_opls.
-
-- :func:`read_opls_parameters`
-- :func:`set_forcefield_parameters`
-- :func:`check_net_charge`
-- :func:`check_consistency`
-
-------------
-
-"""
-
 # System imports
 import re
 import os

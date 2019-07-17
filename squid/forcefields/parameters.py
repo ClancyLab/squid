@@ -1,11 +1,3 @@
-"""
-The Parameters class contains:
-
-- :class:`Parameters`
-
-------------
-
-"""
 import os
 from squid.forcefields.lj import LJ
 import squid.forcefields.helper as ffh
@@ -56,6 +48,33 @@ class Parameters(object):
     A Parameters object that holds force field parameters.  It requires the
     input of which atom types to get parameters for, so as to not read in an
     entire force field.
+
+    This object contains the following:
+
+        - :func:`dump_angles`
+        - :func:`dump_bonds`
+        - :func:`dump_dihedrals`
+        - :func:`dump_lj_cut_coul_cut`
+        - :func:`dump_lj_cut_coul_long`
+        - :func:`dump_morse`
+        - :func:`dump_set_charge`
+        - :func:`dump_smooths`
+        - :func:`dump_style`
+        - :func:`dump_tersoff`
+        - :func:`fix`
+        - :func:`generate`
+        - :func:`get_smrff_style`
+        - :func:`load_opls`
+        - :func:`load_smrff`
+        - :func:`mapper`
+        - :func:`num_free_parameters`
+        - :func:`pack`
+        - :func:`set_smoothed_pair_potentials`
+        - :func:`set_all_masks`
+        - :func:`set_mask`
+        - :func:`set_opls_mask`
+        - :func:`unpack`
+        - :func:`write_smrff`
 
     **Parameters**
 

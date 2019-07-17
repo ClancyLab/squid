@@ -8,7 +8,6 @@ The NEB module simplifies the submission of Nudged Elastic Band simulations.
 - :class:`NEB`
 
 ------------
-
 """
 # System imports
 import sys

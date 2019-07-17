@@ -1,6 +1,3 @@
-'''
-The Tersoff object.  This stores the indices and TERSOFF parameters.
-'''
 import copy
 from itertools import product
 from squid.utils.cast import is_numeric
@@ -13,26 +10,6 @@ BOUND_EPS = 1E-6
 TERSOFF_PFILE_ID = "TERSOFF"
 END_ID = "END"
 
-"""
-The Tersoff class contains:
-- :func:`__init__`
-- :func:`__repr__`
-- :func:`__eq__`
-- :func:`__hash__`
-- :func:`_printer`
-- :func:`print_lower`
-- :func:`print_upper`
-- :func:`unpack`
-- :func:`pack`
-- :func:`validate`
-- :func:`turn_off`
-- :func:`turn_off_3body`
-- :func:`assign_line`
-- :func:`fix`
-- :classmethod:`load_smrff`
-------------
-"""
-
 
 class Tersoff(object):
     '''
@@ -40,6 +17,27 @@ class Tersoff(object):
     LAMMPs webpage (http://lammps.sandia.gov/doc/pair_tersoff.html).  Either
     specify all the parameters, or pass a string to line, but not both.  If
     both are specified, an error will be thrown.
+
+    This object contains the following:
+
+        - :func:`assign_line`
+        - :func:`dump_line`
+        - :func:`fix`
+        - :func:`generate`
+        - :func:`load_smrff`
+        - :func:`pack`
+        - :func:`parse_line`
+        - :func:`print_lower`
+        - :func:`print_upper`
+        - :func:`set_default_bounds`
+        - :func:`sorted_force_2body_symmetry`
+        - :func:`tag_tersoff_for_duplicate_2bodies`
+        - :func:`turn_off`
+        - :func:`turn_off_3body`
+        - :func:`unpack`
+        - :func:`update_2body`
+        - :func:`validate`
+        - :func:`verify_tersoff_2body_symmetry`
 
     **Parameters**
 
@@ -273,6 +271,15 @@ line to be parsed, but not both.")
                 )
 
     def dump_line(self):
+        """
+        This function will output the pair_coeff line for tersoff in LAMMPS.
+        Note - This line output only exists if SMRFF is installed.
+
+        **Returns**
+
+            line: *str*
+                A pair_coeff line output in tersoff.
+        """
         return "pair_coeff * * tersoff " + self._printer(with_indices=True, bounds=None).replace("\n\t\t", " ").strip()
 
     def print_lower(self):
@@ -606,7 +613,7 @@ positive such that R >= D!" % (str(self.indices), self.R, self.D)
     @staticmethod
     def parse_line(line):
         """
-        Parse line inputs and assign to this object.
+        Parse line inputs.
 
         **Parameters**
 
@@ -615,7 +622,36 @@ positive such that R >= D!" % (str(self.indices), self.R, self.D)
 
         **Returns**
 
-            None
+            indices: *tuple, str*
+                Tersoff Parameter.
+            m: *float*
+                Tersoff Parameter.
+            gamma: *float*
+                Tersoff Parameter.
+            lambda3: *float*
+                Tersoff Parameter.
+            c: *float*
+                Tersoff Parameter.
+            d: *float*
+                Tersoff Parameter.
+            costheta0: *float*
+                Tersoff Parameter.
+            n: *float*
+                Tersoff Parameter.
+            beta: *float*
+                Tersoff Parameter.
+            lambda2: *float*
+                Tersoff Parameter.
+            B: *float*
+                Tersoff Parameter.
+            R: *float*
+                Tersoff Parameter.
+            D: *float*
+                Tersoff Parameter.
+            lambda1: *float*
+                Tersoff Parameter.
+            A: *float*
+                Tersoff Parameter.
         """
         line = line.strip().split()
         indices = (line[0], line[1], line[2])
@@ -638,6 +674,18 @@ positive such that R >= D!" % (str(self.indices), self.R, self.D)
             n, beta, lambda2, B, R, D, lambda1, A
 
     def assign_line(self, line, validate=True):
+        """
+        Parse line inputs and assign to this object.
+
+        **Parameters**
+
+            line: *str*
+                A string that holds a three-body tersoff parameter set.
+
+        **Returns**
+
+            None
+        """
         (self.indices, self.m, self.gamma, self.lambda3, self.c, self.d,
          self.costheta0, self.n, self.beta, self.lambda2, self.B, self.R,
          self.D, self.lambda1, self.A) = self.parse_line(line)

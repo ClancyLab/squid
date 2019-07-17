@@ -1,13 +1,4 @@
-'''
-This file will contain functions pertaining solely to the SMRFF force field
-and any associated files.
-
-- :func:`remove_comments`
-- :func:`parse_pfile`
-'''
-
-
-def remove_comments(s):
+def _remove_comments(s):
     '''
     A simple function to remove comments in a string.  Note, we don't care
     about whitespace, so it also removes that.
@@ -52,5 +43,5 @@ def parse_pfile(fname):
     parsed = map(
         lambda x: x.strip(),
         open(fname, 'r').read().strip().split("\n"))
-    parsed = map(remove_comments, parsed)
+    parsed = map(_remove_comments, parsed)
     return '\n'.join([r for r in parsed if r != ''])

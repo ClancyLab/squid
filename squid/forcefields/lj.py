@@ -1,6 +1,3 @@
-'''
-The Lennard-Jones object.  This stores the index and LJ parameters.
-'''
 import copy
 from squid.forcefields.helper import check_restriction
 
@@ -11,30 +8,29 @@ END_ID = "END"
 SIGMA_BOUNDS = (0.01, 5.0)
 EPSILON_BOUNDS = (0.0001, 3.0)
 
-"""
-The LJ class contains:
-- :func:`__init__`
-- :func:`__repr__`
-- :func:`__eq__`
-- :func:`__hash__`
-- :func:`_printer`
-- :func:`print_lower`
-- :func:`print_upper`
-- :func:`unpack`
-- :func:`pack`
-- :func:`validate`
-- :func:`assign_line`
-- :func:`fix`
-- :classmethod:`load_smrff`
-------------
-"""
-
 
 class LJ(object):
     '''
     Initialize the LJ object.  Either pass index + sigma + epsilon,
     or pass line.  If all are passed, then an error will be thrown.
+
+    This object contains the following:
+
+        - :func:`assign_line`
+        - :func:`fix`
+        - :func:`generate`
+        - :func:`load_opls`
+        - :func:`load_smrff`
+        - :func:`pack`
+        - :func:`parse_line`
+        - :func:`pair_coeff_dump`
+        - :func:`print_lower`
+        - :func:`print_upper`
+        - :func:`unpack`
+        - :func:`validate`
+
     **Parameters**
+
         index: *str or int*
             The index of the atom type.
         sigma: *float*
@@ -43,8 +39,10 @@ class LJ(object):
             Epsilon in LJ expression.
         line: *str*
             A line from a parameter file to be parsed.
+
     **Returns**
-        lj: :class:`LJ`
+
+        lj: :class:`squid.structures.LJ`
             A LJ object.
     '''
 
@@ -73,7 +71,9 @@ and epsilon OR line, but not all.")
         '''
         This prints out a representation of this LJ object, in the format
         that is output to the smrff parameter file.
+
         **Returns**
+
             lj: *str*
                 A string representation of LJ.  The index, sigma, and epsilon
                 are printed, in that precise order.  Note, numbers are printed
@@ -96,12 +96,16 @@ and epsilon OR line, but not all.")
         '''
         This prints out a representation of this LJ object, in the format
         that is output to the smrff parameter file.
+
         **Parameters**
+
             bounds: *int, optional*
                 Whether to output the lower bounds (0), or upper boudns (1).
                 If None, then the parameters themselves are output instead
                 (default).
+
         **Returns**
+
             lj: *str*
                 A string representation of LJ.  The index, sigma, and epsilon
                 are printed, in that precise order.  Note, numbers are printed
@@ -122,7 +126,9 @@ and epsilon OR line, but not all.")
         '''
         This prints out a representation of this LJ object's lower bounds,
         in the format that is output to the smrff parameter file.
+
         **Returns**
+
             lj: *str*
                 A string representation of LJ.  The index, sigma, and epsilon
                 are printed, in that precise order.  Note, numbers are printed
@@ -134,7 +140,9 @@ and epsilon OR line, but not all.")
         '''
         This prints out a representation of this LJ object's upper bounds,
         in the format that is output to the smrff parameter file.
+
         **Returns**
+
             lj: *str*
                 A string representation of LJ.  The index, sigma, and epsilon
                 are printed, in that precise order.  Note, numbers are printed
@@ -145,10 +153,16 @@ and epsilon OR line, but not all.")
     def unpack(self, with_indices=True, with_bounds=False):
         '''
         This function unpacks the LJ object into a list.
+
         **Parameters**
+
             with_indices: *bool, optional*
                 Whether to also include the indices in the list.
+            with_bounds: *bool, optional*
+                Whether to also return the bounds or not.
+
         **Returns**
+
             coul: *list, str/float*
                 A list, holding the string of the index and the float of the
                 charge.
@@ -175,10 +189,14 @@ and epsilon OR line, but not all.")
     def pack(self, params):
         '''
         This function packs the LJ object from a list.
+
         **Parameters**
+
             params: *list*
                 A list holding the index, sigma, and epsilon (IN THAT ORDER).
+
         **Returns**
+
             None
         '''
         assert len(params) in [2, 3], "In LJ, tried packing %d parameters.  \
@@ -193,6 +211,17 @@ Should be either 2 or 3!" % len(params)
         '''
         This function will validate data integrity.  In this case, we simply
         ensure data types are appropriate.
+
+        **Parameters**
+
+            warn: *bool, optional*
+                At times, weird parameters may exist (ex. sigma=0).  If this
+                is the case, we will push them to a more realistic lowerbound
+                and print a warning (True) or crash (False).
+
+        **Returns**
+
+            None
         '''
         self.index = str(self.index)
         self.sigma, self.epsilon = float(self.sigma), float(self.epsilon)
@@ -218,12 +247,21 @@ larger than 0! It is %f" % (self.index, self.epsilon)
     @staticmethod
     def parse_line(line):
         """
-        Parse line inputs and assign to this object.
+        Parse line inputs.
+
         **Parameters**
+
             line: *str*
-                A string that holds coulomb information.
+                A string that holds LJ information.
+
         **Returns**
-            None
+
+            index: *str*
+                The label in the line corresponding to atom type.
+            sigma: *float*
+                The position where the potential well equals 0.
+            epsilon: *float*
+                The depth of the well.
         """
         line = line.strip().split()
         index = line[0]
@@ -232,14 +270,40 @@ larger than 0! It is %f" % (self.index, self.epsilon)
         return index, sigma, epsilon
 
     def assign_line(self, line):
+        """
+        Parse line inputs and assign to this object.
+
+        **Parameters**
+
+            line: *str*
+                A string that holds LJ information.
+
+        **Returns**
+
+            None
+        """
         self.index, self.sigma, self.epsilon = self.parse_line(line)
         self.validate()
 
     def fix(self, params='all', value=None):
-        '''
-        This will fix these parameters by assigning bounds to the values
-        themselves.
-        '''
+        """
+        This will fix these parameters by assigning bounds to the
+        values themselves.
+
+        **Parameters**
+
+            params: *str, optional*
+                Whether to fix everything (all), or a specific value (sigma
+                or epsilon).
+            value: *list, float, or float, optional*
+                The value to fix the param to. If None, then it is fixed to
+                the current value.  If params is all, then value must be a
+                list of values.
+
+        **Returns**
+
+            None
+        """
         if params == 'all':
             if value is not None:
                 assert isinstance(value, list) or isinstance(value, tuple),\
@@ -276,7 +340,9 @@ larger than 0! It is %f" % (self.index, self.epsilon)
     def load_smrff(cls, parsed_file, pfile_name=None, restrict=None):
         '''
         Given a parameter file, inport the coulomb parameters if possible.
+
         **Parameters**
+
             parsed_file: *str*
                 A parsed smrff parameter file input string (no comments or
                 trailing white spaces)
@@ -284,8 +350,13 @@ larger than 0! It is %f" % (self.index, self.epsilon)
                 The name of a parameter file to be parsed.  If specified,
                 then parsed_file is ignored (you may simply pass None as
                 parsed_file).
+            restrict: *list, str, optional*
+                A list of atom labels to include when loading.  If not
+                specified, everything is loaded.
+
         **Returns**
-            lj_objs: *list, LJ*, or *None*
+
+            lj_objs: *list,* :class:`squid.structures.LJ`, or *None*
                 Returns a list of LJ objects if possible, else None.
         '''
         import squid.forcefields.smrff as smrff_utils
@@ -311,14 +382,21 @@ larger than 0! It is %f" % (self.index, self.epsilon)
     def load_opls(cls, atom_types, pfile_name=None, restrict=None):
         '''
         Given a parameter file, inport the LJ parameters if possible.
+
         **Parameters**
+
             atom_types: *list, dict, ...*
                 Atom types from a parsed opls parameter file.
             pfile_name: *str*
                 The name of a parameter file to be parsed.  If specified,
                 then pfile is ignored (you may simply pass None as pfile).
+            restrict: *list, str, optional*
+                A list of atom labels to include when loading.  If not
+                specified, everything is loaded.
+
         **Returns**
-            lj_objs: *list, LJ*, or *None*
+
+            lj_objs: *list,* :class:`squid.structures.LJ`, or *None*
                 Returns a list of LJ objects if possible, else None.
         '''
         # Ensure correct pfile format, and that we even need to parse it.
@@ -344,7 +422,7 @@ larger than 0! It is %f" % (self.index, self.epsilon)
 
         **Returns**
 
-            lj_objs: *list, LJ*
+            lj_objs: *list,* :class:`squid.structures.LJ`
                 Returns a list of LJ objects.
         '''
         from helper import random_in_range

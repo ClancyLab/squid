@@ -12,7 +12,8 @@ Contents:
    :maxdepth: 2
 
    squid
-   updating
+   codebase
+   examples
 
 Indices and tables
 ==================
