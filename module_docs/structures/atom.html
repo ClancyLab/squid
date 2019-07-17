@@ -1,0 +1,230 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>&lt;no title&gt; &#8212; Squid 2.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-squid.structures.atom"></span><p>The atom object holds atomic information in and transformations.</p>
+<ul class="simple">
+<li><a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">Atom</span></code></a></li>
+</ul>
+<hr class="docutils" />
+<dl class="class">
+<dt id="squid.structures.atom.Atom">
+<em class="property">class </em><code class="descclassname">squid.structures.atom.</code><code class="descname">Atom</code><span class="sig-paren">(</span><em>element</em>, <em>x</em>, <em>y</em>, <em>z</em>, <em>index=None</em>, <em>molecule_index=1</em>, <em>label=None</em>, <em>charge=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/structures/atom.html#Atom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.structures.atom.Atom" title="Permalink to this definition">¶</a></dt>
+<dd><p>A structure to hold atom information.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>element: <em>str</em></dt>
+<dd>The atomic element.</dd>
+<dt>x: <em>float</em></dt>
+<dd>The x coordinate of the atom.</dd>
+<dt>y: <em>float</em></dt>
+<dd>The y coordinate of the atom.</dd>
+<dt>z: <em>float</em></dt>
+<dd>The z coordinate of the atom.</dd>
+<dt>index: <em>int, optional</em></dt>
+<dd>The atomic index within a molecule.</dd>
+<dt>molecule_index: <em>int, optional</em></dt>
+<dd>Which molecule the atom is contained in.</dd>
+<dt>label: <em>str, optional</em></dt>
+<dd>The label of the atomic type within the given forcefield.</dd>
+<dt>charge: <em>float, optional</em></dt>
+<dd>The atomic charge.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>atom: <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dd>The Atom class container.</dd>
+</dl>
+</div></blockquote>
+<dl class="method">
+<dt id="squid.structures.atom.Atom.flatten">
+<code class="descname">flatten</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/structures/atom.html#Atom.flatten"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.structures.atom.Atom.flatten" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtain simplified position output.</p>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>pos: <em>np.array, float</em></dt>
+<dd>A numpy array holding the x, y, and z position of this atom.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="squid.structures.atom.Atom.get_id_tag">
+<code class="descname">get_id_tag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/structures/atom.html#Atom.get_id_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.structures.atom.Atom.get_id_tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the id tag of this atom.  This is defined as:</p>
+<blockquote>
+<div>molecule_index:index</div></blockquote>
+<p>Note, if either is None then it is returned as the string.  Thus:</p>
+<blockquote>
+<div>None:1
+1:None
+None:None</div></blockquote>
+<p>Are all possible.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="squid.structures.atom.Atom.scale">
+<code class="descname">scale</code><span class="sig-paren">(</span><em>v</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/structures/atom.html#Atom.scale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.structures.atom.Atom.scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scale the atom by a vector.  This can be useful if we want to
+change coordinate systems.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>v: <em>list, float</em></dt>
+<dd>A vector of 3 floats specifying the x, y,
+and z scalars to be applied.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="squid.structures.atom.Atom.set_position">
+<code class="descname">set_position</code><span class="sig-paren">(</span><em>pos</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/structures/atom.html#Atom.set_position"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.structures.atom.Atom.set_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manually set the atomic positions by passing a tuple/list.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>pos: <em>list, float or tuple, float</em></dt>
+<dd>A vector of 3 floats specifying the new x, y, and z coordinate.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="squid.structures.atom.Atom.translate">
+<code class="descname">translate</code><span class="sig-paren">(</span><em>v</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/structures/atom.html#Atom.translate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.structures.atom.Atom.translate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translate the atom by a vector.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>v: <em>list, float</em></dt>
+<dd>A vector of 3 floats specifying the x, y,
+and z offsets to be applied.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="squid.structures.atom.Atom.unravel">
+<code class="descname">unravel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/structures/atom.html#Atom.unravel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.structures.atom.Atom.unravel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like flatten; however, this method will unravel all properties of
+the atom into a tuple.</p>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>props: <em>tuple, …</em></dt>
+<dd><p class="first">Return all atom properties as they are, in the following
+order:</p>
+<blockquote class="last">
+<div>element, x, y, z, index, molecule_index, label, charge</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../squid.html">Squid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../codebase.html">Codebase</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../console_scripts.html">Console Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/module_docs/structures/atom.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Henry Herbol.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

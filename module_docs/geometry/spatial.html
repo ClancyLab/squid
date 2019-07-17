@@ -1,0 +1,289 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>&lt;no title&gt; &#8212; Squid 2.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-squid.geometry.spatial"></span><dl class="function">
+<dt id="squid.geometry.spatial.motion_per_frame">
+<code class="descclassname">squid.geometry.spatial.</code><code class="descname">motion_per_frame</code><span class="sig-paren">(</span><em>frames</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/geometry/spatial.html#motion_per_frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.geometry.spatial.motion_per_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine the root mean squared difference between atomic positions
+of adjacent frames.  Note, as we have differences between frames, this
+means that we return len(frames) - 1 values.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>frames: <em>list, list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dd>List of lists of atoms.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>motion: <em>np.array, float</em></dt>
+<dd>List of motion between consecutive frames (frame_i vs
+frame_(i - 1)).</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="squid.geometry.spatial.mvee">
+<code class="descclassname">squid.geometry.spatial.</code><code class="descname">mvee</code><span class="sig-paren">(</span><em>points</em>, <em>tol=0.001</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/geometry/spatial.html#mvee"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.geometry.spatial.mvee" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a Minimum Volume Enclosing Ellipsoid (MVEE) around atomic species.
+The ellipsoid is calculated for the “center form”: (x-c).T * A * (x-c) = 1</p>
+<p>For useful values, you can get the radii as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">U</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">r_i</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="n">vol</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span><span class="o">/</span><span class="mf">3.</span><span class="p">)</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">Q</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Further, note that V is the rotation matrix giving the orientation of
+the ellipsoid.</p>
+<p>NOTE! You must have a minimum of 4 atoms for this to work.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>points:  <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dd>A list of Atom objects.</dd>
+<dt>tol: <em>float, optional</em></dt>
+<dd>Tolerance for ellipsoid generation.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>A: <em>list, list, float</em></dt>
+<dd>Positive definite symmetric matrix of the ellipsoid’s center form.
+This contains the ellipsoid’s orientation and eccentricity.</dd>
+<dt>c: <em>list, float</em></dt>
+<dd>Center of the ellipsoid.</dd>
+</dl>
+</div></blockquote>
+<p><strong>References</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="https://www.mathworks.com/matlabcentral/fileexchange/9542-minimum-volume-enclosing-ellipsoid?requestedDomain=www.mathworks.com">https://www.mathworks.com/matlabcentral/fileexchange/9542-minimum-volume-enclosing-ellipsoid?requestedDomain=www.mathworks.com</a></li>
+<li><a class="reference external" href="http://stackoverflow.com/questions/14016898/port-matlab-bounding-ellipsoid-code-to-python/14025140#14025140">http://stackoverflow.com/questions/14016898/port-matlab-bounding-ellipsoid-code-to-python/14025140#14025140</a></li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="squid.geometry.spatial.orthogonal_procrustes">
+<code class="descclassname">squid.geometry.spatial.</code><code class="descname">orthogonal_procrustes</code><span class="sig-paren">(</span><em>A</em>, <em>ref_matrix</em>, <em>reflection=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/geometry/spatial.html#orthogonal_procrustes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.geometry.spatial.orthogonal_procrustes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Using the orthogonal procrustes method, we find the unitary matrix R with
+det(R) &gt; 0 such that ||A*R - ref_matrix||^2 is minimized.  This varies
+from that within scipy by the addition of the reflection term, allowing
+and disallowing inversion.  NOTE - This means that the rotation matrix is
+used for right side multiplication!</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>A: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.atom.Atom</span></code></dt>
+<dd>A list of atoms for which R will minimize the frobenius
+norm ||A*R - ref_matrix||^2.</dd>
+<dt>ref_matrix: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.atom.Atom</span></code></dt>
+<dd>A list of atoms for which <em>A</em> is being rotated towards.</dd>
+<dt>reflection: <em>bool, optional</em></dt>
+<dd>Whether inversion is allowed (True) or not (False).</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>R: <em>list, list, float</em></dt>
+<dd>Right multiplication rotation matrix to best overlay A onto the
+reference matrix.</dd>
+<dt>scale: <em>float</em></dt>
+<dd>Scalar between the matrices.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Derivation</strong></p>
+<blockquote>
+<div><p>Goal: minimize ||A*R - ref||^2, switch to trace</p>
+<p>trace((A*R-ref).T*(A*R-ref)), now we distribute</p>
+<p>trace(R’*A’*A*R) + trace(ref.T*ref) - trace((A*R).T*ref) -
+trace(ref.T*(A*R)), trace doesn’t care about order, so re-order</p>
+<p>trace(R*R.T*A.T*A) + trace(ref.T*ref) - trace(R.T*A.T*ref) -
+trace(ref.T*A*R), simplify</p>
+<p>trace(A.T*A) + trace(ref.T*ref) - 2*trace(ref.T*A*R)</p>
+<p>Thus, to minimize we want to maximize trace(ref.T * A * R)</p>
+<p>u*w*v.T = (ref.T*A).T</p>
+<p>ref.T * A = w * u.T * v</p>
+<p>trace(ref.T * A * R) = trace (w * u.T * v * R)</p>
+<p>differences minimized when trace(ref.T * A * R) is maximized, thus
+when trace(u.T * v * R) is maximized</p>
+<p>This occurs when u.T * v * R = I (as u, v and R are all unitary
+matrices so max is 1)</p>
+<p>R is a rotation matrix so R.T = R^-1</p>
+<p>u.T * v * I = R^-1 = R.T</p>
+<p>R = u * v.T</p>
+<p>Thus, R = u.dot(vt)</p>
+</div></blockquote>
+<p><strong>References</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="https://github.com/scipy/scipy/blob/v0.16.0/scipy/linalg/">https://github.com/scipy/scipy/blob/v0.16.0/scipy/linalg/</a>
+_procrustes.py#L14</li>
+<li><a class="reference external" href="http://compgroups.net/comp.soft-sys.matlab/procrustes-analysis">http://compgroups.net/comp.soft-sys.matlab/procrustes-analysis</a>
+-without-reflection/896635</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="squid.geometry.spatial.random_rotation_matrix">
+<code class="descclassname">squid.geometry.spatial.</code><code class="descname">random_rotation_matrix</code><span class="sig-paren">(</span><em>limit_angle=None</em>, <em>lower_bound=0.1</em>, <em>MAXITER=1000000</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/geometry/spatial.html#random_rotation_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.geometry.spatial.random_rotation_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a random rotation matrix.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>limit_angle: <em>float, optional</em></dt>
+<dd>Whether to confine your random rotation (in radians).</dd>
+<dt>lower_bound: <em>float, optional</em></dt>
+<dd>A lower bound for limit_angle, at which the identity is
+simply returned.  This is necessary as the procedure to
+generate the limit_angle method is incredibly slow at
+small angles.</dd>
+<dt>MAXITER: <em>int, optional</em></dt>
+<dd>A maximum iteration for when we try to calculate a rotation
+matrix with some limit_angle specified.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>frames: <em>np.array, list, float</em></dt>
+<dd>A random rotation matrix.</dd>
+</dl>
+</div></blockquote>
+<p><strong>References</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="http://tog.acm.org/resources/GraphicsGems/">http://tog.acm.org/resources/GraphicsGems/</a>, Ed III</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="squid.geometry.spatial.rotation_matrix">
+<code class="descclassname">squid.geometry.spatial.</code><code class="descname">rotation_matrix</code><span class="sig-paren">(</span><em>axis</em>, <em>theta</em>, <em>units='deg'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/geometry/spatial.html#rotation_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.geometry.spatial.rotation_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtain a left multiplication rotation matrix, given the axis and angle you
+wish to rotate by. By default it assumes units of degrees.  If theta is in
+radians, set units to rad.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>axis: <em>list, float</em></dt>
+<dd>The axis in which to rotate around.</dd>
+<dt>theta: <em>float</em></dt>
+<dd>The angle of rotation.</dd>
+<dt>units: <em>str, optional</em></dt>
+<dd>The units of theta (deg or rad).</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>rotatation_matrix: <em>list, list, float</em></dt>
+<dd>The left multiplication rotation matrix.</dd>
+</dl>
+</div></blockquote>
+<p><strong>References</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="http://stackoverflow.com/questions/6802577/python-rotation-of-3d-vector/25709323#25709323">http://stackoverflow.com/questions/6802577/python-rotation-of-3d-vector/25709323#25709323</a></li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../squid.html">Squid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../codebase.html">Codebase</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../console_scripts.html">Console Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/module_docs/geometry/spatial.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Henry Herbol.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

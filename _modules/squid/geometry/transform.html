@@ -1,0 +1,509 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>squid.geometry.transform &#8212; Squid 2.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Squid 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for squid.geometry.transform</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">scipy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">squid.utils</span> <span class="k">import</span> <span class="n">cast</span>
+<span class="kn">from</span> <span class="nn">squid.geometry.misc</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">squid.geometry.spatial</span> <span class="k">import</span> <span class="n">mvee</span>
+<span class="kn">from</span> <span class="nn">squid.geometry.spatial</span> <span class="k">import</span> <span class="n">motion_per_frame</span>
+<span class="kn">from</span> <span class="nn">squid.geometry.spatial</span> <span class="k">import</span> <span class="n">random_rotation_matrix</span>
+<span class="kn">from</span> <span class="nn">squid.geometry.spatial</span> <span class="k">import</span> <span class="n">orthogonal_procrustes</span>
+
+
+<span class="c1"># Given a list of atom objects, this will (1) use mvee to generate a minimum</span>
+<span class="c1"># centroid around the structure, and (2) rotate the ellipsoid and positions</span>
+<span class="c1"># to align along the x-axis</span>
+<div class="viewcode-block" id="align_centroid"><a class="viewcode-back" href="../../../module_docs/geometry/transform.html#squid.geometry.transform.align_centroid">[docs]</a><span class="k">def</span> <span class="nf">align_centroid</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">recenter</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">skip_H</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Generate a Minimum Volume Enclosing Ellipsoid (MVEE) around atomic</span>
+<span class="sd">    species to align the atoms along the x-axis.</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">        atoms: *list,* :class:`structures.atom.Atom`</span>
+<span class="sd">            A list of Atom objects.</span>
+<span class="sd">        recenter: *bool, optional*</span>
+<span class="sd">            Whether to recenter the new coordinates around the origin or not.</span>
+<span class="sd">            Note, this is done via the center of geometry, NOT the center of</span>
+<span class="sd">            mass.</span>
+<span class="sd">        skip_H: *bool, optional*</span>
+<span class="sd">            Whether to skip hydrogen during recentering (that is, do not take</span>
+<span class="sd">            them into accound when calculating the center of geometry).</span>
+
+<span class="sd">    **Returns**</span>
+
+<span class="sd">        molec.atoms: *list,* :class:`structures.atom.Atom`</span>
+<span class="sd">            Rotated atomic coordinates.</span>
+<span class="sd">        A: *list, list, float*</span>
+<span class="sd">            Rotated positive definite symmetric matrix of the ellipsoid&#39;s</span>
+<span class="sd">            center form. This contains the ellipsoid&#39;s orientation and</span>
+<span class="sd">            eccentricity.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># If there is only one atom here, have the centroid be a sphere.</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">atoms</span><span class="p">),</span> <span class="n">A</span>
+
+    <span class="n">new_atoms</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">atoms</span><span class="p">[:])</span>
+
+    <span class="c1"># Get points and the ellipsoid</span>
+    <span class="n">A</span><span class="p">,</span> <span class="n">centroid</span> <span class="o">=</span> <span class="n">mvee</span><span class="p">(</span><span class="n">new_atoms</span><span class="p">)</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="n">a</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">new_atoms</span><span class="p">])</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
+    <span class="c1"># Rotate the ellipsoid</span>
+    <span class="n">omega</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
+
+    <span class="c1"># Rotate the points</span>
+    <span class="n">rotation</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">block_diag</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">R</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">points</span><span class="p">])</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">rotation</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
+    <span class="c1"># Recenter the points</span>
+    <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">new_atoms</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
+        <span class="n">a</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">b</span>
+    <span class="k">if</span> <span class="n">recenter</span><span class="p">:</span>
+        <span class="n">com</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">get_center_of_geometry</span><span class="p">(</span><span class="n">new_atoms</span><span class="p">,</span> <span class="n">skip_H</span><span class="o">=</span><span class="n">skip_H</span><span class="p">))</span> <span class="o">*</span> <span class="o">-</span><span class="mf">1.0</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">new_atoms</span><span class="p">:</span>
+            <span class="n">a</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">com</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">new_atoms</span><span class="p">,</span> <span class="n">A</span></div>
+
+
+<span class="c1"># Procrustes works by geting an orthogonal frame to map frames[1:] to be as</span>
+<span class="c1"># similar to frames[0] as possible. This implements the orthagonal procrustes</span>
+<span class="c1"># with translation and no reflection (Partial Procrustes)</span>
+<div class="viewcode-block" id="procrustes"><a class="viewcode-back" href="../../../module_docs/geometry/transform.html#squid.geometry.transform.procrustes">[docs]</a><span class="k">def</span> <span class="nf">procrustes</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">count_atoms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">append_in_loop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reflection</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Propogate rotation along a list of lists of atoms to smooth out</span>
+<span class="sd">    transitions between consecutive frames. This is done by rigid rotation</span>
+<span class="sd">    and translation (no scaling and no inversions).  Rotation starts</span>
+<span class="sd">    at frames[0].</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">        frames: *list, list,* :class:`structures.atom.Atom`</span>
+<span class="sd">            List of lists of atoms.</span>
+<span class="sd">        count_atoms: *list, int, optional*</span>
+<span class="sd">            A list of indices for which translation and rotations will be</span>
+<span class="sd">            calculated from.</span>
+<span class="sd">        append_in_loop: *bool, optional*</span>
+<span class="sd">            If rotation matrices for every atom (True) is desired vs rotation</span>
+<span class="sd">            matrices for every frame (False). Every rotation matrix for atoms</span>
+<span class="sd">            within the same frame is the same. Thus, when this is True,</span>
+<span class="sd">            multiplicates will appear.</span>
+<span class="sd">        reflection: *bool, optional*</span>
+<span class="sd">            Whether inversion is allowed (True) or not (False).</span>
+
+<span class="sd">    **Returns**</span>
+
+<span class="sd">        full_rotation: *list, list, float*</span>
+<span class="sd">            List of every rotation matrix applied.  NOTE - These matrices are</span>
+<span class="sd">            applied via right side multiplication.</span>
+
+<span class="sd">    **See also**</span>
+
+<span class="sd">        For more information, see :func:`orthogonal_procrustes`.</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">count_atoms</span><span class="p">:</span>
+        <span class="n">count_atoms</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+    <span class="c1"># Offset center of geometries</span>
+    <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">:</span>
+        <span class="n">cog</span> <span class="o">=</span> <span class="n">get_center_of_geometry</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+            <span class="n">a</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="o">-</span><span class="n">cog</span><span class="p">)</span>
+
+    <span class="c1"># rotate all frames to be as similar to their neighbors as possible</span>
+    <span class="n">full_rotation</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># rotate all frames to optimal alignment</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)):</span>
+        <span class="c1"># only count spring-held atoms for finding alignment</span>
+        <span class="c1"># orthogonal_procrustes maps count_atoms_1 onto count_atoms_2</span>
+        <span class="n">count_atoms_1</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frames</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                         <span class="k">if</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">count_atoms</span><span class="p">]</span>
+        <span class="n">count_atoms_2</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frames</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+                         <span class="k">if</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">count_atoms</span><span class="p">]</span>
+        <span class="n">rotation</span> <span class="o">=</span> <span class="n">orthogonal_procrustes</span><span class="p">(</span>
+            <span class="n">count_atoms_1</span><span class="p">,</span> <span class="n">count_atoms_2</span><span class="p">,</span> <span class="n">reflection</span><span class="o">=</span><span class="n">reflection</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">rotation</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Procrustes returned reflection matrix&#39;</span><span class="p">)</span>
+        <span class="c1"># rotate all atoms into alignment</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+            <span class="n">a</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">rotation</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s1">&#39;fx&#39;</span><span class="p">):</span>
+                <span class="n">a</span><span class="o">.</span><span class="n">fx</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">fy</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">fz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">((</span><span class="n">a</span><span class="o">.</span><span class="n">fx</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">fy</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">fz</span><span class="p">),</span> <span class="n">rotation</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">append_in_loop</span><span class="p">:</span>
+                <span class="n">full_rotation</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rotation</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">append_in_loop</span><span class="p">:</span>
+            <span class="n">full_rotation</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rotation</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">full_rotation</span></div>
+
+
+<div class="viewcode-block" id="interpolate"><a class="viewcode-back" href="../../../module_docs/geometry/transform.html#squid.geometry.transform.interpolate">[docs]</a><span class="k">def</span> <span class="nf">interpolate</span><span class="p">(</span><span class="n">frame_1</span><span class="p">,</span> <span class="n">frame_2</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Linearly interpolate N frames between two given frames.</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">        frame_1: *list,* :class:`structures.atom.Atom`</span>
+<span class="sd">            List of atoms.</span>
+<span class="sd">        frame_2: *list,* :class:`structures.atom.Atom`</span>
+<span class="sd">            List of atoms.</span>
+<span class="sd">        N: *int*</span>
+<span class="sd">            Number of new frames you want to generate during interpolation.</span>
+
+<span class="sd">    **Returns**</span>
+
+<span class="sd">        frames: *list, list, float*</span>
+<span class="sd">            List of interpolated frames, inclusive of frame_1 and frame_2.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">frame_1</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span>\
+        <span class="s2">&quot;Error - frame_1 should be a list of Atom objects.&quot;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">frame_2</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span>\
+        <span class="s2">&quot;Error - frame_2 should be a list of Atom objects.&quot;</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">cast</span><span class="o">.</span><span class="n">check_vec</span><span class="p">(</span><span class="n">frame_1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">length</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">numeric</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>\
+        <span class="s2">&quot;Error - frame_1 should be a list of Atom objects.&quot;</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">cast</span><span class="o">.</span><span class="n">check_vec</span><span class="p">(</span><span class="n">frame_2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">length</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">numeric</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>\
+        <span class="s2">&quot;Error - frame_2 should be a list of Atom objects.&quot;</span>
+    <span class="k">assert</span> <span class="n">N</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Error - Interpolate must have N &gt; 0.&quot;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>\
+        <span class="s2">&quot;Error - N must be an integer.&quot;</span>
+    <span class="n">N</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="p">[</span>
+            <span class="n">a</span> <span class="o">+</span> <span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="o">-</span> <span class="n">a</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span> <span class="o">*</span> <span class="n">i</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">frame_1</span><span class="p">,</span> <span class="n">frame_2</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="smooth_xyz"><a class="viewcode-back" href="../../../module_docs/geometry/transform.html#squid.geometry.transform.smooth_xyz">[docs]</a><span class="k">def</span> <span class="nf">smooth_xyz</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span>
+               <span class="n">R_max</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+               <span class="n">F_max</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+               <span class="n">N_frames</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">use_procrustes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+               <span class="n">fname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Smooth out an xyz file by linearly interpolating frames to minimize the</span>
+<span class="sd">    maximum motion between adjacent frames.  Further, this can use procrustes</span>
+<span class="sd">    to best overlap adjacent frames.</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">        frames: *list, list,* :class:`structures.Atom`</span>
+<span class="sd">            A list of lists of atoms.</span>
+<span class="sd">        R_max: *float, optional*</span>
+<span class="sd">            The maximum motion allowed between consecutive frames.</span>
+<span class="sd">        F_max: *int, optional*</span>
+<span class="sd">            The maximum number of frames allowed before failing the smooth</span>
+<span class="sd">            function.</span>
+<span class="sd">        N_frames: *int, optional*</span>
+<span class="sd">            If this is specified, forgo the R_max and F_max and just</span>
+<span class="sd">            interpolate out into N_frames.  Note, if more than N_frames</span>
+<span class="sd">            exists, this also cuts back into exactly N_frames.</span>
+<span class="sd">        use_procrustes: *bool, optional*</span>
+<span class="sd">            Whether procrustes is to be used during smoothing (True), or</span>
+<span class="sd">            not (False).</span>
+<span class="sd">        fname: *str, optional*</span>
+<span class="sd">            An output file name for the smoothed frames (without the .xyz</span>
+<span class="sd">            extension).  If None, then no file is made.</span>
+<span class="sd">        verbose: *bool, optional*</span>
+<span class="sd">            Whether additional stdout is desired (True), or not (False).</span>
+
+<span class="sd">    **Returns**</span>
+
+<span class="sd">        frames: *list, list,* :class:`structures.Atom`</span>
+<span class="sd">            Returns a list of smoothed frames</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - You must have more than 1 frame if you want to interpolate.&quot;</span>
+
+    <span class="k">if</span> <span class="n">N_frames</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">N_frames</span> <span class="o">=</span> <span class="n">F_max</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">R_max</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;-inf&quot;</span><span class="p">)</span>
+        <span class="n">F_max</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">N_frames</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - Either N_frames or F_max was set to 1.&quot;</span>
+
+    <span class="n">UPPER</span> <span class="o">=</span> <span class="mf">1E6</span>
+    <span class="k">assert</span> <span class="n">N_frames</span> <span class="o">&lt;</span> <span class="n">UPPER</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - Either N_frames or F_max was set too large (&gt;</span><span class="si">%d</span><span class="s2">).&quot;</span> <span class="o">%</span> <span class="n">UPPER</span>
+
+    <span class="c1"># Loop till we&#39;re below R_max</span>
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">N_frames</span><span class="p">:</span>
+        <span class="c1"># Find largest motion_per_frame</span>
+        <span class="k">if</span> <span class="n">use_procrustes</span><span class="p">:</span>
+            <span class="n">procrustes</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+        <span class="n">mpf</span> <span class="o">=</span> <span class="n">motion_per_frame</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+
+        <span class="c1"># Check if we&#39;re done</span>
+        <span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="n">mpf</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">R_max</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="c1"># Now, split the list, interpolate, and regenerate</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanargmax</span><span class="p">(</span><span class="n">mpf</span><span class="p">)</span>
+
+        <span class="n">f_low</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">frames</span><span class="p">[:</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">f_mid</span> <span class="o">=</span> <span class="n">interpolate</span><span class="p">(</span><span class="n">frames</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">frames</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">f_high</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">frames</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:])</span>
+
+        <span class="n">frames</span> <span class="o">=</span> <span class="n">f_low</span> <span class="o">+</span> <span class="n">f_mid</span> <span class="o">+</span> <span class="n">f_high</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Interpolated </span><span class="si">%d</span><span class="s2">,</span><span class="si">%d</span><span class="s2"> ... </span><span class="si">%lg</span><span class="s2">&quot;</span>
+                  <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">motion_per_frame</span><span class="p">(</span><span class="n">frames</span><span class="p">))))</span>
+
+        <span class="k">if</span> <span class="n">N_frames</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span> <span class="o">==</span> <span class="n">N_frames</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">N_frames</span><span class="p">:</span>
+                <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">N_frames</span> <span class="o">-</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">mpf</span> <span class="o">=</span> <span class="n">motion_per_frame</span><span class="p">(</span><span class="n">frames</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">to_kill</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanargmin</span><span class="p">(</span><span class="n">mpf</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+                    <span class="k">del</span> <span class="n">frames</span><span class="p">[</span><span class="n">to_kill</span><span class="p">]</span>
+                <span class="k">break</span>
+
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">N_frames</span><span class="p">:</span>
+        <span class="c1"># Get smallest motion and remove</span>
+        <span class="k">if</span> <span class="n">use_procrustes</span><span class="p">:</span>
+            <span class="n">procrustes</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+        <span class="n">mpf</span> <span class="o">=</span> <span class="n">motion_per_frame</span><span class="p">(</span><span class="n">frames</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanargmin</span><span class="p">(</span><span class="n">mpf</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="k">del</span> <span class="n">frames</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">use_procrustes</span><span class="p">:</span>
+        <span class="n">procrustes</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">There are now a total of </span><span class="si">%d</span><span class="s2"> frames&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">))</span>
+
+    <span class="c1"># In the case that F_max is not inf, check if r_max was met or not</span>
+    <span class="n">max_rms</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">motion_per_frame</span><span class="p">(</span><span class="n">frames</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">F_max</span> <span class="o">!=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">max_rms</span> <span class="o">&gt;</span> <span class="n">R_max</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-------------------------------------------------------&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Max RMS = </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">max_rms</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-------------------------------------------------------&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">Error - Could not lower motion below </span><span class="si">%lg</span><span class="s2"> in </span><span class="si">%d</span><span class="s2"> frames.&quot;</span>
+              <span class="o">%</span> <span class="p">(</span><span class="n">R_max</span><span class="p">,</span> <span class="n">F_max</span><span class="p">),</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Currently Frames = </span><span class="si">%d</span><span class="se">\t</span><span class="s2">r2 = </span><span class="si">%lg</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">),</span> <span class="n">r2</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">frames</span></div>
+
+
+<div class="viewcode-block" id="perturbate"><a class="viewcode-back" href="../../../module_docs/geometry/transform.html#squid.geometry.transform.perturbate">[docs]</a><span class="k">def</span> <span class="nf">perturbate</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">dr</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">around</span><span class="o">=</span><span class="s2">&quot;com&quot;</span><span class="p">,</span> <span class="n">rotate</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Given a list of atomic coordinates, randomly perturbate them and apply</span>
+<span class="sd">    a slight rotation.</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">        atoms: *list,* :class:`structures.atom.Atom`</span>
+<span class="sd">            A list of atomic coordinates to be perturbated</span>
+<span class="sd">        dx: *float, optional*</span>
+<span class="sd">            By how much you are willing to perturbate via translation.</span>
+<span class="sd">        dr: *float, optional*</span>
+<span class="sd">            By how much you are willing to perturbate via rotation in degrees.</span>
+<span class="sd">        around: *str, optional*</span>
+<span class="sd">            Whether to rotate around the center of mass (com), center of</span>
+<span class="sd">            geometry (cog), or neither (&quot;None&quot; or None).</span>
+<span class="sd">        rotate: *bool, optional*</span>
+<span class="sd">            Whether to randomly rotate the molecule or not.</span>
+
+<span class="sd">    **Returns**</span>
+
+<span class="sd">        perturbated_atoms: *list,* :class:`structures.atom.Atom`</span>
+<span class="sd">            The perturbated list of atomic coordinates.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">:</span>
+        <span class="n">rand_step</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">*</span> <span class="n">dx</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+        <span class="n">a</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">rand_step</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">rotate</span><span class="p">:</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">random_rotation_matrix</span><span class="p">(</span><span class="n">limit_angle</span><span class="o">=</span><span class="n">dr</span><span class="p">)</span>
+        <span class="n">atoms</span> <span class="o">=</span> <span class="n">rotate_atoms</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">around</span><span class="o">=</span><span class="n">around</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">atoms</span></div>
+
+
+<span class="k">def</span> <span class="nf">run_unit_tests</span><span class="p">():</span>
+    <span class="kn">from</span> <span class="nn">squid.structures.atom</span> <span class="k">import</span> <span class="n">Atom</span>
+    <span class="n">frame_1</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">Atom</span><span class="p">(</span><span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">Atom</span><span class="p">(</span><span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">Atom</span><span class="p">(</span><span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="n">frame_2</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">Atom</span><span class="p">(</span><span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="n">Atom</span><span class="p">(</span><span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="n">Atom</span><span class="p">(</span><span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="n">N_FRAMES</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">interp</span> <span class="o">=</span> <span class="n">interpolate</span><span class="p">(</span><span class="n">frame_1</span><span class="p">,</span> <span class="n">frame_2</span><span class="p">,</span> <span class="n">N_FRAMES</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="n">a</span> <span class="o">==</span> <span class="n">b</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">interp</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">frame_1</span><span class="p">)]),</span>\
+        <span class="s2">&quot;Error - interpolate does not include start frame.&quot;</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="n">a</span> <span class="o">==</span> <span class="n">b</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">interp</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">frame_2</span><span class="p">)]),</span>\
+        <span class="s2">&quot;Error - interpolate does not include end frame.&quot;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">interp</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">N_FRAMES</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - interpolate did not include enough frames.&quot;</span>
+    <span class="n">frame_1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">interp</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">frame_1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>\
+        <span class="s2">&quot;Error - Pointer followed through interpolation.  It shouldn&#39;t.&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">squid.unittests.examples</span> <span class="k">import</span> <span class="n">get_test_frames</span>
+    <span class="kn">from</span> <span class="nn">squid.unittests.examples</span> <span class="k">import</span> <span class="n">get_unit_test_structures</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">chex</span><span class="p">,</span> <span class="n">chex_copied</span> <span class="o">=</span> <span class="n">get_unit_test_structures</span><span class="p">()</span>
+    <span class="n">check_atoms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">chex</span><span class="o">.</span><span class="n">atoms</span><span class="p">])</span>
+    <span class="n">EPS</span> <span class="o">=</span> <span class="mf">1E-3</span>
+    <span class="k">for</span> <span class="n">rotate</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+            <span class="n">local_atoms</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">chex_copied</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
+            <span class="n">perturbate</span><span class="p">(</span><span class="n">local_atoms</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">dr</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">around</span><span class="o">=</span><span class="s2">&quot;com&quot;</span><span class="p">,</span> <span class="n">rotate</span><span class="o">=</span><span class="n">rotate</span><span class="p">)</span>
+            <span class="n">local_atoms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">local_atoms</span><span class="p">])</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">check_atoms</span> <span class="o">-</span> <span class="n">local_atoms</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">EPS</span><span class="p">,</span>\
+                <span class="s2">&quot;Error - Perturbation isn&#39;t working.&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+            <span class="n">local_atoms</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">chex_copied</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
+            <span class="n">perturbate</span><span class="p">(</span><span class="n">local_atoms</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">dr</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">around</span><span class="o">=</span><span class="s2">&quot;cog&quot;</span><span class="p">,</span> <span class="n">rotate</span><span class="o">=</span><span class="n">rotate</span><span class="p">)</span>
+            <span class="n">local_atoms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">local_atoms</span><span class="p">])</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">check_atoms</span> <span class="o">-</span> <span class="n">local_atoms</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">EPS</span><span class="p">,</span>\
+                <span class="s2">&quot;Error - Perturbation isn&#39;t working.&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+            <span class="n">local_atoms</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">chex_copied</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
+            <span class="n">perturbate</span><span class="p">(</span><span class="n">local_atoms</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">dr</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">around</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rotate</span><span class="o">=</span><span class="n">rotate</span><span class="p">)</span>
+            <span class="n">local_atoms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">local_atoms</span><span class="p">])</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">check_atoms</span> <span class="o">-</span> <span class="n">local_atoms</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">EPS</span><span class="p">,</span>\
+                <span class="s2">&quot;Error - Perturbation isn&#39;t working.&quot;</span>
+
+    <span class="n">frames</span> <span class="o">=</span> <span class="n">get_test_frames</span><span class="p">()</span>
+    <span class="n">mpf_prior</span> <span class="o">=</span> <span class="n">motion_per_frame</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+    <span class="n">procrustes</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">count_atoms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">append_in_loop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reflection</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">sum</span><span class="p">(</span><span class="n">mpf_prior</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">sum</span><span class="p">(</span><span class="n">motion_per_frame</span><span class="p">(</span><span class="n">frames</span><span class="p">)),</span>\
+        <span class="s2">&quot;Error - Procrustes did not work!&quot;</span>
+    <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">motion_per_frame</span><span class="p">(</span><span class="n">frames</span><span class="p">))</span> <span class="o">-</span> <span class="mf">0.563173</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">EPS</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - Procrustes somehow made worse than before.&quot;</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">chex</span><span class="p">,</span> <span class="n">chex_copied</span> <span class="o">=</span> <span class="n">get_unit_test_structures</span><span class="p">()</span>
+    <span class="n">new_atoms</span><span class="p">,</span> <span class="n">A</span> <span class="o">=</span> <span class="n">align_centroid</span><span class="p">(</span><span class="n">chex</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">recenter</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">skip_H</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">chex</span><span class="o">.</span><span class="n">atoms</span> <span class="o">==</span> <span class="n">chex_copied</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - align_centroid moved atoms within the list!&quot;</span>
+    <span class="n">A_held</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="p">[</span><span class="mf">3.24793594e-02</span><span class="p">,</span> <span class="mf">1.58400634e-01</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.24441908e-03</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">1.58190353e-01</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.25251754e-02</span><span class="p">,</span> <span class="mf">3.87540435e-04</span><span class="p">],</span>
+        <span class="p">[</span><span class="o">-</span><span class="mf">2.16105492e-04</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.93356076e-03</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.54229102e-01</span><span class="p">]])</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">A</span> <span class="o">-</span> <span class="n">A_held</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">EPS</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - align_centroid has changed!&quot;</span>
+
+    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unit Test smooth_xyz&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;squid.geometry.smooth - All unit tests passed!&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run_unit_tests</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../squid.html">Squid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../codebase.html">Codebase</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../console_scripts.html">Console Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Squid 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Henry Herbol.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

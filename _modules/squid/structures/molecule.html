@@ -1,0 +1,625 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>squid.structures.molecule &#8212; Squid 2.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Squid 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for squid.structures.molecule</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+
+<span class="sd">- :class:`Molecule`</span>
+
+<span class="sd">------------</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="n">__docformat__</span> <span class="o">=</span> <span class="s1">&#39;reStructuredText&#39;</span>
+
+<span class="c1"># System imports</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="c1"># Squid imports</span>
+<span class="kn">from</span> <span class="nn">squid.utils</span> <span class="k">import</span> <span class="n">cast</span>
+<span class="kn">from</span> <span class="nn">squid.geometry</span> <span class="k">import</span> <span class="n">misc</span>
+<span class="kn">from</span> <span class="nn">squid.structures.atom</span> <span class="k">import</span> <span class="n">Atom</span>
+<span class="kn">from</span> <span class="nn">squid.structures.topology</span> <span class="k">import</span> <span class="n">Connector</span>
+<span class="kn">from</span> <span class="nn">squid.structures.topology</span> <span class="k">import</span> <span class="n">get_angle</span>
+<span class="kn">from</span> <span class="nn">squid.structures.topology</span> <span class="k">import</span> <span class="n">get_dihedral_angle</span>
+
+<span class="c1"># External imports</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="Molecule"><a class="viewcode-back" href="../../../module_docs/structures/molecule.html#squid.structures.molecule.Molecule">[docs]</a><span class="k">class</span> <span class="nc">Molecule</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    A molecule object to store atoms and any/all associated</span>
+<span class="sd">    interatomic connections.</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">        atoms: *list,* :class:`structures.atom.Atom`</span>
+<span class="sd">            A list of atoms.</span>
+<span class="sd">        bonds: *list,* :class:`structures.topology.Connector` *, optional*</span>
+<span class="sd">            A list of all bonds within the system.</span>
+<span class="sd">        angles: *list,* :class:`structures.topology.Connector` *, optional*</span>
+<span class="sd">            A list of all angles within the system.</span>
+<span class="sd">        dihedrals: *list,* :class:`structures.topology.Connector` *, optional*</span>
+<span class="sd">            A list of all dihedrals within the system.</span>
+<span class="sd">        molecule_index: *int, optional*</span>
+<span class="sd">            The index to be assigned for this molecule.</span>
+<span class="sd">        assign_indices: *bool, optional*</span>
+<span class="sd">            Whether to assign the molecule a default index of 1 (if no other</span>
+<span class="sd">            is specified), and to assign the atomic indices, indexed at 1.</span>
+<span class="sd">            If molecule_index is specified, that will take precedence over</span>
+<span class="sd">            the default of 1; however, the atom re-indexing will still take</span>
+<span class="sd">            place.</span>
+
+<span class="sd">    **Returns**</span>
+
+<span class="sd">        molecule: :class:`structures.molecule.Molecule`</span>
+<span class="sd">            The Molecule class container.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span>
+                 <span class="n">bonds</span><span class="o">=</span><span class="p">[],</span> <span class="n">angles</span><span class="o">=</span><span class="p">[],</span> <span class="n">dihedrals</span><span class="o">=</span><span class="p">[],</span>
+                 <span class="n">molecule_index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">assign_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span> <span class="o">=</span> <span class="n">bonds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angles</span> <span class="o">=</span> <span class="n">angles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dihedrals</span> <span class="o">=</span> <span class="n">dihedrals</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">molecule_index</span> <span class="o">=</span> <span class="n">molecule_index</span>
+
+        <span class="c1"># If we want to, by default, assign pertinent values</span>
+        <span class="k">if</span> <span class="n">assign_indices</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">molecule_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">molecule_index</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="c1"># Reassign atom indexing (note - LAMMPs has 1 indexing)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reassign_indices</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># Generate all connections if possible</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assign_angles_and_dihedrals</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">atoms</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">    &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">))</span>
+        <span class="n">bonds</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">    &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span><span class="p">))</span>
+        <span class="n">angles</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">    &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">angles</span><span class="p">))</span>
+        <span class="n">dihedrals</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">    &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dihedrals</span><span class="p">))</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">ATOMS</span>
+<span class="s1">    </span><span class="si">%s</span><span class="s1"></span>
+<span class="s1">BONDS (molecule_index: index)</span>
+<span class="s1">    </span><span class="si">%s</span><span class="s1"></span>
+<span class="s1">ANGLES (molecule_index: index)</span>
+<span class="s1">    </span><span class="si">%s</span><span class="s1"></span>
+<span class="s1">DIHERALS (molecule_index: index)</span>
+<span class="s1">    </span><span class="si">%s</span><span class="s1"></span>
+<span class="s1">&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">bonds</span><span class="p">,</span> <span class="n">angles</span><span class="p">,</span> <span class="n">dihedrals</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        If given some 3D array, offset all atomic coordinates.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            other: *array, float*</span>
+<span class="sd">                Some 3D array/tuple/list of sorts that indicates a</span>
+<span class="sd">                translation.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">cast</span><span class="o">.</span><span class="n">assert_vec</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">numeric</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new</span>
+
+    <span class="k">def</span> <span class="nf">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        If given some 3D array, offset all atomic coordinates.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            other: *array, float*</span>
+<span class="sd">                Some 3D array/tuple/list of sorts that indicates a</span>
+<span class="sd">                translation.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">cast</span><span class="o">.</span><span class="n">assert_vec</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">numeric</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__add__</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        If given some 3D array, scale all atomic coordinates.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            other: *array, float*</span>
+<span class="sd">                Some 3D array/tuple/list of sorts that indicates a</span>
+<span class="sd">                scalar operation.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">cast</span><span class="o">.</span><span class="n">assert_vec</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">numeric</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new</span>
+
+    <span class="k">def</span> <span class="nf">__truediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        If given some 3D array, scale all atomic coordinates.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            other: *array, float*</span>
+<span class="sd">                Some 3D array/tuple/list of sorts that indicates a</span>
+<span class="sd">                scalar operation.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">assert</span> <span class="mf">0.0</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">other</span><span class="p">,</span>\
+            <span class="s2">&quot;Error - Cannot divide by 0!&quot;</span>
+        <span class="n">cast</span><span class="o">.</span><span class="n">assert_vec</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">numeric</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__mul__</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">([</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">bonds</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">angles</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">angles</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dihedrals</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">dihedrals</span>
+        <span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">hash</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">)),</span>
+                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span><span class="p">)),</span>
+                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">angles</span><span class="p">)),</span>
+                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dihedrals</span><span class="p">))</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="Molecule.reassign_indices"><a class="viewcode-back" href="../../../module_docs/structures/molecule.html#squid.structures.molecule.Molecule.reassign_indices">[docs]</a>    <span class="k">def</span> <span class="nf">reassign_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Simply reassign atomic indices based on their current positions</span>
+<span class="sd">        in the atoms array.  This is zero indexed, unless otherwise specified.</span>
+<span class="sd">        Further, assign the molecule_index of the atoms to be the same as this</span>
+<span class="sd">        molecule object.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            offset: *int, optional*</span>
+<span class="sd">                What offset to use when indexing.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">):</span>
+            <span class="n">a</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="n">offset</span>
+            <span class="n">a</span><span class="o">.</span><span class="n">molecule_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">molecule_index</span></div>
+
+<div class="viewcode-block" id="Molecule.flatten"><a class="viewcode-back" href="../../../module_docs/structures/molecule.html#squid.structures.molecule.Molecule.flatten">[docs]</a>    <span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Flatten out all atoms into a 1D array.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            atoms: *list, float*</span>
+<span class="sd">                A 1D array of atomic positions.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">])</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Molecule.net_charge"><a class="viewcode-back" href="../../../module_docs/structures/molecule.html#squid.structures.molecule.Molecule.net_charge">[docs]</a>    <span class="k">def</span> <span class="nf">net_charge</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Return the net charge of the molecule.  This requires that atoms</span>
+<span class="sd">        have charges associated with them.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            charge: *float*</span>
+<span class="sd">                The atomic charge of the system.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="nb">sum</span><span class="p">([</span>
+            <span class="n">a</span><span class="o">.</span><span class="n">charge</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s2">&quot;charge&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">a</span><span class="o">.</span><span class="n">charge</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">]))</span></div>
+
+<div class="viewcode-block" id="Molecule.rotate"><a class="viewcode-back" href="../../../module_docs/structures/molecule.html#squid.structures.molecule.Molecule.rotate">[docs]</a>    <span class="k">def</span> <span class="nf">rotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">around</span><span class="o">=</span><span class="s2">&quot;com&quot;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Rotate the molecule by the given matrix *m*.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            m: *list, list, float*</span>
+<span class="sd">                A 3x3 matrix describing the rotation to be</span>
+<span class="sd">                applied to this molecule.</span>
+<span class="sd">            around: *str, optional*</span>
+<span class="sd">                Whether to rotate around the center of mass (com), center of</span>
+<span class="sd">                geometry (cog), or neither (&quot;None&quot; or None).</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">misc</span><span class="o">.</span><span class="n">rotate_atoms</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">around</span><span class="o">=</span><span class="n">around</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Molecule.translate"><a class="viewcode-back" href="../../../module_docs/structures/molecule.html#squid.structures.molecule.Molecule.translate">[docs]</a>    <span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Apply a translation to this molecule.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            v: *list, float*</span>
+<span class="sd">                A vector of 3 floats specifying the x, y,</span>
+<span class="sd">                and z offsets to be applied.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">cast</span><span class="o">.</span><span class="n">assert_vec</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">numeric</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span>
+            <span class="n">a</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Molecule.scale"><a class="viewcode-back" href="../../../module_docs/structures/molecule.html#squid.structures.molecule.Molecule.scale">[docs]</a>    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Apply a scalar to this molecule.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            v: *list, float*</span>
+<span class="sd">                A vector of 3 floats specifying the x, y,</span>
+<span class="sd">                and z scalars to be applied.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">cast</span><span class="o">.</span><span class="n">assert_vec</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">numeric</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span>
+            <span class="n">a</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Molecule.set_positions"><a class="viewcode-back" href="../../../module_docs/structures/molecule.html#squid.structures.molecule.Molecule.set_positions">[docs]</a>    <span class="k">def</span> <span class="nf">set_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">positions</span><span class="p">,</span> <span class="n">new_atom_list</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Manually specify atomic positions of your molecule.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            positions: *list, float*</span>
+<span class="sd">                A list, either 2D or 1D, of the atomic positions.</span>
+<span class="sd">                Note, this should be in the same order that the</span>
+<span class="sd">                atoms are stored in.</span>
+
+<span class="sd">            new_atom_list: *bool, optional*</span>
+<span class="sd">                Whether to generate an entirely new atom list</span>
+<span class="sd">                (True) or re-write atom positions of those atoms</span>
+<span class="sd">                already stored (False). Note, if a new list is</span>
+<span class="sd">                written, connections are wiped out.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">new_atom_list</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Position list does not hold the same number </span><span class="se">\</span>
+<span class="s2">of atoms as does this molecule. Consider raising new_atom_list flag in </span><span class="se">\</span>
+<span class="s2">set_positions.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_atom_list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">Atom</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">positions</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">positions</span><span class="p">):</span>
+                <span class="n">a</span><span class="o">.</span><span class="n">set_position</span><span class="p">(</span><span class="n">b</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Molecule.get_center_of_geometry"><a class="viewcode-back" href="../../../module_docs/structures/molecule.html#squid.structures.molecule.Molecule.get_center_of_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">get_center_of_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip_H</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Calculate the center of geometry of the molecule.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            skip_H: *bool, optional*</span>
+<span class="sd">                Whether to include Hydrogens in the</span>
+<span class="sd">                calculation (False), or not (True).</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            cog: *np.array, float*</span>
+<span class="sd">                A np.array of the x, y, and z coordinate</span>
+<span class="sd">                of the center of geometry.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">misc</span><span class="o">.</span><span class="n">get_center_of_geometry</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">skip_H</span><span class="o">=</span><span class="n">skip_H</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Molecule.get_center_of_mass"><a class="viewcode-back" href="../../../module_docs/structures/molecule.html#squid.structures.molecule.Molecule.get_center_of_mass">[docs]</a>    <span class="k">def</span> <span class="nf">get_center_of_mass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip_H</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Calculate the center of mass of the molecule.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            skip_H: *bool, optional*</span>
+<span class="sd">                Whether to include Hydrogens in the</span>
+<span class="sd">                calculation (False), or not (True).</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            com: *np.array, float*</span>
+<span class="sd">                A np.array of the x, y, and z coordinate of the center of mass.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">misc</span><span class="o">.</span><span class="n">get_center_of_mass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">skip_H</span><span class="o">=</span><span class="n">skip_H</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Molecule.merge"><a class="viewcode-back" href="../../../module_docs/structures/molecule.html#squid.structures.molecule.Molecule.merge">[docs]</a>    <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">deepcopy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This function merges another molecule into this one, offsetting</span>
+<span class="sd">        indices as needed.  When merging, the atom indices of this molecule</span>
+<span class="sd">        is reassigned.  Futher, if deepcopy is False, then the atom indices</span>
+<span class="sd">        of the other molecule are also reassigned.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            deepcopy: *bool, optional*</span>
+<span class="sd">                Whether to merge via a deep copy, in which</span>
+<span class="sd">                atoms are replicated (that is, the atom</span>
+<span class="sd">                pointers are different between the molecules),</span>
+<span class="sd">                or to merge via pointers, in which the other</span>
+<span class="sd">                molecule has similar pointers.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reassign_indices</span><span class="p">()</span>
+        <span class="n">local_other</span> <span class="o">=</span> <span class="n">other</span>
+        <span class="k">if</span> <span class="n">deepcopy</span><span class="p">:</span>
+            <span class="n">local_other</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="n">local_other</span><span class="o">.</span><span class="n">reassign_indices</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">+=</span> <span class="n">other</span><span class="o">.</span><span class="n">atoms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span> <span class="o">+=</span> <span class="n">other</span><span class="o">.</span><span class="n">bonds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angles</span> <span class="o">+=</span> <span class="n">other</span><span class="o">.</span><span class="n">angles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dihedrals</span> <span class="o">+=</span> <span class="n">other</span><span class="o">.</span><span class="n">dihedrals</span></div>
+
+<div class="viewcode-block" id="Molecule.assign_angles_and_dihedrals"><a class="viewcode-back" href="../../../module_docs/structures/molecule.html#squid.structures.molecule.Molecule.assign_angles_and_dihedrals">[docs]</a>    <span class="k">def</span> <span class="nf">assign_angles_and_dihedrals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Given a list of atom structures with bonded information, calculate</span>
+<span class="sd">        angles and dihedrals.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="c1"># Get a list of bonded interactions to each atom.</span>
+        <span class="n">bonded</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span>
+                <span class="n">a2</span> <span class="k">for</span> <span class="n">a2</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span>
+                <span class="k">if</span> <span class="nb">any</span><span class="p">([</span>
+                    <span class="nb">all</span><span class="p">([</span>
+                        <span class="n">a1</span> <span class="ow">in</span> <span class="n">b</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span>
+                        <span class="n">a2</span> <span class="ow">in</span> <span class="n">b</span><span class="o">.</span><span class="n">atoms</span>
+                    <span class="p">])</span>
+                    <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span>
+                <span class="p">])</span> <span class="ow">and</span> <span class="n">a1</span> <span class="o">!=</span> <span class="n">a2</span>
+            <span class="p">]</span>
+            <span class="k">for</span> <span class="n">a1</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span>
+        <span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">angles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">center</span><span class="p">,</span> <span class="n">center_bonded</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">bonded</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">center_bonded</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">center_bonded</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">center_bonded</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">angles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">Connector</span><span class="p">(</span>
+                            <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">center</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span>
+                            <span class="n">angle</span><span class="o">=</span><span class="n">get_angle</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">center</span><span class="p">,</span> <span class="n">b</span><span class="p">))</span>
+                        <span class="p">))</span>
+
+        <span class="c1"># Updated to provide deterministic dihedral order with the same</span>
+        <span class="c1"># time complexity</span>
+        <span class="n">dihedral_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">dihedral_set</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">angle</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">angles</span><span class="p">:</span>
+            <span class="n">a0</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">a2</span> <span class="o">=</span> <span class="n">angle</span><span class="o">.</span><span class="n">atoms</span>
+            <span class="n">a0_bonded</span> <span class="o">=</span> <span class="n">bonded</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">a0</span><span class="p">)]</span>
+            <span class="n">a2_bonded</span> <span class="o">=</span> <span class="n">bonded</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">a2</span><span class="p">)]</span>
+
+            <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">a0_bonded</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">a</span> <span class="ow">is</span> <span class="n">angle</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="k">continue</span>
+                <span class="n">dihedral</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="p">,)</span> <span class="o">+</span> <span class="n">angle</span><span class="o">.</span><span class="n">atoms</span>
+                <span class="k">if</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">dihedral</span><span class="p">))</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dihedral_set</span><span class="p">:</span>
+                    <span class="n">dihedral_set</span><span class="p">[</span><span class="n">dihedral</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">dihedral_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dihedral</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">a2_bonded</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">b</span> <span class="ow">is</span> <span class="n">angle</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="k">continue</span>
+                <span class="n">dihedral</span> <span class="o">=</span> <span class="n">angle</span><span class="o">.</span><span class="n">atoms</span> <span class="o">+</span> <span class="p">(</span><span class="n">b</span><span class="p">,)</span>
+                <span class="k">if</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">dihedral</span><span class="p">))</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dihedral_set</span><span class="p">:</span>
+                    <span class="n">dihedral_set</span><span class="p">[</span><span class="n">dihedral</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">dihedral_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dihedral</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dihedrals</span> <span class="o">=</span> <span class="p">[</span><span class="n">Connector</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">angle</span><span class="o">=</span><span class="n">get_dihedral_angle</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+                          <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">dihedral_list</span><span class="p">))]</span></div></div>
+
+
+<span class="k">def</span> <span class="nf">run_unit_tests</span><span class="p">():</span>
+    <span class="kn">from</span> <span class="nn">squid.unittests.examples</span> <span class="k">import</span> <span class="n">get_unit_test_structures</span>
+    <span class="n">m1a</span><span class="p">,</span> <span class="n">m1b</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">chex</span><span class="p">,</span> <span class="n">copied_chex</span> <span class="o">=</span> <span class="n">get_unit_test_structures</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">m1a</span> <span class="o">==</span> <span class="n">m1b</span><span class="p">,</span> <span class="s2">&quot;Error - Unable to identify identical molecules.&quot;</span>
+    <span class="k">assert</span> <span class="n">m1a</span> <span class="o">!=</span> <span class="n">m2</span><span class="p">,</span> <span class="s2">&quot;Error - Unable to distinguish different molecules.&quot;</span>
+
+    <span class="n">EPS</span> <span class="o">=</span> <span class="mf">1E-6</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+        <span class="n">m1a</span><span class="o">.</span><span class="n">get_center_of_geometry</span><span class="p">()</span> <span class="o">-</span> <span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">EPS</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - Center of Geometry failed.&quot;</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+        <span class="n">m1a</span><span class="o">.</span><span class="n">get_center_of_mass</span><span class="p">()</span> <span class="o">-</span> <span class="p">(</span><span class="mf">2.00107278</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">EPS</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - Center of Geometry failed.&quot;</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+        <span class="n">m1a</span><span class="o">.</span><span class="n">get_center_of_geometry</span><span class="p">(</span><span class="n">skip_H</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">EPS</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - Center of Geometry failed.&quot;</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+        <span class="n">m1a</span><span class="o">.</span><span class="n">get_center_of_mass</span><span class="p">(</span><span class="n">skip_H</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mf">1.82598148</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">EPS</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - Center of Geometry failed.&quot;</span>
+
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+    <span class="n">com</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mf">2.00107278</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">m1a</span> <span class="o">*</span> <span class="n">scale</span><span class="p">)</span><span class="o">.</span><span class="n">get_center_of_mass</span><span class="p">()</span> <span class="o">-</span> <span class="n">com</span> <span class="o">*</span> <span class="n">scale</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">EPS</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - Multiplication failed.&quot;</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">m1a</span> <span class="o">/</span> <span class="n">scale</span><span class="p">)</span><span class="o">.</span><span class="n">get_center_of_mass</span><span class="p">()</span> <span class="o">-</span> <span class="n">com</span> <span class="o">/</span> <span class="n">scale</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">EPS</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - Division failed.&quot;</span>
+
+    <span class="k">assert</span> <span class="n">copied_chex</span><span class="o">.</span><span class="n">bonds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="n">copied_chex</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span>\
+        <span class="s2">&quot;Error - When deepcopying molecule, the bonds are not connected.&quot;</span>
+    <span class="k">assert</span> <span class="n">copied_chex</span><span class="o">.</span><span class="n">bonds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">chex</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span>\
+        <span class="s2">&quot;Error - When deepcopying molecule, the atoms were not deepcopied.&quot;</span>
+
+    <span class="n">flat_chex</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="o">-</span><span class="mf">1.54846</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.62372</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.23277</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.36075</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.8303</span><span class="p">,</span> <span class="mf">0.22901</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.09058</span><span class="p">,</span>
+        <span class="o">-</span><span class="mf">0.72742</span><span class="p">,</span> <span class="mf">0.20628</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.99055</span><span class="p">,</span> <span class="mf">0.29459</span><span class="p">,</span> <span class="mf">0.16994</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.59582</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.54877</span><span class="p">,</span>
+        <span class="o">-</span><span class="mf">1.32609</span><span class="p">,</span> <span class="mf">0.54389</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.03745</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.25281</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.03335</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.65785</span><span class="p">,</span> <span class="mf">1.29946</span><span class="p">,</span>
+        <span class="mf">0.47714</span><span class="p">,</span> <span class="mf">0.11843</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.19774</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.26907</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.24874</span><span class="p">,</span> <span class="mf">0.19654</span><span class="p">,</span> <span class="mf">1.56326</span><span class="p">,</span>
+        <span class="o">-</span><span class="mf">2.1112</span><span class="p">,</span> <span class="mf">0.1429</span><span class="p">,</span> <span class="mf">0.6251</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.03877</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.34664</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.73066</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.14223</span><span class="p">,</span>
+        <span class="o">-</span><span class="mf">0.23062</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.3831</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.75673</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.15876</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.43273</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.82396</span><span class="p">,</span> <span class="mf">1.32351</span><span class="p">,</span>
+        <span class="o">-</span><span class="mf">1.79709</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.2148</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.32304</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.29648</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.98613</span><span class="p">,</span> <span class="mf">0.18023</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.21477</span><span class="p">,</span>
+        <span class="o">-</span><span class="mf">3.33864</span><span class="p">,</span> <span class="mf">1.28832</span><span class="p">,</span> <span class="mf">0.17038</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.16187</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.22089</span>
+    <span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">flat_chex</span> <span class="o">==</span> <span class="n">chex</span><span class="o">.</span><span class="n">flatten</span><span class="p">()),</span>\
+        <span class="s2">&quot;Error - Flattening molecule has failed.&quot;</span>
+
+    <span class="c1"># Randomize the atom coordinates</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">copied_chex</span><span class="o">.</span><span class="n">atoms</span><span class="p">))</span>
+        <span class="n">copied_chex</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">flat_chex</span> <span class="o">==</span> <span class="n">copied_chex</span><span class="o">.</span><span class="n">flatten</span><span class="p">()),</span>\
+        <span class="s2">&quot;Error - Need to scramble here for further testing, but this failed.&quot;</span>
+    <span class="n">copied_chex</span><span class="o">.</span><span class="n">set_positions</span><span class="p">(</span><span class="n">flat_chex</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">flat_chex</span> <span class="o">==</span> <span class="n">copied_chex</span><span class="o">.</span><span class="n">flatten</span><span class="p">()),</span>\
+        <span class="s2">&quot;Error - set_positions failed.&quot;</span>
+
+    <span class="c1"># Assess rotation</span>
+    <span class="n">atoms</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">Atom</span><span class="p">(</span><span class="s2">&quot;H1&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">Atom</span><span class="p">(</span><span class="s2">&quot;H2&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">Atom</span><span class="p">(</span><span class="s2">&quot;H3&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="n">mol</span> <span class="o">=</span> <span class="n">Molecule</span><span class="p">(</span>
+        <span class="n">atoms</span><span class="p">,</span>
+        <span class="n">bonds</span><span class="o">=</span><span class="p">[</span><span class="n">Connector</span><span class="p">((</span><span class="n">atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">atoms</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span>
+               <span class="n">Connector</span><span class="p">((</span><span class="n">atoms</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">atoms</span><span class="p">[</span><span class="mi">2</span><span class="p">]))]</span>
+    <span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]]</span>
+    <span class="n">mol</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">EPS</span> <span class="o">=</span> <span class="mf">1E-6</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+        <span class="n">mol</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mf">1.000</span><span class="p">,</span> <span class="mf">0.000</span><span class="p">,</span> <span class="mf">0.000</span><span class="p">)))</span> <span class="o">&lt;</span> <span class="n">EPS</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - Failed rotation!&quot;</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+        <span class="n">mol</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mf">0.000</span><span class="p">,</span> <span class="mf">0.000</span><span class="p">,</span> <span class="mf">1.000</span><span class="p">)))</span> <span class="o">&lt;</span> <span class="n">EPS</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - Failed rotation!&quot;</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+        <span class="n">mol</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mf">0.000</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.000</span><span class="p">,</span> <span class="mf">0.000</span><span class="p">)))</span> <span class="o">&lt;</span> <span class="n">EPS</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - Failed rotation!&quot;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;squid.structures.molecule - All unit tests passed!&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run_unit_tests</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../squid.html">Squid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../codebase.html">Codebase</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../console_scripts.html">Console Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Squid 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Henry Herbol.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

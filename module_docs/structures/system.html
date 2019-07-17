@@ -1,0 +1,408 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>&lt;no title&gt; &#8212; Squid 2.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-squid.structures.system"></span><dl class="class">
+<dt id="squid.structures.system.System">
+<em class="property">class </em><code class="descclassname">squid.structures.system.</code><code class="descname">System</code><span class="sig-paren">(</span><em>name</em>, <em>box_size=(10.0</em>, <em>10.0</em>, <em>10.0)</em>, <em>box_angles=(90.0</em>, <em>90.0</em>, <em>90.0)</em>, <em>periodic=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/structures/system.html#System"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.structures.system.System" title="Permalink to this definition">¶</a></dt>
+<dd><p>A system object to store molecules for one’s simulations.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>name: <em>str</em></dt>
+<dd>System Name.  This is used when any files/folders are generated.</dd>
+<dt>box_size: <em>tuple, float, optional</em></dt>
+<dd>System x, y, and z lengths.</dd>
+<dt>box_angles: <em>tuple, float, optional</em></dt>
+<dd>System xy, yz, and xz angles in degrees.</dd>
+<dt>periodic: <em>bool, optional</em></dt>
+<dd>Whether to have periodic boundaries on or off.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>system: <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.system.System</span></code></dt>
+<dd>The System class container.</dd>
+</dl>
+</div></blockquote>
+<dl class="method">
+<dt id="squid.structures.system.System.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>molecule</em>, <em>mol_offset=1</em>, <em>deepcopy=True</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/structures/system.html#System.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.structures.system.System.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function to add a molecule to this system.  Note, this addition can
+be either a deepcopy or not.  If it is not a deepcopy, then the
+molecule is added as a pointer and can be adjusted externally. By
+default it is added via a deepcopy to prevent untracked errors.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>molecule: <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Molecule</span></code></dt>
+<dd>A Molecule structure.</dd>
+<dt>mol_offset: <em>int, optional</em></dt>
+<dd>The offset to apply to molecule_index.</dd>
+<dt>deepcopy: <em>bool, optional</em></dt>
+<dd>Whether to add the molecule into the system via a deepcopy or
+not.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="squid.structures.system.System.contains_molecule">
+<code class="descname">contains_molecule</code><span class="sig-paren">(</span><em>molecule</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/structures/system.html#System.contains_molecule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.structures.system.System.contains_molecule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if this system contains a molecule, based on the atoms, bonds,
+angles and dihedrals.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>molecule: <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Molecule</span></code></dt>
+<dd>A molecule to be checked if it resides within this system.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>is_contained: <em>bool</em></dt>
+<dd>A boolean specifying if the molecule passed to this function
+is contained within this System object.  This implies that
+all atoms, bonds, angles, and dihedrals within the molecule are
+present in a molecule within the system.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="squid.structures.system.System.dump_angles_data">
+<code class="descname">dump_angles_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/structures/system.html#System.dump_angles_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.structures.system.System.dump_angles_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will dump all the bond information to a LAMMPS data
+file.</p>
+<blockquote>
+<div>bond_index bond_type_index atoms…atoms</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>connection_info: <em>str</em></dt>
+<dd>A string of all the connector information with proper data.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="squid.structures.system.System.dump_atoms_data">
+<code class="descname">dump_atoms_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/structures/system.html#System.dump_atoms_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.structures.system.System.dump_atoms_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will dump all the atom information to a LAMMPS data
+file.</p>
+<blockquote>
+<div>atom_index mol_index type charge x y z</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>atomic_info: <em>str</em></dt>
+<dd>A string of all the atomic information with proper data.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="squid.structures.system.System.dump_bonds_data">
+<code class="descname">dump_bonds_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/structures/system.html#System.dump_bonds_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.structures.system.System.dump_bonds_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will dump all the bond information to a LAMMPS data
+file.</p>
+<blockquote>
+<div>bond_index bond_type_index atoms…atoms</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>connection_info: <em>str</em></dt>
+<dd>A string of all the connector information with proper data.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="squid.structures.system.System.dump_dihedrals_data">
+<code class="descname">dump_dihedrals_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/structures/system.html#System.dump_dihedrals_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.structures.system.System.dump_dihedrals_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will dump all the bond information to a LAMMPS data
+file.</p>
+<blockquote>
+<div>bond_index bond_type_index atoms…atoms</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>connection_info: <em>str</em></dt>
+<dd>A string of all the connector information with proper data.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="squid.structures.system.System.dump_pair_coeffs">
+<code class="descname">dump_pair_coeffs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/structures/system.html#System.dump_pair_coeffs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.structures.system.System.dump_pair_coeffs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Will try to dump all available pair coefficients.  Currently, this
+means that Coulomb, Lennard-Jones, and Morse will be attempted.
+If you prefer that one or another not be output, you must set the
+appropriate masks to your parameter object.  For example, assume this
+System object is called “solv_box”, you can do the following prior to
+dumping the pair coeffs:</p>
+<blockquote>
+<div>solv_box.parameters.coul_mask = True
+solv_box.parameters.lj_mask = False
+solv_box.parameters.morse_mask = False</div></blockquote>
+<p>Note - this function dumps pair coeffs for the input script, NOT the
+data file.  If you wish for the alternative, see
+dump_pair_coeffs_data()</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="squid.structures.system.System.dump_pair_coeffs_data">
+<code class="descname">dump_pair_coeffs_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/structures/system.html#System.dump_pair_coeffs_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.structures.system.System.dump_pair_coeffs_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Will try to dump all available pair coefficients.  Currently, this
+means that Coulomb, Lennard-Jones, and Morse will be attempted.
+If you prefer that one or another not be output, you must set the
+appropriate masks to your parameter object.  For example, assume this
+System object is called “solv_box”, you can do the following prior to
+dumping the pair coeffs:</p>
+<blockquote>
+<div>solv_box.parameters.coul_mask = True
+solv_box.parameters.lj_mask = False
+solv_box.parameters.morse_mask = False</div></blockquote>
+<p>Note - this function dumps pair coeffs for the data file, NOT the
+input script.  If you wish for the alternative, see dump_pair_coeffs()</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="squid.structures.system.System.get_atom_masses">
+<code class="descname">get_atom_masses</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/structures/system.html#System.get_atom_masses"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.structures.system.System.get_atom_masses" title="Permalink to this definition">¶</a></dt>
+<dd><p>This simplifies using data file writing by getting the masses of all
+the atoms in the correct order.</p>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>masses: <em>list, float</em></dt>
+<dd>A list of the masses for each atom type.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="squid.structures.system.System.get_center_of_geometry">
+<code class="descname">get_center_of_geometry</code><span class="sig-paren">(</span><em>skip_H=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/structures/system.html#System.get_center_of_geometry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.structures.system.System.get_center_of_geometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the center of geometry of the system.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>skip_H: <em>bool, optional</em></dt>
+<dd>Whether to include Hydrogens in the
+calculation (False), or not (True).</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>cog: <em>np.array, float</em></dt>
+<dd>A np.array of the x, y, and z coordinate
+of the center of geometry.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="squid.structures.system.System.get_center_of_mass">
+<code class="descname">get_center_of_mass</code><span class="sig-paren">(</span><em>skip_H=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/structures/system.html#System.get_center_of_mass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.structures.system.System.get_center_of_mass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the center of mass of the system.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>skip_H: <em>bool, optional</em></dt>
+<dd>Whether to include Hydrogens in the
+calculation (False), or not (True).</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>com: <em>np.array, float</em></dt>
+<dd>A np.array of the x, y, and z coordinate of the center of mass.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="squid.structures.system.System.get_elements">
+<code class="descname">get_elements</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/structures/system.html#System.get_elements"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.structures.system.System.get_elements" title="Permalink to this definition">¶</a></dt>
+<dd><p>This simplifies using dump_modify by getting a list of the elements in
+this system, sorted by their weight.  Note, duplicates will exist if
+different atom types exist within this system!</p>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>elements: <em>list, str</em></dt>
+<dd>A list of the elements, sorted appropriately for something
+like dump_modify.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="squid.structures.system.System.reassign_indices">
+<code class="descname">reassign_indices</code><span class="sig-paren">(</span><em>mol_offset=1</em>, <em>atom_offset=1</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/structures/system.html#System.reassign_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.structures.system.System.reassign_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a system of many molecules and atoms, reassign all the indices
+to be consistent.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>mol_offset: <em>int, optional</em></dt>
+<dd>The molecule atom offset.  Do we start at 0 or 1 or 2?
+By default it is 0.</dd>
+<dt>atom_offset: <em>int, optional</em></dt>
+<dd>The atom offset.  Do we start at 0 or 1 or 2?
+By default it is 0.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="squid.structures.system.System.rotate">
+<code class="descname">rotate</code><span class="sig-paren">(</span><em>m</em>, <em>around='com'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/structures/system.html#System.rotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.structures.system.System.rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate the system by the given matrix <em>m</em>.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>m: <em>list, list, float</em></dt>
+<dd>A 3x3 matrix describing the rotation to be
+applied to this molecule.</dd>
+<dt>around: <em>str, optional</em></dt>
+<dd>Whether to rotate around the center of mass (com), center of
+geometry (cog), or neither (“None” or None).</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="squid.structures.system.System.set_types">
+<code class="descname">set_types</code><span class="sig-paren">(</span><em>opls_file='/home/hherbol/Programs/squid/2.0.0/squid/structures/../forcefields/potentials/oplsaa.prm'</em>, <em>smrff_file=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/structures/system.html#System.set_types"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.structures.system.System.set_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the atoms, bonds, angles, and dihedrals in a system object,
+generate a list of the unique atom, bond, angle, dihedral types
+and assign that to the system object.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>opls_file: <em>str, optional</em></dt>
+<dd>A path to an opls file.  By default, this points to the stored
+values in squid.  If None, then no OPLS file is read.
+Otherwise, a custom file is read.</dd>
+<dt>smrff_file: <em>str, optional</em></dt>
+<dd>A path to a smrff file.  By default, none is read.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="squid.structures.system.System.zhi">
+<code class="descname">zhi</code><em class="property"> = None</em><a class="headerlink" href="#squid.structures.system.System.zhi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Otherwise, we have a monoclinic box.  We will set the
+center to the euclidean origin.</p>
+</dd></dl>
+
+</dd></dl>
+
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../squid.html">Squid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../codebase.html">Codebase</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../console_scripts.html">Console Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/module_docs/structures/system.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Henry Herbol.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

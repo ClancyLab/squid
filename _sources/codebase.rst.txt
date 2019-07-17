@@ -46,6 +46,11 @@ maths
 
 .. include:: ./maths.rst
 
+optimizers
+--------------------
+
+.. include:: ./optimizers.rst
+
 orca
 --------------------
 

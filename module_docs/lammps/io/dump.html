@@ -1,0 +1,167 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>&lt;no title&gt; &#8212; Squid 2.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-squid.lammps.io.dump"></span><dl class="function">
+<dt id="squid.lammps.io.dump.read_dump">
+<code class="descclassname">squid.lammps.io.dump.</code><code class="descname">read_dump</code><span class="sig-paren">(</span><em>fptr, ext='.dump', coordinates=['x', 'y', 'z'], extras=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/squid/lammps/io/dump.html#read_dump"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.lammps.io.dump.read_dump" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to read in a generic dump file.  Currently it (1) requires
+element, x, y, z in the dump.  You can also use xu, yu, and zu if
+the unwraped flag is set to True.</p>
+<p>Due to individual preference, the extension was separated.  Thus,
+if you dump to .xyz, have ext=”.xyz”, etc.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>fptr: <em>str</em></dt>
+<dd>Name of the dump file with NO extension (ex. ‘run’ instead
+of ‘run.dump’).  This can also be a relative path.  If no relative
+path is given, and the file cannot be found, it will default
+check in lammps/fptr/fptr+ext.</dd>
+<dt>ext: <em>str, optional</em></dt>
+<dd>The extension for the dump file.  Note, this is default “.dump”
+but can be anything (ensure you have the “.”).</dd>
+<dt>coordinates: <em>list, str, optional</em></dt>
+<dd>A list of strings describing how the coordinates are
+specified (x vs xs vs xu vs xsu)</dd>
+<dt>extras: <em>list, str, optional</em></dt>
+<dd>An additional list of things you want to read in from the dump
+file.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>frames: <em>list, list</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dd>A list of lists, each holding atom structures.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="squid.lammps.io.dump.read_dump_gen">
+<code class="descclassname">squid.lammps.io.dump.</code><code class="descname">read_dump_gen</code><span class="sig-paren">(</span><em>fptr, ext='.dump', coordinates=['x', 'y', 'z'], extras=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/squid/lammps/io/dump.html#read_dump_gen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.lammps.io.dump.read_dump_gen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to read in a generic dump file.  Currently it (1) requires
+element, x, y, z in the dump.  You can also use xu, yu, and zu if
+the unwraped flag is set to True.</p>
+<p>Due to individual preference, the extension was separated.  Thus,
+if you dump to .xyz, have ext=”.xyz”, etc.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>fptr: <em>str</em></dt>
+<dd>Name of the dump file with NO extension (ex. ‘run’ instead
+of ‘run.dump’).  This can also be a relative path.  If no relative
+path is given, and the file cannot be found, it will default
+check in lammps/fptr/fptr+ext.</dd>
+<dt>ext: <em>str, optional</em></dt>
+<dd>The extension for the dump file.  Note, this is default “.dump”
+but can be anything (ensure you have the “.”).</dd>
+<dt>coordinates: <em>list, str, optional</em></dt>
+<dd>A list of strings describing how the coordinates are
+specified (x vs xs vs xu vs xsu)</dd>
+<dt>extras: <em>list, str, optional</em></dt>
+<dd>An additional list of things you want to read in from the dump
+file.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>frames: <em>list, list</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dd>A list of lists, each holding atom structures.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../squid.html">Squid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../codebase.html">Codebase</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../console_scripts.html">Console Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/module_docs/lammps/io/dump.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Henry Herbol.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

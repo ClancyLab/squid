@@ -1,0 +1,409 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>squid.files.cml_io &#8212; Squid 2.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Squid 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for squid.files.cml_io</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">xml</span>
+
+<span class="kn">from</span> <span class="nn">squid.structures.atom</span> <span class="k">import</span> <span class="n">Atom</span>
+<span class="kn">from</span> <span class="nn">squid.structures.system</span> <span class="k">import</span> <span class="n">System</span>
+<span class="kn">from</span> <span class="nn">squid.structures.molecule</span> <span class="k">import</span> <span class="n">Molecule</span>
+<span class="kn">from</span> <span class="nn">squid.structures.topology</span> <span class="k">import</span> <span class="n">Connector</span>
+
+
+<div class="viewcode-block" id="read_cml"><a class="viewcode-back" href="../../../module_docs/files/cml_io.html#squid.files.cml_io.read_cml">[docs]</a><span class="k">def</span> <span class="nf">read_cml</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Read in a file written in the Chemical Markup Language (CML) format.</span>
+<span class="sd">    As cml files may hold more than simple atomic coordinates, we return a</span>
+<span class="sd">    list of molecules instead.</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">        name: *str*</span>
+<span class="sd">            File name.</span>
+
+<span class="sd">    **Returns**</span>
+
+<span class="sd">        molecules: *list,* :class:`squid.structures.molecule.Molecule`</span>
+<span class="sd">            A list of molecules in read in from the CML file.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.cml&#39;</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">+=</span> <span class="s1">&#39;.cml&#39;</span>
+
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">xml</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
+
+    <span class="c1"># If periodic box information was passed to cml file, first root is the</span>
+    <span class="c1"># periodic box. If no periodic box info, first root is atomArray. Fill</span>
+    <span class="c1"># appropriate section when it is found</span>
+    <span class="n">atoms</span><span class="p">,</span> <span class="n">bonds</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+
+    <span class="c1"># Parse the atoms of a cml file</span>
+    <span class="k">def</span> <span class="nf">_parse_atoms</span><span class="p">(</span><span class="n">child</span><span class="p">):</span>
+        <span class="n">required_attrs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;elementType&#39;</span><span class="p">,</span> <span class="s1">&#39;x3&#39;</span><span class="p">,</span> <span class="s1">&#39;y3&#39;</span><span class="p">,</span> <span class="s1">&#39;z3&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">]</span>
+        <span class="n">translated_attrs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;elementType&#39;</span><span class="p">:</span> <span class="s1">&#39;element&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;x3&#39;</span><span class="p">:</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;y3&#39;</span><span class="p">:</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;z3&#39;</span><span class="p">:</span> <span class="s1">&#39;z&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;index&#39;</span>
+        <span class="p">}</span>
+        <span class="n">child_atoms</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">child</span><span class="p">:</span>
+            <span class="c1"># Error handle</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="s2">&quot;Error - CML file requires the following: &quot;</span> <span class="o">+</span>\
+                        <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">required_attrs</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="n">attr</span> <span class="ow">in</span> <span class="n">keys</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">required_attrs</span><span class="p">]),</span> <span class="n">error_msg</span>
+
+            <span class="c1"># Generate a blank atom</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">Atom</span><span class="p">(</span><span class="n">element</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+            <span class="c1"># Assign all values</span>
+            <span class="k">for</span> <span class="n">cml_attr</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+                <span class="n">atom_attr</span> <span class="o">=</span> <span class="n">cml_attr</span>
+                <span class="k">if</span> <span class="n">cml_attr</span> <span class="ow">in</span> <span class="n">translated_attrs</span><span class="p">:</span>
+                    <span class="n">atom_attr</span> <span class="o">=</span> <span class="n">translated_attrs</span><span class="p">[</span><span class="n">cml_attr</span><span class="p">]</span>
+                <span class="c1"># Special handling for index, where we remove the a</span>
+                <span class="k">if</span> <span class="n">atom_attr</span> <span class="o">==</span> <span class="s2">&quot;index&quot;</span><span class="p">:</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">atom_attr</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="n">cml_attr</span><span class="p">][</span><span class="mi">1</span><span class="p">:]))</span>
+                <span class="k">elif</span> <span class="n">atom_attr</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">]:</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">atom_attr</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="n">cml_attr</span><span class="p">]))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">atom_attr</span><span class="p">,</span> <span class="n">atom</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="n">cml_attr</span><span class="p">])</span>
+
+            <span class="c1"># Save this atom</span>
+            <span class="n">child_atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">child_atoms</span>
+
+    <span class="c1"># Parse the bonds of a cml file</span>
+    <span class="k">def</span> <span class="nf">_parse_bonds</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">child_atoms</span><span class="p">):</span>
+        <span class="n">c_bonds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">child</span><span class="p">:</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">bond</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;atomRefs2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+            <span class="n">c_bonds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Connector</span><span class="p">((</span>
+                <span class="n">child_atoms</span><span class="p">[</span><span class="n">a</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
+                <span class="n">child_atoms</span><span class="p">[</span><span class="n">b</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])))</span>
+        <span class="k">return</span> <span class="n">c_bonds</span>
+
+    <span class="c1"># Loop through molecules</span>
+    <span class="n">molecules</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">root</span><span class="p">:</span>
+        <span class="c1"># Strip away any {} info</span>
+        <span class="k">if</span> <span class="s2">&quot;{&quot;</span> <span class="ow">in</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Skip crystal information</span>
+        <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;crystal&#39;</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># Add atoms</span>
+        <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;atomArray&#39;</span><span class="p">:</span>
+            <span class="n">c_atoms</span> <span class="o">=</span> <span class="n">_parse_atoms</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+            <span class="n">atoms</span> <span class="o">+=</span> <span class="n">c_atoms</span>
+
+        <span class="c1"># Add bonds</span>
+        <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;bondArray&#39;</span><span class="p">:</span>
+            <span class="n">c_bonds</span> <span class="o">=</span> <span class="n">_parse_bonds</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">c_atoms</span><span class="p">)</span>
+            <span class="n">bonds</span> <span class="o">+=</span> <span class="n">c_bonds</span>
+
+        <span class="c1"># Read in molecules</span>
+        <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;molecule&#39;</span><span class="p">:</span>
+
+            <span class="n">c_atoms</span><span class="p">,</span> <span class="n">c_bonds</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">sub_child</span> <span class="ow">in</span> <span class="n">child</span><span class="p">:</span>
+                <span class="c1"># Skip crystal information</span>
+                <span class="k">if</span> <span class="n">sub_child</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;crystal&#39;</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># Add atoms</span>
+                <span class="k">if</span> <span class="n">sub_child</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;atomArray&#39;</span><span class="p">:</span>
+                    <span class="n">c_atoms</span> <span class="o">=</span> <span class="n">_parse_atoms</span><span class="p">(</span><span class="n">sub_child</span><span class="p">)</span>
+                    <span class="n">c2_atoms</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">c_atoms</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">atoms</span> <span class="o">==</span> <span class="p">[]:</span>
+                        <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">offset</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">])</span>
+                    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">c2_atoms</span><span class="p">:</span>
+                        <span class="n">a</span><span class="o">.</span><span class="n">index</span> <span class="o">+=</span> <span class="n">offset</span>
+                    <span class="n">atoms</span> <span class="o">+=</span> <span class="n">c2_atoms</span>
+
+                <span class="c1"># Add bonds</span>
+                <span class="k">if</span> <span class="n">sub_child</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;bondArray&#39;</span><span class="p">:</span>
+                    <span class="n">c_bonds</span> <span class="o">=</span> <span class="n">_parse_bonds</span><span class="p">(</span><span class="n">sub_child</span><span class="p">,</span> <span class="n">c_atoms</span><span class="p">)</span>
+                    <span class="n">bonds</span> <span class="o">+=</span> <span class="n">c_bonds</span>
+
+            <span class="n">molecules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Molecule</span><span class="p">(</span><span class="n">c_atoms</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="n">c_bonds</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">molecules</span> <span class="o">==</span> <span class="p">[]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">Molecule</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="n">bonds</span><span class="p">)]</span>
+
+    <span class="k">return</span> <span class="n">molecules</span></div>
+
+
+<span class="c1"># 1st param: either a list of Atom objects, a</span>
+<span class="c1"># Molecule object or a structures.System object</span>
+<div class="viewcode-block" id="write_cml"><a class="viewcode-back" href="../../../module_docs/files/cml_io.html#squid.files.cml_io.write_cml">[docs]</a><span class="k">def</span> <span class="nf">write_cml</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Write atomic coordinates and any other relevant information into a file</span>
+<span class="sd">    using the Chemical Markup Language (CML) format.</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">        atoms: *...*</span>
+<span class="sd">            A list of atomic coordinates to be stored.  Note, you may also</span>
+<span class="sd">            input a molecule object which stores relevant bonding information.</span>
+<span class="sd">            You may further pass a System object that has further information.</span>
+<span class="sd">        name: *str, optional*</span>
+<span class="sd">            The name of the output file (either ending or not in .cml).</span>
+<span class="sd">        bonds: *list,* :class:`structures.topology.Connector` *, optional*</span>
+<span class="sd">            A list of bonds within the system.  This is useful when the input</span>
+<span class="sd">            is a list of :class:`structures.atom.Atom`.</span>
+
+<span class="sd">    **Returns**</span>
+
+<span class="sd">        None</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;out&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.cml&#39;</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">+=</span> <span class="s1">&#39;.cml&#39;</span>
+
+    <span class="c1"># Handle odd situations of list[list[list[...[atoms]]]]</span>
+    <span class="k">while</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>\
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Determine whether input is an atom list or a system object</span>
+    <span class="c1"># If it is a system object, compile information to write cml file</span>
+    <span class="n">child_flag</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">System</span><span class="p">):</span>
+        <span class="n">system</span> <span class="o">=</span> <span class="n">atoms</span>
+        <span class="n">atoms</span><span class="p">,</span> <span class="n">bonds</span><span class="p">,</span> <span class="n">periodic</span> <span class="o">=</span> <span class="n">system</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">bonds</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">periodic</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">Molecule</span><span class="p">):</span>
+        <span class="n">molecule</span> <span class="o">=</span> <span class="n">atoms</span>
+        <span class="n">atoms</span> <span class="o">=</span> <span class="n">molecule</span><span class="o">.</span><span class="n">atoms</span>
+        <span class="n">bonds</span> <span class="o">=</span> <span class="n">bonds</span> <span class="ow">or</span> <span class="n">molecule</span><span class="o">.</span><span class="n">bonds</span>
+        <span class="n">periodic</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Atom</span><span class="p">):</span>
+        <span class="n">periodic</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Molecule</span><span class="p">):</span>
+        <span class="n">molecules</span> <span class="o">=</span> <span class="n">atoms</span>
+        <span class="n">child_flag</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">periodic</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">molecules</span> <span class="o">=</span> <span class="p">[</span><span class="n">Molecule</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">]</span>
+        <span class="n">child_flag</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">periodic</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;write_cml got an odd input for atoms.&quot;</span><span class="p">)</span>
+
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&lt;molecule&gt;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Write crystal information if provided. Assign it is a crystal</span>
+    <span class="c1"># if it is periodic</span>
+    <span class="k">if</span> <span class="n">periodic</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; &lt;crystal&gt;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;  &lt;scalar title=&quot;a&quot; units=&quot;units:angstrom&quot;&gt;</span><span class="si">%3.6f</span><span class="s1">&lt;/scalar&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">box_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;  &lt;scalar title=&quot;b&quot; units=&quot;units:angstrom&quot;&gt;</span><span class="si">%3.6f</span><span class="s1">&lt;/scalar&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">box_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;  &lt;scalar title=&quot;c&quot; units=&quot;units:angstrom&quot;&gt;</span><span class="si">%3.6f</span><span class="s1">&lt;/scalar&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">box_size</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;  &lt;scalar title=&quot;alpha&quot; units=&quot;units:degree&quot;&gt;</span><span class="si">%3.6f</span><span class="s1">&lt;/scalar&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">box_angles</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;  &lt;scalar title=&quot;beta&quot; units=&quot;units:degree&quot;&gt;</span><span class="si">%3.6f</span><span class="s1">&lt;/scalar&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">box_angles</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;  &lt;scalar title=&quot;gamma&quot; units=&quot;units:degree&quot;&gt;</span><span class="si">%3.6f</span><span class="s1">&lt;/scalar&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">box_angles</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; &lt;/crystal&gt;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="c1"># If writing molecule</span>
+    <span class="k">if</span> <span class="n">child_flag</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">mol</span> <span class="ow">in</span> <span class="n">molecules</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;  &lt;molecule&gt;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;    &lt;atomArray&gt;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="c1"># Switch to 1 indexed instead of 0 indexed</span>
+            <span class="n">offset_from_1</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="nb">min</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">atoms</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">offset_from_1</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">bond_indices</span> <span class="o">=</span> <span class="p">[(</span><span class="n">b</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="n">offset_from_1</span><span class="p">,</span>
+                             <span class="n">b</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="n">offset_from_1</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">bonds</span><span class="p">]</span>
+            <span class="n">bond_indices</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mol</span><span class="o">.</span><span class="n">atoms</span><span class="p">):</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;      &lt;atom id=&quot;a</span><span class="si">%d</span><span class="s1">&quot; elementType=&quot;</span><span class="si">%s</span><span class="s1">&quot; x3=&quot;</span><span class="si">%f</span><span class="s1">&quot; y3=&quot;</span><span class="si">%f</span><span class="s1">&quot;</span><span class="se">\</span>
+<span class="s1"> z3=&quot;</span><span class="si">%f</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">element</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">z</span><span class="p">))</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s1">&#39;type.charge&#39;</span><span class="p">):</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; formalCharge=&quot;</span><span class="si">%d</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="n">a</span><span class="o">.</span><span class="n">charge</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s1">&#39;type_index&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">a</span><span class="o">.</span><span class="n">type_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; label=&quot;</span><span class="si">%d</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="n">a</span><span class="o">.</span><span class="n">type_index</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">):</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; label=&quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">label</span><span class="p">))</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;/&gt;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;    &lt;/atomArray&gt;</span><span class="se">\n</span><span class="s1">    &lt;bondArray&gt;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">bond_indices</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;      &lt;bond atomRefs2=&quot;a</span><span class="si">%d</span><span class="s1"> a</span><span class="si">%d</span><span class="s1">&quot; order=&quot;1&quot;/&gt;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">pair</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;    &lt;/bondArray&gt;</span><span class="se">\n</span><span class="s1">  &lt;/molecule&gt;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&lt;/molecule&gt;&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Switch to 1 indexed instead of 0 indexed</span>
+        <span class="n">offset_from_1</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="nb">min</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">offset_from_1</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">bond_indices</span> <span class="o">=</span> <span class="p">[(</span><span class="n">b</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="n">offset_from_1</span><span class="p">,</span>
+                         <span class="n">b</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="n">offset_from_1</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bonds</span><span class="p">]</span>
+        <span class="n">bond_indices</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+        <span class="c1"># Write atom information</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; &lt;atomArray&gt;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atoms</span><span class="p">):</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;  &lt;atom id=&quot;a</span><span class="si">%d</span><span class="s1">&quot; elementType=&quot;</span><span class="si">%s</span><span class="s1">&quot; x3=&quot;</span><span class="si">%f</span><span class="s1">&quot; y3=&quot;</span><span class="si">%f</span><span class="s1">&quot; z3=&quot;</span><span class="si">%f</span><span class="s1">&quot;&#39;</span>
+                    <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">element</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">z</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s1">&#39;type.charge&#39;</span><span class="p">):</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; formalCharge=&quot;</span><span class="si">%d</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="n">a</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">charge</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s1">&#39;type_index&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">a</span><span class="o">.</span><span class="n">type_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; label=&quot;</span><span class="si">%d</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="n">a</span><span class="o">.</span><span class="n">type_index</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">):</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; label=&quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">label</span><span class="p">))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;/&gt;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; &lt;/atomArray&gt;</span><span class="se">\n</span><span class="s1"> &lt;bondArray&gt;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">bond_indices</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;  &lt;bond atomRefs2=&quot;a</span><span class="si">%d</span><span class="s1"> a</span><span class="si">%d</span><span class="s1">&quot; order=&quot;1&quot;/&gt;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">pair</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; &lt;/bondArray&gt;</span><span class="se">\n</span><span class="s1">&lt;/molecule&gt;&#39;</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">run_unit_tests</span><span class="p">():</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+    <span class="kn">import</span> <span class="nn">hashlib</span>
+
+    <span class="n">thf</span> <span class="o">=</span> <span class="n">read_cml</span><span class="p">(</span><span class="s2">&quot;./../unittests/misc/THF.cml&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">write_cml</span><span class="p">(</span><span class="n">thf</span><span class="p">,</span> <span class="s2">&quot;test.cml&quot;</span><span class="p">)</span>
+    <span class="n">h1</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span>
+        <span class="s1">&#39;test.cml&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+    <span class="n">h2</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span>
+        <span class="s1">&#39;./../unittests/misc/THF.cml&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">h1</span> <span class="o">==</span> <span class="n">h2</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - Writing files has failed!&quot;</span>
+
+    <span class="c1"># Generate a cml file of various frames</span>
+    <span class="n">frames</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">[</span>
+            <span class="n">Atom</span><span class="p">(</span><span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="p">,</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="n">write_cml</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="s2">&quot;test.cml&quot;</span><span class="p">)</span>
+    <span class="n">frames_2</span> <span class="o">=</span> <span class="n">read_cml</span><span class="p">(</span><span class="s2">&quot;test.cml&quot;</span><span class="p">)</span>
+    <span class="n">write_cml</span><span class="p">(</span><span class="n">frames_2</span><span class="p">,</span> <span class="s2">&quot;test_2.cml&quot;</span><span class="p">)</span>
+
+    <span class="n">h1</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;test.cml&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+    <span class="n">h2</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;test_2.cml&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">h1</span> <span class="o">==</span> <span class="n">h2</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - Writing files has failed!&quot;</span>
+
+    <span class="c1"># Cleanup at the end</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;rm test.cml test_2.cml&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run_unit_tests</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../squid.html">Squid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../codebase.html">Codebase</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../console_scripts.html">Console Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Squid 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Henry Herbol.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>
