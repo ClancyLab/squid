@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Squid &#8212; Squid 2.0.0 documentation</title>
+    <title>Squid &#8212; Squid 0.0.1 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="index.html" title="Squid - Table of Contents"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Squid 0.0.1 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -50,104 +50,106 @@
 <p>Squid is an open-source molecular simulation codebase developed by the Clancy Lab at Cornell University. The codebase includes simplified Molecular Dynamics (MD) and Density Functional Theory (DFT) simulation submission, as well as other utilities such as file I/O and post-processing.</p>
 <div class="section" id="installing">
 <h2>Installing<a class="headerlink" href="#installing" title="Permalink to this headline">¶</a></h2>
-<p>For most, the easiest way to install squid is to use pip install:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>user@local<span class="o">]</span>~% pip install clancylab-squid
-</pre></div>
-</div>
-<p>If you wish, you may also clone the repository though:</p>
+<p>Currently installation involves cloning this repository.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>user@local<span class="o">]</span>~% <span class="nb">cd</span> ~<span class="p">;</span> git clone https://github.com/ClancyLab/squid.git
 </pre></div>
 </div>
+<p>NOTE! If you are going to also be contributing and you want to have the ssh link instead, first get access
+by contacting Henry Herbol, and then clone as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>user@local<span class="o">]</span>~% <span class="nb">cd</span> ~<span class="p">;</span> git clone git@github.com:clancylab/squid.git
+</pre></div>
+</div>
+<p>Aftewards, copy <em>install.py</em> to some other file (say, <em>install_local.py</em>) and adjust settings accordingly.
+Then, simply run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>user@local<span class="o">]</span>~% python install.py
+</pre></div>
+</div>
+<p>and you are good to go with using Squid.</p>
 <div class="section" id="installation-variables">
 <h3>Installation Variables<a class="headerlink" href="#installation-variables" title="Permalink to this headline">¶</a></h3>
 <p>When installing, you may change many variables in your <em>install_local.py</em> file.  This section outlines what these
 variables are, and how they will effect your installation:</p>
-<dl class="docutils">
-<dt><em>install_target</em> <span class="classifier-delimiter">:</span> <span class="classifier"><strong>“wsl” or “marcc”</strong></span></dt>
-<dd><ul class="first last simple">
-<li>This variable is necessary to specify, and will alter how the installation proceeds based on if it is to be installed on MARCC, or on some Linux system.  Note, the “wsl” key has been tested for Windows Subsystem for Linux (WSL), as well as Ubuntu.  We appologize for any confusion here.</li>
+<ul class="simple">
+<li>install_target : “wsl” or “marcc”.  This variable is necessary to specify, and will alter how the installation proceeds based</li>
 </ul>
-</dd>
-<dt><em>shell</em> <span class="classifier-delimiter">:</span> <span class="classifier"><strong>“.bashrc”</strong></span></dt>
-<dd><ul class="first last simple">
-<li>This variable simply specifies where your shell file is.  You may set it accordingly.</li>
+<p>on if it is to be installed on MARCC, or on some Linux system.  Note, the “wsl” key has been tested for Windows Subsystem for
+Linux (WSL), as well as Ubuntu.  We appologize for any confusion here.</p>
+<ul class="simple">
+<li>shell : “.bashrc”. This variable simply specifies where your shell file is.  You may set it accordingly.</li>
+<li>install_X : True or False.  There are many install_X variables in the file, where X may be some program.  These flags simply</li>
 </ul>
-</dd>
-<dt><em>install_X</em> <span class="classifier-delimiter">:</span> <span class="classifier"><strong>True or False</strong></span></dt>
-<dd><ul class="first last simple">
-<li>There are many install_X variables in the file, where X may be some program.  These flags simply tell Squid whether you wish to install the various components or not.  Note, if you choose not to, Squid will not function in “full”.  If you already have these programs installed, please see the Editing Squid Installation section.</li>
+<p>tell Squid whether you wish to install the various components or not.  Note, if you choose not to, Squid will not function in
+“full”.  If you already have these programs installed, please see the Editing Squid Installation section.</p>
+<ul class="simple">
+<li>mpirun_path : path to mpirun executable.  This is a string giving the path to the mpi executable you wish to use.  It may be</li>
 </ul>
-</dd>
-<dt><em>mpirun_path</em> <span class="classifier-delimiter">:</span> <span class="classifier"><strong>path to mpirun executable</strong></span></dt>
-<dd><ul class="first last simple">
-<li>This is a string giving the path to the mpi executable you wish to use.  It may be mpiexec, mpirun, or whatever.</li>
+<p>mpiexec, mpirun, or whatever.</p>
+<ul class="simple">
+<li>queueing_system: name of system.  This is a string giving the name of the queueing system you have on your machines.  So far,</li>
 </ul>
-</dd>
-<dt><em>queueing_system</em> <span class="classifier-delimiter">:</span> <span class="classifier"><strong>name of system</strong></span></dt>
-<dd><ul class="first last simple">
-<li>This is a string giving the name of the queueing system you have on your machines.  So far, the supported options are None, “nbs”, and “slurm”.</li>
+<p>the supported options are None, “nbs”, and “slurm”.</p>
+<ul class="simple">
+<li>default_queue: name of default queue.  This is the name of your default queue you wish to submit jobs to.  For example, on</li>
 </ul>
-</dd>
-<dt><em>default_queue</em> <span class="classifier-delimiter">:</span> <span class="classifier"><strong>name of default queue</strong></span></dt>
-<dd><ul class="first last simple">
-<li>This is the name of your default queue you wish to submit jobs to.  For example, on MARCC this may be “shared”, while on a local laptop it will likely be “None”.</li>
+<p>MARCC this may be “shared”, while on a local laptop it will likely be “None”.</p>
+<ul class="simple">
+<li>anaconda_path: path to the anaconda folder.  If set as None, then Squid will manually install anaconda.  Otherwise, it will</li>
 </ul>
-</dd>
-<dt><em>anaconda_path</em> <span class="classifier-delimiter">:</span> <span class="classifier"><strong>path to the anaconda folder</strong></span></dt>
-<dd><ul class="first last simple">
-<li>If set as None, then Squid will manually install anaconda.  Otherwise, it will simply assign variables appropriately.  Note, the expected path will look something like “/software/apps/anaconda/5.2/python/2.7”. Further, Squid will try to be nice, and will seek out common installation locations (including ones on MARCC).  If one is found, it will use that instead.</li>
+<p>simply assign variables appropriately.  Note, the expected path will look something like “/software/apps/anaconda/5.2/python/2.7”.
+Further, Squid will try to be nice, and will seek out common installation locations (including ones on MARCC).  If one is found,
+it will use that instead.</p>
+<ul class="simple">
+<li>vmd_path : path to the VMD program.  Squid functionality for generating molecular orbitals uses the VMD software for visualization.</li>
 </ul>
-</dd>
-<dt><em>vmd_path</em> <span class="classifier-delimiter">:</span> <span class="classifier"><strong>path to the VMD program</strong></span></dt>
-<dd><ul class="first last simple">
-<li>Squid functionality for generating molecular orbitals uses the VMD software for visualization. If you desire this approach, you will need to have VMD installed, with the path to the VMD executable itself specified here.</li>
+<p>If you desire this approach, you will need to have VMD installed, with the path to the VMD executable itself specified here.</p>
+<ul class="simple">
+<li>ovito_path : path to the Ovito program.  Squid functionality that wraps around the Ovito software exists, and will only work if</li>
 </ul>
-</dd>
-<dt><em>ovito_path</em> <span class="classifier-delimiter">:</span> <span class="classifier"><strong>path to the Ovito program</strong></span></dt>
-<dd><ul class="first last simple">
-<li>Squid functionality that wraps around the Ovito software exists, and will only work if given the path to Ovito.  This is the absolute path to the explicit ovito program executable.  That is, for example the following: “/opt/Ovito/ovito”.  Note, please make sure your path is correct.  On a linux machine, you may always type “which ovito” to find it.</li>
+<p>given the path to Ovito.  This is the absolute path to the explicit ovito program executable.  That is, for example the following:
+“/opt/Ovito/ovito”.  Note, please make sure your path is correct.  On a linux machine, you may always type “which ovito” to find
+it.</p>
+<ul class="simple">
+<li>text_editor_path : path to a text editor.  At times Squid functions may attempt to open up a file in a text editor for the user.</li>
 </ul>
-</dd>
-<dt><em>text_editor_path</em> <span class="classifier-delimiter">:</span> <span class="classifier"><strong>path to a text editor</strong></span></dt>
-<dd><ul class="first last simple">
-<li>At times Squid functions may attempt to open up a file in a text editor for the user. If this functionality is desired, please specify a path to your desired text editor.</li>
+<p>If this functionality is desired, please specify a path to your desired text editor.</p>
+<ul class="simple">
+<li>env_vars : any code you wish to add prior to the job submission script.  This should now be deprecated in nature, however this</li>
 </ul>
-</dd>
-<dt><em>env_vars</em> <span class="classifier-delimiter">:</span> <span class="classifier"><strong>any code you wish to add prior to the job submission script</strong></span></dt>
-<dd><ul class="first last simple">
-<li>This should now be deprecated in nature, however this variable allows the user to inject bash commands that will be run prior to a job that has been submitted to a queueing system.</li>
+<p>variable allows the user to inject bash commands that will be run prior to a job that has been submitted to a queueing system.</p>
+<ul class="simple">
+<li>mpi_preface : command to put before a function call for mpi.  NOTE! IT IS RECOMMENDED THAT THIS BE LEFT EMPTY.  This is ideally</li>
 </ul>
-</dd>
-<dt><em>mpi_preface</em> <span class="classifier-delimiter">:</span> <span class="classifier"><strong>command to put before a function call for mpi</strong></span></dt>
-<dd><ul class="first last simple">
-<li>NOTE! IT IS RECOMMENDED THAT THIS BE LEFT EMPTY.  This is ideally deprecated also, but it allows the user to define a command before a function.  Say, for example, mpi_preface was “mpirun -np 4”. If a job command is “run_this.sh” the final result will be “mpirun -np 4 run_this.sh”.</li>
+<p>deprecated also, but it allows the user to define a command before a function.  Say, for example, mpi_preface was “mpirun -np 4”.
+If a job command is “run_this.sh” the final result will be “mpirun -np 4 run_this.sh”.</p>
+<ul class="simple">
+<li>orca_path : path to the orca 3.X program executable.</li>
+<li>orca4_path : path to the orca 4.X program executable.</li>
+<li>use_orca4 : True/False.  Whether to by default use orca 3.X (False) or orca 4.X (True).  It is recommended that this be set to True.</li>
+<li>sandbox_orca : True/False.  If the queueing system has been setup to allow for sandboxing (only available on NBS), then this will</li>
 </ul>
-</dd>
-</dl>
-<p><em>orca_path</em> : <strong>path to the orca 3.X program executable</strong></p>
-<p><em>orca4_path</em> : <strong>path to the orca 4.X program executable</strong></p>
-<dl class="docutils">
-<dt><em>use_orca4</em> <span class="classifier-delimiter">:</span> <span class="classifier"><strong>True or False</strong></span></dt>
-<dd><ul class="first last simple">
-<li>Whether to by default use orca 3.X (False) or orca 4.X (True).  It is recommended that this be set to True.</li>
+<p>sandbox a submitted orca simulation if set to True.  Sandboxing means that the simulation will run within the local machine that the
+job was submitted to, reducing strain on the network due to tmp files needing to be transferred (of which, Orca has many).</p>
+<ul class="simple">
+<li>orca_env_vars : bash commands to inject prior to an orca 3.X job being submitted to a queue.</li>
+<li>orca4_env_vars : bash commands to inject prior to an orca 4.X job being submitted to a queue.</li>
+<li>orca_sub_flag : flags to pass to the queuing manager during orca simulation submission.  For instance, imagine submitting a</li>
 </ul>
-</dd>
-<dt><em>sandbox_orca</em> <span class="classifier-delimiter">:</span> <span class="classifier"><strong>True or False</strong></span></dt>
-<dd><ul class="first last simple">
-<li>If the queueing system has been setup to allow for sandboxing (only available on NBS), then this will sandbox a submitted orca simulation if set to True.  Sandboxing means that the simulation will run within the local machine that the job was submitted to, reducing strain on the network due to tmp files needing to be transferred (of which, Orca has many).</li>
+<p>job to a slurm queued system as “sbatch job.sh X Y Z”.  In this case, orca_sub_flag = “X Y Z”.</p>
+<ul class="simple">
+<li>g09_formchk : path to g09 formchk executable.</li>
+<li>g09_cubegen : path to g09 cubegen executable.</li>
+<li>smrff_path : path to the the smrff folder.  This should look like “/path/to/smrff”.  That is, it points to the top folder,</li>
 </ul>
-</dd>
-</dl>
-<p><em>orca_env_vars</em> : <strong>bash commands to inject prior to an orca 3.X job being submitted to a queue</strong></p>
-<p><em>orca4_env_vars</em> : <strong>bash commands to inject prior to an orca 4.X job being submitted to a queue</strong></p>
-<p><em>orca_sub_flag</em> : <strong>flags to pass to the queuing manager during orca simulation submission.  For instance, imagine submitting a job to a slurm queued system as “sbatch job.sh X Y Z”.  In this case, orca_sub_flag = “X Y Z”</strong></p>
-<p><em>g09_formchk</em> : <strong>path to g09 formchk executable</strong></p>
-<p><em>g09_cubegen</em> : <strong>path to g09 cubegen executable</strong></p>
-<p><em>smrff_path</em> : <strong>path to the the smrff folder.  This should look like “/path/to/smrff”.  That is, it points to the top folder, and does not end with a slash</strong></p>
-<p><em>lammps_sffx</em> : <strong>what to name the LAMMPs executable as.  If lammps_sffx = “smrff”, then the final executable is lmp_smrff</strong></p>
-<p><em>lammps_version</em> : <strong>The version of LAMMPs to install.  Note, this is very important that the version is in the correct format.  It is parsed directly into a url and requested from the LAMMPs website</strong></p>
-<p><em>extra_lammps_packages</em> : <strong>A list of lammps packages that should be set during installation</strong></p>
-<p><em>lmp_env_vars</em> : <strong>bash commands to inject prior to a lammps job being submitted to the queue</strong></p>
+<p>and does not end with a slash.</p>
+<ul class="simple">
+<li>lammps_sffx : what to name the LAMMPs executable as.  If lammps_sffx = “smrff”, then the final executable is lmp_smrff.</li>
+<li>lammps_version : The version of LAMMPs to install.  Note, this is very important that the version is in the correct format.  It is</li>
+</ul>
+<p>parsed directly into a url and requested from the LAMMPs website.</p>
+<ul class="simple">
+<li>extra_lammps_packages : A list of lammps packages that should be set during installation.</li>
+<li>lmp_env_vars : bash commands to inject prior to a lammps job being submitted to the queue.</li>
+</ul>
 </div>
 <div class="section" id="editing-squid-installation">
 <h3>Editing Squid Installation<a class="headerlink" href="#editing-squid-installation" title="Permalink to this headline">¶</a></h3>
@@ -278,7 +280,7 @@ as you see fit.  For instance, if you already have packmol installed, during Squ
         <li class="right" >
           <a href="index.html" title="Squid - Table of Contents"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Squid 0.0.1 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
