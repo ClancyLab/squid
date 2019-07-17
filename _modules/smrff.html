@@ -39,16 +39,7 @@
           <div class="body" role="main">
             
   <h1>Source code for smrff</h1><div class="highlight"><pre>
-<span></span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">This file will contain functions pertaining solely to the SMRFF force field</span>
-<span class="sd">and any associated files.</span>
-
-<span class="sd">- :func:`remove_comments`</span>
-<span class="sd">- :func:`parse_pfile`</span>
-<span class="sd">&#39;&#39;&#39;</span>
-
-
-<div class="viewcode-block" id="remove_comments"><a class="viewcode-back" href="../forcefields.html#smrff.remove_comments">[docs]</a><span class="k">def</span> <span class="nf">remove_comments</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<span></span><span class="k">def</span> <span class="nf">_remove_comments</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    A simple function to remove comments in a string.  Note, we don&#39;t care</span>
 <span class="sd">    about whitespace, so it also removes that.</span>
@@ -70,10 +61,10 @@
         <span class="k">return</span> <span class="n">s</span><span class="p">[:</span><span class="n">s</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">)]</span>
     <span class="k">elif</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;#&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="s1">&#39;&#39;</span>
-    <span class="k">return</span> <span class="n">s</span></div>
+    <span class="k">return</span> <span class="n">s</span>
 
 
-<div class="viewcode-block" id="parse_pfile"><a class="viewcode-back" href="../forcefields.html#smrff.parse_pfile">[docs]</a><span class="k">def</span> <span class="nf">parse_pfile</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+<div class="viewcode-block" id="parse_pfile"><a class="viewcode-back" href="../module_docs/smrff.html#smrff.parse_pfile">[docs]</a><span class="k">def</span> <span class="nf">parse_pfile</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This function will, given a smrff parameter file, will parse it by</span>
 <span class="sd">    removing comments, trailing whitespaces, and empty lines.</span>
@@ -93,7 +84,7 @@
     <span class="n">parsed</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span>
         <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
         <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span>
-    <span class="n">parsed</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">remove_comments</span><span class="p">,</span> <span class="n">parsed</span><span class="p">)</span>
+    <span class="n">parsed</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">_remove_comments</span><span class="p">,</span> <span class="n">parsed</span><span class="p">)</span>
     <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">parsed</span> <span class="k">if</span> <span class="n">r</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">])</span></div>
 </pre></div>
 
@@ -105,7 +96,8 @@
 <h3><a href="../index.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../squid.html">Squid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../updating.html">UPDATING TO v2.0.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codebase.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
 </ul>
 
 <div id="searchbox" style="display: none" role="search">

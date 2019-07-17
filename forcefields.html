@@ -37,20 +37,53 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <p>The forcefields module contains various objects to define forcefields,
-as well as several functions to parse forcefield files.</p>
-<ul class="simple">
-<li><code class="xref py py-func docutils literal notranslate"><span class="pre">opls.parse_pfile()</span></code></li>
-<li><code class="xref py py-func docutils literal notranslate"><span class="pre">smrff.parse_pfile()</span></code></li>
-<li><code class="xref py py-class docutils literal notranslate"><span class="pre">connectors.HarmonicConnector</span></code></li>
-<li><code class="xref py py-class docutils literal notranslate"><span class="pre">connectors.Bond</span></code></li>
-<li><code class="xref py py-class docutils literal notranslate"><span class="pre">connectors.Angle</span></code></li>
-<li><code class="xref py py-class docutils literal notranslate"><span class="pre">connectors.Dihedral</span></code></li>
-<li><code class="xref py py-class docutils literal notranslate"><span class="pre">coulomb.Coul</span></code></li>
-<li><code class="xref py py-class docutils literal notranslate"><span class="pre">lj.LJ</span></code></li>
-<li><code class="xref py py-class docutils literal notranslate"><span class="pre">morse.Morse</span></code></li>
-<li><code class="xref py py-class docutils literal notranslate"><span class="pre">tersoff.Tersoff</span></code></li>
+  <p>To handle forcefields in Molecular Dynamics, the various components are subdivided into objects.  These are then stored in an overarching <a class="reference internal" href="module_docs/parameters.html#parameters.Parameters" title="parameters.Parameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">parameters.Parameters</span></code></a> object, which is the main interface a user should use.</p>
+<p>Main user interface:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="module_docs/parameters.html#parameters.Parameters" title="parameters.Parameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">parameters.Parameters</span></code></a></li>
 </ul>
+</div></blockquote>
+<p>Subdivided objects:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="module_docs/connectors.html#connectors.HarmonicConnector" title="connectors.HarmonicConnector"><code class="xref py py-class docutils literal notranslate"><span class="pre">connectors.HarmonicConnector</span></code></a> - A generic connector object.</li>
+<li><a class="reference internal" href="module_docs/connectors.html#connectors.Bond" title="connectors.Bond"><code class="xref py py-class docutils literal notranslate"><span class="pre">connectors.Bond</span></code></a> - Derived from the HarmonicConnector, this handles Bonds.</li>
+<li><a class="reference internal" href="module_docs/connectors.html#connectors.Angle" title="connectors.Angle"><code class="xref py py-class docutils literal notranslate"><span class="pre">connectors.Angle</span></code></a> - Derived from the HarmonicConnector, this handles Angles.</li>
+<li><a class="reference internal" href="module_docs/connectors.html#connectors.Dihedral" title="connectors.Dihedral"><code class="xref py py-class docutils literal notranslate"><span class="pre">connectors.Dihedral</span></code></a> - Derived from the HarmonicConnector, this handles Dihedrals.</li>
+</ul>
+</div></blockquote>
+<p>Supported Potentials:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="module_docs/coulomb.html#coulomb.Coul" title="coulomb.Coul"><code class="xref py py-class docutils literal notranslate"><span class="pre">coulomb.Coul</span></code></a> - An object to handle Coulombic information.  This also holds other pertinent atomic information (element, mass, etc).</li>
+<li><a class="reference internal" href="module_docs/lj.html#lj.LJ" title="lj.LJ"><code class="xref py py-class docutils literal notranslate"><span class="pre">lj.LJ</span></code></a> - An object to handle the Lennard-Jones information.</li>
+<li><a class="reference internal" href="module_docs/morse.html#morse.Morse" title="morse.Morse"><code class="xref py py-class docutils literal notranslate"><span class="pre">morse.Morse</span></code></a> - An object to handle Morse information.</li>
+<li><a class="reference internal" href="module_docs/tersoff.html#tersoff.Tersoff" title="tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">tersoff.Tersoff</span></code></a> - An object to handle Tersoff information.</li>
+</ul>
+</div></blockquote>
+<p>Helper Code:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="module_docs/opls.html#opls.parse_pfile" title="opls.parse_pfile"><code class="xref py py-func docutils literal notranslate"><span class="pre">opls.parse_pfile()</span></code></a> - A function to parse the OPLS parameter file.</li>
+<li><a class="reference internal" href="module_docs/smrff.html#smrff.parse_pfile" title="smrff.parse_pfile"><code class="xref py py-func docutils literal notranslate"><span class="pre">smrff.parse_pfile()</span></code></a> - A function to parse the SMRFF parameter file.</li>
+</ul>
+</div></blockquote>
+<dl class="docutils">
+<dt>Module Files:</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="module_docs/coulomb.html"><span class="doc">coulomb</span></a></li>
+<li><a class="reference internal" href="module_docs/lj.html"><span class="doc">lj</span></a></li>
+<li><a class="reference internal" href="module_docs/morse.html"><span class="doc">morse</span></a></li>
+<li><a class="reference internal" href="module_docs/tersoff.html"><span class="doc">tersoff</span></a></li>
+<li><a class="reference internal" href="module_docs/opls.html"><span class="doc">opls</span></a></li>
+<li><a class="reference internal" href="module_docs/smrff.html"><span class="doc">smrff</span></a></li>
+<li><a class="reference internal" href="module_docs/connectors.html"><span class="doc">connectors</span></a></li>
+<li><a class="reference internal" href="module_docs/helper.html"><span class="doc">helper</span></a></li>
+<li><a class="reference internal" href="module_docs/parameters.html"><span class="doc">parameters</span></a></li>
+</ul>
+</dd>
+</dl>
 <hr class="docutils" />
 
 
@@ -62,7 +95,8 @@ as well as several functions to parse forcefield files.</p>
 <h3><a href="index.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="squid.html">Squid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="updating.html">UPDATING TO v2.0.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codebase.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 </ul>
 
   <div role="note" aria-label="source link">

@@ -1,0 +1,2 @@
+.. automodule:: slurm
+    :members:

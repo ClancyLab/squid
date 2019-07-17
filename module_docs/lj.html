@@ -1,0 +1,364 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>&lt;no title&gt; &#8212; Squid 2.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-lj"></span><dl class="class">
+<dt id="lj.LJ">
+<em class="property">class </em><code class="descclassname">lj.</code><code class="descname">LJ</code><span class="sig-paren">(</span><em>index=None</em>, <em>sigma=None</em>, <em>epsilon=None</em>, <em>line=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lj.html#LJ"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the LJ object.  Either pass index + sigma + epsilon,
+or pass line.  If all are passed, then an error will be thrown.</p>
+<p>This object contains the following:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="#lj.LJ.assign_line" title="lj.LJ.assign_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">assign_line()</span></code></a></li>
+<li><a class="reference internal" href="#lj.LJ.fix" title="lj.LJ.fix"><code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code></a></li>
+<li><a class="reference internal" href="#lj.LJ.generate" title="lj.LJ.generate"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate()</span></code></a></li>
+<li><a class="reference internal" href="#lj.LJ.load_opls" title="lj.LJ.load_opls"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_opls()</span></code></a></li>
+<li><a class="reference internal" href="#lj.LJ.load_smrff" title="lj.LJ.load_smrff"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_smrff()</span></code></a></li>
+<li><a class="reference internal" href="#lj.LJ.pack" title="lj.LJ.pack"><code class="xref py py-func docutils literal notranslate"><span class="pre">pack()</span></code></a></li>
+<li><a class="reference internal" href="#lj.LJ.parse_line" title="lj.LJ.parse_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse_line()</span></code></a></li>
+<li><code class="xref py py-func docutils literal notranslate"><span class="pre">pair_coeff_dump()</span></code></li>
+<li><a class="reference internal" href="#lj.LJ.print_lower" title="lj.LJ.print_lower"><code class="xref py py-func docutils literal notranslate"><span class="pre">print_lower()</span></code></a></li>
+<li><a class="reference internal" href="#lj.LJ.print_upper" title="lj.LJ.print_upper"><code class="xref py py-func docutils literal notranslate"><span class="pre">print_upper()</span></code></a></li>
+<li><a class="reference internal" href="#lj.LJ.unpack" title="lj.LJ.unpack"><code class="xref py py-func docutils literal notranslate"><span class="pre">unpack()</span></code></a></li>
+<li><a class="reference internal" href="#lj.LJ.validate" title="lj.LJ.validate"><code class="xref py py-func docutils literal notranslate"><span class="pre">validate()</span></code></a></li>
+</ul>
+</div></blockquote>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>index: <em>str or int</em></dt>
+<dd>The index of the atom type.</dd>
+<dt>sigma: <em>float</em></dt>
+<dd>Sigma in LJ expression.</dd>
+<dt>epsilon: <em>float</em></dt>
+<dd>Epsilon in LJ expression.</dd>
+<dt>line: <em>str</em></dt>
+<dd>A line from a parameter file to be parsed.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>lj: <code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.LJ</span></code></dt>
+<dd>A LJ object.</dd>
+</dl>
+</div></blockquote>
+<dl class="method">
+<dt id="lj.LJ.assign_line">
+<code class="descname">assign_line</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lj.html#LJ.assign_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.assign_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse line inputs and assign to this object.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>line: <em>str</em></dt>
+<dd>A string that holds LJ information.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="lj.LJ.fix">
+<code class="descname">fix</code><span class="sig-paren">(</span><em>params='all'</em>, <em>value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lj.html#LJ.fix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.fix" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will fix these parameters by assigning bounds to the
+values themselves.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>str, optional</em></dt>
+<dd>Whether to fix everything (all), or a specific value (sigma
+or epsilon).</dd>
+<dt>value: <em>list, float, or float, optional</em></dt>
+<dd>The value to fix the param to. If None, then it is fixed to
+the current value.  If params is all, then value must be a
+list of values.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="lj.LJ.generate">
+<em class="property">classmethod </em><code class="descname">generate</code><span class="sig-paren">(</span><em>atom_types</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lj.html#LJ.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Randomly generate parameters for lj sigma and epsilon.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>atom_types: <em>list, str</em></dt>
+<dd>A list of all the atom types to have parameters generated for.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>lj_objs: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.LJ</span></code></dt>
+<dd>Returns a list of LJ objects.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="lj.LJ.load_opls">
+<em class="property">classmethod </em><code class="descname">load_opls</code><span class="sig-paren">(</span><em>atom_types</em>, <em>pfile_name=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lj.html#LJ.load_opls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.load_opls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a parameter file, inport the LJ parameters if possible.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>atom_types: <em>list, dict, …</em></dt>
+<dd>Atom types from a parsed opls parameter file.</dd>
+<dt>pfile_name: <em>str</em></dt>
+<dd>The name of a parameter file to be parsed.  If specified,
+then pfile is ignored (you may simply pass None as pfile).</dd>
+<dt>restrict: <em>list, str, optional</em></dt>
+<dd>A list of atom labels to include when loading.  If not
+specified, everything is loaded.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>lj_objs: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.LJ</span></code>, or <em>None</em></dt>
+<dd>Returns a list of LJ objects if possible, else None.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="lj.LJ.load_smrff">
+<em class="property">classmethod </em><code class="descname">load_smrff</code><span class="sig-paren">(</span><em>parsed_file</em>, <em>pfile_name=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lj.html#LJ.load_smrff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.load_smrff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a parameter file, inport the coulomb parameters if possible.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>parsed_file: <em>str</em></dt>
+<dd>A parsed smrff parameter file input string (no comments or
+trailing white spaces)</dd>
+<dt>pfile_name: <em>str</em></dt>
+<dd>The name of a parameter file to be parsed.  If specified,
+then parsed_file is ignored (you may simply pass None as
+parsed_file).</dd>
+<dt>restrict: <em>list, str, optional</em></dt>
+<dd>A list of atom labels to include when loading.  If not
+specified, everything is loaded.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>lj_objs: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.LJ</span></code>, or <em>None</em></dt>
+<dd>Returns a list of LJ objects if possible, else None.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="lj.LJ.pack">
+<code class="descname">pack</code><span class="sig-paren">(</span><em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lj.html#LJ.pack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.pack" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function packs the LJ object from a list.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list</em></dt>
+<dd>A list holding the index, sigma, and epsilon (IN THAT ORDER).</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="lj.LJ.parse_line">
+<em class="property">static </em><code class="descname">parse_line</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lj.html#LJ.parse_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.parse_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse line inputs.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>line: <em>str</em></dt>
+<dd>A string that holds LJ information.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>index: <em>str</em></dt>
+<dd>The label in the line corresponding to atom type.</dd>
+<dt>sigma: <em>float</em></dt>
+<dd>The position where the potential well equals 0.</dd>
+<dt>epsilon: <em>float</em></dt>
+<dd>The depth of the well.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="lj.LJ.print_lower">
+<code class="descname">print_lower</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lj.html#LJ.print_lower"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.print_lower" title="Permalink to this definition">¶</a></dt>
+<dd><p>This prints out a representation of this LJ object’s lower bounds,
+in the format that is output to the smrff parameter file.</p>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>lj: <em>str</em></dt>
+<dd>A string representation of LJ.  The index, sigma, and epsilon
+are printed, in that precise order.  Note, numbers are printed
+to exactly 2 decimal places.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="lj.LJ.print_upper">
+<code class="descname">print_upper</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lj.html#LJ.print_upper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.print_upper" title="Permalink to this definition">¶</a></dt>
+<dd><p>This prints out a representation of this LJ object’s upper bounds,
+in the format that is output to the smrff parameter file.</p>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>lj: <em>str</em></dt>
+<dd>A string representation of LJ.  The index, sigma, and epsilon
+are printed, in that precise order.  Note, numbers are printed
+to exactly 2 decimal places.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="lj.LJ.unpack">
+<code class="descname">unpack</code><span class="sig-paren">(</span><em>with_indices=True</em>, <em>with_bounds=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lj.html#LJ.unpack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.unpack" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function unpacks the LJ object into a list.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>with_indices: <em>bool, optional</em></dt>
+<dd>Whether to also include the indices in the list.</dd>
+<dt>with_bounds: <em>bool, optional</em></dt>
+<dd>Whether to also return the bounds or not.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>coul: <em>list, str/float</em></dt>
+<dd>A list, holding the string of the index and the float of the
+charge.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="lj.LJ.validate">
+<code class="descname">validate</code><span class="sig-paren">(</span><em>warn=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lj.html#LJ.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will validate data integrity.  In this case, we simply
+ensure data types are appropriate.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>warn: <em>bool, optional</em></dt>
+<dd>At times, weird parameters may exist (ex. sigma=0).  If this
+is the case, we will push them to a more realistic lowerbound
+and print a warning (True) or crash (False).</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../squid.html">Squid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codebase.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/module_docs/lj.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Henry Herbol.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

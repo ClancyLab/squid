@@ -1,0 +1,2 @@
+.. automodule:: geometry.misc
+    :members:

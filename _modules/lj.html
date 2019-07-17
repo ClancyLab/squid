@@ -39,10 +39,7 @@
           <div class="body" role="main">
             
   <h1>Source code for lj</h1><div class="highlight"><pre>
-<span></span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">The Lennard-Jones object.  This stores the index and LJ parameters.</span>
-<span class="sd">&#39;&#39;&#39;</span>
-<span class="kn">import</span> <span class="nn">copy</span>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">from</span> <span class="nn">squid.forcefields.helper</span> <span class="k">import</span> <span class="n">check_restriction</span>
 
 <span class="c1"># These are the identifiers in the parameter file that we seek out</span>
@@ -52,30 +49,29 @@
 <span class="n">SIGMA_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">)</span>
 <span class="n">EPSILON_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0001</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">The LJ class contains:</span>
-<span class="sd">- :func:`__init__`</span>
-<span class="sd">- :func:`__repr__`</span>
-<span class="sd">- :func:`__eq__`</span>
-<span class="sd">- :func:`__hash__`</span>
-<span class="sd">- :func:`_printer`</span>
-<span class="sd">- :func:`print_lower`</span>
-<span class="sd">- :func:`print_upper`</span>
-<span class="sd">- :func:`unpack`</span>
-<span class="sd">- :func:`pack`</span>
-<span class="sd">- :func:`validate`</span>
-<span class="sd">- :func:`assign_line`</span>
-<span class="sd">- :func:`fix`</span>
-<span class="sd">- :classmethod:`load_smrff`</span>
-<span class="sd">------------</span>
-<span class="sd">&quot;&quot;&quot;</span>
 
-
-<div class="viewcode-block" id="LJ"><a class="viewcode-back" href="../forcefields.html#lj.LJ">[docs]</a><span class="k">class</span> <span class="nc">LJ</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="LJ"><a class="viewcode-back" href="../module_docs/lj.html#lj.LJ">[docs]</a><span class="k">class</span> <span class="nc">LJ</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Initialize the LJ object.  Either pass index + sigma + epsilon,</span>
 <span class="sd">    or pass line.  If all are passed, then an error will be thrown.</span>
+
+<span class="sd">    This object contains the following:</span>
+
+<span class="sd">        - :func:`assign_line`</span>
+<span class="sd">        - :func:`fix`</span>
+<span class="sd">        - :func:`generate`</span>
+<span class="sd">        - :func:`load_opls`</span>
+<span class="sd">        - :func:`load_smrff`</span>
+<span class="sd">        - :func:`pack`</span>
+<span class="sd">        - :func:`parse_line`</span>
+<span class="sd">        - :func:`pair_coeff_dump`</span>
+<span class="sd">        - :func:`print_lower`</span>
+<span class="sd">        - :func:`print_upper`</span>
+<span class="sd">        - :func:`unpack`</span>
+<span class="sd">        - :func:`validate`</span>
+
 <span class="sd">    **Parameters**</span>
+
 <span class="sd">        index: *str or int*</span>
 <span class="sd">            The index of the atom type.</span>
 <span class="sd">        sigma: *float*</span>
@@ -84,8 +80,10 @@
 <span class="sd">            Epsilon in LJ expression.</span>
 <span class="sd">        line: *str*</span>
 <span class="sd">            A line from a parameter file to be parsed.</span>
+
 <span class="sd">    **Returns**</span>
-<span class="sd">        lj: :class:`LJ`</span>
+
+<span class="sd">        lj: :class:`squid.structures.LJ`</span>
 <span class="sd">            A LJ object.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
@@ -114,7 +112,9 @@
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This prints out a representation of this LJ object, in the format</span>
 <span class="sd">        that is output to the smrff parameter file.</span>
+
 <span class="sd">        **Returns**</span>
+
 <span class="sd">            lj: *str*</span>
 <span class="sd">                A string representation of LJ.  The index, sigma, and epsilon</span>
 <span class="sd">                are printed, in that precise order.  Note, numbers are printed</span>
@@ -137,12 +137,16 @@
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This prints out a representation of this LJ object, in the format</span>
 <span class="sd">        that is output to the smrff parameter file.</span>
+
 <span class="sd">        **Parameters**</span>
+
 <span class="sd">            bounds: *int, optional*</span>
 <span class="sd">                Whether to output the lower bounds (0), or upper boudns (1).</span>
 <span class="sd">                If None, then the parameters themselves are output instead</span>
 <span class="sd">                (default).</span>
+
 <span class="sd">        **Returns**</span>
+
 <span class="sd">            lj: *str*</span>
 <span class="sd">                A string representation of LJ.  The index, sigma, and epsilon</span>
 <span class="sd">                are printed, in that precise order.  Note, numbers are printed</span>
@@ -159,11 +163,13 @@
     <span class="k">def</span> <span class="nf">pair_coeff_dump</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%.4f</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">)</span>
 
-<div class="viewcode-block" id="LJ.print_lower"><a class="viewcode-back" href="../forcefields.html#lj.LJ.print_lower">[docs]</a>    <span class="k">def</span> <span class="nf">print_lower</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="LJ.print_lower"><a class="viewcode-back" href="../module_docs/lj.html#lj.LJ.print_lower">[docs]</a>    <span class="k">def</span> <span class="nf">print_lower</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This prints out a representation of this LJ object&#39;s lower bounds,</span>
 <span class="sd">        in the format that is output to the smrff parameter file.</span>
+
 <span class="sd">        **Returns**</span>
+
 <span class="sd">            lj: *str*</span>
 <span class="sd">                A string representation of LJ.  The index, sigma, and epsilon</span>
 <span class="sd">                are printed, in that precise order.  Note, numbers are printed</span>
@@ -171,11 +177,13 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_printer</span><span class="p">(</span><span class="n">bounds</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LJ.print_upper"><a class="viewcode-back" href="../forcefields.html#lj.LJ.print_upper">[docs]</a>    <span class="k">def</span> <span class="nf">print_upper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="LJ.print_upper"><a class="viewcode-back" href="../module_docs/lj.html#lj.LJ.print_upper">[docs]</a>    <span class="k">def</span> <span class="nf">print_upper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This prints out a representation of this LJ object&#39;s upper bounds,</span>
 <span class="sd">        in the format that is output to the smrff parameter file.</span>
+
 <span class="sd">        **Returns**</span>
+
 <span class="sd">            lj: *str*</span>
 <span class="sd">                A string representation of LJ.  The index, sigma, and epsilon</span>
 <span class="sd">                are printed, in that precise order.  Note, numbers are printed</span>
@@ -183,13 +191,19 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_printer</span><span class="p">(</span><span class="n">bounds</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LJ.unpack"><a class="viewcode-back" href="../forcefields.html#lj.LJ.unpack">[docs]</a>    <span class="k">def</span> <span class="nf">unpack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">with_bounds</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="LJ.unpack"><a class="viewcode-back" href="../module_docs/lj.html#lj.LJ.unpack">[docs]</a>    <span class="k">def</span> <span class="nf">unpack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">with_bounds</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This function unpacks the LJ object into a list.</span>
+
 <span class="sd">        **Parameters**</span>
+
 <span class="sd">            with_indices: *bool, optional*</span>
 <span class="sd">                Whether to also include the indices in the list.</span>
+<span class="sd">            with_bounds: *bool, optional*</span>
+<span class="sd">                Whether to also return the bounds or not.</span>
+
 <span class="sd">        **Returns**</span>
+
 <span class="sd">            coul: *list, str/float*</span>
 <span class="sd">                A list, holding the string of the index and the float of the</span>
 <span class="sd">                charge.</span>
@@ -213,13 +227,17 @@
 
         <span class="k">return</span> <span class="n">pkg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="LJ.pack"><a class="viewcode-back" href="../forcefields.html#lj.LJ.pack">[docs]</a>    <span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="LJ.pack"><a class="viewcode-back" href="../module_docs/lj.html#lj.LJ.pack">[docs]</a>    <span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This function packs the LJ object from a list.</span>
+
 <span class="sd">        **Parameters**</span>
+
 <span class="sd">            params: *list*</span>
 <span class="sd">                A list holding the index, sigma, and epsilon (IN THAT ORDER).</span>
+
 <span class="sd">        **Returns**</span>
+
 <span class="sd">            None</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s2">&quot;In LJ, tried packing </span><span class="si">%d</span><span class="s2"> parameters.  </span><span class="se">\</span>
@@ -230,10 +248,21 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">params</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="LJ.validate"><a class="viewcode-back" href="../forcefields.html#lj.LJ.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">warn</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="LJ.validate"><a class="viewcode-back" href="../module_docs/lj.html#lj.LJ.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">warn</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This function will validate data integrity.  In this case, we simply</span>
 <span class="sd">        ensure data types are appropriate.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            warn: *bool, optional*</span>
+<span class="sd">                At times, weird parameters may exist (ex. sigma=0).  If this</span>
+<span class="sd">                is the case, we will push them to a more realistic lowerbound</span>
+<span class="sd">                and print a warning (True) or crash (False).</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            None</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span>
@@ -256,15 +285,24 @@
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;In LJ (index </span><span class="si">%s</span><span class="s2">), epsilon should be </span><span class="se">\</span>
 <span class="s2">larger than 0! It is </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LJ.parse_line"><a class="viewcode-back" href="../forcefields.html#lj.LJ.parse_line">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="LJ.parse_line"><a class="viewcode-back" href="../module_docs/lj.html#lj.LJ.parse_line">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">parse_line</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Parse line inputs and assign to this object.</span>
+<span class="sd">        Parse line inputs.</span>
+
 <span class="sd">        **Parameters**</span>
+
 <span class="sd">            line: *str*</span>
-<span class="sd">                A string that holds coulomb information.</span>
+<span class="sd">                A string that holds LJ information.</span>
+
 <span class="sd">        **Returns**</span>
-<span class="sd">            None</span>
+
+<span class="sd">            index: *str*</span>
+<span class="sd">                The label in the line corresponding to atom type.</span>
+<span class="sd">            sigma: *float*</span>
+<span class="sd">                The position where the potential well equals 0.</span>
+<span class="sd">            epsilon: *float*</span>
+<span class="sd">                The depth of the well.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
         <span class="n">index</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -272,15 +310,41 @@
         <span class="n">epsilon</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">index</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">epsilon</span></div>
 
-    <span class="k">def</span> <span class="nf">assign_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+<div class="viewcode-block" id="LJ.assign_line"><a class="viewcode-back" href="../module_docs/lj.html#lj.LJ.assign_line">[docs]</a>    <span class="k">def</span> <span class="nf">assign_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse line inputs and assign to this object.</span>
 
-<div class="viewcode-block" id="LJ.fix"><a class="viewcode-back" href="../forcefields.html#lj.LJ.fix">[docs]</a>    <span class="k">def</span> <span class="nf">fix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        This will fix these parameters by assigning bounds to the values</span>
-<span class="sd">        themselves.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            line: *str*</span>
+<span class="sd">                A string that holds LJ information.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="LJ.fix"><a class="viewcode-back" href="../module_docs/lj.html#lj.LJ.fix">[docs]</a>    <span class="k">def</span> <span class="nf">fix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This will fix these parameters by assigning bounds to the</span>
+<span class="sd">        values themselves.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            params: *str, optional*</span>
+<span class="sd">                Whether to fix everything (all), or a specific value (sigma</span>
+<span class="sd">                or epsilon).</span>
+<span class="sd">            value: *list, float, or float, optional*</span>
+<span class="sd">                The value to fix the param to. If None, then it is fixed to</span>
+<span class="sd">                the current value.  If params is all, then value must be a</span>
+<span class="sd">                list of values.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">params</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">),</span>\
@@ -313,11 +377,13 @@
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                 <span class="s2">&quot;In LJ, tried fixing </span><span class="si">%s</span><span class="s2"> parameter (does not exist)!&quot;</span> <span class="o">%</span> <span class="n">params</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LJ.load_smrff"><a class="viewcode-back" href="../forcefields.html#lj.LJ.load_smrff">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="LJ.load_smrff"><a class="viewcode-back" href="../module_docs/lj.html#lj.LJ.load_smrff">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">load_smrff</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">parsed_file</span><span class="p">,</span> <span class="n">pfile_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">restrict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Given a parameter file, inport the coulomb parameters if possible.</span>
+
 <span class="sd">        **Parameters**</span>
+
 <span class="sd">            parsed_file: *str*</span>
 <span class="sd">                A parsed smrff parameter file input string (no comments or</span>
 <span class="sd">                trailing white spaces)</span>
@@ -325,8 +391,13 @@
 <span class="sd">                The name of a parameter file to be parsed.  If specified,</span>
 <span class="sd">                then parsed_file is ignored (you may simply pass None as</span>
 <span class="sd">                parsed_file).</span>
+<span class="sd">            restrict: *list, str, optional*</span>
+<span class="sd">                A list of atom labels to include when loading.  If not</span>
+<span class="sd">                specified, everything is loaded.</span>
+
 <span class="sd">        **Returns**</span>
-<span class="sd">            lj_objs: *list, LJ*, or *None*</span>
+
+<span class="sd">            lj_objs: *list,* :class:`squid.structures.LJ`, or *None*</span>
 <span class="sd">                Returns a list of LJ objects if possible, else None.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="kn">import</span> <span class="nn">squid.forcefields.smrff</span> <span class="k">as</span> <span class="nn">smrff_utils</span>
@@ -348,18 +419,25 @@
             <span class="k">if</span> <span class="n">check_restriction</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">restrict</span><span class="p">)</span>
         <span class="p">]</span></div>
 
-<div class="viewcode-block" id="LJ.load_opls"><a class="viewcode-back" href="../forcefields.html#lj.LJ.load_opls">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="LJ.load_opls"><a class="viewcode-back" href="../module_docs/lj.html#lj.LJ.load_opls">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">load_opls</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">atom_types</span><span class="p">,</span> <span class="n">pfile_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">restrict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Given a parameter file, inport the LJ parameters if possible.</span>
+
 <span class="sd">        **Parameters**</span>
+
 <span class="sd">            atom_types: *list, dict, ...*</span>
 <span class="sd">                Atom types from a parsed opls parameter file.</span>
 <span class="sd">            pfile_name: *str*</span>
 <span class="sd">                The name of a parameter file to be parsed.  If specified,</span>
 <span class="sd">                then pfile is ignored (you may simply pass None as pfile).</span>
+<span class="sd">            restrict: *list, str, optional*</span>
+<span class="sd">                A list of atom labels to include when loading.  If not</span>
+<span class="sd">                specified, everything is loaded.</span>
+
 <span class="sd">        **Returns**</span>
-<span class="sd">            lj_objs: *list, LJ*, or *None*</span>
+
+<span class="sd">            lj_objs: *list,* :class:`squid.structures.LJ`, or *None*</span>
 <span class="sd">                Returns a list of LJ objects if possible, else None.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="c1"># Ensure correct pfile format, and that we even need to parse it.</span>
@@ -373,7 +451,7 @@
             <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">atom_types</span> <span class="k">if</span> <span class="n">check_restriction</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">restrict</span><span class="p">)</span>
         <span class="p">]</span></div>
 
-<div class="viewcode-block" id="LJ.generate"><a class="viewcode-back" href="../forcefields.html#lj.LJ.generate">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="LJ.generate"><a class="viewcode-back" href="../module_docs/lj.html#lj.LJ.generate">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">atom_types</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Randomly generate parameters for lj sigma and epsilon.</span>
@@ -385,7 +463,7 @@
 
 <span class="sd">        **Returns**</span>
 
-<span class="sd">            lj_objs: *list, LJ*</span>
+<span class="sd">            lj_objs: *list,* :class:`squid.structures.LJ`</span>
 <span class="sd">                Returns a list of LJ objects.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="kn">from</span> <span class="nn">helper</span> <span class="k">import</span> <span class="n">random_in_range</span>
@@ -483,7 +561,8 @@
 <h3><a href="../index.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../squid.html">Squid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../updating.html">UPDATING TO v2.0.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codebase.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
 </ul>
 
 <div id="searchbox" style="display: none" role="search">

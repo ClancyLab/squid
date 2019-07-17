@@ -1,0 +1,2 @@
+.. automodule:: parameters
+    :members:

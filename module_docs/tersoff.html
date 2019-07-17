@@ -1,0 +1,537 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>&lt;no title&gt; &#8212; Squid 2.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-tersoff"></span><dl class="class">
+<dt id="tersoff.Tersoff">
+<em class="property">class </em><code class="descclassname">tersoff.</code><code class="descname">Tersoff</code><span class="sig-paren">(</span><em>indices=None</em>, <em>m=None</em>, <em>gamma=None</em>, <em>lambda3=None</em>, <em>c=None</em>, <em>d=None</em>, <em>costheta0=None</em>, <em>n=None</em>, <em>beta=None</em>, <em>lambda2=None</em>, <em>B=None</em>, <em>R=None</em>, <em>D=None</em>, <em>lambda1=None</em>, <em>A=None</em>, <em>line=None</em>, <em>form='original'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tersoff.html#Tersoff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the Tersoff object.  The potential form can be found on the
+LAMMPs webpage (<a class="reference external" href="http://lammps.sandia.gov/doc/pair_tersoff.html">http://lammps.sandia.gov/doc/pair_tersoff.html</a>).  Either
+specify all the parameters, or pass a string to line, but not both.  If
+both are specified, an error will be thrown.</p>
+<p>This object contains the following:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="#tersoff.Tersoff.assign_line" title="tersoff.Tersoff.assign_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">assign_line()</span></code></a></li>
+<li><a class="reference internal" href="#tersoff.Tersoff.dump_line" title="tersoff.Tersoff.dump_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_line()</span></code></a></li>
+<li><a class="reference internal" href="#tersoff.Tersoff.fix" title="tersoff.Tersoff.fix"><code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code></a></li>
+<li><a class="reference internal" href="#tersoff.Tersoff.generate" title="tersoff.Tersoff.generate"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate()</span></code></a></li>
+<li><a class="reference internal" href="#tersoff.Tersoff.load_smrff" title="tersoff.Tersoff.load_smrff"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_smrff()</span></code></a></li>
+<li><a class="reference internal" href="#tersoff.Tersoff.pack" title="tersoff.Tersoff.pack"><code class="xref py py-func docutils literal notranslate"><span class="pre">pack()</span></code></a></li>
+<li><a class="reference internal" href="#tersoff.Tersoff.parse_line" title="tersoff.Tersoff.parse_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse_line()</span></code></a></li>
+<li><a class="reference internal" href="#tersoff.Tersoff.print_lower" title="tersoff.Tersoff.print_lower"><code class="xref py py-func docutils literal notranslate"><span class="pre">print_lower()</span></code></a></li>
+<li><a class="reference internal" href="#tersoff.Tersoff.print_upper" title="tersoff.Tersoff.print_upper"><code class="xref py py-func docutils literal notranslate"><span class="pre">print_upper()</span></code></a></li>
+<li><a class="reference internal" href="#tersoff.Tersoff.set_default_bounds" title="tersoff.Tersoff.set_default_bounds"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_default_bounds()</span></code></a></li>
+<li><a class="reference internal" href="#tersoff.sorted_force_2body_symmetry" title="tersoff.sorted_force_2body_symmetry"><code class="xref py py-func docutils literal notranslate"><span class="pre">sorted_force_2body_symmetry()</span></code></a></li>
+<li><a class="reference internal" href="#tersoff.tag_tersoff_for_duplicate_2bodies" title="tersoff.tag_tersoff_for_duplicate_2bodies"><code class="xref py py-func docutils literal notranslate"><span class="pre">tag_tersoff_for_duplicate_2bodies()</span></code></a></li>
+<li><a class="reference internal" href="#tersoff.Tersoff.turn_off" title="tersoff.Tersoff.turn_off"><code class="xref py py-func docutils literal notranslate"><span class="pre">turn_off()</span></code></a></li>
+<li><a class="reference internal" href="#tersoff.Tersoff.turn_off_3body" title="tersoff.Tersoff.turn_off_3body"><code class="xref py py-func docutils literal notranslate"><span class="pre">turn_off_3body()</span></code></a></li>
+<li><a class="reference internal" href="#tersoff.Tersoff.unpack" title="tersoff.Tersoff.unpack"><code class="xref py py-func docutils literal notranslate"><span class="pre">unpack()</span></code></a></li>
+<li><a class="reference internal" href="#tersoff.Tersoff.update_2body" title="tersoff.Tersoff.update_2body"><code class="xref py py-func docutils literal notranslate"><span class="pre">update_2body()</span></code></a></li>
+<li><a class="reference internal" href="#tersoff.Tersoff.validate" title="tersoff.Tersoff.validate"><code class="xref py py-func docutils literal notranslate"><span class="pre">validate()</span></code></a></li>
+<li><a class="reference internal" href="#tersoff.verify_tersoff_2body_symmetry" title="tersoff.verify_tersoff_2body_symmetry"><code class="xref py py-func docutils literal notranslate"><span class="pre">verify_tersoff_2body_symmetry()</span></code></a></li>
+</ul>
+</div></blockquote>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>indices: <em>list or tuple, str or int</em></dt>
+<dd>The indices of the atom types in this three-body interaction.</dd>
+<dt>m: <em>int</em></dt>
+<dd>m is an exponential term in the zeta component of the Tersoff
+potential.  It is either 1 or 3.</dd>
+<dt>gamma: <em>float</em></dt>
+<dd>gamma is a prefactor to g(theta) in the Tersoff potential,
+and is between 0 (completely off) and 1 (completely on).</dd>
+<dt>lambda3: <em>float</em></dt>
+<dd>lambda3 is the exponential coefficient of the three-body
+tersoff interaction.</dd>
+<dt>c: <em>float</em></dt>
+<dd>c describes the numerator part of the three-body interaction
+(found withing the g(theta) term).</dd>
+<dt>d: <em>float</em></dt>
+<dd>d describes the denominator part of the three-body interaction
+(found withing the g(theta) term).</dd>
+<dt>costheta0: <em>float</em></dt>
+<dd>costheta0 gives an equilibrium angle of sorts for the
+three-body interaction.  As such, it is restricted between -1
+and 1.</dd>
+<dt>n: <em>float</em></dt>
+<dd>n is a power that the three-body interaction is taken to (or
+to some function of n).</dd>
+<dt>beta: <em>float</em></dt>
+<dd>beta is some scaling to the three-body interactions, found in
+the b_ij term of the Tersoff potential.</dd>
+<dt>lambda2: <em>float</em></dt>
+<dd>lambda2 is the exponential coefficient of the two-body
+attraction term in the tersoff interaction.</dd>
+<dt>B: <em>float</em></dt>
+<dd>B is the pre-factor to the two-body attraction term in the
+tersoff interaction.</dd>
+<dt>R: <em>float</em></dt>
+<dd>R is a component of the tersoff potential’s cutoff distance.</dd>
+<dt>D: <em>float</em></dt>
+<dd>D is a component of the tersoff potential’s cutoff distance.</dd>
+<dt>lambda1: <em>float</em></dt>
+<dd>lambda1 is the exponential coefficient of the two-body
+repulsion term in the tersoff interaction.</dd>
+<dt>A: <em>float</em></dt>
+<dd>A is the pre-factor to the two-body repulsion term in the
+tersoff interaction.</dd>
+<dt>line: <em>str</em></dt>
+<dd>A line from a parameter file to be parsed.</dd>
+<dt>form: <em>str</em></dt>
+<dd>Whether to use the original form (m=3, gamma=1) or the
+Albe et al form (m=1, beta=1).  Must be original or albe.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>tersoff: <a class="reference internal" href="#tersoff.Tersoff" title="tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tersoff</span></code></a></dt>
+<dd>A Tersoff object.</dd>
+</dl>
+</div></blockquote>
+<dl class="method">
+<dt id="tersoff.Tersoff.assign_line">
+<code class="descname">assign_line</code><span class="sig-paren">(</span><em>line</em>, <em>validate=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tersoff.html#Tersoff.assign_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.assign_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse line inputs and assign to this object.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>line: <em>str</em></dt>
+<dd>A string that holds a three-body tersoff parameter set.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="tersoff.Tersoff.dump_line">
+<code class="descname">dump_line</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tersoff.html#Tersoff.dump_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.dump_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will output the pair_coeff line for tersoff in LAMMPS.
+Note - This line output only exists if SMRFF is installed.</p>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>line: <em>str</em></dt>
+<dd>A pair_coeff line output in tersoff.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="tersoff.Tersoff.fix">
+<code class="descname">fix</code><span class="sig-paren">(</span><em>params='all'</em>, <em>value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tersoff.html#Tersoff.fix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.fix" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will fix these parameters by assigning bounds to the
+values themselves.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="tersoff.Tersoff.generate">
+<em class="property">classmethod </em><code class="descname">generate</code><span class="sig-paren">(</span><em>atom_types</em>, <em>form='original'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tersoff.html#Tersoff.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Randomly generate parameters for tersoff.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>atom_types: <em>list, str</em></dt>
+<dd>A list of all the atom types to have parameters generated for.</dd>
+<dt>form: <em>str</em></dt>
+<dd>Whether to use the original form (m=3, gamma=1) or the
+Albe et al form (m=1, beta=1).  Must be original or albe.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>ters_objs: <em>list, Tersoff</em></dt>
+<dd>Returns a list of Tersoff objects.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="tersoff.Tersoff.load_smrff">
+<em class="property">classmethod </em><code class="descname">load_smrff</code><span class="sig-paren">(</span><em>parsed_file</em>, <em>pfile_name=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tersoff.html#Tersoff.load_smrff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.load_smrff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a parameter file, inport the coulomb parameters if possible.</p>
+<dl class="docutils">
+<dt><strong>Parameters</strong></dt>
+<dd><dl class="first last docutils">
+<dt>parsed_file: <em>str</em></dt>
+<dd>A parsed smrff parameter file input string (no comments or
+trailing white spaces)</dd>
+<dt>pfile_name: <em>str</em></dt>
+<dd>The name of a parameter file to be parsed.  If specified,
+then parsed_file is ignored (you may simply pass None as
+parsed_file).</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>tersoff_objs: <em>list, Tersoff</em>, or <em>None</em></dt>
+<dd>Returns a list of Tersoff objects if possible, else None.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="tersoff.Tersoff.pack">
+<code class="descname">pack</code><span class="sig-paren">(</span><em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tersoff.html#Tersoff.pack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.pack" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function packs the tersoff object from a list.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list</em></dt>
+<dd>A list holding the indices, m, gamma, lambda3, c, d,
+costheta0, n, beta, lambda2, B, R, D, lambda1, A.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="tersoff.Tersoff.parse_line">
+<em class="property">static </em><code class="descname">parse_line</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tersoff.html#Tersoff.parse_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.parse_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse line inputs.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>line: <em>str</em></dt>
+<dd>A string that holds a three-body tersoff parameter set.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>indices: <em>tuple, str</em></dt>
+<dd>Tersoff Parameter.</dd>
+<dt>m: <em>float</em></dt>
+<dd>Tersoff Parameter.</dd>
+<dt>gamma: <em>float</em></dt>
+<dd>Tersoff Parameter.</dd>
+<dt>lambda3: <em>float</em></dt>
+<dd>Tersoff Parameter.</dd>
+<dt>c: <em>float</em></dt>
+<dd>Tersoff Parameter.</dd>
+<dt>d: <em>float</em></dt>
+<dd>Tersoff Parameter.</dd>
+<dt>costheta0: <em>float</em></dt>
+<dd>Tersoff Parameter.</dd>
+<dt>n: <em>float</em></dt>
+<dd>Tersoff Parameter.</dd>
+<dt>beta: <em>float</em></dt>
+<dd>Tersoff Parameter.</dd>
+<dt>lambda2: <em>float</em></dt>
+<dd>Tersoff Parameter.</dd>
+<dt>B: <em>float</em></dt>
+<dd>Tersoff Parameter.</dd>
+<dt>R: <em>float</em></dt>
+<dd>Tersoff Parameter.</dd>
+<dt>D: <em>float</em></dt>
+<dd>Tersoff Parameter.</dd>
+<dt>lambda1: <em>float</em></dt>
+<dd>Tersoff Parameter.</dd>
+<dt>A: <em>float</em></dt>
+<dd>Tersoff Parameter.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="tersoff.Tersoff.print_lower">
+<code class="descname">print_lower</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tersoff.html#Tersoff.print_lower"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.print_lower" title="Permalink to this definition">¶</a></dt>
+<dd><p>This prints out a representation of this tersoff object’s upper bound,
+in the format that is output to the smrff parameter file.</p>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>tersoff: <em>str</em></dt>
+<dd><p class="first">A string representation of Tersoff parameters.  It is in the
+following order:</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>indices m gamma lambda3 c d costheta0</dt>
+<dd>n beta  lambda2 B R     D     lambda1   A</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="tersoff.Tersoff.print_upper">
+<code class="descname">print_upper</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tersoff.html#Tersoff.print_upper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.print_upper" title="Permalink to this definition">¶</a></dt>
+<dd><p>This prints out a representation of this tersoff object’s upper bound,
+in the format that is output to the smrff parameter file.</p>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>tersoff: <em>str</em></dt>
+<dd><p class="first">A string representation of Tersoff parameters.  It is in the
+following order:</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>indices m gamma lambda3 c d costheta0</dt>
+<dd>n beta  lambda2 B R     D     lambda1   A</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="tersoff.Tersoff.set_default_bounds">
+<code class="descname">set_default_bounds</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tersoff.html#Tersoff.set_default_bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.set_default_bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign default bounds.  Further, if this is the case of A-B-B vs A-B-C
+we can simplify the bounds as only in the case of A-B-B are two body
+parameters n, Beta, lambda2, lambda1, and A read in.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tersoff.Tersoff.turn_off">
+<code class="descname">turn_off</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tersoff.html#Tersoff.turn_off"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.turn_off" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function essentially turns off the Tersoff potential.  This is
+accomplished by:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Setting a small cutoff distance.</li>
+<li>Assigning an impossibly large repulsion energy (A is large)</li>
+<li>Removing attractive potential (B is 0)</li>
+<li>Setting beta to 0 (this removes the three-body interaction)</li>
+<li>Setting all benign (unused) parameters to 1</li>
+</ol>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="tersoff.Tersoff.turn_off_3body">
+<code class="descname">turn_off_3body</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tersoff.html#Tersoff.turn_off_3body"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.turn_off_3body" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function essentially turns off the 3-body component of the
+Tersoff potential.  This is accomplished by:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Setting beta to 0 (this removes the three-body interaction)</li>
+<li>Setting all benign (unused) parameters to 1</li>
+</ol>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="tersoff.Tersoff.unpack">
+<code class="descname">unpack</code><span class="sig-paren">(</span><em>with_indices=True</em>, <em>bounds=None</em>, <em>with_bounds=False</em>, <em>for_output=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tersoff.html#Tersoff.unpack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.unpack" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function unpacks the tersoff object into a list.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>with_indices: <em>bool, optional</em></dt>
+<dd>Whether to also include the indices in the list.</dd>
+<dt>bounds: <em>int, optional</em></dt>
+<dd>Whether to output the lower bounds (0), or upper bounds (1).
+If None, then the parameters themselves are output
+instead (default).</dd>
+<dt>with_bounds: <em>bool, optional</em></dt>
+<dd>Whether to output the bounds or not.</dd>
+<dt>for_output: <em>bool, optional</em></dt>
+<dd>Whether this is for output (in which case we disregard
+2-body sym flag)</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>tersoff: <em>list, str/float</em></dt>
+<dd>A list, holding the string of the indices, m, gamma, lambda3,
+c, d, costheta0, n, beta, lambda2, B, R, D, lambda1, A.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="tersoff.Tersoff.update_2body">
+<code class="descname">update_2body</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tersoff.html#Tersoff.update_2body"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.update_2body" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a tersoff parameter object, update the current one with
+the 2-body parameters (n, beta, lambda1, lambda2, A, B).</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>other: <em>:class:`Tersoff`</em></dt>
+<dd>A Tersoff parameter object to get 2-body parameters from.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="tersoff.Tersoff.validate">
+<code class="descname">validate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tersoff.html#Tersoff.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will validate data integrity.  In this case, we simply
+ensure data types are appropriate.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="tersoff.sorted_force_2body_symmetry">
+<code class="descclassname">tersoff.</code><code class="descname">sorted_force_2body_symmetry</code><span class="sig-paren">(</span><em>tersoff_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tersoff.html#sorted_force_2body_symmetry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.sorted_force_2body_symmetry" title="Permalink to this definition">¶</a></dt>
+<dd><p>In the case of randomly generating parameters, we may want to randomly
+force the 2body symmetry condition.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>tersoff_params: <em>list,</em> <a class="reference internal" href="#tersoff.Tersoff" title="tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tersoff</span></code></a></dt>
+<dd>A list of Tersoff objects.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>corrected_tersoff_params: <em>list,</em> <a class="reference internal" href="#tersoff.Tersoff" title="tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tersoff</span></code></a></dt>
+<dd>A list of Tersoff objects with the 2body symmetry
+condition ensured.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="tersoff.tag_tersoff_for_duplicate_2bodies">
+<code class="descclassname">tersoff.</code><code class="descname">tag_tersoff_for_duplicate_2bodies</code><span class="sig-paren">(</span><em>tersoff_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tersoff.html#tag_tersoff_for_duplicate_2bodies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.tag_tersoff_for_duplicate_2bodies" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will mimic the sorted_force_2body_symmetry
+and tag the duplicates that would be set by
+sorted_force_2body_symmetry.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>tersoff_params: <em>list,</em> <a class="reference internal" href="#tersoff.Tersoff" title="tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tersoff</span></code></a></dt>
+<dd>A list of Tersoff objects.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>tagged_tersoff_params: <em>list,</em> <a class="reference internal" href="#tersoff.Tersoff" title="tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tersoff</span></code></a></dt>
+<dd>A list of the unique Tersoff objects.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tersoff.verify_tersoff_2body_symmetry">
+<code class="descclassname">tersoff.</code><code class="descname">verify_tersoff_2body_symmetry</code><span class="sig-paren">(</span><em>tersoff_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tersoff.html#verify_tersoff_2body_symmetry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.verify_tersoff_2body_symmetry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of tersoff parameters, verify that they are such that
+the two-body parameters are symmetric.  What this means is that when
+we consider A-B B and B-A A, the two body parameters must be the same.
+This is necessary as LAMMPs will randomly isolate the two body
+interaction (A-B or B-A) and use the corresponding parameters.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>tersoff_params: <em>list,</em> <a class="reference internal" href="#tersoff.Tersoff" title="tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tersoff</span></code></a></dt>
+<dd>A list of Tersoff objects.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../squid.html">Squid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codebase.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/module_docs/tersoff.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Henry Herbol.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

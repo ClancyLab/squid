@@ -1,0 +1,2 @@
+.. automodule:: molecule
+    :members:

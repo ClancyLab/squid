@@ -1,0 +1,280 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>packmol &#8212; Squid 2.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for packmol</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">squid.utils</span> <span class="k">import</span> <span class="n">units</span>
+<span class="kn">from</span> <span class="nn">squid.files.xyz_io</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">squid.files.misc</span> <span class="k">import</span> <span class="n">which</span>
+<span class="kn">from</span> <span class="nn">squid.utils.cast</span> <span class="k">import</span> <span class="n">is_array</span>
+
+
+<div class="viewcode-block" id="get_packmol_obj"><a class="viewcode-back" href="../module_docs/packmol.html#packmol.get_packmol_obj">[docs]</a><span class="k">def</span> <span class="nf">get_packmol_obj</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function will find the packmol executable and handle errors</span>
+<span class="sd">    accordingly.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">packmol_path</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="s2">&quot;packmol&quot;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">packmol_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">packmol_path</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - Unable to access Packmol.  Please ensure it is in your PATH </span><span class="se">\</span>
+<span class="s2">environment variable!&quot;</span>
+
+    <span class="k">return</span> <span class="n">packmol_path</span></div>
+
+
+<div class="viewcode-block" id="packmol"><a class="viewcode-back" href="../module_docs/packmol.html#packmol.packmol">[docs]</a><span class="k">def</span> <span class="nf">packmol</span><span class="p">(</span><span class="n">system_obj</span><span class="p">,</span> <span class="n">molecules</span><span class="p">,</span> <span class="n">molecule_ratio</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span>
+            <span class="n">density</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">persist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">additional</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">custom</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extra_block_at_end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">extra_block_at_beginning</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">2.0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a list of molecules, pack this system appropriately.  Note,</span>
+<span class="sd">    we now will pack around what is already within the system!  This is</span>
+<span class="sd">    done by first generating a packmol block for the system at hand,</span>
+<span class="sd">    followed by a block for the solvent.</span>
+
+<span class="sd">    A custom script is also allowed; however, if this path is chosen, then</span>
+<span class="sd">    ensure all file paths for packmol exist.  We change directories within</span>
+<span class="sd">    this function to a sys_packmol folder, where all files are expected to</span>
+<span class="sd">    reside.</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">        system_obj: :class:`structures.system.System`</span>
+<span class="sd">            The system object to pack the molecules into.</span>
+<span class="sd">        molecules: *list,* :class:`structures.molecule.Molecule`</span>
+<span class="sd">            Molecules to be added to this system.</span>
+<span class="sd">        molecule_ratio: *tuple, float, optional*</span>
+<span class="sd">            The ration that each molecule in *molecules* will be added to</span>
+<span class="sd">            the system.</span>
+<span class="sd">        density: *float, optional*</span>
+<span class="sd">            The density of the system in g/mL</span>
+<span class="sd">        seed: *float, optional*</span>
+<span class="sd">            Seed for random generator.</span>
+<span class="sd">        persist: *bool, optional*</span>
+<span class="sd">            Whether to maintain the generated sys_packmol directory or</span>
+<span class="sd">            not.</span>
+<span class="sd">        number: *int or list, int, optional*</span>
+<span class="sd">            Overide density and specify the exact number of molecules to</span>
+<span class="sd">            pack. When using a list of molecules, you must specify each</span>
+<span class="sd">            in order within a list.</span>
+<span class="sd">        custom: *str, optional*</span>
+<span class="sd">            A custom packmol script to run for the given input molecules.</span>
+<span class="sd">            Note, you should ensure all necessary files are within the</span>
+<span class="sd">            sys_packmol folder if using this option.</span>
+<span class="sd">        additional: *str, optional*</span>
+<span class="sd">            Whether to add additional constraints to the standard packmol</span>
+<span class="sd">            setup.</span>
+<span class="sd">        extra_block_at_beginning: *str, optional*</span>
+<span class="sd">            An additional block to put prior to the standard block.</span>
+<span class="sd">        extra_block_at_end: *str, optional*</span>
+<span class="sd">            An additional block to put after the standard block.</span>
+<span class="sd">        tolerance: *float, optional*</span>
+<span class="sd">            The tolerance around which we allow atomic overlap/proximity.</span>
+
+<span class="sd">    **Returns**</span>
+
+<span class="sd">        None</span>
+
+<span class="sd">    **References**</span>
+
+<span class="sd">        * Packmol - http://www.ime.unicamp.br/~martinez/packmol/home.shtml</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s1">&#39;sys_packmol&#39;</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="s1">&#39;sys_packmol&#39;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;sys_packmol&#39;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">is_array</span><span class="p">(</span><span class="n">molecules</span><span class="p">),</span>\
+        <span class="s2">&quot;Error - Molecules must be an array!&quot;</span>
+
+    <span class="n">packmol_path</span> <span class="o">=</span> <span class="n">get_packmol_obj</span><span class="p">()</span>
+
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">system_obj</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.packmol&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">custom</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">custom</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">tolerance &#39;&#39;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">tolerance</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">filetype xyz</span>
+<span class="s1">output &#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">system_obj</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;.packed.xyz</span>
+<span class="s1">seed &#39;&#39;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">&#39;&#39;&#39;</span><span class="p">)</span>
+
+        <span class="c1"># If the system already has atoms, then set them</span>
+        <span class="k">if</span> <span class="n">system_obj</span><span class="o">.</span><span class="n">atoms</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">system_obj</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">write_xyz</span><span class="p">(</span><span class="n">system_obj</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_fixed.xyz&quot;</span> <span class="o">%</span> <span class="n">system_obj</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">structure </span><span class="si">%s</span><span class="s1">_fixed.xyz</span>
+<span class="s1">number 1</span>
+<span class="s1">fixed 0. 0. 0. 0. 0. 0.</span>
+<span class="s1">centerofmass</span>
+<span class="s1">end structure</span>
+<span class="s1">&#39;&#39;&#39;</span> <span class="o">%</span> <span class="n">system_obj</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="c1"># convert density to amu/angstrom^3. 1 g/mL = 0.6022 amu/angstrom^3</span>
+        <span class="n">density</span> <span class="o">*=</span> <span class="mf">0.6022</span>
+        <span class="n">average_molecular_weight</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="p">[(</span><span class="n">units</span><span class="o">.</span><span class="n">elem_weight</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">element</span><span class="p">))</span> <span class="o">*</span>
+             <span class="n">molecule_ratio</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">molecules</span><span class="p">))</span>
+             <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">molecules</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="p">])</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">molecule_ratio</span><span class="p">)</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="p">(</span><span class="n">density</span> <span class="o">*</span>
+                 <span class="n">system_obj</span><span class="o">.</span><span class="n">box_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span>
+                 <span class="n">system_obj</span><span class="o">.</span><span class="n">box_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span>
+                 <span class="n">system_obj</span><span class="o">.</span><span class="n">box_size</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span>
+                 <span class="n">average_molecular_weight</span><span class="p">)</span>
+        <span class="n">molecule_counts</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">count</span> <span class="o">*</span> <span class="n">x</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">molecule_ratio</span><span class="p">)))</span>
+                           <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">molecule_ratio</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">number</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">molecule_counts</span> <span class="o">=</span> <span class="n">number</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">number</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">:</span>
+                <span class="n">molecule_counts</span> <span class="o">=</span> <span class="p">[</span><span class="n">molecule_counts</span><span class="p">]</span>
+
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">extra_block_at_beginning</span><span class="p">)</span>
+        <span class="n">lower</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="o">-</span><span class="n">x</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">system_obj</span><span class="o">.</span><span class="n">box_size</span><span class="p">])</span>
+        <span class="n">upper</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">x</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">system_obj</span><span class="o">.</span><span class="n">box_size</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">molecules</span><span class="p">):</span>
+            <span class="n">xyz_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_</span><span class="si">%d</span><span class="s1">.xyz&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">system_obj</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+            <span class="n">xyz_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">atoms</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Atoms</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span>
+                <span class="n">xyz_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s%d</span><span class="s1"> </span><span class="si">%f</span><span class="s1"> </span><span class="si">%f</span><span class="s1"> </span><span class="si">%f</span><span class="se">\n</span><span class="s1">&#39;</span>
+                               <span class="o">%</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">element</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">z</span><span class="p">))</span>
+            <span class="n">xyz_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">structure </span><span class="si">%s</span><span class="s1">_</span><span class="si">%d</span><span class="s1">.xyz</span>
+<span class="s1">number </span><span class="si">%d</span><span class="s1"></span>
+<span class="s1">inside box </span><span class="si">%f</span><span class="s1"> </span><span class="si">%f</span><span class="s1"> </span><span class="si">%f</span><span class="s1"> </span><span class="si">%f</span><span class="s1"> </span><span class="si">%f</span><span class="s1"> </span><span class="si">%f</span><span class="s1">&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">((</span><span class="n">system_obj</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">molecule_counts</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="n">lower</span> <span class="o">+</span> <span class="n">upper</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">additional</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">end structure</span>
+<span class="s1">&#39;&#39;&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">extra_block_at_end</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="c1"># Run packmol</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">packmol_path</span> <span class="o">+</span>
+              <span class="s1">&#39; &lt; &#39;</span> <span class="o">+</span>
+              <span class="n">system_obj</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span>
+              <span class="s1">&#39;.packmol &gt; packmol.log&#39;</span><span class="p">)</span>
+    <span class="n">atoms</span> <span class="o">=</span> <span class="n">read_xyz</span><span class="p">(</span><span class="n">system_obj</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.packed.xyz&#39;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Now have a list of atoms with element = H0 for molecule 0,</span>
+    <span class="c1"># H1 for molecule 1, etc</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">system_obj</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">):</span>
+        <span class="n">ints_in_element</span> <span class="o">=</span> <span class="p">[</span><span class="n">j</span> <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atoms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">element</span><span class="p">)</span> <span class="k">if</span> <span class="n">h</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ints_in_element</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># This is the fixed molecule that already exists in the system</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="n">offset</span>
+            <span class="k">continue</span>
+        <span class="c1"># More robust, now we handle &gt; 10 molecules!</span>
+        <span class="n">molecule_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">atoms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">element</span><span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">ints_in_element</span><span class="p">):])</span>
+        <span class="n">molecule</span> <span class="o">=</span> <span class="n">molecules</span><span class="p">[</span><span class="n">molecule_number</span><span class="p">]</span>
+        <span class="n">system_obj</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">molecule</span><span class="p">)</span>
+        <span class="c1"># Update positions of latest molecule</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">system_obj</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">molecule</span><span class="o">.</span><span class="n">atoms</span><span class="p">):]:</span>
+            <span class="n">a</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">atoms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">atoms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">atoms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">z</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">persist</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;rm -rf sys_packmol&quot;</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">run_unit_tests</span><span class="p">():</span>
+    <span class="c1"># This unit test exists in the structures.system.System unit test.</span>
+    <span class="k">pass</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run_unit_tests</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../squid.html">Squid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codebase.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Henry Herbol.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

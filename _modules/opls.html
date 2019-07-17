@@ -39,28 +39,14 @@
           <div class="body" role="main">
             
   <h1>Source code for opls</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">The OPLS Forcefield module contains functionality for parsing the OPLS</span>
-<span class="sd">forcefield and typing appropriately.  Note, you must first import</span>
-<span class="sd">files before ever importing frc_opls.</span>
-
-<span class="sd">- :func:`read_opls_parameters`</span>
-<span class="sd">- :func:`set_forcefield_parameters`</span>
-<span class="sd">- :func:`check_net_charge`</span>
-<span class="sd">- :func:`check_consistency`</span>
-
-<span class="sd">------------</span>
-
-<span class="sd">&quot;&quot;&quot;</span>
-
-<span class="c1"># System imports</span>
+<span></span><span class="c1"># System imports</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="n">OPLS_FILE</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span>\
     <span class="s2">&quot;/potentials/oplsaa.prm&quot;</span>
 
 
-<div class="viewcode-block" id="parse_pfile"><a class="viewcode-back" href="../forcefields.html#opls.parse_pfile">[docs]</a><span class="k">def</span> <span class="nf">parse_pfile</span><span class="p">(</span><span class="n">parameter_file</span><span class="o">=</span><span class="n">OPLS_FILE</span><span class="p">,</span> <span class="n">pair_style</span><span class="o">=</span><span class="s1">&#39;lj/cut&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="parse_pfile"><a class="viewcode-back" href="../module_docs/opls.html#opls.parse_pfile">[docs]</a><span class="k">def</span> <span class="nf">parse_pfile</span><span class="p">(</span><span class="n">parameter_file</span><span class="o">=</span><span class="n">OPLS_FILE</span><span class="p">,</span> <span class="n">pair_style</span><span class="o">=</span><span class="s1">&#39;lj/cut&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reads an opls parameter file written in the Tinker file format.</span>
 
@@ -160,7 +146,8 @@
 <h3><a href="../index.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../squid.html">Squid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../updating.html">UPDATING TO v2.0.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codebase.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
 </ul>
 
 <div id="searchbox" style="display: none" role="search">

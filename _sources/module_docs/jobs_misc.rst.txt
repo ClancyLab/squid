@@ -1,0 +1,2 @@
+.. automodule:: jobs.misc
+    :members:

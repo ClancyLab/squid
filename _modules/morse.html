@@ -39,10 +39,7 @@
           <div class="body" role="main">
             
   <h1>Source code for morse</h1><div class="highlight"><pre>
-<span></span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">The Morse object. This stores the indices and MORSE parameters.</span>
-<span class="sd">&#39;&#39;&#39;</span>
-<span class="kn">import</span> <span class="nn">copy</span>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">combinations_with_replacement</span>
 <span class="kn">from</span> <span class="nn">squid.forcefields.helper</span> <span class="k">import</span> <span class="n">check_restriction</span>
 
@@ -77,32 +74,32 @@
 <span class="n">RC_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">)</span>
 <span class="c1">##############################################################################</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">The Morse class contains:</span>
-<span class="sd">- :func:`__init__`</span>
-<span class="sd">- :func:`__repr__`</span>
-<span class="sd">- :func:`__eq__`</span>
-<span class="sd">- :func:`__hash__`</span>
-<span class="sd">- :func:`_printer`</span>
-<span class="sd">- :func:`print_lower`</span>
-<span class="sd">- :func:`print_upper`</span>
-<span class="sd">- :func:`unpack`</span>
-<span class="sd">- :func:`pack`</span>
-<span class="sd">- :func:`validate`</span>
-<span class="sd">- :func:`assign_line`</span>
-<span class="sd">- :func:`fix`</span>
-<span class="sd">- :classmethod:`load_smrff`</span>
-<span class="sd">------------</span>
-<span class="sd">&quot;&quot;&quot;</span>
 
-
-<div class="viewcode-block" id="Morse"><a class="viewcode-back" href="../forcefields.html#morse.Morse">[docs]</a><span class="k">class</span> <span class="nc">Morse</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Morse"><a class="viewcode-back" href="../module_docs/morse.html#morse.Morse">[docs]</a><span class="k">class</span> <span class="nc">Morse</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Initialize the Morse object.  The potential form can be found on the</span>
 <span class="sd">    LAMMPs webpage (http://lammps.sandia.gov/doc/pair_Morse.html).  Either</span>
 <span class="sd">    specify all the parameters, or pass a string to line, but not both.  If</span>
 <span class="sd">    both are specified, an error will be thrown.</span>
+
+<span class="sd">    This object contains the following:</span>
+
+<span class="sd">        - :func:`assign_line`</span>
+<span class="sd">        - :func:`fix`</span>
+<span class="sd">        - :func:`generate`</span>
+<span class="sd">        - :func:`load_smrff`</span>
+<span class="sd">        - :func:`pack`</span>
+<span class="sd">        - :func:`pair_coeff_dump`</span>
+<span class="sd">        - :func:`parse_line`</span>
+<span class="sd">        - :func:`print_lower`</span>
+<span class="sd">        - :func:`print_upper`</span>
+<span class="sd">        - :func:`set_binder`</span>
+<span class="sd">        - :func:`set_nonbinder`</span>
+<span class="sd">        - :func:`unpack`</span>
+<span class="sd">        - :func:`validate`</span>
+
 <span class="sd">    **Parameters**</span>
+
 <span class="sd">        indices: *list or tuple, str or int*</span>
 <span class="sd">            The indices of the atom types in this pairwise interaction.</span>
 <span class="sd">        D0: *float*</span>
@@ -117,8 +114,10 @@
 <span class="sd">            rc describes the cutoff of the pairwise interaction.</span>
 <span class="sd">        line: *str*</span>
 <span class="sd">            A line from a parameter file to be parsed.</span>
+
 <span class="sd">    **Returns**</span>
-<span class="sd">        Morse: :class:`Morse`</span>
+
+<span class="sd">        Morse: :class:`squid.structures.Morse`</span>
 <span class="sd">            A Morse object.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
@@ -152,7 +151,9 @@
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This prints out a representation of this Morse object, in the format</span>
 <span class="sd">        that is output to the smrff parameter file.</span>
+
 <span class="sd">        **Returns**</span>
+
 <span class="sd">            Morse: *str*</span>
 <span class="sd">                A string representation of Morse parameters.</span>
 <span class="sd">                It is in the following order:</span>
@@ -183,14 +184,18 @@
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This prints out a representation of this Morse object,</span>
 <span class="sd">        in the format that is output to the smrff parameter file.</span>
+
 <span class="sd">        **Parameters**</span>
+
 <span class="sd">            with_indices: *bool, optional*</span>
 <span class="sd">                Whether to also include the indices in the output.</span>
 <span class="sd">            bounds: *int, optional*</span>
 <span class="sd">                Whether to output the lower bounds (0), or upper bounds (1).</span>
 <span class="sd">                If None, then the parameters themselves are output instead</span>
 <span class="sd">                (default).</span>
+
 <span class="sd">        **Returns**</span>
+
 <span class="sd">            Morse: *str*</span>
 <span class="sd">                A string representation of Morse parameters.</span>
 <span class="sd">                It is in the following order: indices D0 alpha r0 rc</span>
@@ -204,39 +209,47 @@
             <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;      </span><span class="si">%.7f</span><span class="s2">   </span><span class="si">%.7f</span><span class="s2">   </span><span class="si">%.7f</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">))</span> <span class="o">+</span> <span class="n">s</span> <span class="o">%</span> <span class="n">values</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Morse.print_lower"><a class="viewcode-back" href="../forcefields.html#morse.Morse.print_lower">[docs]</a>    <span class="k">def</span> <span class="nf">print_lower</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Morse.print_lower"><a class="viewcode-back" href="../module_docs/morse.html#morse.Morse.print_lower">[docs]</a>    <span class="k">def</span> <span class="nf">print_lower</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This prints out a representation of this Morse object&#39;s lower bound,</span>
 <span class="sd">        in the format that is output to the smrff parameter file.</span>
+
 <span class="sd">        **Returns**</span>
+
 <span class="sd">            Morse: *str*</span>
 <span class="sd">                A string representation of Morse parameters.</span>
 <span class="sd">                It is in the following order: indices D0 alpha r0 rc</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_printer</span><span class="p">(</span><span class="n">with_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Morse.print_upper"><a class="viewcode-back" href="../forcefields.html#morse.Morse.print_upper">[docs]</a>    <span class="k">def</span> <span class="nf">print_upper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Morse.print_upper"><a class="viewcode-back" href="../module_docs/morse.html#morse.Morse.print_upper">[docs]</a>    <span class="k">def</span> <span class="nf">print_upper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This prints out a representation of this Morse object&#39;s upper bound,</span>
 <span class="sd">        in the format that is output to the smrff parameter file.</span>
+
 <span class="sd">        **Returns**</span>
+
 <span class="sd">            Morse: *str*</span>
 <span class="sd">                A string representation of Morse parameters.</span>
 <span class="sd">                It is in the following order: indices D0 alpha r0 rc</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_printer</span><span class="p">(</span><span class="n">with_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Morse.unpack"><a class="viewcode-back" href="../forcefields.html#morse.Morse.unpack">[docs]</a>    <span class="k">def</span> <span class="nf">unpack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">with_bounds</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Morse.unpack"><a class="viewcode-back" href="../module_docs/morse.html#morse.Morse.unpack">[docs]</a>    <span class="k">def</span> <span class="nf">unpack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">with_bounds</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This function unpacks the Morse object into a list.</span>
+
 <span class="sd">        **Parameters**</span>
+
 <span class="sd">            with_indices: *bool, optional*</span>
 <span class="sd">                Whether to also include the indices in the list.</span>
 <span class="sd">            bounds: *int, optional*</span>
 <span class="sd">                Whether to output the lower bounds (0), or upper bounds (1).</span>
 <span class="sd">                If None, then the parameters themselves are output instead</span>
 <span class="sd">                (default).</span>
+
 <span class="sd">        **Returns**</span>
+
 <span class="sd">            Morse: *list, str/float*</span>
 <span class="sd">                A list, holding the string of the indices, D0, alpha, r0, rc.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -277,13 +290,17 @@
 
         <span class="k">return</span> <span class="n">pkg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Morse.pack"><a class="viewcode-back" href="../forcefields.html#morse.Morse.pack">[docs]</a>    <span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="Morse.pack"><a class="viewcode-back" href="../module_docs/morse.html#morse.Morse.pack">[docs]</a>    <span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This function packs the Morse object from a list.</span>
+
 <span class="sd">        **Parameters**</span>
+
 <span class="sd">            params: *list*</span>
 <span class="sd">                A list holding the indices, D0, alpha, r0, rc.</span>
+
 <span class="sd">        **Returns**</span>
+
 <span class="sd">            None</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="s2">&quot;In Morse, tried packing </span><span class="si">%d</span><span class="s2"> parameters. </span><span class="se">\</span>
@@ -302,7 +319,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Morse.validate"><a class="viewcode-back" href="../forcefields.html#morse.Morse.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Morse.validate"><a class="viewcode-back" href="../module_docs/morse.html#morse.Morse.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This function will validate data integrity.</span>
 <span class="sd">        In this case, we simply ensure data types are appropriate.</span>
@@ -331,15 +348,28 @@
                 <span class="s2">&quot;In Morse </span><span class="si">%s</span><span class="s2">, parameter </span><span class="si">%s</span><span class="s2"> = </span><span class="si">%.2f</span><span class="s2"> is outside of it&#39;s range = </span><span class="se">\</span>
 <span class="s2">[</span><span class="si">%.2f</span><span class="s2">, </span><span class="si">%.2f</span><span class="s2">]!&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">),</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">bound</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">bound</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="Morse.parse_line"><a class="viewcode-back" href="../forcefields.html#morse.Morse.parse_line">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Morse.parse_line"><a class="viewcode-back" href="../module_docs/morse.html#morse.Morse.parse_line">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">parse_line</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Parse line inputs and assign to this object.</span>
+<span class="sd">        Parse line inputs.</span>
+
 <span class="sd">        **Parameters**</span>
+
 <span class="sd">            line: *str*</span>
 <span class="sd">                A string that holds a three-body Morse parameter set.</span>
+
 <span class="sd">        **Returns**</span>
-<span class="sd">            None</span>
+
+<span class="sd">            indices: *tuple, str*</span>
+<span class="sd">                The labels in the line corresponding to atom types.</span>
+<span class="sd">            D0: *float*</span>
+<span class="sd">                The depth of the potential well.</span>
+<span class="sd">            alpha: *float*</span>
+<span class="sd">                The width of the potential well.</span>
+<span class="sd">            r0: *float*</span>
+<span class="sd">                The interatomic distance associated with the minimum.</span>
+<span class="sd">            rc: *float*</span>
+<span class="sd">                The cutoff of the potential.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span>\
@@ -355,16 +385,42 @@
 
         <span class="k">return</span> <span class="n">indices</span><span class="p">,</span> <span class="n">D0</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">rc</span></div>
 
-    <span class="k">def</span> <span class="nf">assign_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+<div class="viewcode-block" id="Morse.assign_line"><a class="viewcode-back" href="../module_docs/morse.html#morse.Morse.assign_line">[docs]</a>    <span class="k">def</span> <span class="nf">assign_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse line inputs and assign to this object.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            line: *str*</span>
+<span class="sd">                A string that holds a three-body Morse parameter set.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="o">=</span>\
             <span class="bp">self</span><span class="o">.</span><span class="n">parse_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Morse.fix"><a class="viewcode-back" href="../forcefields.html#morse.Morse.fix">[docs]</a>    <span class="k">def</span> <span class="nf">fix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        This will fix these parameters by assigning bounds to the values</span>
-<span class="sd">        themselves.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="Morse.fix"><a class="viewcode-back" href="../module_docs/morse.html#morse.Morse.fix">[docs]</a>    <span class="k">def</span> <span class="nf">fix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This will fix these parameters by assigning bounds to the</span>
+<span class="sd">        values themselves.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            params: *str, optional*</span>
+<span class="sd">                Whether to fix everything (all), or a specific value (D0,</span>
+<span class="sd">                alpha, r0, or rc).</span>
+<span class="sd">            value: *list, float, or float, optional*</span>
+<span class="sd">                The value to fix the charge to. If None, then it is fixed to</span>
+<span class="sd">                the current value.  If params is all, then value must be a</span>
+<span class="sd">                list of values.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">params</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">),</span>\
@@ -420,7 +476,7 @@
             <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%.4f</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">D0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="p">)</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%.4f</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">D0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Morse.set_binder"><a class="viewcode-back" href="../forcefields.html#morse.Morse.set_binder">[docs]</a>    <span class="k">def</span> <span class="nf">set_binder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Morse.set_binder"><a class="viewcode-back" href="../module_docs/morse.html#morse.Morse.set_binder">[docs]</a>    <span class="k">def</span> <span class="nf">set_binder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This will adjust bounds such that the parameters are in a range of a</span>
 <span class="sd">        morse &quot;Bond&quot;.  This means that:</span>
@@ -432,7 +488,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">r0</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">+</span>\
                 <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Morse.set_nonbinder"><a class="viewcode-back" href="../forcefields.html#morse.Morse.set_nonbinder">[docs]</a>    <span class="k">def</span> <span class="nf">set_nonbinder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Morse.set_nonbinder"><a class="viewcode-back" href="../module_docs/morse.html#morse.Morse.set_nonbinder">[docs]</a>    <span class="k">def</span> <span class="nf">set_nonbinder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This will adjust bounds such that the parameters are in a range of a</span>
 <span class="sd">        morse &quot;Non-Bond&quot;.  This means that:</span>
@@ -456,11 +512,13 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">alpha_bounds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">+</span>\
                 <span class="bp">self</span><span class="o">.</span><span class="n">alpha_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Morse.load_smrff"><a class="viewcode-back" href="../forcefields.html#morse.Morse.load_smrff">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Morse.load_smrff"><a class="viewcode-back" href="../module_docs/morse.html#morse.Morse.load_smrff">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">load_smrff</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">parsed_file</span><span class="p">,</span> <span class="n">pfile_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">restrict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Given a parameter file, import the Morse parameters if possible.</span>
+
 <span class="sd">        **Parameters**</span>
+
 <span class="sd">            parsed_file: *str*</span>
 <span class="sd">                A parsed smrff parameter file input string.</span>
 <span class="sd">                (no comments or trailing white spaces)</span>
@@ -468,8 +526,10 @@
 <span class="sd">                The name of a parameter file to be parsed.</span>
 <span class="sd">                If specified, then parsed_file is ignored.</span>
 <span class="sd">                (you may simply pass None as parsed_file)</span>
+
 <span class="sd">        **Returns**</span>
-<span class="sd">            Morse_objs: *list, Morse*, or *None*</span>
+
+<span class="sd">            Morse_objs: *list,* :class:`squid.structures.Morse`, or *None*</span>
 <span class="sd">                Returns a list of Morse objects if possible, else None.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="kn">import</span> <span class="nn">squid.forcefields.smrff</span> <span class="k">as</span> <span class="nn">smrff_utils</span>
@@ -490,7 +550,7 @@
             <span class="k">if</span> <span class="n">check_restriction</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">restrict</span><span class="p">)</span>
         <span class="p">]</span></div>
 
-<div class="viewcode-block" id="Morse.generate"><a class="viewcode-back" href="../forcefields.html#morse.Morse.generate">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Morse.generate"><a class="viewcode-back" href="../module_docs/morse.html#morse.Morse.generate">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">atom_types</span><span class="p">,</span> <span class="n">gen_rc</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Randomly generate parameters for morse.</span>
@@ -502,7 +562,7 @@
 
 <span class="sd">        **Returns**</span>
 
-<span class="sd">            morse_objs: *list, Morse*</span>
+<span class="sd">            morse_objs: *list,* :class:`squid.structures.Morse`</span>
 <span class="sd">                Returns a list of Morse objects.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="kn">from</span> <span class="nn">helper</span> <span class="k">import</span> <span class="n">random_in_range</span>
@@ -595,7 +655,8 @@
 <h3><a href="../index.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../squid.html">Squid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../updating.html">UPDATING TO v2.0.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codebase.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
 </ul>
 
 <div id="searchbox" style="display: none" role="search">
