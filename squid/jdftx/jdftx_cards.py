@@ -1,16 +1,5 @@
-"""
-The JDFTx card module.  This works as a python wrapper of
-cards used within JDFTx.
-
-- :class:`QeControl`
-
-------------
-
-"""
-
-
 class QeControl:
-    """
+    '''
     The X card.  This is where X
 
     **Parameters**
@@ -25,7 +14,7 @@ class QeControl:
             - md:
             - vc-relax:
             - vc-md:
-    """
+    '''
 
     def __init__(self, calculation="scf", title="", verbosity="low",
                  restart_mode="from_scratch", wf_collect=False, nstep=None,

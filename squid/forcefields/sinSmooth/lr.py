@@ -48,12 +48,6 @@ LOWER_CUT = 0.2
 SMOOTH_PFILE_ID = "SMOOTHS"
 END_ID = "END"
 
-"""
-The Smooth class contains:
-
-------------
-"""
-
 
 class SmoothSinLR(object):
     '''
@@ -128,14 +122,14 @@ class SmoothSinLR(object):
 
     @staticmethod
     def parse_line(line):
-        """
+        '''
         Parse line inputs and assign to this object.
         **Parameters**
             line: *str*
                 A string that holds a smooth parameter set.
         **Returns**
             None
-        """
+        '''
 
         line = line.strip().split()
         assert len(line) == 7,\

@@ -1,13 +1,3 @@
-"""
-The JDFTx module.  This works as a python wrapper of the JDFTx plane-wave DFT
-code.
-
-- :func:`job`
-- :func:`read`
-
-------------
-
-"""
 import os
 import sys
 import time
@@ -23,7 +13,7 @@ from squid.structures import results
 
 
 def read(input_file, atom_units="Ang"):
-    """
+    '''
     General read in of all possible data from a JDFTx output file.
 
     **Parameters**
@@ -38,7 +28,7 @@ def read(input_file, atom_units="Ang"):
         data: :class:`results.DFT_out`
             Generic DFT output object containing all parsed results.
 
-    """
+    '''
     raise Exception("NEEDS TO BE DONE!")
     # Check file exists, and open
     # Allow absolute paths as filenames
@@ -174,7 +164,7 @@ def job(run_name, atoms, ecut, ecutrho=None, atom_units="Ang", route=None,
         redundancy=False,
         previous=None, mem=2000, priority=None, xhost=None,
         slurm_allocation=None):
-    """
+    '''
     Wrapper to submitting a JDFTx simulation.
 
     **Parameters**
@@ -234,7 +224,7 @@ def job(run_name, atoms, ecut, ecutrho=None, atom_units="Ang", route=None,
 
         job: :class:`jobs.Job`
             Teturn the job container.
-    """
+    '''
     raise Exception("NEEDS TO BE DONE!")
 
     if len(run_name) > 31 and queue is not None:
