@@ -6,13 +6,16 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>debyer &#8212; Squid 0.0.1 documentation</title>
+    <title>debyer &#8212; Squid 2.0.0 documentation</title>
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
   </head><body>
@@ -25,7 +28,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -48,25 +51,32 @@
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">import</span> <span class="nn">files</span>
+
+<span class="kn">from</span> <span class="nn">squid.files.misc</span> <span class="k">import</span> <span class="n">which</span>
+<span class="kn">from</span> <span class="nn">squid.files.xyz_io</span> <span class="k">import</span> <span class="n">write_xyz</span>
 
 
-<div class="viewcode-block" id="get_pdf"><a class="viewcode-back" href="../codebase.html#debyer.get_pdf">[docs]</a><span class="k">def</span> <span class="nf">get_pdf</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">quanta</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">persist</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="get_pdf"><a class="viewcode-back" href="../codebase.html#debyer.get_pdf">[docs]</a><span class="k">def</span> <span class="nf">get_pdf</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+            <span class="n">rho</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">quanta</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">persist</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Obtain the pair distribution function of a list of atoms using the Debyer code.</span>
+<span class="sd">    Obtain the pair distribution function of a list of atoms using</span>
+<span class="sd">    the Debyer code.</span>
 
 <span class="sd">    **Parameters**</span>
 
 <span class="sd">        frames: *str or list,* :class:`structures.Atom`</span>
-<span class="sd">            An xyz file name (with or without the .xyz extension) or an input frame to calculate the pdf for.</span>
+<span class="sd">            An xyz file name (with or without the .xyz extension) or</span>
+<span class="sd">            an input frame to calculate the pdf for.</span>
 <span class="sd">        start: *float, optional*</span>
-<span class="sd">            The starting radial distance in Angstroms for the calculated pattern.</span>
+<span class="sd">            The starting radial distance in Angstroms for the</span>
+<span class="sd">            calculated pattern.</span>
 <span class="sd">        stop: *float, optional*</span>
 <span class="sd">            The ending radial distance in Angstroms for the calculated pattern.</span>
 <span class="sd">        step: *float, optional*</span>
 <span class="sd">            Step in Angstroms for the calculated pattern.</span>
 <span class="sd">        cutoff: *float, optional*</span>
-<span class="sd">            Cutoff distance in Angstroms for Interatomic Distance (ID) calculations.</span>
+<span class="sd">            Cutoff distance in Angstroms for Interatomic Distance</span>
+<span class="sd">            (ID) calculations.</span>
 <span class="sd">        rho: *float, optional*</span>
 <span class="sd">            Numeric density of the system.</span>
 <span class="sd">        quanta: *float, optional*</span>
@@ -74,21 +84,28 @@
 <span class="sd">        output: *str, optional*</span>
 <span class="sd">            Output file name with NO extension given</span>
 <span class="sd">        persist: *bool, optional*</span>
-<span class="sd">            Whether to persist made .g and .xyz files (True), or remove them (False)</span>
+<span class="sd">            Whether to persist made .g and .xyz files (True), or remove</span>
+<span class="sd">            them (False)</span>
 
 <span class="sd">    **Returns**</span>
 
 <span class="sd">        pdf: *list, tuple, float*</span>
-<span class="sd">            A list of tuples holding the pdf data (distance in Angstroms and Intensity).</span>
+<span class="sd">            A list of tuples holding the pdf data (distance in</span>
+<span class="sd">            Angstroms and Intensity).</span>
 
 <span class="sd">    **References**</span>
 
 <span class="sd">        * https://debyer.readthedocs.io/en/latest/</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">debyer_path</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="s2">&quot;debyer&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">debyer_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - Cannot find debyer in the PATH env variable.&quot;</span>
+
     <span class="c1"># If passed frames and not an xyz file name, write to xyz</span>
     <span class="n">append</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">*</span> <span class="mf">1E12</span><span class="p">))</span>
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="n">files</span><span class="o">.</span><span class="n">write_xyz</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="s2">&quot;tmp_for_pdf_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">append</span><span class="p">)</span>
+        <span class="n">write_xyz</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="s2">&quot;tmp_for_pdf_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">append</span><span class="p">)</span>
         <span class="n">file_name</span> <span class="o">=</span> <span class="s2">&quot;tmp_for_pdf_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">append</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">file_name</span> <span class="o">=</span> <span class="n">frames</span>
@@ -100,10 +117,20 @@
         <span class="n">output</span> <span class="o">=</span> <span class="n">file_name</span>
 
     <span class="k">if</span> <span class="n">stop</span> <span class="o">&gt;</span> <span class="n">cutoff</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Stopping position should be larger less than or equal to the cutoff.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Stopping position should be larger less than </span><span class="se">\</span>
+<span class="s2">or equal to the cutoff.&quot;</span><span class="p">)</span>
 
     <span class="c1"># Make command for debyer</span>
-    <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;debyer --cutoff=</span><span class="si">%.2f</span><span class="s2"> --quanta=</span><span class="si">%.2f</span><span class="s2"> -g -f</span><span class="si">%.2f</span><span class="s2"> -t</span><span class="si">%.2f</span><span class="s2"> -s</span><span class="si">%.2f</span><span class="s2"> --ro=</span><span class="si">%.2f</span><span class="s2"> -o </span><span class="si">%s</span><span class="s2">.g </span><span class="si">%s</span><span class="s2">.xyz&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cutoff</span><span class="p">,</span> <span class="n">quanta</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="n">debyer_path</span>
+    <span class="n">cmd</span> <span class="o">+=</span> <span class="s2">&quot; --cutoff=</span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">cutoff</span>
+    <span class="n">cmd</span> <span class="o">+=</span> <span class="s2">&quot; --quanta=</span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">quanta</span>
+    <span class="n">cmd</span> <span class="o">+=</span> <span class="s2">&quot; -g&quot;</span>
+    <span class="n">cmd</span> <span class="o">+=</span> <span class="s2">&quot; -f</span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">start</span>
+    <span class="n">cmd</span> <span class="o">+=</span> <span class="s2">&quot; -t</span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">stop</span>
+    <span class="n">cmd</span> <span class="o">+=</span> <span class="s2">&quot; -s</span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">step</span>
+    <span class="n">cmd</span> <span class="o">+=</span> <span class="s2">&quot; --ro=</span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">rho</span>
+    <span class="n">cmd</span> <span class="o">+=</span> <span class="s2">&quot; -o </span><span class="si">%s</span><span class="s2">.g&quot;</span> <span class="o">%</span> <span class="n">output</span>
+    <span class="n">cmd</span> <span class="o">+=</span> <span class="s2">&quot; </span><span class="si">%s</span><span class="s2">.xyz&quot;</span> <span class="o">%</span> <span class="n">file_name</span>
 
     <span class="c1"># Run debyer and read in the pdf</span>
     <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
@@ -130,11 +157,10 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../index.html">Table Of Contents</a></h3>
+<h3><a href="../index.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../squid.html">Squid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../codebase.html">Codebase</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../updating.html">UPDATING TO v2.0.0</a></li>
 </ul>
 
 <div id="searchbox" style="display: none" role="search">
@@ -162,13 +188,13 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2016, Henry Herbol.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

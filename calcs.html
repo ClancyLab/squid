@@ -1,0 +1,749 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>&lt;no title&gt; &#8212; Squid 2.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p>The calcs module contains various calculations that can be seen as
+an automated task.</p>
+<ul class="simple">
+<li><a class="reference internal" href="codebase.html#neb.NEB" title="neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">neb.NEB</span></code></a></li>
+<li><a class="reference internal" href="codebase.html#aneb.ANEB" title="aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">aneb.ANEB</span></code></a></li>
+</ul>
+<hr class="docutils" />
+<span class="target" id="module-neb"></span><p>The NEB module simplifies the submission of Nudged Elastic Band simulations.</p>
+<ul class="simple">
+<li><a class="reference internal" href="codebase.html#neb.g09_start_job" title="neb.g09_start_job"><code class="xref py py-func docutils literal notranslate"><span class="pre">g09_start_job()</span></code></a></li>
+<li><a class="reference internal" href="codebase.html#neb.g09_results" title="neb.g09_results"><code class="xref py py-func docutils literal notranslate"><span class="pre">g09_results()</span></code></a></li>
+<li><a class="reference internal" href="codebase.html#neb.orca_start_job" title="neb.orca_start_job"><code class="xref py py-func docutils literal notranslate"><span class="pre">orca_start_job()</span></code></a></li>
+<li><a class="reference internal" href="codebase.html#neb.orca_results" title="neb.orca_results"><code class="xref py py-func docutils literal notranslate"><span class="pre">orca_results()</span></code></a></li>
+<li><a class="reference internal" href="codebase.html#neb.NEB" title="neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a></li>
+</ul>
+<hr class="docutils" />
+<dl class="class">
+<dt id="neb.NEB">
+<em class="property">class </em><code class="descclassname">neb.</code><code class="descname">NEB</code><span class="sig-paren">(</span><em>name</em>, <em>states</em>, <em>theory</em>, <em>extra_section=''</em>, <em>initial_guess=None</em>, <em>spring_atoms=None</em>, <em>procs=1</em>, <em>queue=None</em>, <em>mem=2000</em>, <em>priority=None</em>, <em>disp=0</em>, <em>k=0.00367453</em>, <em>charge=0</em>, <em>multiplicity=1</em>, <em>fit_rigid=True</em>, <em>DFT='orca'</em>, <em>opt='LBFGS'</em>, <em>start_job=None</em>, <em>get_results=None</em>, <em>new_opt_params={}</em>, <em>callback=None</em>, <em>ci_neb=False</em>, <em>ci_N=5</em>, <em>no_energy=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neb.html#NEB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neb.NEB" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method for determining the minimum energy pathway of a reaction using
+DFT. Note, this method was written for atomic orbital DFT codes; however,
+is potentially generalizable to other programs.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>name: <em>str</em></dt>
+<dd>The name of the NEB simulation to be run.</dd>
+<dt>states: <em>list, list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dd>A list of frames, each frame being a list of atom structures.
+These frames represent your reaction coordinate.</dd>
+<dt>theory: <em>str</em></dt>
+<dd>The route line for your DFT simulation.</dd>
+<dt>extra_section: <em>str, optional</em></dt>
+<dd>Additional parameters for your DFT simulation.</dd>
+<dt>initial_guess: <em>list, str, optional</em></dt>
+<dd>TODO - List of strings specifying a previously run NEB simulation,
+allowing restart capabilities.</dd>
+<dt>spring_atoms: <em>list, int, optional</em></dt>
+<dd>Specify which atoms will be represented by virutal springs in the
+NEB calculations. Default includes all.</dd>
+<dt>procs: <em>int, optional</em></dt>
+<dd>The number of processors for your simulation.</dd>
+<dt>queue: <em>str, optional</em></dt>
+<dd>Which queue you wish your simulation to run on (queueing system
+dependent). When None, NEB is run locally.</dd>
+<dt>mem: <em>float, optional</em></dt>
+<dd>Specify memory constraints (specific to your X_start_job method).</dd>
+<dt>priority: <em>int, optional</em></dt>
+<dd>Whether to submit a DFT simulation with some given priority or not.</dd>
+<dt>disp: <em>int, optional</em></dt>
+<dd>Specify for additional stdout information.</dd>
+<dt>charge: <em>int</em></dt>
+<dd>Charge of the system.</dd>
+<dt>multiplicity: <em>int</em></dt>
+<dd>Multiplicity of the system.</dd>
+<dt>k: <em>float, optional</em></dt>
+<dd>The spring constant for your NEB simulation.</dd>
+<dt>fit_rigid: <em>bool, optional</em></dt>
+<dd>Whether you want to use procrustes to minimize motion between
+adjacent frames (thus minimizing error due to excessive virtal
+spring forces).</dd>
+<dt>DFT: <em>str, optional</em></dt>
+<dd>Specify if you wish to use the default X_start_job and X_results
+functions where X is either g09 or orca.</dd>
+<dt>opt: <em>str, optional</em></dt>
+<dd>Select which optimization method you wish to use from the
+following: BFGS, LBFGS, SD, FIRE, QM, CG, scipy_X. Note, if using
+scipy_X, change X to be a valid scipy minimize method.</dd>
+<dt>start_job: <em>func, optional</em></dt>
+<dd>A function specifying how to submit your NEB single point
+calculations.  Needed if DFT is neither orca nor g09.</dd>
+<dt>get_results: <em>func, optional</em></dt>
+<dd>A function specifying how to read your NEB single point
+calculations.  Needed if DFT is neither orca nor g09.  Note, this
+function returns two things: list of energies, list of atoms.
+Further, the forces are contained within each atom object.  It also
+requires that the forces on the state object be updated within said
+function (for more info see example codes).  Finally, if using
+no_energy=True, then return None (or an empty list) for the energies.</dd>
+<dt>new_opt_params: <em>dict, optional</em></dt>
+<dd>Pass any additional parameters to the optimization algorithm.</dd>
+<dt>callback: <em>func, optional</em></dt>
+<dd>A function to be run after each each to calculate().</dd>
+<dt>ci_neb: <em>bool, optional</em></dt>
+<dd>Whether to use the climbing image variation of NEB.</dd>
+<dt>ci_N: <em>int, optional</em></dt>
+<dd>How many iterations to wait in climbing image NEB before selecting
+which image to be used.</dd>
+<dt>no_energy: <em>bool, optional</em></dt>
+<dd>A flag to turn on an experimental method, in which our selection
+of the tangent is based on only the force, and not the energy.
+Note, the code still expects the get_results function to return
+two things, so just have it return (None, atoms + forces).</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>This <a class="reference internal" href="codebase.html#neb.NEB" title="neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a> object.</div></blockquote>
+<p><strong>References</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li>Henkelman, G.; Jonsson, H. The Journal of Chemical Physics 2000,
+113, 9978-9985.</li>
+<li>Jonsson, H.; Mills, G.; Jacobson, K. W. In Classical and Quantum
+Dynamics in Condensed Phase Simulations;</li>
+<li>Berne, B. J., Ciccotti, G., Coker, D. F., Eds.; World Scientific,
+1998; Chapter 16, pp 385-404.</li>
+<li>Armijo, L. Pacific Journal of Mathematics 1966, 16.</li>
+<li>Sheppard, D.; Terrell, R.; Henkelman, G. The Journal of Chemical
+Physics 2008, 128.</li>
+<li>Henkelman, G.; Uberuaga, B. P.; Jonsson, H. Journal of Chemical
+Physics 2000, 113.</li>
+<li>Atomic Simulation Environment - <a class="reference external" href="https://wiki.fysik.dtu.dk/ase/">https://wiki.fysik.dtu.dk/ase/</a></li>
+</ul>
+</div></blockquote>
+<dl class="method">
+<dt id="neb.NEB.align_coordinates">
+<code class="descname">align_coordinates</code><span class="sig-paren">(</span><em>r</em>, <em>B=None</em>, <em>H=None</em>, <em>return_matrix=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neb.html#NEB.align_coordinates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neb.NEB.align_coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a rotation matrix A that will remove rigid rotation from the
+new coordinates r.  Further, if another vector needs rotating by the
+same matrix A, it should be passed in B and will be rotated.  If
+a matrix also needs rotating, it can be passed as H and also be
+rotated.</p>
+<p><em>Parameters</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>r: <em>list, float</em></dt>
+<dd>1D array of atomic coordinates to be rotated by procrustes
+matrix A.</dd>
+<dt>B: <em>list, list, float, optional</em></dt>
+<dd>A list of vectors that may also be rotated by the same matrix
+as <em>r</em>.</dd>
+<dt>H: <em>list, list, float, optional</em></dt>
+<dd><dl class="first last docutils">
+<dt>A matrix that should also be rotated via:</dt>
+<dd>H = R * H * R.T</dd>
+</dl>
+</dd>
+<dt>return_matrix: <em>bool, optional</em></dt>
+<dd>Whether to also return the rotation matrix used or not.</dd>
+</dl>
+</div></blockquote>
+<p><em>Returns</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>rotations: <em>dict</em></dt>
+<dd>A dictionary holding ‘A’, the rotation matrix, ‘r’, the
+rotated new coordinates, ‘B’, a list of all other vectors that
+were rotated, and ‘H’, a rotated matrix.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="neb.g09_results">
+<code class="descclassname">neb.</code><code class="descname">g09_results</code><span class="sig-paren">(</span><em>NEB</em>, <em>step_to_use</em>, <em>i</em>, <em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neb.html#g09_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neb.g09_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method for reading in the output of Gaussian09 single point calculations
+for NEB calculations. This will both (a) assign forces to the atoms stored
+in state and (b) return the energy and atoms.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>NEB: <a class="reference internal" href="codebase.html#neb.NEB" title="neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a></dt>
+<dd>An NEB container holding the main NEB simulation</dd>
+<dt>step_to_use: <em>int</em></dt>
+<dd>Which iteration in the NEB sequence the output to be read in is on.</dd>
+<dt>i: <em>int</em></dt>
+<dd>The index corresponding to which image on the frame is to be
+simulated.</dd>
+<dt>state: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dd>A list of atoms describing the image on the frame associated with
+index <em>i</em>.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>new_energy: <em>float</em></dt>
+<dd>The energy of the system in Hartree (Ha).</dd>
+<dt>new_atoms: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dd>A list of atoms with the forces attached in units of Hartree per
+Angstrom (Ha/Ang).</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="neb.g09_start_job">
+<code class="descclassname">neb.</code><code class="descname">g09_start_job</code><span class="sig-paren">(</span><em>NEB</em>, <em>i</em>, <em>state</em>, <em>charge</em>, <em>multiplicity</em>, <em>procs</em>, <em>queue</em>, <em>initial_guess</em>, <em>extra_section</em>, <em>mem</em>, <em>priority</em>, <em>extra_keywords={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neb.html#g09_start_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neb.g09_start_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method for submitting a single point calculation using Gaussian09 for
+NEB calculations.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>NEB: <a class="reference internal" href="codebase.html#neb.NEB" title="neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a></dt>
+<dd>An NEB container holding the main NEB simulation</dd>
+<dt>i: <em>int</em></dt>
+<dd>The index corresponding to which image on the frame is to be
+simulated.</dd>
+<dt>state: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dd>A list of atoms describing the image on the frame associated
+with index <em>i</em>.</dd>
+<dt>charge: <em>int</em></dt>
+<dd>Charge of the system.</dd>
+<dt>multiplicity: <em>int</em></dt>
+<dd>Multiplicity of the system.</dd>
+<dt>procs: <em>int</em></dt>
+<dd>The number of processors to use during calculations.</dd>
+<dt>queue: <em>str</em></dt>
+<dd>Which queue to submit the simulation to (this is queueing system
+dependent).</dd>
+<dt>initial_guess: <em>str</em></dt>
+<dd>The name of a previous simulation for which we can read in a
+hessian.</dd>
+<dt>extra_section: <em>str</em></dt>
+<dd>Extra settings for this DFT method.</dd>
+<dt>mem: <em>int</em></dt>
+<dd>How many Mega Words (MW) you wish to have as dynamic memory.</dd>
+<dt>priority: <em>int</em></dt>
+<dd>Whether to submit the job with a given priority (NBS). Not setup for
+this function yet.</dd>
+<dt>extra_keywords: <em>dict, optional</em></dt>
+<dd>Specify extra keywords beyond the defaults.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>g09_job: <code class="xref py py-class docutils literal notranslate"><span class="pre">jobs.Job</span></code></dt>
+<dd>A job container holding the g09 simulation.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="neb.orca_results">
+<code class="descclassname">neb.</code><code class="descname">orca_results</code><span class="sig-paren">(</span><em>NEB</em>, <em>step_to_use</em>, <em>i</em>, <em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neb.html#orca_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neb.orca_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method for reading in the output of Orca single point calculations for
+NEB calculations. This will both (a) assign forces to the atoms stored
+in state and (b) return the energy and atoms.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>NEB: <a class="reference internal" href="codebase.html#neb.NEB" title="neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a></dt>
+<dd>An NEB container holding the main NEB simulation</dd>
+<dt>step_to_use: <em>int</em></dt>
+<dd>Which iteration in the NEB sequence the output to be read in is on.</dd>
+<dt>i: <em>int</em></dt>
+<dd>The index corresponding to which image on the frame is to be
+simulated.</dd>
+<dt>state: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dd>A list of atoms describing the image on the frame associated with
+index <em>i</em>.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>new_energy: <em>float</em></dt>
+<dd>The energy of the system in Hartree (Ha).</dd>
+<dt>new_atoms: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dd>A list of atoms with the forces attached in units of Hartree per
+Angstrom (Ha/Ang).</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="neb.orca_start_job">
+<code class="descclassname">neb.</code><code class="descname">orca_start_job</code><span class="sig-paren">(</span><em>NEB</em>, <em>i</em>, <em>state</em>, <em>charge</em>, <em>multiplicity</em>, <em>procs</em>, <em>queue</em>, <em>initial_guess</em>, <em>extra_section</em>, <em>mem</em>, <em>priority</em>, <em>extra_keywords={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neb.html#orca_start_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neb.orca_start_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method for submitting a single point calculation using Orca for NEB
+calculations.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>NEB: <a class="reference internal" href="codebase.html#neb.NEB" title="neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a></dt>
+<dd>An NEB container holding the main NEB simulation</dd>
+<dt>i: <em>int</em></dt>
+<dd>The index corresponding to which image on the frame is to be
+simulated.</dd>
+<dt>state: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dd>A list of atoms describing the image on the frame associated with
+index <em>i</em>.</dd>
+<dt>charge: <em>int</em></dt>
+<dd>Charge of the system.</dd>
+<dt>multiplicity: <em>int</em></dt>
+<dd>Multiplicity of the system.</dd>
+<dt>procs: <em>int</em></dt>
+<dd>The number of processors to use during calculations.</dd>
+<dt>queue: <em>str</em></dt>
+<dd>Which queue to submit the simulation to (this is queueing system
+dependent).</dd>
+<dt>initial_guess: <em>str</em></dt>
+<dd>The name of a previous simulation for which we can read in a
+hessian.</dd>
+<dt>extra_section: <em>str</em></dt>
+<dd>Extra settings for this DFT method.</dd>
+<dt>mem: <em>int</em></dt>
+<dd>How many MegaBytes (MB) of memory you have available per core.</dd>
+<dt>priority: <em>int</em></dt>
+<dd>Whether to submit to NBS with a given priority</dd>
+<dt>extra_keywords: <em>dict, optional</em></dt>
+<dd>Specify extra keywords beyond the defaults.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>orca_job: <code class="xref py py-class docutils literal notranslate"><span class="pre">jobs.Job</span></code></dt>
+<dd>A job container holding the orca simulation.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<span class="target" id="module-aneb"></span><p>The Auto ANEB module simplifies the submission of Auto Nudged Elastic Band simulations.</p>
+<p>NOTE! This module is still in a very rough beta.  It has been hacked together from the
+NEB module and is being tested.  Do not use this expecting a miracle.</p>
+<p>The following code has been tested out to some moderate success for now:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_opt_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;step_size&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+                  <span class="s1">&#39;step_size_adjustment&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+                  <span class="s1">&#39;max_step&#39;</span><span class="p">:</span> <span class="mf">0.04</span><span class="p">,</span>
+                  <span class="s1">&#39;maxiter&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                  <span class="s1">&#39;linesearch&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+                  <span class="s1">&#39;accelerate&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+                  <span class="s1">&#39;N_reset_hess&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                  <span class="s1">&#39;max_steps_remembered&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+                  <span class="s1">&#39;fit_rigid&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+                  <span class="s1">&#39;g_rms&#39;</span><span class="p">:</span> <span class="n">units</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;eV/Ang&quot;</span><span class="p">,</span> <span class="s2">&quot;Ha/Ang&quot;</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">),</span>
+                  <span class="s1">&#39;g_max&#39;</span><span class="p">:</span> <span class="n">units</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;eV/Ang&quot;</span><span class="p">,</span> <span class="s2">&quot;Ha/Ang&quot;</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">)}</span>
+
+<span class="n">new_auto_opt_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;step_size&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+                       <span class="s1">&#39;step_size_adjustment&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+                       <span class="s1">&#39;max_step&#39;</span><span class="p">:</span> <span class="mf">0.04</span><span class="p">,</span>
+                       <span class="s1">&#39;maxiter&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+                       <span class="s1">&#39;linesearch&#39;</span><span class="p">:</span> <span class="s1">&#39;backtrack&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;accelerate&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+                       <span class="s1">&#39;reset_step_size&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+                       <span class="s1">&#39;fit_rigid&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+                       <span class="s1">&#39;g_rms&#39;</span><span class="p">:</span> <span class="n">units</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;eV/Ang&quot;</span><span class="p">,</span> <span class="s2">&quot;Ha/Ang&quot;</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">),</span>
+                       <span class="s1">&#39;g_max&#39;</span><span class="p">:</span> <span class="n">units</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;eV/Ang&quot;</span><span class="p">,</span> <span class="s2">&quot;Ha/Ang&quot;</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">)}</span>
+
+
+<span class="n">nebs</span> <span class="o">=</span> <span class="n">aneb</span><span class="o">.</span><span class="n">ANEB</span><span class="p">(</span><span class="s2">&quot;debug_auto&quot;</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="s2">&quot;!HF-3c&quot;</span><span class="p">,</span> <span class="n">fit_rigid</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                 <span class="n">opt</span><span class="o">=</span><span class="s1">&#39;LBFGS&#39;</span><span class="p">,</span>
+                 <span class="n">new_opt_params</span><span class="o">=</span><span class="n">new_opt_params</span><span class="p">,</span>
+                 <span class="n">new_auto_opt_params</span><span class="o">=</span><span class="n">new_auto_opt_params</span><span class="p">,</span>
+                 <span class="n">ci_N</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                 <span class="n">ANEB_Nsim</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                 <span class="n">ANEB_Nmax</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><a class="reference internal" href="codebase.html#aneb.g09_start_job" title="aneb.g09_start_job"><code class="xref py py-func docutils literal notranslate"><span class="pre">g09_start_job()</span></code></a></li>
+<li><a class="reference internal" href="codebase.html#aneb.g09_results" title="aneb.g09_results"><code class="xref py py-func docutils literal notranslate"><span class="pre">g09_results()</span></code></a></li>
+<li><a class="reference internal" href="codebase.html#aneb.orca_start_job" title="aneb.orca_start_job"><code class="xref py py-func docutils literal notranslate"><span class="pre">orca_start_job()</span></code></a></li>
+<li><a class="reference internal" href="codebase.html#aneb.orca_results" title="aneb.orca_results"><code class="xref py py-func docutils literal notranslate"><span class="pre">orca_results()</span></code></a></li>
+<li><a class="reference internal" href="codebase.html#aneb.ANEB" title="aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a></li>
+</ul>
+<hr class="docutils" />
+<dl class="class">
+<dt id="aneb.ANEB">
+<em class="property">class </em><code class="descclassname">aneb.</code><code class="descname">ANEB</code><span class="sig-paren">(</span><em>name</em>, <em>states</em>, <em>theory</em>, <em>extra_section=''</em>, <em>initial_guess=None</em>, <em>spring_atoms=None</em>, <em>procs=1</em>, <em>queue=None</em>, <em>mem=2000</em>, <em>priority=None</em>, <em>disp=0</em>, <em>k=0.00367453</em>, <em>charge=0</em>, <em>fit_rigid=True</em>, <em>DFT='orca'</em>, <em>opt='LBFGS'</em>, <em>start_job=None</em>, <em>get_results=None</em>, <em>new_opt_params={}</em>, <em>new_auto_opt_params={}</em>, <em>callback=None</em>, <em>ci_ANEB=False</em>, <em>ci_N=5</em>, <em>ANEB_Nsim=5</em>, <em>ANEB_Nmax=15</em>, <em>add_by_energy=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aneb.html#ANEB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aneb.ANEB" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method for determining the minimum energy pathway of a reaction using
+DFT. Note, this method was written for atomic orbital DFT codes; however,
+is potentially generalizable to other programs.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>name: <em>str</em></dt>
+<dd>The name of the ANEB simulation to be run.</dd>
+<dt>states: <em>list, list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dd>A list of frames, each frame being a list of atom structures.
+These frames represent your reaction coordinate.</dd>
+<dt>theory: <em>str</em></dt>
+<dd>The route line for your DFT simulation.</dd>
+<dt>extra_section: <em>str, optional</em></dt>
+<dd>Additional parameters for your DFT simulation.</dd>
+<dt>initial_guess: <em>list, str, optional</em></dt>
+<dd>TODO - List of strings specifying a previously run ANEB simulation,
+allowing restart capabilities.</dd>
+<dt>spring_atoms: <em>list, int, optional</em></dt>
+<dd>Specify which atoms will be represented by virutal springs in the
+ANEB calculations. Default includes all.</dd>
+<dt>procs: <em>int, optional</em></dt>
+<dd>The number of processors for your simulation.</dd>
+<dt>queue: <em>str, optional</em></dt>
+<dd>Which queue you wish your simulation to run on (queueing system
+dependent). When None, ANEB is run locally.</dd>
+<dt>mem: <em>float, optional</em></dt>
+<dd>Specify memory constraints (specific to your X_start_job method).</dd>
+<dt>priority: <em>int, optional</em></dt>
+<dd>Whether to submit a DFT simulation with some given priority or not.</dd>
+<dt>disp: <em>int, optional</em></dt>
+<dd>Specify for additional stdout information.</dd>
+<dt>charge: <em>int</em></dt>
+<dd>Charge of the system.</dd>
+<dt>k: <em>float, optional</em></dt>
+<dd>The spring constant for your ANEB simulation.</dd>
+<dt>fit_rigid: <em>bool, optional</em></dt>
+<dd>Whether you want to use procrustes to minimize motion between
+adjacent frames (thus minimizing error due to excessive virtal
+spring forces).</dd>
+<dt>DFT: <em>str, optional</em></dt>
+<dd>Specify if you wish to use the default X_start_job and X_results
+functions where X is either g09 or orca.</dd>
+<dt>opt: <em>str, optional</em></dt>
+<dd>Select which optimization method you wish to use from the
+following: LBFGS.</dd>
+<dt>start_job: <em>func, optional</em></dt>
+<dd>A function specifying how to submit your ANEB single point
+calculations.  Needed if DFT is neither orca nor g09.</dd>
+<dt>get_results: <em>func, optional</em></dt>
+<dd>A function specifying how to read your ANEB single point
+calculations.  Needed if DFT is neither orca nor g09.</dd>
+<dt>new_opt_params: <em>dict, optional</em></dt>
+<dd>Pass any additional parameters to the optimization algorithm.
+Note, these parameters are for the final calculation after frames
+have been added in.</dd>
+<dt>new_auto_opt_params: <em>dict, optional</em></dt>
+<dd>Pass any additional parameters to the optimization algorithm.
+Note, these parameters are for the iterative calculations, as
+frames are being added to the band.</dd>
+<dt>callback: <em>func, optional</em></dt>
+<dd>A function to be run after each each to calculate().</dd>
+<dt>ci_ANEB: <em>bool, optional</em></dt>
+<dd>Whether to use the climbing image variation of ANEB.</dd>
+<dt>ci_N: <em>int, optional</em></dt>
+<dd>How many iterations to wait in climbing image ANEB before selecting
+which image to be used.</dd>
+<dt>ANEB_Nsim: <em>int, optional</em></dt>
+<dd>The number of frames for an auto ANEB calculation. If an even
+number is chosen, the expansion happens around floor(ANEB_Nsim/2).</dd>
+<dt>ANEB_Nmax: <em>int, optional</em></dt>
+<dd>The maximum number of frames to build up to in the auto ANEB.</dd>
+<dt>add_by_energy: <em>bool, optional</em></dt>
+<dd>If the user wants to add frames by the largest dE instead of dR
+(motion per frame), then set this flag to True.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>This <a class="reference internal" href="codebase.html#aneb.ANEB" title="aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a> object.</div></blockquote>
+<p><strong>References</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li>Henkelman, G.; Jonsson, H. The Journal of Chemical Physics 2000,
+113, 9978-9985.</li>
+<li>Jonsson, H.; Mills, G.; Jacobson, K. W. In Classical and Quantum
+Dynamics in Condensed Phase Simulations;</li>
+<li>Berne, B. J., Ciccotti, G., Coker, D. F., Eds.; World Scientific,
+1998; Chapter 16, pp 385-404.</li>
+<li>Armijo, L. Pacific Journal of Mathematics 1966, 16.</li>
+<li>Sheppard, D.; Terrell, R.; Henkelman, G. The Journal of Chemical
+Physics 2008, 128.</li>
+<li>Henkelman, G.; Uberuaga, B. P.; Jonsson, H. Journal of Chemical
+Physics 2000, 113.</li>
+<li>Atomic Simulation Environment - <a class="reference external" href="https://wiki.fysik.dtu.dk/ase/">https://wiki.fysik.dtu.dk/ase/</a></li>
+<li>Kolsbjerg, E. L.; Groves, M. N.; Hammer, B. The Journal of 
+Chemical Physics 2016, 145.</li>
+</ul>
+</div></blockquote>
+<dl class="method">
+<dt id="aneb.ANEB.align_coordinates">
+<code class="descname">align_coordinates</code><span class="sig-paren">(</span><em>r</em>, <em>B=None</em>, <em>H=None</em>, <em>return_matrix=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aneb.html#ANEB.align_coordinates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aneb.ANEB.align_coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a rotation matrix A that will remove rigid rotation from the
+new coordinates r.  Further, if another vector needs rotating by the
+same matrix A, it should be passed in B and will be rotated.  If
+a matrix also needs rotating, it can be passed as H and also be
+rotated.</p>
+<p><em>Parameters</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>r: <em>list, float</em></dt>
+<dd>1D array of atomic coordinates to be rotated by procrustes
+matrix A.</dd>
+<dt>B: <em>list, list, float, optional</em></dt>
+<dd>A list of vectors that may also be rotated by the same matrix
+as <em>r</em>.</dd>
+<dt>H: <em>list, list, float, optional</em></dt>
+<dd><dl class="first last docutils">
+<dt>A matrix that should also be rotated via:</dt>
+<dd>H = R * H * R.T</dd>
+</dl>
+</dd>
+<dt>return_matrix: <em>bool, optional</em></dt>
+<dd>Whether to also return the rotation matrix used or not.</dd>
+</dl>
+</div></blockquote>
+<p><em>Returns</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>rotations: <em>dict</em></dt>
+<dd>A dictionary holding ‘A’, the rotation matrix, ‘r’, the
+rotated new coordinates, ‘B’, a list of all other vectors that
+were rotated, and ‘H’, a rotated matrix.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="aneb.g09_results">
+<code class="descclassname">aneb.</code><code class="descname">g09_results</code><span class="sig-paren">(</span><em>ANEB</em>, <em>step_to_use</em>, <em>i</em>, <em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aneb.html#g09_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aneb.g09_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method for reading in the output of Gaussian09 single point calculations
+for ANEB calculations. This will both (a) assign forces to the atoms stored
+in state and (b) return the energy and atoms.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>ANEB: <a class="reference internal" href="codebase.html#aneb.ANEB" title="aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a></dt>
+<dd>An ANEB container holding the main ANEB simulation</dd>
+<dt>step_to_use: <em>int</em></dt>
+<dd>Which iteration in the ANEB sequence the output to be read in is on.</dd>
+<dt>i: <em>int</em></dt>
+<dd>The index corresponding to which image on the frame is to be
+simulated.</dd>
+<dt>state: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dd>A list of atoms describing the image on the frame associated with
+index <em>i</em>.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>new_energy: <em>float</em></dt>
+<dd>The energy of the system in Hartree (Ha).</dd>
+<dt>new_atoms: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dd>A list of atoms with the forces attached in units of Hartree per
+Angstrom (Ha/Ang).</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="aneb.g09_start_job">
+<code class="descclassname">aneb.</code><code class="descname">g09_start_job</code><span class="sig-paren">(</span><em>ANEB</em>, <em>i</em>, <em>state</em>, <em>charge</em>, <em>procs</em>, <em>queue</em>, <em>initial_guess</em>, <em>extra_section</em>, <em>mem</em>, <em>priority</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aneb.html#g09_start_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aneb.g09_start_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method for submitting a single point calculation using Gaussian09 for
+ANEB calculations.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>ANEB: <a class="reference internal" href="codebase.html#aneb.ANEB" title="aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a></dt>
+<dd>An ANEB container holding the main ANEB simulation</dd>
+<dt>i: <em>int</em></dt>
+<dd>The index corresponding to which image on the frame is to be
+simulated.</dd>
+<dt>state: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dd>A list of atoms describing the image on the frame associated
+with index <em>i</em>.</dd>
+<dt>charge: <em>int</em></dt>
+<dd>Charge of the system.</dd>
+<dt>procs: <em>int</em></dt>
+<dd>The number of processors to use during calculations.</dd>
+<dt>queue: <em>str</em></dt>
+<dd>Which queue to submit the simulation to (this is queueing system
+dependent).</dd>
+<dt>initial_guess: <em>str</em></dt>
+<dd>The name of a previous simulation for which we can read in a
+hessian.</dd>
+<dt>extra_section: <em>str</em></dt>
+<dd>Extra settings for this DFT method.</dd>
+<dt>mem: <em>int</em></dt>
+<dd>How many Mega Words (MW) you wish to have as dynamic memory.</dd>
+<dt>priority: <em>int</em></dt>
+<dd>Whether to submit the job with a given priority (NBS). Not setup for
+this function yet.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>g09_job: <code class="xref py py-class docutils literal notranslate"><span class="pre">jobs.Job</span></code></dt>
+<dd>A job container holding the g09 simulation.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="aneb.orca_results">
+<code class="descclassname">aneb.</code><code class="descname">orca_results</code><span class="sig-paren">(</span><em>ANEB</em>, <em>step_to_use</em>, <em>i</em>, <em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aneb.html#orca_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aneb.orca_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method for reading in the output of Orca single point calculations for
+ANEB calculations. This will both (a) assign forces to the atoms stored
+in state and (b) return the energy and atoms.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>ANEB: <a class="reference internal" href="codebase.html#aneb.ANEB" title="aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a></dt>
+<dd>An ANEB container holding the main ANEB simulation</dd>
+<dt>step_to_use: <em>int</em></dt>
+<dd>Which iteration in the ANEB sequence the output to be read in is on.</dd>
+<dt>i: <em>int</em></dt>
+<dd>The index corresponding to which image on the frame is to be
+simulated.</dd>
+<dt>state: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dd>A list of atoms describing the image on the frame associated with
+index <em>i</em>.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>new_energy: <em>float</em></dt>
+<dd>The energy of the system in Hartree (Ha).</dd>
+<dt>new_atoms: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dd>A list of atoms with the forces attached in units of Hartree per
+Angstrom (Ha/Ang).</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="aneb.orca_start_job">
+<code class="descclassname">aneb.</code><code class="descname">orca_start_job</code><span class="sig-paren">(</span><em>ANEB</em>, <em>i</em>, <em>state</em>, <em>charge</em>, <em>procs</em>, <em>queue</em>, <em>initial_guess</em>, <em>extra_section</em>, <em>mem</em>, <em>priority</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aneb.html#orca_start_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aneb.orca_start_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method for submitting a single point calculation using Orca for ANEB
+calculations.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>ANEB: <a class="reference internal" href="codebase.html#aneb.ANEB" title="aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a></dt>
+<dd>An ANEB container holding the main ANEB simulation</dd>
+<dt>i: <em>int</em></dt>
+<dd>The index corresponding to which image on the frame is to be
+simulated.</dd>
+<dt>state: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dd>A list of atoms describing the image on the frame associated with
+index <em>i</em>.</dd>
+<dt>charge: <em>int</em></dt>
+<dd>Charge of the system.</dd>
+<dt>procs: <em>int</em></dt>
+<dd>The number of processors to use during calculations.</dd>
+<dt>queue: <em>str</em></dt>
+<dd>Which queue to submit the simulation to (this is queueing system
+dependent).</dd>
+<dt>initial_guess: <em>str</em></dt>
+<dd>The name of a previous simulation for which we can read in a
+hessian.</dd>
+<dt>extra_section: <em>str</em></dt>
+<dd>Extra settings for this DFT method.</dd>
+<dt>mem: <em>int</em></dt>
+<dd>How many MegaBytes (MB) of memory you have available per core.</dd>
+<dt>priority: <em>int</em></dt>
+<dd>Whether to submit to NBS with a given priority</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>orca_job: <code class="xref py py-class docutils literal notranslate"><span class="pre">jobs.Job</span></code></dt>
+<dd>A job container holding the orca simulation.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="squid.html">Squid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="updating.html">UPDATING TO v2.0.0</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/calcs.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Henry Herbol.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

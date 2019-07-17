@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>morse &#8212; Squid 0.0.1 documentation</title>
+    <title>morse &#8212; Squid 2.0.0 documentation</title>
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -42,6 +42,7 @@
 <span></span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">The Morse object. This stores the indices and MORSE parameters.</span>
 <span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">combinations_with_replacement</span>
 <span class="kn">from</span> <span class="nn">squid.forcefields.helper</span> <span class="k">import</span> <span class="n">check_restriction</span>
 
@@ -51,6 +52,30 @@
 <span class="c1"># NOTE! THEY ARE CASE SENSITIVE!</span>
 <span class="n">MORSE_PFILE_ID</span> <span class="o">=</span> <span class="s2">&quot;MORSE&quot;</span>
 <span class="n">END_ID</span> <span class="o">=</span> <span class="s2">&quot;END&quot;</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># From a cursory scan of existing parameters, D0 ranges</span>
+<span class="c1"># from 0.2 eV to 4.3 eV (or so).  From this, we will make the</span>
+<span class="c1"># range be 1 - 300 for kcal/mol.  However, to facilitate atoms that do</span>
+<span class="c1"># not bond, we allow for ultra low D0.</span>
+<span class="c1"># NOTE!</span>
+<span class="c1"># First I went with 0.1 to 300; however, strong bonds like N=-N have</span>
+<span class="c1"># very deep wells, so I extended this to be larger bound again.</span>
+<span class="n">D0_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="c1"># This dictates the width of the well.  From a cursory scan of</span>
+<span class="c1"># existing parameters, this should be on the order of 1.0 - 2.0 ang.</span>
+<span class="c1"># PREVIOUSLY USED RANGES:</span>
+<span class="c1">#   (0.1, 100)</span>
+<span class="n">ALPHA_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">)</span>
+<span class="c1"># r0 is the equilibrium bond length.  No bonds should exist closer</span>
+<span class="c1"># than 0.5 angstroms, and similarly no bond length further than 4.0.</span>
+<span class="c1"># However, to facilitate situations where no bond exists, we allow for</span>
+<span class="c1"># R0 to go all the way up to 10.  When parameterizing, it is advised that</span>
+<span class="c1"># someone appreciate if something binds or not, and assign R0 to a low</span>
+<span class="c1"># range (0.5 - 4.0) or a high range(4.0 - 10.0)</span>
+<span class="n">R0_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">)</span>
+<span class="n">RC_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">)</span>
+<span class="c1">##############################################################################</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">The Morse class contains:</span>
@@ -97,27 +122,31 @@
 <span class="sd">            A Morse object.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">D0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">r0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">D0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">r0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># Assign default bounds</span>
         <span class="c1"># For the programmer: The bounds need reconsidering.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">D0_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">alpha_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rc_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">D0_bounds</span> <span class="o">=</span> <span class="n">D0_BOUNDS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha_bounds</span> <span class="o">=</span> <span class="n">ALPHA_BOUNDS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span> <span class="o">=</span> <span class="n">R0_BOUNDS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rc_bounds</span> <span class="o">=</span> <span class="n">RC_BOUNDS</span>
 
         <span class="c1"># How many parameters exist in this potential</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">N_params</span> <span class="o">=</span> <span class="mi">4</span>
 
-        <span class="k">if</span> <span class="n">line</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">([</span><span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">indices</span><span class="p">,</span> <span class="n">D0</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">rc</span><span class="p">]]):</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">D0</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">rc</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">line</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">([</span><span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">assign_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">line</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">([</span><span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">indices</span><span class="p">,</span> <span class="n">D0</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">rc</span><span class="p">]]):</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">),</span> <span class="s2">&quot;In Morse, initialized with indices not being a list or tuple!&quot;</span>
+        <span class="k">elif</span> <span class="n">line</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">([</span><span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">values</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]):</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">),</span>\
+                <span class="s2">&quot;In Morse, initialized with indices not being a list or tuple!&quot;</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="o">=</span> <span class="n">indices</span><span class="p">,</span> <span class="n">D0</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">rc</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="o">=</span> <span class="n">values</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Either specify all Morse parameters, or the line to be parsed, but not both.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Either specify all Morse parameters, or the line </span><span class="se">\</span>
+<span class="s2">to be parsed, but not both.&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -134,9 +163,13 @@
     <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;*&quot;</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">)]</span>
-        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">indices</span><span class="p">):</span>
-            <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;*&quot;</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">)]</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;*&quot;</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">o</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">)]</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;indices&quot;</span><span class="p">):</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;*&quot;</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">o</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">)]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
 
@@ -144,7 +177,7 @@
                 <span class="nb">all</span><span class="p">([</span><span class="n">x</span> <span class="o">==</span> <span class="n">y</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">,</span> <span class="n">indices</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])]))</span>
 
     <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">with_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">bounds</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">bounds</span><span class="o">=</span><span class="mi">1</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_printer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -155,15 +188,21 @@
 <span class="sd">                Whether to also include the indices in the output.</span>
 <span class="sd">            bounds: *int, optional*</span>
 <span class="sd">                Whether to output the lower bounds (0), or upper bounds (1).</span>
-<span class="sd">                If None, then the parameters themselves are output instead (default).</span>
+<span class="sd">                If None, then the parameters themselves are output instead</span>
+<span class="sd">                (default).</span>
 <span class="sd">        **Returns**</span>
 <span class="sd">            Morse: *str*</span>
 <span class="sd">                A string representation of Morse parameters.</span>
 <span class="sd">                It is in the following order: indices D0 alpha r0 rc</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
-        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">))</span> <span class="o">+</span>
-                <span class="s2">&quot;      </span><span class="si">%.7f</span><span class="s2">   </span><span class="si">%.7f</span><span class="s2">   </span><span class="si">%.7f</span><span class="s2">   </span><span class="si">%.7f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">with_indices</span><span class="o">=</span><span class="n">with_indices</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]))</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span>
+            <span class="n">with_indices</span><span class="o">=</span><span class="n">with_indices</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;      </span><span class="si">%.7f</span><span class="s2">   </span><span class="si">%.7f</span><span class="s2">   </span><span class="si">%.7f</span><span class="s2">   </span><span class="si">%.7f</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;      </span><span class="si">%.7f</span><span class="s2">   </span><span class="si">%.7f</span><span class="s2">   </span><span class="si">%.7f</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">))</span> <span class="o">+</span> <span class="n">s</span> <span class="o">%</span> <span class="n">values</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Morse.print_lower"><a class="viewcode-back" href="../forcefields.html#morse.Morse.print_lower">[docs]</a>    <span class="k">def</span> <span class="nf">print_lower</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -195,7 +234,8 @@
 <span class="sd">                Whether to also include the indices in the list.</span>
 <span class="sd">            bounds: *int, optional*</span>
 <span class="sd">                Whether to output the lower bounds (0), or upper bounds (1).</span>
-<span class="sd">                If None, then the parameters themselves are output instead (default).</span>
+<span class="sd">                If None, then the parameters themselves are output instead</span>
+<span class="sd">                (default).</span>
 <span class="sd">        **Returns**</span>
 <span class="sd">            Morse: *list, str/float*</span>
 <span class="sd">                A list, holding the string of the indices, D0, alpha, r0, rc.</span>
@@ -207,28 +247,35 @@
         <span class="k">if</span> <span class="n">bounds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">with_indices</span><span class="p">:</span>
                 <span class="n">pkg</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">,</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">D0_bounds</span><span class="p">[</span><span class="n">bounds</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_bounds</span><span class="p">[</span><span class="n">bounds</span><span class="p">],</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span><span class="p">[</span><span class="n">bounds</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc_bounds</span><span class="p">[</span><span class="n">bounds</span><span class="p">]])</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">D0_bounds</span><span class="p">[</span><span class="n">bounds</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_bounds</span><span class="p">[</span><span class="n">bounds</span><span class="p">],</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span><span class="p">[</span><span class="n">bounds</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc_bounds</span><span class="p">[</span><span class="n">bounds</span><span class="p">]])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">pkg</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">D0_bounds</span><span class="p">[</span><span class="n">bounds</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_bounds</span><span class="p">[</span><span class="n">bounds</span><span class="p">],</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span><span class="p">[</span><span class="n">bounds</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc_bounds</span><span class="p">[</span><span class="n">bounds</span><span class="p">]])</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span><span class="p">[</span><span class="n">bounds</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc_bounds</span><span class="p">[</span><span class="n">bounds</span><span class="p">]])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">with_indices</span><span class="p">:</span>
-                <span class="n">pkg</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">,</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">D0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">])</span>
+                <span class="n">pkg</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D0</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">pkg</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">D0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">])</span>
+                <span class="n">pkg</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">D0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">pkg</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">with_bounds</span><span class="p">:</span>
             <span class="c1"># Get all lower and upper bounds added to pkg</span>
             <span class="c1"># After this, pkg = [params, lower, upper]</span>
-            <span class="k">for</span> <span class="n">bnd</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">D0_bounds</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_bounds</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc_bounds</span><span class="p">)):</span>
-                <span class="n">pkg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="o">*</span><span class="n">bnd</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">bnd</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">D0_bounds</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_bounds</span><span class="p">,</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc_bounds</span><span class="p">)):</span>
+                    <span class="n">pkg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="o">*</span><span class="n">bnd</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">bnd</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">D0_bounds</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_bounds</span><span class="p">,</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span><span class="p">)):</span>
+                    <span class="n">pkg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="o">*</span><span class="n">bnd</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">pkg</span>
 
         <span class="k">return</span> <span class="n">pkg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
-
 
 <div class="viewcode-block" id="Morse.pack"><a class="viewcode-back" href="../forcefields.html#morse.Morse.pack">[docs]</a>    <span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -239,17 +286,19 @@
 <span class="sd">        **Returns**</span>
 <span class="sd">            None</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="s2">&quot;In Morse, tried packing </span><span class="si">%d</span><span class="s2"> parameters.  Should be either 4 or 5!&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="s2">&quot;In Morse, tried packing </span><span class="si">%d</span><span class="s2"> parameters. </span><span class="se">\</span>
+<span class="s2">Should be either 3, 4, or 5!&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
             <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">indices</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">0</span> <span class="o">+</span> <span class="n">offset</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span> <span class="o">+</span> <span class="n">offset</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">offset</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">D0</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">1</span> <span class="o">+</span> <span class="n">offset</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">2</span> <span class="o">+</span> <span class="n">offset</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">r0</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">3</span> <span class="o">+</span> <span class="n">offset</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">4</span> <span class="o">+</span> <span class="n">offset</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">4</span> <span class="o">+</span> <span class="n">offset</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span></div>
 
@@ -262,12 +311,25 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">D0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">D0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">r0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">)</span>
+
+        <span class="c1"># In the case of rc being None, change N-params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N_params</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">N_params</span> <span class="o">=</span> <span class="mi">3</span>
+
         <span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">D0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">]</span>
-        <span class="n">bounds</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">D0_bounds</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_bounds</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc_bounds</span><span class="p">]</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">D0_bounds</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_bounds</span><span class="p">,</span>
+                  <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc_bounds</span><span class="p">]</span>
         <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;D0&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="s2">&quot;r0&quot;</span><span class="p">,</span> <span class="s2">&quot;rc&quot;</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">bound</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">names</span><span class="p">):</span>
-            <span class="k">assert</span> <span class="n">param</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">bound</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">BOUND_EPS</span><span class="p">)</span> <span class="ow">and</span> <span class="n">param</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">bound</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">BOUND_EPS</span><span class="p">),</span> <span class="s2">&quot;In Morse </span><span class="si">%s</span><span class="s2">, parameter </span><span class="si">%s</span><span class="s2"> = </span><span class="si">%.2f</span><span class="s2"> is outside of it&#39;s range = [</span><span class="si">%.2f</span><span class="s2">, </span><span class="si">%.2f</span><span class="s2">]!&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">),</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">bound</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">bound</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+            <span class="k">if</span> <span class="n">param</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">assert</span> <span class="n">param</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">bound</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">BOUND_EPS</span><span class="p">)</span> <span class="ow">and</span>\
+                <span class="n">param</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">bound</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">BOUND_EPS</span><span class="p">),</span>\
+                <span class="s2">&quot;In Morse </span><span class="si">%s</span><span class="s2">, parameter </span><span class="si">%s</span><span class="s2"> = </span><span class="si">%.2f</span><span class="s2"> is outside of it&#39;s range = </span><span class="se">\</span>
+<span class="s2">[</span><span class="si">%.2f</span><span class="s2">, </span><span class="si">%.2f</span><span class="s2">]!&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">),</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">bound</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">bound</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="Morse.parse_line"><a class="viewcode-back" href="../forcefields.html#morse.Morse.parse_line">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">parse_line</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
@@ -280,28 +342,38 @@
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span>\
+            <span class="s2">&quot;Error - Invalid line to parse!&quot;</span>
 
         <span class="n">indices</span> <span class="o">=</span> <span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="n">D0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
         <span class="n">alpha</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
         <span class="n">r0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
-        <span class="n">rc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
+            <span class="n">rc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="n">indices</span><span class="p">,</span> <span class="n">D0</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">rc</span></div>
 
     <span class="k">def</span> <span class="nf">assign_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="o">=</span>\
+            <span class="bp">self</span><span class="o">.</span><span class="n">parse_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Morse.fix"><a class="viewcode-back" href="../forcefields.html#morse.Morse.fix">[docs]</a>    <span class="k">def</span> <span class="nf">fix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        This will fix these parameters by assigning bounds to the values themselves.</span>
+<span class="sd">        This will fix these parameters by assigning bounds to the values</span>
+<span class="sd">        themselves.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="n">params</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">),</span> <span class="s2">&quot;Error - Trying to set all Morse params without passing list/tuple (passed </span><span class="si">%s</span><span class="s2">).&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;Error - Not the right number of parameters (4) passed to fix all in Morse (passed </span><span class="si">%s</span><span class="s2">).&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">D0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">),</span>\
+                    <span class="s2">&quot;Error - Trying to set all Morse params without passing </span><span class="se">\</span>
+<span class="s2">list/tuple (passed </span><span class="si">%s</span><span class="s2">).&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;Error - Not the right number of </span><span class="se">\</span>
+<span class="s2">parameters (4) passed to fix all in Morse (passed </span><span class="si">%s</span><span class="s2">).&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">D0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="nb">float</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">D0_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">D0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D0</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">alpha_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="p">)</span>
@@ -309,70 +381,117 @@
         <span class="k">elif</span> <span class="n">params</span> <span class="o">==</span> <span class="s1">&#39;D0&#39;</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-                    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Error - passed more than one value when fixing D0 in Morse (passed </span><span class="si">%s</span><span class="s2">).&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Error - passed more than one value </span><span class="se">\</span>
+<span class="s2">when fixing D0 in Morse (passed </span><span class="si">%s</span><span class="s2">).&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
                     <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">D0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">D0_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">D0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D0</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">params</span> <span class="o">==</span> <span class="s1">&#39;alpha&#39;</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-                    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Error - passed more than one value when fixing alpha in Morse (passed </span><span class="si">%s</span><span class="s2">).&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Error - passed more than one value </span><span class="se">\</span>
+<span class="s2">when fixing alpha in Morse (passed </span><span class="si">%s</span><span class="s2">).&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
                     <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">alpha_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">params</span> <span class="o">==</span> <span class="s2">&quot;r0&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-                    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Error - passed more than one value when fixing r0 in Morse (passed </span><span class="si">%s</span><span class="s2">).&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Error - passed more than one value </span><span class="se">\</span>
+<span class="s2">when fixing r0 in Morse (passed </span><span class="si">%s</span><span class="s2">).&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
                     <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">r0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">params</span> <span class="o">==</span> <span class="s2">&quot;rc&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-                    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Error - passed more than one value when fixing rc in Morse (passed </span><span class="si">%s</span><span class="s2">).&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Error - passed more than one </span><span class="se">\</span>
+<span class="s2">value when fixing rc in Morse (passed </span><span class="si">%s</span><span class="s2">).&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
                     <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">rc_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;In Morse, tried fixing </span><span class="si">%s</span><span class="s2"> parameter (does not exist)!&quot;</span> <span class="o">%</span> <span class="n">params</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;In Morse, tried fixing </span><span class="si">%s</span><span class="s2"> parameter (does not exist)!&quot;</span>
+                <span class="o">%</span> <span class="n">params</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">pair_coeff_dump</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%.4f</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">D0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%.4f</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">D0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Morse.set_binder"><a class="viewcode-back" href="../forcefields.html#morse.Morse.set_binder">[docs]</a>    <span class="k">def</span> <span class="nf">set_binder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This will adjust bounds such that the parameters are in a range of a</span>
+<span class="sd">        morse &quot;Bond&quot;.  This means that:</span>
+
+<span class="sd">            0.5 &lt; r &lt; 4.0</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">r0</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">+</span>\
+                <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Morse.set_nonbinder"><a class="viewcode-back" href="../forcefields.html#morse.Morse.set_nonbinder">[docs]</a>    <span class="k">def</span> <span class="nf">set_nonbinder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This will adjust bounds such that the parameters are in a range of a</span>
+<span class="sd">        morse &quot;Non-Bond&quot;.  This means that:</span>
+
+<span class="sd">            4.0 &lt; r &lt; 10.0</span>
+<span class="sd">            0.1 &lt; D0 &lt; 50.0</span>
+<span class="sd">            0.1 &lt; alpha &lt; 5.0</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">r0</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">+</span>\
+                <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">D0_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">D0</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">D0_bounds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">D0</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">D0_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">D0</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">D0_bounds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">D0_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">+</span>\
+                <span class="bp">self</span><span class="o">.</span><span class="n">D0_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_bounds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">or</span>\
+                <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">alpha_bounds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">+</span>\
+                <span class="bp">self</span><span class="o">.</span><span class="n">alpha_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Morse.load_smrff"><a class="viewcode-back" href="../forcefields.html#morse.Morse.load_smrff">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">load_smrff</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pfile</span><span class="p">,</span> <span class="n">pfptr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">restrict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">load_smrff</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">parsed_file</span><span class="p">,</span> <span class="n">pfile_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">restrict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Given a parameter file, import the Morse parameters if possible.</span>
 <span class="sd">        **Parameters**</span>
-<span class="sd">            pfile: *str*</span>
+<span class="sd">            parsed_file: *str*</span>
 <span class="sd">                A parsed smrff parameter file input string.</span>
 <span class="sd">                (no comments or trailing white spaces)</span>
-<span class="sd">            pfptr: *str*</span>
+<span class="sd">            pfile_name: *str*</span>
 <span class="sd">                The name of a parameter file to be parsed.</span>
-<span class="sd">                If specified, then pfile is ignored.</span>
-<span class="sd">                (you may simply pass None as pfile)</span>
-<span class="sd">                (For programmer: The name of this parameter must be changed. It is hard to understand.)</span>
+<span class="sd">                If specified, then parsed_file is ignored.</span>
+<span class="sd">                (you may simply pass None as parsed_file)</span>
 <span class="sd">        **Returns**</span>
 <span class="sd">            Morse_objs: *list, Morse*, or *None*</span>
 <span class="sd">                Returns a list of Morse objects if possible, else None.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="kn">import</span> <span class="nn">squid.forcefields.smrff</span> <span class="k">as</span> <span class="nn">smrff_utils</span>
 
-        <span class="c1"># Ensure correct pfile format, and that we even need to parse it.</span>
-        <span class="k">if</span> <span class="n">pfptr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">pfile</span> <span class="o">=</span> <span class="n">smrff_utils</span><span class="o">.</span><span class="n">parse_pfile</span><span class="p">(</span><span class="n">pfptr</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">MORSE_PFILE_ID</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pfile</span><span class="p">:</span>
+        <span class="c1"># Ensure correct parsed_file format, and that we even need to parse it.</span>
+        <span class="k">if</span> <span class="n">pfile_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">parsed_file</span> <span class="o">=</span> <span class="n">smrff_utils</span><span class="o">.</span><span class="n">parse_pfile</span><span class="p">(</span><span class="n">pfile_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">MORSE_PFILE_ID</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">parsed_file</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
-        <span class="n">pfile</span> <span class="o">=</span> <span class="n">pfile</span><span class="p">[</span><span class="n">pfile</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">MORSE_PFILE_ID</span><span class="p">):]</span>
-        <span class="n">pfile</span> <span class="o">=</span> <span class="n">pfile</span><span class="p">[:</span><span class="n">pfile</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">END_ID</span><span class="p">)]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">parsed_file</span> <span class="o">=</span> <span class="n">parsed_file</span><span class="p">[</span><span class="n">parsed_file</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">MORSE_PFILE_ID</span><span class="p">):]</span>
+        <span class="n">parsed_file</span> <span class="o">=</span> <span class="n">parsed_file</span><span class="p">[:</span><span class="n">parsed_file</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">END_ID</span><span class="p">)]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-        <span class="n">pfile</span> <span class="o">=</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">parse_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">pfile</span><span class="p">]</span>
+        <span class="n">parsed_file</span> <span class="o">=</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">parse_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">parsed_file</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="p">[</span>
             <span class="bp">cls</span><span class="p">(</span><span class="n">indices</span><span class="o">=</span><span class="n">indices</span><span class="p">,</span> <span class="n">D0</span><span class="o">=</span><span class="n">D0</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">r0</span><span class="o">=</span><span class="n">r0</span><span class="p">,</span> <span class="n">rc</span><span class="o">=</span><span class="n">rc</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">indices</span><span class="p">,</span> <span class="n">D0</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">rc</span> <span class="ow">in</span> <span class="n">pfile</span> <span class="k">if</span> <span class="n">check_restriction</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">restrict</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">indices</span><span class="p">,</span> <span class="n">D0</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">rc</span> <span class="ow">in</span> <span class="n">parsed_file</span>
+            <span class="k">if</span> <span class="n">check_restriction</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">restrict</span><span class="p">)</span>
         <span class="p">]</span></div>
 
 <div class="viewcode-block" id="Morse.generate"><a class="viewcode-back" href="../forcefields.html#morse.Morse.generate">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">atom_types</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">atom_types</span><span class="p">,</span> <span class="n">gen_rc</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Randomly generate parameters for morse.</span>
 
@@ -391,14 +510,81 @@
         <span class="n">morse_objs</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">indices</span> <span class="ow">in</span> <span class="n">combinations_with_replacement</span><span class="p">(</span><span class="n">atom_types</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
-            <span class="n">D0</span> <span class="o">=</span> <span class="n">random_in_range</span><span class="p">((</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">))</span>
-            <span class="n">alpha</span> <span class="o">=</span> <span class="n">random_in_range</span><span class="p">((</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>
-            <span class="n">r0</span> <span class="o">=</span> <span class="n">random_in_range</span><span class="p">((</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">))</span>
-            <span class="n">rc</span> <span class="o">=</span> <span class="n">random_in_range</span><span class="p">((</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">))</span>
+            <span class="n">D0</span> <span class="o">=</span> <span class="n">random_in_range</span><span class="p">(</span><span class="n">D0_BOUNDS</span><span class="p">)</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="n">random_in_range</span><span class="p">(</span><span class="n">ALPHA_BOUNDS</span><span class="p">)</span>
+            <span class="n">r0</span> <span class="o">=</span> <span class="n">random_in_range</span><span class="p">(</span><span class="n">R0_BOUNDS</span><span class="p">)</span>
+            <span class="n">rc</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">gen_rc</span><span class="p">:</span>
+                <span class="n">rc</span> <span class="o">=</span> <span class="n">random_in_range</span><span class="p">(</span><span class="n">RC_BOUNDS</span><span class="p">)</span>
             <span class="n">morse_objs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">cls</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">D0</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">rc</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">morse_objs</span></div></div>
 
+
+<span class="k">def</span> <span class="nf">run_unit_tests</span><span class="p">():</span>
+    <span class="c1"># Ensure we do not allow a blank Coul</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">Morse</span><span class="p">(</span>
+            <span class="n">indices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">D0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">r0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Morse initialization failed!&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="c1"># Ensure we do not allow a blank Morse (which should be None on all</span>
+    <span class="c1"># by default)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">Morse</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Morse initialization failed!&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># Ensure strings have not changed</span>
+    <span class="n">ct1</span> <span class="o">=</span> <span class="n">Morse</span><span class="p">(</span>
+        <span class="n">indices</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">D0</span><span class="o">=</span><span class="mf">75.0</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.8</span><span class="p">,</span>
+        <span class="n">r0</span><span class="o">=</span><span class="mf">3.1</span><span class="p">,</span> <span class="n">rc</span><span class="o">=</span><span class="mf">3.6</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="n">ct1_s</span> <span class="o">=</span> <span class="s2">&quot;1 2      75.0000000   1.8000000   3.1000000   3.6000000&quot;</span>
+    <span class="k">assert</span> <span class="n">ct1_s</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">ct1</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="s2">&quot;Error - String formatting has changed&quot;</span>
+    <span class="n">ct2</span> <span class="o">=</span> <span class="n">Morse</span><span class="p">(</span>
+        <span class="n">indices</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;123&quot;</span><span class="p">,</span> <span class="s2">&quot;8&quot;</span><span class="p">),</span> <span class="n">D0</span><span class="o">=</span><span class="mf">75.0</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.8</span><span class="p">,</span>
+        <span class="n">r0</span><span class="o">=</span><span class="mf">3.1</span><span class="p">,</span> <span class="n">rc</span><span class="o">=</span><span class="mf">3.6</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="n">ct2_s</span> <span class="o">=</span> <span class="s2">&quot;123 8      75.0000000   1.8000000   3.1000000   3.6000000&quot;</span>
+    <span class="k">assert</span> <span class="n">ct2_s</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">ct2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="s2">&quot;Error - String formatting has changed&quot;</span>
+
+    <span class="n">ct2_hold</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">ct2</span><span class="p">)</span>
+    <span class="n">ct2</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">ct2</span><span class="o">.</span><span class="n">unpack</span><span class="p">())</span>
+    <span class="k">assert</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ct2_hold</span><span class="p">))</span> <span class="o">==</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ct2</span><span class="p">)),</span>\
+        <span class="s2">&quot;Error - Packing and Unpacking has failed&quot;</span>
+
+    <span class="c1"># Comparison is done only by index.  Thus, these should still equate!</span>
+    <span class="n">ct2</span><span class="o">.</span><span class="n">D0</span> <span class="o">=</span> <span class="mf">10.0</span>
+    <span class="k">assert</span> <span class="n">ct2_hold</span> <span class="o">==</span> <span class="n">ct2</span><span class="p">,</span> <span class="s2">&quot;Error - Unable to compare atoms in Morse&quot;</span>
+    <span class="c1"># And these should not equate</span>
+    <span class="n">ct2</span><span class="o">.</span><span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;32113&quot;</span><span class="p">,</span> <span class="s2">&quot;sldjkf&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">ct2_hold</span> <span class="o">!=</span> <span class="n">ct2</span><span class="p">,</span> <span class="s2">&quot;Error - Unable to compare atoms in Morse&quot;</span>
+
+    <span class="c1"># Should unpack as follows</span>
+    <span class="n">should_be</span> <span class="o">=</span> <span class="p">[</span><span class="n">ct2</span><span class="o">.</span><span class="n">indices</span><span class="p">,</span> <span class="n">ct2</span><span class="o">.</span><span class="n">D0</span><span class="p">,</span>
+                 <span class="n">ct2</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="n">ct2</span><span class="o">.</span><span class="n">r0</span><span class="p">,</span> <span class="n">ct2</span><span class="o">.</span><span class="n">rc</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="n">x</span> <span class="o">==</span> <span class="n">y</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ct2</span><span class="o">.</span><span class="n">unpack</span><span class="p">(),</span> <span class="n">should_be</span><span class="p">)]),</span>\
+        <span class="s2">&quot;Error - Unpack is not correct!&quot;</span>
+
+    <span class="c1"># Test parsing of a line</span>
+    <span class="n">ct3</span> <span class="o">=</span> <span class="n">Morse</span><span class="p">(</span><span class="n">line</span><span class="o">=</span><span class="s2">&quot;2 3      75.0000000   1.8000000   3.1000000   3.6000000&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">ct3</span><span class="o">.</span><span class="n">indices</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;3&quot;</span><span class="p">],</span>\
+        <span class="s2">&quot;Error - Unable to parse indices from line.&quot;</span>
+    <span class="k">assert</span> <span class="n">ct3</span><span class="o">.</span><span class="n">D0</span> <span class="o">==</span> <span class="mi">75</span><span class="p">,</span> <span class="s2">&quot;Error - Unable to parse D0 from line.&quot;</span>
+    <span class="k">assert</span> <span class="n">ct3</span><span class="o">.</span><span class="n">alpha</span> <span class="o">==</span> <span class="mf">1.8</span><span class="p">,</span> <span class="s2">&quot;Error - Unable to parse alpha from line.&quot;</span>
+    <span class="k">assert</span> <span class="n">ct3</span><span class="o">.</span><span class="n">r0</span> <span class="o">==</span> <span class="mf">3.1</span><span class="p">,</span> <span class="s2">&quot;Error - Unable to parse r0 from line.&quot;</span>
+    <span class="k">assert</span> <span class="n">ct3</span><span class="o">.</span><span class="n">rc</span> <span class="o">==</span> <span class="mf">3.6</span><span class="p">,</span> <span class="s2">&quot;Error - Unable to parse rc from line.&quot;</span>
+
+    <span class="n">ct3</span> <span class="o">=</span> <span class="n">Morse</span><span class="o">.</span><span class="n">generate</span><span class="p">([</span><span class="s2">&quot;xA&quot;</span><span class="p">,</span> <span class="s2">&quot;xB&quot;</span><span class="p">])</span>
+    <span class="c1"># print(ct3)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run_unit_tests</span><span class="p">()</span>
 </pre></div>
 
           </div>
@@ -409,8 +595,7 @@
 <h3><a href="../index.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../squid.html">Squid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../codebase.html">Codebase</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../updating.html">UPDATING TO v2.0.0</a></li>
 </ul>
 
 <div id="searchbox" style="display: none" role="search">
@@ -438,7 +623,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

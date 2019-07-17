@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>&lt;no title&gt; &#8212; Squid 0.0.1 documentation</title>
+    <title>&lt;no title&gt; &#8212; Squid 2.0.0 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Squid 0.0.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Squid 2.0.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -40,7 +40,7 @@
   <p>The forcefields module contains various objects to define forcefields,
 as well as several functions to parse forcefield files.</p>
 <ul class="simple">
-<li><code class="xref py py-func docutils literal notranslate"><span class="pre">opls.parse_pfile()</span></code></li>
+<li><a class="reference internal" href="#opls.parse_pfile" title="opls.parse_pfile"><code class="xref py py-func docutils literal notranslate"><span class="pre">opls.parse_pfile()</span></code></a></li>
 <li><a class="reference internal" href="#smrff.parse_pfile" title="smrff.parse_pfile"><code class="xref py py-func docutils literal notranslate"><span class="pre">smrff.parse_pfile()</span></code></a></li>
 <li><a class="reference internal" href="#connectors.HarmonicConnector" title="connectors.HarmonicConnector"><code class="xref py py-class docutils literal notranslate"><span class="pre">connectors.HarmonicConnector</span></code></a></li>
 <li><a class="reference internal" href="#connectors.Bond" title="connectors.Bond"><code class="xref py py-class docutils literal notranslate"><span class="pre">connectors.Bond</span></code></a></li>
@@ -58,14 +58,14 @@ as well as several functions to parse forcefield files.</p>
 <em class="property">class </em><code class="descclassname">connectors.</code><code class="descname">Angle</code><span class="sig-paren">(</span><em>indices=None</em>, <em>energies=None</em>, <em>equilibs=None</em>, <em>line=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#Angle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.Angle" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="classmethod">
 <dt id="connectors.Angle.load_opls">
-<em class="property">classmethod </em><code class="descname">load_opls</code><span class="sig-paren">(</span><em>angle_types</em>, <em>pfptr=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#Angle.load_opls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.Angle.load_opls" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">load_opls</code><span class="sig-paren">(</span><em>angle_types</em>, <em>pfile_name=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#Angle.load_opls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.Angle.load_opls" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a parameter file, inport the Angle parameters if possible.
 <strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
 <dt>angle_types: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code></dt>
 <dd>Angle types from a parsed opls parameter file.</dd>
-<dt>pfptr: <em>str</em></dt>
+<dt>pfile_name: <em>str</em></dt>
 <dd>The name of a parameter file to be parsed.  If specified,
 then pfile is ignored (you may simply pass None as pfile).</dd>
 </dl>
@@ -87,14 +87,14 @@ then pfile is ignored (you may simply pass None as pfile).</dd>
 <em class="property">class </em><code class="descclassname">connectors.</code><code class="descname">Bond</code><span class="sig-paren">(</span><em>indices=None</em>, <em>energies=None</em>, <em>equilibs=None</em>, <em>line=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#Bond"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.Bond" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="classmethod">
 <dt id="connectors.Bond.load_opls">
-<em class="property">classmethod </em><code class="descname">load_opls</code><span class="sig-paren">(</span><em>bond_types</em>, <em>pfptr=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#Bond.load_opls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.Bond.load_opls" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">load_opls</code><span class="sig-paren">(</span><em>bond_types</em>, <em>pfile_name=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#Bond.load_opls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.Bond.load_opls" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a parameter file, inport the Bond parameters if possible.
 <strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
 <dt>bond_types: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code></dt>
 <dd>Bond types from a parsed opls parameter file.</dd>
-<dt>pfptr: <em>str</em></dt>
+<dt>pfile_name: <em>str</em></dt>
 <dd>The name of a parameter file to be parsed.  If specified,
 then pfile is ignored (you may simply pass None as pfile).</dd>
 </dl>
@@ -116,14 +116,14 @@ then pfile is ignored (you may simply pass None as pfile).</dd>
 <em class="property">class </em><code class="descclassname">connectors.</code><code class="descname">Dihedral</code><span class="sig-paren">(</span><em>indices=None</em>, <em>energies=None</em>, <em>equilibs=None</em>, <em>line=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#Dihedral"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.Dihedral" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="classmethod">
 <dt id="connectors.Dihedral.load_opls">
-<em class="property">classmethod </em><code class="descname">load_opls</code><span class="sig-paren">(</span><em>dihedral_types</em>, <em>pfptr=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#Dihedral.load_opls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.Dihedral.load_opls" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">load_opls</code><span class="sig-paren">(</span><em>dihedral_types</em>, <em>pfile_name=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#Dihedral.load_opls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.Dihedral.load_opls" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a parameter file, inport the Dihedral parameters if possible.
 <strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
 <dt>dihedral_types: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code></dt>
 <dd>Dihedral types from a parsed opls parameter file.</dd>
-<dt>pfptr: <em>str</em></dt>
+<dt>pfile_name: <em>str</em></dt>
 <dd>The name of a parameter file to be parsed.  If specified,
 then pfile is ignored (you may simply pass None as pfile).</dd>
 </dl>
@@ -191,7 +191,7 @@ or pass line.  If all are passed, then an error will be thrown.
 
 <dl class="classmethod">
 <dt id="connectors.HarmonicConnector.load_opls">
-<em class="property">classmethod </em><code class="descname">load_opls</code><span class="sig-paren">(</span><em>info</em>, <em>pfptr=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#HarmonicConnector.load_opls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.HarmonicConnector.load_opls" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">load_opls</code><span class="sig-paren">(</span><em>info</em>, <em>pfile_name=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#HarmonicConnector.load_opls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.HarmonicConnector.load_opls" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a parameter file, inport the LJ parameters if possible.
 <strong>Parameters</strong></p>
 <blockquote>
@@ -199,7 +199,7 @@ or pass line.  If all are passed, then an error will be thrown.
 <dt>pfile: <em>str</em></dt>
 <dd>A parsed smrff parameter file input string (no comments or
 trailing white spaces)</dd>
-<dt>pfptr: <em>str</em></dt>
+<dt>pfile_name: <em>str</em></dt>
 <dd>The name of a parameter file to be parsed.  If specified,
 then pfile is ignored (you may simply pass None as pfile).</dd>
 </dl>
@@ -216,7 +216,7 @@ then pfile is ignored (you may simply pass None as pfile).</dd>
 
 <dl class="classmethod">
 <dt id="connectors.HarmonicConnector.load_smrff">
-<em class="property">classmethod </em><code class="descname">load_smrff</code><span class="sig-paren">(</span><em>pfile</em>, <em>pfptr=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#HarmonicConnector.load_smrff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.HarmonicConnector.load_smrff" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">load_smrff</code><span class="sig-paren">(</span><em>pfile</em>, <em>pfile_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/connectors.html#HarmonicConnector.load_smrff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#connectors.HarmonicConnector.load_smrff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a parameter file, inport the LJ parameters if possible.
 <strong>Parameters</strong></p>
 <blockquote>
@@ -224,7 +224,7 @@ then pfile is ignored (you may simply pass None as pfile).</dd>
 <dt>pfile: <em>str</em></dt>
 <dd>A parsed smrff parameter file input string (no comments or
 trailing white spaces)</dd>
-<dt>pfptr: <em>str</em></dt>
+<dt>pfile_name: <em>str</em></dt>
 <dd>The name of a parameter file to be parsed.  If specified,
 then pfile is ignored (you may simply pass None as pfile).</dd>
 </dl>
@@ -356,7 +356,8 @@ ensure data types are appropriate.</p>
 <dl class="method">
 <dt id="coulomb.Coul.fix">
 <code class="descname">fix</code><span class="sig-paren">(</span><em>params='all'</em>, <em>value=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coulomb.html#Coul.fix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coulomb.Coul.fix" title="Permalink to this definition">¶</a></dt>
-<dd><p>This will fix these parameters by assigning bounds to the values themselves.</p>
+<dd><p>This will fix these parameters by assigning bounds to the
+values themselves.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -371,7 +372,8 @@ ensure data types are appropriate.</p>
 <dt>elems: <em>list, str</em></dt>
 <dd>List of the elements (in the same order as atom_types).</dd>
 <dt>signs: <em>list, float</em></dt>
-<dd>The list of the signs of the charges (in the same order as the atom_types).</dd>
+<dd>The list of the signs of the charges (in the same order as
+the atom_types).</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
@@ -385,14 +387,14 @@ ensure data types are appropriate.</p>
 
 <dl class="classmethod">
 <dt id="coulomb.Coul.load_opls">
-<em class="property">classmethod </em><code class="descname">load_opls</code><span class="sig-paren">(</span><em>atom_types</em>, <em>pfptr=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coulomb.html#Coul.load_opls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coulomb.Coul.load_opls" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a parameter file, importthe Coulomb parameters if possible.
+<em class="property">classmethod </em><code class="descname">load_opls</code><span class="sig-paren">(</span><em>atom_types</em>, <em>pfile_name=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coulomb.html#Coul.load_opls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coulomb.Coul.load_opls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a parameter file, import the Coulomb parameters if possible.
 <strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>atom_types: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code></dt>
+<dt>atom_types: <em>list, dict, …</em></dt>
 <dd>Atom types from a parsed opls parameter file.</dd>
-<dt>pfptr: <em>str</em></dt>
+<dt>pfile_name: <em>str</em></dt>
 <dd>The name of a parameter file to be parsed.  If specified,
 then pfile is ignored (you may simply pass None as pfile).</dd>
 </dl>
@@ -409,17 +411,18 @@ then pfile is ignored (you may simply pass None as pfile).</dd>
 
 <dl class="classmethod">
 <dt id="coulomb.Coul.load_smrff">
-<em class="property">classmethod </em><code class="descname">load_smrff</code><span class="sig-paren">(</span><em>pfile</em>, <em>pfptr=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coulomb.html#Coul.load_smrff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coulomb.Coul.load_smrff" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">load_smrff</code><span class="sig-paren">(</span><em>parsed_file</em>, <em>pfile_name=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coulomb.html#Coul.load_smrff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coulomb.Coul.load_smrff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a parameter file, inport the coulomb parameters if possible.
 <strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>pfile: <em>str</em></dt>
+<dt>parsed_file: <em>str</em></dt>
 <dd>A parsed smrff parameter file input string (no comments or
 trailing white spaces)</dd>
-<dt>pfptr: <em>str</em></dt>
+<dt>pfile_name: <em>str</em></dt>
 <dd>The name of a parameter file to be parsed.  If specified,
-then pfile is ignored (you may simply pass None as pfile).</dd>
+then parsed_file is ignored (you may simply pass None as
+parsed_file).</dd>
 </dl>
 </div></blockquote>
 <dl class="docutils">
@@ -482,7 +485,8 @@ only assign charge, then do so manually.</dd>
 <dt><strong>Returns</strong></dt>
 <dd><dl class="first last docutils">
 <dt>coul: <em>list, str/float</em></dt>
-<dd>A list, holding the string of the index and the float of the charge.</dd>
+<dd>A list, holding the string of the index and the float of
+the charge.</dd>
 </dl>
 </dd>
 </dl>
@@ -491,7 +495,7 @@ only assign charge, then do so manually.</dd>
 <dl class="method">
 <dt id="coulomb.Coul.validate">
 <code class="descname">validate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/coulomb.html#Coul.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coulomb.Coul.validate" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function will validate data integrity.  
+<dd><p>This function will validate data integrity.
 In this case, we simply ensure data types are appropriate.</p>
 </dd></dl>
 
@@ -520,28 +524,6 @@ In this case, we simply ensure data types are appropriate.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="helper.is_struct">
-<code class="descclassname">helper.</code><code class="descname">is_struct</code><span class="sig-paren">(</span><em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helper.html#is_struct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#helper.is_struct" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function essentially does isinstance(p, struct) without needing
-to import squid.structures.  Currently there is a cyclic import that would
-make the later annoying to deal with.  NOTE - HOT FIX - REMOVE ASAP.</p>
-<p><strong>Parameters</strong></p>
-<blockquote>
-<div><dl class="docutils">
-<dt>p: <em>obj</em></dt>
-<dd>Some parameter object, such as Coulomb, Morse, etc.</dd>
-</dl>
-</div></blockquote>
-<p><strong>Returns</strong></p>
-<blockquote>
-<div><dl class="docutils">
-<dt>isStruct: <em>bool</em></dt>
-<dd>Whether p is a Struct (True) or not (False).</dd>
-</dl>
-</div></blockquote>
-</dd></dl>
-
-<dl class="function">
 <dt id="helper.random_in_range">
 <code class="descclassname">helper.</code><code class="descname">random_in_range</code><span class="sig-paren">(</span><em>bounds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helper.html#random_in_range"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#helper.random_in_range" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a random number in the given bounds: [lower, upper).</p>
@@ -563,8 +545,8 @@ make the later annoying to deal with.  NOTE - HOT FIX - REMOVE ASAP.</p>
 
 <span class="target" id="module-lj"></span><p>The Lennard-Jones object.  This stores the index and LJ parameters.</p>
 <dl class="data">
-<dt id="lj.END_ID">
-<code class="descclassname">lj.</code><code class="descname">END_ID</code><em class="property"> = 'END'</em><a class="headerlink" href="#lj.END_ID" title="Permalink to this definition">¶</a></dt>
+<dt id="lj.EPSILON_BOUNDS">
+<code class="descclassname">lj.</code><code class="descname">EPSILON_BOUNDS</code><em class="property"> = (0.0001, 3.0)</em><a class="headerlink" href="#lj.EPSILON_BOUNDS" title="Permalink to this definition">¶</a></dt>
 <dd><p>The LJ class contains:
 - <code class="xref py py-func docutils literal notranslate"><span class="pre">__init__()</span></code>
 - <code class="xref py py-func docutils literal notranslate"><span class="pre">__repr__()</span></code>
@@ -611,7 +593,8 @@ or pass line.  If all are passed, then an error will be thrown.
 <dl class="method">
 <dt id="lj.LJ.fix">
 <code class="descname">fix</code><span class="sig-paren">(</span><em>params='all'</em>, <em>value=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lj.html#LJ.fix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.fix" title="Permalink to this definition">¶</a></dt>
-<dd><p>This will fix these parameters by assigning bounds to the values themselves.</p>
+<dd><p>This will fix these parameters by assigning bounds to the values
+themselves.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -636,14 +619,14 @@ or pass line.  If all are passed, then an error will be thrown.
 
 <dl class="classmethod">
 <dt id="lj.LJ.load_opls">
-<em class="property">classmethod </em><code class="descname">load_opls</code><span class="sig-paren">(</span><em>atom_types</em>, <em>pfptr=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lj.html#LJ.load_opls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.load_opls" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">load_opls</code><span class="sig-paren">(</span><em>atom_types</em>, <em>pfile_name=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lj.html#LJ.load_opls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.load_opls" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a parameter file, inport the LJ parameters if possible.
 <strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>atom_types: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code></dt>
+<dt>atom_types: <em>list, dict, …</em></dt>
 <dd>Atom types from a parsed opls parameter file.</dd>
-<dt>pfptr: <em>str</em></dt>
+<dt>pfile_name: <em>str</em></dt>
 <dd>The name of a parameter file to be parsed.  If specified,
 then pfile is ignored (you may simply pass None as pfile).</dd>
 </dl>
@@ -660,17 +643,18 @@ then pfile is ignored (you may simply pass None as pfile).</dd>
 
 <dl class="classmethod">
 <dt id="lj.LJ.load_smrff">
-<em class="property">classmethod </em><code class="descname">load_smrff</code><span class="sig-paren">(</span><em>pfile</em>, <em>pfptr=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lj.html#LJ.load_smrff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.load_smrff" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a parameter file, inport the LJ parameters if possible.
+<em class="property">classmethod </em><code class="descname">load_smrff</code><span class="sig-paren">(</span><em>parsed_file</em>, <em>pfile_name=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lj.html#LJ.load_smrff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.load_smrff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a parameter file, inport the coulomb parameters if possible.
 <strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>pfile: <em>str</em></dt>
+<dt>parsed_file: <em>str</em></dt>
 <dd>A parsed smrff parameter file input string (no comments or
 trailing white spaces)</dd>
-<dt>pfptr: <em>str</em></dt>
+<dt>pfile_name: <em>str</em></dt>
 <dd>The name of a parameter file to be parsed.  If specified,
-then pfile is ignored (you may simply pass None as pfile).</dd>
+then parsed_file is ignored (you may simply pass None as
+parsed_file).</dd>
 </dl>
 </div></blockquote>
 <dl class="docutils">
@@ -773,7 +757,7 @@ charge.</dd>
 
 <dl class="method">
 <dt id="lj.LJ.validate">
-<code class="descname">validate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lj.html#LJ.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.validate" title="Permalink to this definition">¶</a></dt>
+<code class="descname">validate</code><span class="sig-paren">(</span><em>warn=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lj.html#LJ.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lj.LJ.validate" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function will validate data integrity.  In this case, we simply
 ensure data types are appropriate.</p>
 </dd></dl>
@@ -781,26 +765,6 @@ ensure data types are appropriate.</p>
 </dd></dl>
 
 <span class="target" id="module-morse"></span><p>The Morse object. This stores the indices and MORSE parameters.</p>
-<dl class="data">
-<dt id="morse.END_ID">
-<code class="descclassname">morse.</code><code class="descname">END_ID</code><em class="property"> = 'END'</em><a class="headerlink" href="#morse.END_ID" title="Permalink to this definition">¶</a></dt>
-<dd><p>The Morse class contains:
-- <code class="xref py py-func docutils literal notranslate"><span class="pre">__init__()</span></code>
-- <code class="xref py py-func docutils literal notranslate"><span class="pre">__repr__()</span></code>
-- <code class="xref py py-func docutils literal notranslate"><span class="pre">__eq__()</span></code>
-- <code class="xref py py-func docutils literal notranslate"><span class="pre">__hash__()</span></code>
-- <code class="xref py py-func docutils literal notranslate"><span class="pre">_printer()</span></code>
-- <code class="xref py py-func docutils literal notranslate"><span class="pre">print_lower()</span></code>
-- <code class="xref py py-func docutils literal notranslate"><span class="pre">print_upper()</span></code>
-- <code class="xref py py-func docutils literal notranslate"><span class="pre">unpack()</span></code>
-- <code class="xref py py-func docutils literal notranslate"><span class="pre">pack()</span></code>
-- <code class="xref py py-func docutils literal notranslate"><span class="pre">validate()</span></code>
-- <code class="xref py py-func docutils literal notranslate"><span class="pre">assign_line()</span></code>
-- <code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code>
-- <a href="#id3"><span class="problematic" id="id4">:classmethod:`load_smrff`</span></a>
-————</p>
-</dd></dl>
-
 <dl class="class">
 <dt id="morse.Morse">
 <em class="property">class </em><code class="descclassname">morse.</code><code class="descname">Morse</code><span class="sig-paren">(</span><em>indices=None</em>, <em>D0=None</em>, <em>alpha=None</em>, <em>r0=None</em>, <em>rc=None</em>, <em>line=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/morse.html#Morse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#morse.Morse" title="Permalink to this definition">¶</a></dt>
@@ -838,12 +802,13 @@ both are specified, an error will be thrown.
 <dl class="method">
 <dt id="morse.Morse.fix">
 <code class="descname">fix</code><span class="sig-paren">(</span><em>params='all'</em>, <em>value=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/morse.html#Morse.fix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#morse.Morse.fix" title="Permalink to this definition">¶</a></dt>
-<dd><p>This will fix these parameters by assigning bounds to the values themselves.</p>
+<dd><p>This will fix these parameters by assigning bounds to the values
+themselves.</p>
 </dd></dl>
 
 <dl class="classmethod">
 <dt id="morse.Morse.generate">
-<em class="property">classmethod </em><code class="descname">generate</code><span class="sig-paren">(</span><em>atom_types</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/morse.html#Morse.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#morse.Morse.generate" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">generate</code><span class="sig-paren">(</span><em>atom_types</em>, <em>gen_rc=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/morse.html#Morse.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#morse.Morse.generate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Randomly generate parameters for morse.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
@@ -863,19 +828,18 @@ both are specified, an error will be thrown.
 
 <dl class="classmethod">
 <dt id="morse.Morse.load_smrff">
-<em class="property">classmethod </em><code class="descname">load_smrff</code><span class="sig-paren">(</span><em>pfile</em>, <em>pfptr=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/morse.html#Morse.load_smrff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#morse.Morse.load_smrff" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">load_smrff</code><span class="sig-paren">(</span><em>parsed_file</em>, <em>pfile_name=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/morse.html#Morse.load_smrff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#morse.Morse.load_smrff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a parameter file, import the Morse parameters if possible.
 <strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>pfile: <em>str</em></dt>
+<dt>parsed_file: <em>str</em></dt>
 <dd>A parsed smrff parameter file input string.
 (no comments or trailing white spaces)</dd>
-<dt>pfptr: <em>str</em></dt>
+<dt>pfile_name: <em>str</em></dt>
 <dd>The name of a parameter file to be parsed.
-If specified, then pfile is ignored.
-(you may simply pass None as pfile)
-(For programmer: The name of this parameter must be changed. It is hard to understand.)</dd>
+If specified, then parsed_file is ignored.
+(you may simply pass None as parsed_file)</dd>
 </dl>
 </div></blockquote>
 <dl class="docutils">
@@ -953,6 +917,26 @@ It is in the following order: indices D0 alpha r0 rc</dd>
 </dd></dl>
 
 <dl class="method">
+<dt id="morse.Morse.set_binder">
+<code class="descname">set_binder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/morse.html#Morse.set_binder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#morse.Morse.set_binder" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will adjust bounds such that the parameters are in a range of a
+morse “Bond”.  This means that:</p>
+<blockquote>
+<div>0.5 &lt; r &lt; 4.0</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="morse.Morse.set_nonbinder">
+<code class="descname">set_nonbinder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/morse.html#Morse.set_nonbinder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#morse.Morse.set_nonbinder" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will adjust bounds such that the parameters are in a range of a
+morse “Non-Bond”.  This means that:</p>
+<blockquote>
+<div>4.0 &lt; r &lt; 10.0
+0.1 &lt; D0 &lt; 50.0
+0.1 &lt; alpha &lt; 5.0</div></blockquote>
+</dd></dl>
+
+<dl class="method">
 <dt id="morse.Morse.unpack">
 <code class="descname">unpack</code><span class="sig-paren">(</span><em>with_indices=True</em>, <em>bounds=None</em>, <em>with_bounds=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/morse.html#Morse.unpack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#morse.Morse.unpack" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function unpacks the Morse object into a list.
@@ -963,7 +947,8 @@ It is in the following order: indices D0 alpha r0 rc</dd>
 <dd>Whether to also include the indices in the list.</dd>
 <dt>bounds: <em>int, optional</em></dt>
 <dd>Whether to output the lower bounds (0), or upper bounds (1).
-If None, then the parameters themselves are output instead (default).</dd>
+If None, then the parameters themselves are output instead
+(default).</dd>
 </dl>
 </div></blockquote>
 <dl class="docutils">
@@ -985,177 +970,67 @@ In this case, we simply ensure data types are appropriate.</p>
 
 </dd></dl>
 
-<span class="target" id="module-smooth_sin"></span><p>Class object for the sin_l/sin_r/sin_inout smooths.</p>
 <dl class="data">
-<dt id="smooth_sin.END_ID">
-<code class="descclassname">smooth_sin.</code><code class="descname">END_ID</code><em class="property"> = 'END'</em><a class="headerlink" href="#smooth_sin.END_ID" title="Permalink to this definition">¶</a></dt>
-<dd><p>The Smooth class contains:</p>
+<dt id="morse.RC_BOUNDS">
+<code class="descclassname">morse.</code><code class="descname">RC_BOUNDS</code><em class="property"> = (0.1, 7.0)</em><a class="headerlink" href="#morse.RC_BOUNDS" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Morse class contains:
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">__init__()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">__repr__()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">__eq__()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">__hash__()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">_printer()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">print_lower()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">print_upper()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">unpack()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">pack()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">validate()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">assign_line()</span></code>
+- <code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code>
+- <a href="#id3"><span class="problematic" id="id4">:classmethod:`load_smrff`</span></a>
+————</p>
 </dd></dl>
 
-<dl class="class">
-<dt id="smooth_sin.SmoothSin">
-<em class="property">class </em><code class="descclassname">smooth_sin.</code><code class="descname">SmoothSin</code><span class="sig-paren">(</span><em>smooth_index</em>, <em>atom_i</em>, <em>atom_j</em>, <em>r_in</em>, <em>d_in</em>, <em>gcut</em>, <em>r_out=None</em>, <em>d_out=None</em>, <em>lr=None</em>, <em>c_r=None</em>, <em>c_d=None</em>, <em>c_lr=None</em>, <em>c_gcut=None</em>, <em>c_s_index=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smooth_sin.html#SmoothSin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smooth_sin.SmoothSin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize the smooth object for sin_l/sin_r/sin_inout smooths.</p>
+<span class="target" id="module-opls"></span><p>The OPLS Forcefield module contains functionality for parsing the OPLS
+forcefield and typing appropriately.  Note, you must first import
+files before ever importing frc_opls.</p>
+<ul class="simple">
+<li><code class="xref py py-func docutils literal notranslate"><span class="pre">read_opls_parameters()</span></code></li>
+<li><code class="xref py py-func docutils literal notranslate"><span class="pre">set_forcefield_parameters()</span></code></li>
+<li><code class="xref py py-func docutils literal notranslate"><span class="pre">check_net_charge()</span></code></li>
+<li><code class="xref py py-func docutils literal notranslate"><span class="pre">check_consistency()</span></code></li>
+</ul>
+<hr class="docutils" />
+<dl class="function">
+<dt id="opls.parse_pfile">
+<code class="descclassname">opls.</code><code class="descname">parse_pfile</code><span class="sig-paren">(</span><em>parameter_file='/home/hherbol/programs/squid/squid/forcefields/potentials/oplsaa.prm'</em>, <em>pair_style='lj/cut'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opls.html#parse_pfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#opls.parse_pfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads an opls parameter file written in the Tinker file format.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>smooth_index: <em>int</em></dt>
-<dd>Which smooth function this is applied to (0th, 1st, etc).</dd>
-<dt>atom_i: <em>int</em></dt>
-<dd>Which atom type this applies to.  Note, using None is the same as <a href="#id5"><span class="problematic" id="id6">*</span></a>.</dd>
-<dt>atom_j: <em>int</em></dt>
-<dd>Which atom type this applies to.  Note, using None is the same as <a href="#id7"><span class="problematic" id="id8">*</span></a>.=</dd>
-<dt>r_in: <em>float</em></dt>
-<dd>The inner cutoff.</dd>
-<dt>d_in: <em>float</em></dt>
-<dd>The inner cutoff radius.</dd>
-<dt>gcut: <em>float</em></dt>
-<dd>The global cutoff, to never be exceeded.</dd>
-<dt>r_out: <em>float, optional</em></dt>
-<dd>The outer cutoff.</dd>
-<dt>d_out: <em>float, optional</em></dt>
-<dd>The outer cutoff radius.</dd>
-<dt>lr: <em>str, optional</em></dt>
-<dd>If r_out and d_out are NOT specified, you MUST specify this. It is either
-l or r to specify which direction this smooth is.</dd>
-<dt>c_r: <em>float</em></dt>
-<dd>Coupled cutoff.  Only necessary if inout was used.</dd>
-<dt>c_d: <em>float</em></dt>
-<dd>Coupled cutoff radius.  Only necessary if inout was used.</dd>
-<dt>c_lr: <em>str</em></dt>
-<dd>If c_r and c_d are NOT specified, you MUST specify this. It is either
-l or r to specify which direction this smooth is.</dd>
-<dt>c_gcut: <em>float</em></dt>
-<dd>Coupled global cutoff, to never be exceeded.  Only necessary if inout is used.</dd>
-<dt>c_s_index: <em>int</em></dt>
-<dd>Which smooth funciton this applies to (0th, 1st, etc).</dd>
-</dl>
-</div></blockquote>
-<dl class="method">
-<dt id="smooth_sin.SmoothSin.dump_pair_coeffs">
-<code class="descname">dump_pair_coeffs</code><span class="sig-paren">(</span><em>restricts</em>, <em>skip_restricts=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smooth_sin.html#SmoothSin.dump_pair_coeffs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smooth_sin.SmoothSin.dump_pair_coeffs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the smrff lammps input line for this smooth function.  Specifically
-the pair_coeff line.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="smooth_sin.SmoothSin.generate">
-<em class="property">classmethod </em><code class="descname">generate</code><span class="sig-paren">(</span><em>atom_types</em>, <em>lri</em>, <em>gcut</em>, <em>smooth_index</em>, <em>coupled=False</em>, <em>coupled_lr_smooth=None</em>, <em>coupled_lr_cut=None</em>, <em>coupled_smooth_index=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smooth_sin.html#SmoothSin.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smooth_sin.SmoothSin.generate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Randomly generate parameters for smooths.</p>
-<p><strong>Parameters</strong></p>
-<blockquote>
-<div><dl class="docutils">
-<dt>atom_types: <em>list, str</em></dt>
-<dd>A list of all the atom types to have parameters generated for.</dd>
-<dt>lri: <em>str</em></dt>
-<dd>Whether this is sin_l, sin_r, or sin_inout.</dd>
-<dt>gcut: <em>float</em></dt>
-<dd>The global cutoff, to not be exceeded.</dd>
-<dt>smooth_index: <em>int</em></dt>
-<dd>This smooth’s index.</dd>
-<dt>coupled: <em>bool, optional</em></dt>
-<dd>Whether to couple this smooth with another smooth or not.  If
-so, then all coupled keywords need defining.</dd>
-<dt>coupled_lr_smooth: <em>str</em></dt>
-<dd>Whether this is sin_l, sin_r, or sin_inout.</dd>
-<dt>coupled_lr_cut: <em>float</em></dt>
-<dd>The global cutoff, to not be exceeded.</dd>
-<dt>coupled_smooth_index: <em>int</em></dt>
-<dd>The coupled smooth’s index.</dd>
+<dt>parameter_file: <em>str, optional</em></dt>
+<dd>Relative or absolute path to an opls parameter file, written in
+the Tinker file format.</dd>
+<dt>pair_style: <em>str, optional</em></dt>
+<dd>The pair style to be assigned.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>smooth_objs: <em>list, SmoothSin</em></dt>
-<dd>Returns a list of smooth objects.</dd>
+<dt>atom_types: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code></dt>
+<dd>A list of the forcefield types for atoms, stored as
+<code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code>.</dd>
+<dt>bond_types: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code></dt>
+<dd>A list of the forcefield types for bonds, stored as
+<code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code>.</dd>
+<dt>angle_types: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code></dt>
+<dd>A list of the forcefield types for angles, stored as
+<code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code>.</dd>
+<dt>dihedral_types: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code></dt>
+<dd>A list of the forcefield types for dihedrals, stored as
+<code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code>.</dd>
 </dl>
 </div></blockquote>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="smooth_sin.SmoothSin.load_smrff">
-<em class="property">classmethod </em><code class="descname">load_smrff</code><span class="sig-paren">(</span><em>pfile</em>, <em>pfptr=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smooth_sin.html#SmoothSin.load_smrff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smooth_sin.SmoothSin.load_smrff" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a parameter file, inport the smooth parameters if possible.
-<strong>Parameters</strong></p>
-<blockquote>
-<div><dl class="docutils">
-<dt>pfile: <em>str</em></dt>
-<dd>A parsed smrff parameter file input string (no comments or
-trailing white spaces)</dd>
-<dt>pfptr: <em>str</em></dt>
-<dd>The name of a parameter file to be parsed.  If specified,
-then pfile is ignored (you may simply pass None as pfile).</dd>
-</dl>
-</div></blockquote>
-<dl class="docutils">
-<dt><strong>Returns</strong></dt>
-<dd><dl class="first last docutils">
-<dt>smooth_objs: <em>list, smooth</em>, or <em>None</em></dt>
-<dd>Returns a list of smooth objects if possible, else None.</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="smooth_sin.SmoothSin.pack">
-<code class="descname">pack</code><span class="sig-paren">(</span><em>params</em>, <em>with_index=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smooth_sin.html#SmoothSin.pack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smooth_sin.SmoothSin.pack" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function packs the smooth object from a list.
-<strong>Parameters</strong></p>
-<blockquote>
-<div><dl class="docutils">
-<dt>params: <em>list</em></dt>
-<dd>A list holding the indices and parameters.</dd>
-</dl>
-</div></blockquote>
-<dl class="docutils">
-<dt><strong>Returns</strong></dt>
-<dd>None</dd>
-</dl>
-</dd></dl>
-
-<dl class="staticmethod">
-<dt id="smooth_sin.SmoothSin.parse_line">
-<em class="property">static </em><code class="descname">parse_line</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smooth_sin.html#SmoothSin.parse_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smooth_sin.SmoothSin.parse_line" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parse line inputs and assign to this object.
-<strong>Parameters</strong></p>
-<blockquote>
-<div><dl class="docutils">
-<dt>line: <em>str</em></dt>
-<dd>A string that holds a smooth parameter set.</dd>
-</dl>
-</div></blockquote>
-<dl class="docutils">
-<dt><strong>Returns</strong></dt>
-<dd>None</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="smooth_sin.SmoothSin.unpack">
-<code class="descname">unpack</code><span class="sig-paren">(</span><em>with_indices=True</em>, <em>with_bounds=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smooth_sin.html#SmoothSin.unpack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smooth_sin.SmoothSin.unpack" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function unpacks the smooth object into a list.
-<strong>Parameters</strong></p>
-<blockquote>
-<div><dl class="docutils">
-<dt>with_indices: <em>bool, optional</em></dt>
-<dd>Whether to also include the indices in the list.</dd>
-<dt>with_bounds: <em>bool, optional</em></dt>
-<dd>Whether to also include the bounds.</dd>
-</dl>
-</div></blockquote>
-<dl class="docutils">
-<dt><strong>Returns</strong></dt>
-<dd><dl class="first last docutils">
-<dt>Smooth: <em>list, str/float</em></dt>
-<dd>A list of parameters.  With inidices includes smooth_index,
-atom_i, and atom_j, else it is only the distances.</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
 </dd></dl>
 
 <span class="target" id="module-smrff"></span><p>This file will contain functions pertaining solely to the SMRFF force field
@@ -1225,7 +1100,7 @@ about whitespace, so it also removes that.</p>
 - <code class="xref py py-func docutils literal notranslate"><span class="pre">turn_off_3body()</span></code>
 - <code class="xref py py-func docutils literal notranslate"><span class="pre">assign_line()</span></code>
 - <code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code>
-- <a href="#id9"><span class="problematic" id="id10">:classmethod:`load_smrff`</span></a>
+- <a href="#id5"><span class="problematic" id="id6">:classmethod:`load_smrff`</span></a>
 ————</p>
 </dd></dl>
 
@@ -1299,7 +1174,8 @@ Albe et al form (m=1, beta=1).  Must be original or albe.</dd>
 <dl class="method">
 <dt id="tersoff.Tersoff.fix">
 <code class="descname">fix</code><span class="sig-paren">(</span><em>params='all'</em>, <em>value=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tersoff.html#Tersoff.fix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.fix" title="Permalink to this definition">¶</a></dt>
-<dd><p>This will fix these parameters by assigning bounds to the values themselves.</p>
+<dd><p>This will fix these parameters by assigning bounds to the
+values themselves.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -1327,19 +1203,21 @@ Albe et al form (m=1, beta=1).  Must be original or albe.</dd>
 
 <dl class="classmethod">
 <dt id="tersoff.Tersoff.load_smrff">
-<em class="property">classmethod </em><code class="descname">load_smrff</code><span class="sig-paren">(</span><em>pfile</em>, <em>pfptr=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tersoff.html#Tersoff.load_smrff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.load_smrff" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a parameter file, inport the tersoff parameters if possible.</p>
-<p><strong>Parameters</strong></p>
-<blockquote>
-<div><dl class="docutils">
-<dt>pfile: <em>str</em></dt>
+<em class="property">classmethod </em><code class="descname">load_smrff</code><span class="sig-paren">(</span><em>parsed_file</em>, <em>pfile_name=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tersoff.html#Tersoff.load_smrff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.Tersoff.load_smrff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a parameter file, inport the coulomb parameters if possible.</p>
+<dl class="docutils">
+<dt><strong>Parameters</strong></dt>
+<dd><dl class="first last docutils">
+<dt>parsed_file: <em>str</em></dt>
 <dd>A parsed smrff parameter file input string (no comments or
 trailing white spaces)</dd>
-<dt>pfptr: <em>str</em></dt>
+<dt>pfile_name: <em>str</em></dt>
 <dd>The name of a parameter file to be parsed.  If specified,
-then pfile is ignored (you may simply pass None as pfile).</dd>
+then parsed_file is ignored (you may simply pass None as
+parsed_file).</dd>
 </dl>
-</div></blockquote>
+</dd>
+</dl>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
@@ -1474,11 +1352,13 @@ Tersoff potential.  This is accomplished by:</p>
 <dd>Whether to also include the indices in the list.</dd>
 <dt>bounds: <em>int, optional</em></dt>
 <dd>Whether to output the lower bounds (0), or upper bounds (1).
-If None, then the parameters themselves are output instead (default).</dd>
+If None, then the parameters themselves are output
+instead (default).</dd>
 <dt>with_bounds: <em>bool, optional</em></dt>
 <dd>Whether to output the bounds or not.</dd>
 <dt>for_output: <em>bool, optional</em></dt>
-<dd>Whether this is for output (in which case we disregard 2-body sym flag)</dd>
+<dd>Whether this is for output (in which case we disregard
+2-body sym flag)</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
@@ -1533,7 +1413,8 @@ force the 2body symmetry condition.</p>
 <blockquote>
 <div><dl class="docutils">
 <dt>corrected_tersoff_params: <em>list,</em> <a class="reference internal" href="#tersoff.Tersoff" title="tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tersoff</span></code></a></dt>
-<dd>A list of Tersoff objects with the 2body symmetry condition ensured.</dd>
+<dd>A list of Tersoff objects with the 2body symmetry
+condition ensured.</dd>
 </dl>
 </div></blockquote>
 </dd></dl>
@@ -1541,8 +1422,9 @@ force the 2body symmetry condition.</p>
 <dl class="function">
 <dt id="tersoff.tag_tersoff_for_duplicate_2bodies">
 <code class="descclassname">tersoff.</code><code class="descname">tag_tersoff_for_duplicate_2bodies</code><span class="sig-paren">(</span><em>tersoff_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tersoff.html#tag_tersoff_for_duplicate_2bodies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tersoff.tag_tersoff_for_duplicate_2bodies" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function will mimic the sorted_force_2body_symmetry and tag the duplicates
-that would be set by sorted_force_2body_symmetry.</p>
+<dd><p>This function will mimic the sorted_force_2body_symmetry
+and tag the duplicates that would be set by
+sorted_force_2body_symmetry.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
@@ -1590,8 +1472,7 @@ interaction (A-B or B-A) and use the corresponding parameters.</p>
 <h3><a href="index.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="squid.html">Squid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="codebase.html">Codebase</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="updating.html">UPDATING TO v2.0.0</a></li>
 </ul>
 
   <div role="note" aria-label="source link">
@@ -1626,7 +1507,7 @@ interaction (A-B or B-A) and use the corresponding parameters.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Squid 0.0.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Squid 2.0.0 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

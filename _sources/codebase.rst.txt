@@ -1,11 +1,10 @@
 Codebase
 ==============================
 
-aneb
+calcs
 --------------------
 
-.. automodule:: aneb
-    :members:
+.. include:: calcs.rst
 
 constants
 --------------------
@@ -31,11 +30,6 @@ files
 .. automodule:: files
     :members:
 
-ff_params
---------------------
-
-.. automodule:: ff_params
-   :members:
 
 forcefields
 --------------------
