@@ -480,7 +480,8 @@ class System(object):
                 a.index, a.molecule_index, self.i2t(a.label),
                 self.parameters.coul_params[
                     self.parameters.coul_params.index(a.label)
-                ].charge,
+                ].charge
+                if a.label in self.parameters.coul_params else a.charge,
                 a.x, a.y, a.z
             )
             for i, a in enumerate(self.atoms)
