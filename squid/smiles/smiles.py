@@ -15,8 +15,8 @@ def get_radius(sym):
     atomic_number = units.elem_s2i(sym)
     vdwr = constants.PERIODIC_TABLE[atomic_number].get("vdw_r")
     if vdwr is None:
-        # Some elements do not have a Van der Waals radius listed.
-        # Exceptions are stored in the following dictionary.
+        # Some elements do not have a Van der Waals radius listed;
+        # exceptions are stored in the following dictionary.
         no_vdwr = {
             "H": 1.2,
             "He": 1.4
@@ -27,7 +27,11 @@ def get_radius(sym):
     return vdwr
 
 
-def smiles(smiles_string):
+def smiles_to_molecule(smiles_string):
+    """
+    Convert SMILES string to a molecule object
+    """
+    # Initialize list of atoms to add to the molecule and initial position
     list_of_atoms = []
     pos = [0.0, 0.0, 0.0]
     for index, character in enumerate(smiles_string):
@@ -37,13 +41,13 @@ def smiles(smiles_string):
         pos[0] += vdwr
         list_of_atoms.append(temp_atom)
     # Create molecule object
-    final_structure = structures.Molecule(list_of_atoms)
-    return final_structure
+    final_molecule = structures.Molecule(list_of_atoms)
+    return final_molecule
 
 
 def main():
     # Return a squid Molecule object with atoms, bonds
-    water = smiles("HOH")
+    water = smiles_to_molecule("HOH")
     output = structures.System()
     output.add(water)
     files.write_xyz(water, "test.xyz")
