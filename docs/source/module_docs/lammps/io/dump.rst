@@ -1,2 +1,2 @@
-.. automodule:: lammps.io.dump
+.. automodule:: squid.lammps.io.dump
     :members:

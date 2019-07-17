@@ -1,2 +1,2 @@
-.. automodule:: lammps.parser
+.. automodule:: squid.lammps.parser
     :members:

@@ -1,2 +1,2 @@
-.. automodule:: orca.job
+.. automodule:: squid.orca.job
     :members:

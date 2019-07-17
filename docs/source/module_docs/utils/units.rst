@@ -1,2 +1,2 @@
-.. automodule:: utils.units
+.. automodule:: squid.utils.units
     :members:

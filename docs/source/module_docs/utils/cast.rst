@@ -1,2 +1,2 @@
-.. automodule:: utils.cast
+.. automodule:: squid.utils.cast
     :members:

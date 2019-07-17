@@ -18,24 +18,28 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../../squid/'))
-sys.path.insert(0, os.path.abspath('../../squid/calcs/'))
-sys.path.insert(0, os.path.abspath('../../squid/files/'))
-sys.path.insert(0, os.path.abspath('../../squid/forcefields/'))
-# sys.path.insert(0, os.path.abspath('../../squid/g09/'))
-sys.path.insert(0, os.path.abspath('../../squid/geometry/'))
-# sys.path.insert(0, os.path.abspath('../../squid/installers/'))
-# sys.path.insert(0, os.path.abspath('../../squid/jdftx/'))
-sys.path.insert(0, os.path.abspath('../../squid/jobs/'))
-sys.path.insert(0, os.path.abspath('../../squid/lammps/'))
-sys.path.insert(0, os.path.abspath('../../squid/maths/'))
-sys.path.insert(0, os.path.abspath('../../squid/optimizers/'))
-sys.path.insert(0, os.path.abspath('../../squid/orca/'))
-sys.path.insert(0, os.path.abspath('../../squid/post_process/'))
-# sys.path.insert(0, os.path.abspath('../../squid/qe/'))
-sys.path.insert(0, os.path.abspath('../../squid/structures/'))
-# sys.path.insert(0, os.path.abspath('../../squid/unittests/'))
-sys.path.insert(0, os.path.abspath('../../squid/utils/'))
+
+FOLDER_NAME = "../../squid"
+
+sys.path.insert(0, os.path.abspath('%s/' % FOLDER_NAME))
+# sys.path.insert(0, os.path.abspath('%s/calcs/' % FOLDER_NAME))
+# sys.path.insert(0, os.path.abspath('%s/files/' % FOLDER_NAME))
+# sys.path.insert(0, os.path.abspath('%s/forcefields/' % FOLDER_NAME))
+# # sys.path.insert(0, os.path.abspath('%s/g09/' % FOLDER_NAME))
+# sys.path.insert(0, os.path.abspath('%s/geometry/' % FOLDER_NAME))
+# # sys.path.insert(0, os.path.abspath('%s/installers/' % FOLDER_NAME))
+# # sys.path.insert(0, os.path.abspath('%s/jdftx/' % FOLDER_NAME))
+# sys.path.insert(0, os.path.abspath('%s/jobs/' % FOLDER_NAME))
+# sys.path.insert(0, os.path.abspath('%s/lammps/' % FOLDER_NAME))
+# sys.path.insert(0, os.path.abspath('%s/lammps/io' % FOLDER_NAME))
+# sys.path.insert(0, os.path.abspath('%s/maths/' % FOLDER_NAME))
+# sys.path.insert(0, os.path.abspath('%s/optimizers/' % FOLDER_NAME))
+# sys.path.insert(0, os.path.abspath('%s/orca/' % FOLDER_NAME))
+# sys.path.insert(0, os.path.abspath('%s/post_process/' % FOLDER_NAME))
+# # sys.path.insert(0, os.path.abspath('%s/qe/' % FOLDER_NAME))
+# sys.path.insert(0, os.path.abspath('%s/structures/' % FOLDER_NAME))
+# # sys.path.insert(0, os.path.abspath('%s/unittests/' % FOLDER_NAME))
+# sys.path.insert(0, os.path.abspath('%s/utils/' % FOLDER_NAME))
 
 # -- General configuration ------------------------------------------------
 

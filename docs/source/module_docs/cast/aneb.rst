@@ -1,2 +1,2 @@
-.. automodule:: aneb
+.. automodule:: squid.cast.aneb
     :members:

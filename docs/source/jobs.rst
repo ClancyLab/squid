@@ -4,17 +4,17 @@ The main interface with the job module is through the queue_manager module and t
 
 The queue_manager module holds the following:
 
-    - :func:`jobs.queue_manager.get_all_jobs` - Get a list of all jobs submitted that are currently running or pending.
-    - :func:`jobs.queue_manager.get_available_queues` - Get a list of the avaiable queue/partition names.
-    - :func:`jobs.queue_manager.get_pending_jobs` - Get a list of all jobs submitted that are currently pending.
-    - :func:`jobs.queue_manager.get_queue_manager` - Get the queue manager available on the system.
-    - :func:`jobs.queue_manager.get_running_jobs` - Get a list of all jobs submitted that are currently running.
-    - :func:`jobs.queue_manager.Job` - Get a Job object container depending on the queueing system used.
+    - :func:`squid.jobs.queue_manager.get_all_jobs` - Get a list of all jobs submitted that are currently running or pending.
+    - :func:`squid.jobs.queue_manager.get_available_queues` - Get a list of the avaiable queue/partition names.
+    - :func:`squid.jobs.queue_manager.get_pending_jobs` - Get a list of all jobs submitted that are currently pending.
+    - :func:`squid.jobs.queue_manager.get_queue_manager` - Get the queue manager available on the system.
+    - :func:`squid.jobs.queue_manager.get_running_jobs` - Get a list of all jobs submitted that are currently running.
+    - :func:`squid.jobs.queue_manager.Job` - Get a Job object container depending on the queueing system used.
 
 The submission module holds two function that handle submitting a job:
 
-    - :func:`jobs.submission.submit_job` - Submit a script as a job.
-    - :func:`jobs.submission.pysub` - Submit a python script as a job.
+    - :func:`squid.jobs.submission.submit_job` - Submit a script as a job.
+    - :func:`squid.jobs.submission.pysub` - Submit a python script as a job.
 
 Module Files:
     - :doc:`container <./module_docs/jobs/container>`

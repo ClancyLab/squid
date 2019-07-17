@@ -1,2 +1,2 @@
-.. automodule:: jobs.misc
+.. automodule:: squid.jobs.misc
     :members:

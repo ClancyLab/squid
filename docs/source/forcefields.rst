@@ -1,27 +1,27 @@
-To handle forcefields in Molecular Dynamics, the various components are subdivided into objects.  These are then stored in an overarching :class:`parameters.Parameters` object, which is the main interface a user should use.
+To handle forcefields in Molecular Dynamics, the various components are subdivided into objects.  These are then stored in an overarching :class:`squid.forcefields.parameters.Parameters` object, which is the main interface a user should use.
 
 Main user interface:
 
-    - :class:`parameters.Parameters`
+    - :class:`squid.forcefields.parameters.Parameters`
 
 Subdivided objects:
 
-    - :class:`connectors.HarmonicConnector` - A generic connector object.
-    - :class:`connectors.Bond` - Derived from the HarmonicConnector, this handles Bonds.
-    - :class:`connectors.Angle` - Derived from the HarmonicConnector, this handles Angles.
-    - :class:`connectors.Dihedral` - Derived from the HarmonicConnector, this handles Dihedrals.
+    - :class:`squid.forcefields.connectors.HarmonicConnector` - A generic connector object.
+    - :class:`squid.forcefields.connectors.Bond` - Derived from the HarmonicConnector, this handles Bonds.
+    - :class:`squid.forcefields.connectors.Angle` - Derived from the HarmonicConnector, this handles Angles.
+    - :class:`squid.forcefields.connectors.Dihedral` - Derived from the HarmonicConnector, this handles Dihedrals.
 
 Supported Potentials:
 
-    - :class:`coulomb.Coul` - An object to handle Coulombic information.  This also holds other pertinent atomic information (element, mass, etc).
-    - :class:`lj.LJ` - An object to handle the Lennard-Jones information.
-    - :class:`morse.Morse` - An object to handle Morse information.
-    - :class:`tersoff.Tersoff` - An object to handle Tersoff information.
+    - :class:`squid.forcefields.coulomb.Coul` - An object to handle Coulombic information.  This also holds other pertinent atomic information (element, mass, etc).
+    - :class:`squid.forcefields.lj.LJ` - An object to handle the Lennard-Jones information.
+    - :class:`squid.forcefields.morse.Morse` - An object to handle Morse information.
+    - :class:`squid.forcefields.tersoff.Tersoff` - An object to handle Tersoff information.
 
 Helper Code:
 
-    - :func:`opls.parse_pfile` - A function to parse the OPLS parameter file.
-    - :func:`smrff.parse_pfile` - A function to parse the SMRFF parameter file.
+    - :func:`squid.opls.parse_pfile` - A function to parse the OPLS parameter file.
+    - :func:`squid.smrff.parse_pfile` - A function to parse the SMRFF parameter file.
 
 Module Files:
     - :doc:`coulomb <./module_docs/forcefields/coulomb>`

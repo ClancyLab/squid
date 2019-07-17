@@ -1,2 +1,2 @@
-.. automodule:: forcefields.helper
+.. automodule:: squid.forcefields.forcefields.helper
     :members:

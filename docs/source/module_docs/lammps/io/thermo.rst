@@ -1,2 +1,2 @@
-.. automodule:: lammps.io.thermo
+.. automodule:: squid.lammps.io.thermo
     :members:

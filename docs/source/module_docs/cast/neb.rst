@@ -1,2 +1,2 @@
-.. automodule:: neb
+.. automodule:: squid.cast.neb
     :members:

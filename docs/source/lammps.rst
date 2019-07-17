@@ -2,10 +2,10 @@ The lammps module allows squid to interface with the Large-scale Atomic/Molecula
 
 Two main abilities exist within the lammps module: submitting simulations and parsing output.  This is divided into the following:
 
-    - :func:`lammps.job.job` - The main function that allows a user to submit a LAMMPS simulation.
-    - :func:`lammps.io.dump.read_dump` - The main function that allows a user to robustly read in a LAMMPS dump file.
-    - :func:`lammps.io.dump.read_dump_gen` - A generator for reading in a LAMMPS dump file, so as to improve speeds.
-    - :func:`lammps.io.data.write_lammps_data` - A function to automate the writing of a LAMMPS data file.
+    - :func:`squid.lammps.job.job` - The main function that allows a user to submit a LAMMPS simulation.
+    - :func:`squid.lammps.io.dump.read_dump` - The main function that allows a user to robustly read in a LAMMPS dump file.
+    - :func:`squid.lammps.io.dump.read_dump_gen` - A generator for reading in a LAMMPS dump file, so as to improve speeds.
+    - :func:`squid.lammps.io.data.write_lammps_data` - A function to automate the writing of a LAMMPS data file.
 
 Module Files:
     - :doc:`io.dump <./module_docs/lammps/io/dump>`

@@ -1,2 +1,2 @@
-.. automodule:: orca.utils
+.. automodule:: squid.orca.utils
     :members:

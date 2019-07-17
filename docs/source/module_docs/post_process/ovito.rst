@@ -1,2 +1,2 @@
-.. automodule:: post_process.ovito
+.. automodule:: squid.post_process.ovito
     :members:

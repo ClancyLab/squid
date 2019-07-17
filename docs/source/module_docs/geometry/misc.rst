@@ -1,2 +1,2 @@
-.. automodule:: geometry.misc
+.. automodule:: squid.geometry.misc
     :members:

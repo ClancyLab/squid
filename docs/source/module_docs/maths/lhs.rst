@@ -1,2 +1,2 @@
-.. automodule:: maths.lhs
+.. automodule:: squid.maths.lhs
     :members:
