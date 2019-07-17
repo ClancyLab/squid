@@ -1,0 +1,12 @@
+The following have contributed the bulk of work to
+the initial development of Squid
+--------------------------------------------------------
+Henry C. Herbol
+James Stevenson
+Andrew Ruttinger
+Yaset Acevedo
+
+The following have contributed in other ways (bug fixes,
+additional functionality added, etc).
+--------------------------------------------------------
+Gregory Casee
