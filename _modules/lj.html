@@ -6,13 +6,16 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>lj &#8212; Squid 0.0.1 documentation</title>
+    <title>lj &#8212; Squid 2.0.0 documentation</title>
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
   </head><body>
@@ -25,7 +28,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -39,12 +42,15 @@
 <span></span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">The Lennard-Jones object.  This stores the index and LJ parameters.</span>
 <span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">from</span> <span class="nn">squid.forcefields.helper</span> <span class="k">import</span> <span class="n">check_restriction</span>
 
 <span class="c1"># These are the identifiers in the parameter file that we seek out</span>
 <span class="c1"># NOTE! THEY ARE CASE SENSITIVE!</span>
 <span class="n">LJ_PFILE_ID</span> <span class="o">=</span> <span class="s2">&quot;LENNARD-JONES&quot;</span>
 <span class="n">END_ID</span> <span class="o">=</span> <span class="s2">&quot;END&quot;</span>
+<span class="n">SIGMA_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">)</span>
+<span class="n">EPSILON_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0001</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">The LJ class contains:</span>
@@ -87,20 +93,22 @@
         <span class="c1"># How many parameters exist in this potential</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">N_params</span> <span class="o">=</span> <span class="mi">2</span>
 
-        <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">]])</span> <span class="ow">and</span> <span class="n">line</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">]])</span>\
+                <span class="ow">and</span> <span class="n">line</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">assign_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">line</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">([</span><span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">]]):</span>
-            <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span> <span class="s2">&quot;In LJ, initialized with index being a list, not a string/int!&quot;</span>
+        <span class="k">elif</span> <span class="n">line</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">([</span><span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                                   <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">]]):</span>
+            <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span>\
+                <span class="s2">&quot;In LJ, initialized with index being a list, not a string/int!&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">index</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">epsilon</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;You must either specify only index, sigma, and epsilon OR line, but not all.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;You must either specify only index, sigma, </span><span class="se">\</span>
+<span class="s2">and epsilon OR line, but not all.&quot;</span><span class="p">)</span>
 
         <span class="c1"># Assign default bounds</span>
-        <span class="c1"># self.sigma_bounds = tuple(sorted([self.sigma * 0.5, self.sigma * 1.5]))</span>
-        <span class="c1"># self.epsilon_bounds = tuple(sorted([self.epsilon * 0.5, self.epsilon * 1.5]))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sigma_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">6.5</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0001</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma_bounds</span> <span class="o">=</span> <span class="n">SIGMA_BOUNDS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon_bounds</span> <span class="o">=</span> <span class="n">EPSILON_BOUNDS</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -122,7 +130,8 @@
         <span class="k">return</span> <span class="n">index</span> <span class="o">==</span> <span class="s2">&quot;*&quot;</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="o">==</span> <span class="n">index</span>
 
     <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">with_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">)))</span>
+        <span class="c1"># return hash(tuple(self.unpack(with_indices=True)))</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_printer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -131,7 +140,8 @@
 <span class="sd">        **Parameters**</span>
 <span class="sd">            bounds: *int, optional*</span>
 <span class="sd">                Whether to output the lower bounds (0), or upper boudns (1).</span>
-<span class="sd">                If None, then the parameters themselves are output instead (default).</span>
+<span class="sd">                If None, then the parameters themselves are output instead</span>
+<span class="sd">                (default).</span>
 <span class="sd">        **Returns**</span>
 <span class="sd">            lj: *str*</span>
 <span class="sd">                A string representation of LJ.  The index, sigma, and epsilon</span>
@@ -140,7 +150,9 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">bounds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma_bounds</span><span class="p">[</span><span class="n">bounds</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon_bounds</span><span class="p">[</span><span class="n">bounds</span><span class="p">])</span>
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma_bounds</span><span class="p">[</span><span class="n">bounds</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">epsilon_bounds</span><span class="p">[</span><span class="n">bounds</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span>
 
@@ -210,22 +222,39 @@
 <span class="sd">        **Returns**</span>
 <span class="sd">            None</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s2">&quot;In LJ, tried packing </span><span class="si">%d</span><span class="s2"> parameters.  Should be either 2 or 3!&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s2">&quot;In LJ, tried packing </span><span class="si">%d</span><span class="s2"> parameters.  </span><span class="se">\</span>
+<span class="s2">Should be either 2 or 3!&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">params</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">params</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="LJ.validate"><a class="viewcode-back" href="../forcefields.html#lj.LJ.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="LJ.validate"><a class="viewcode-back" href="../forcefields.html#lj.LJ.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">warn</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This function will validate data integrity.  In this case, we simply</span>
 <span class="sd">        ensure data types are appropriate.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;In LJ, sigma should be larger than 0! It is </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;In LJ, epsilon should be larger than 0! It is </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span></div>
+
+        <span class="n">MIN_SIGMA</span> <span class="o">=</span> <span class="mf">1E-4</span>
+        <span class="n">MIN_EPSILON</span> <span class="o">=</span> <span class="mf">1E-4</span>
+
+        <span class="k">if</span> <span class="n">warn</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning, in LJ (index </span><span class="si">%s</span><span class="s2">), sigma is </span><span class="si">%f</span><span class="s2">.  It should </span><span class="se">\</span>
+<span class="s2">be greater than 0!  Setting to </span><span class="si">%.2f</span><span class="s2">.&quot;</span>
+                      <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="n">MIN_SIGMA</span><span class="p">))</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning, in LJ (index </span><span class="si">%s</span><span class="s2">), epsilon is </span><span class="si">%f</span><span class="s2">.  It should </span><span class="se">\</span>
+<span class="s2">be greater than 0!  Setting to </span><span class="si">%.2f</span><span class="s2">.&quot;</span>
+                      <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">,</span> <span class="n">MIN_EPSILON</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;In LJ (index </span><span class="si">%s</span><span class="s2">), sigma should be larger </span><span class="se">\</span>
+<span class="s2">than 0! It is </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;In LJ (index </span><span class="si">%s</span><span class="s2">), epsilon should be </span><span class="se">\</span>
+<span class="s2">larger than 0! It is </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LJ.parse_line"><a class="viewcode-back" href="../forcefields.html#lj.LJ.parse_line">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">parse_line</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
@@ -249,43 +278,53 @@
 
 <div class="viewcode-block" id="LJ.fix"><a class="viewcode-back" href="../forcefields.html#lj.LJ.fix">[docs]</a>    <span class="k">def</span> <span class="nf">fix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        This will fix these parameters by assigning bounds to the values themselves.</span>
+<span class="sd">        This will fix these parameters by assigning bounds to the values</span>
+<span class="sd">        themselves.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="n">params</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">),</span> <span class="s2">&quot;Error - Passed </span><span class="si">%s</span><span class="s2"> when fixing all LJ params.&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Error - Not enough/too many parameters passed for fix lj (passed </span><span class="si">%s</span><span class="s2">).&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">),</span>\
+                    <span class="s2">&quot;Error - Passed </span><span class="si">%s</span><span class="s2"> when fixing all LJ params.&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span>\
+                    <span class="s2">&quot;Error - Not enough/too many parameters passed for fix lj</span><span class="se">\</span>
+<span class="s2">(passed </span><span class="si">%s</span><span class="s2">).&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">value</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sigma_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">epsilon_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">params</span> <span class="o">==</span> <span class="s1">&#39;sigma&#39;</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-                    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Error - fixing only sigma in lj but passed </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span>\
+                        <span class="s2">&quot;Error - fixing only sigma in lj but passed </span><span class="si">%s</span><span class="s2">.&quot;</span>\
+                        <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
                     <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sigma_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">params</span> <span class="o">==</span> <span class="s1">&#39;epsilon&#39;</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-                    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Error - fixing only epsilon in lj but passed </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span>\
+                        <span class="s2">&quot;Error - fixing only epsilon in lj but passed </span><span class="si">%s</span><span class="s2">.&quot;</span>\
+                        <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
                     <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">epsilon_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;In LJ, tried fixing </span><span class="si">%s</span><span class="s2"> parameter (does not exist)!&quot;</span> <span class="o">%</span> <span class="n">params</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;In LJ, tried fixing </span><span class="si">%s</span><span class="s2"> parameter (does not exist)!&quot;</span> <span class="o">%</span> <span class="n">params</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LJ.load_smrff"><a class="viewcode-back" href="../forcefields.html#lj.LJ.load_smrff">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">load_smrff</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pfile</span><span class="p">,</span> <span class="n">pfptr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">restrict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">load_smrff</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">parsed_file</span><span class="p">,</span> <span class="n">pfile_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">restrict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Given a parameter file, inport the LJ parameters if possible.</span>
+<span class="sd">        Given a parameter file, inport the coulomb parameters if possible.</span>
 <span class="sd">        **Parameters**</span>
-<span class="sd">            pfile: *str*</span>
+<span class="sd">            parsed_file: *str*</span>
 <span class="sd">                A parsed smrff parameter file input string (no comments or</span>
 <span class="sd">                trailing white spaces)</span>
-<span class="sd">            pfptr: *str*</span>
+<span class="sd">            pfile_name: *str*</span>
 <span class="sd">                The name of a parameter file to be parsed.  If specified,</span>
-<span class="sd">                then pfile is ignored (you may simply pass None as pfile).</span>
+<span class="sd">                then parsed_file is ignored (you may simply pass None as</span>
+<span class="sd">                parsed_file).</span>
 <span class="sd">        **Returns**</span>
 <span class="sd">            lj_objs: *list, LJ*, or *None*</span>
 <span class="sd">                Returns a list of LJ objects if possible, else None.</span>
@@ -293,29 +332,30 @@
         <span class="kn">import</span> <span class="nn">squid.forcefields.smrff</span> <span class="k">as</span> <span class="nn">smrff_utils</span>
 
         <span class="c1"># Ensure correct pfile format, and that we even need to parse it.</span>
-        <span class="k">if</span> <span class="n">pfptr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">pfile</span> <span class="o">=</span> <span class="n">smrff_utils</span><span class="o">.</span><span class="n">parse_pfile</span><span class="p">(</span><span class="n">pfptr</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">LJ_PFILE_ID</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pfile</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">pfile_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">parsed_file</span> <span class="o">=</span> <span class="n">smrff_utils</span><span class="o">.</span><span class="n">parse_pfile</span><span class="p">(</span><span class="n">pfile_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">LJ_PFILE_ID</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">parsed_file</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
 
-        <span class="n">pfile</span> <span class="o">=</span> <span class="n">pfile</span><span class="p">[</span><span class="n">pfile</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">LJ_PFILE_ID</span><span class="p">):]</span>
-        <span class="n">pfile</span> <span class="o">=</span> <span class="n">pfile</span><span class="p">[:</span><span class="n">pfile</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">END_ID</span><span class="p">)]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">parsed_file</span> <span class="o">=</span> <span class="n">parsed_file</span><span class="p">[</span><span class="n">parsed_file</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">LJ_PFILE_ID</span><span class="p">):]</span>
+        <span class="n">parsed_file</span> <span class="o">=</span> <span class="n">parsed_file</span><span class="p">[:</span><span class="n">parsed_file</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">END_ID</span><span class="p">)]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-        <span class="n">pfile</span> <span class="o">=</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">parse_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">pfile</span><span class="p">]</span>
+        <span class="n">parsed_file</span> <span class="o">=</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">parse_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">parsed_file</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="p">[</span>
             <span class="bp">cls</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">epsilon</span> <span class="ow">in</span> <span class="n">pfile</span> <span class="k">if</span> <span class="n">check_restriction</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">restrict</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">epsilon</span> <span class="ow">in</span> <span class="n">parsed_file</span>
+            <span class="k">if</span> <span class="n">check_restriction</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">restrict</span><span class="p">)</span>
         <span class="p">]</span></div>
 
 <div class="viewcode-block" id="LJ.load_opls"><a class="viewcode-back" href="../forcefields.html#lj.LJ.load_opls">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">load_opls</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">atom_types</span><span class="p">,</span> <span class="n">pfptr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">restrict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">load_opls</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">atom_types</span><span class="p">,</span> <span class="n">pfile_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">restrict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Given a parameter file, inport the LJ parameters if possible.</span>
 <span class="sd">        **Parameters**</span>
-<span class="sd">            atom_types: *list,* :class:`structures.Struct`</span>
+<span class="sd">            atom_types: *list, dict, ...*</span>
 <span class="sd">                Atom types from a parsed opls parameter file.</span>
-<span class="sd">            pfptr: *str*</span>
+<span class="sd">            pfile_name: *str*</span>
 <span class="sd">                The name of a parameter file to be parsed.  If specified,</span>
 <span class="sd">                then pfile is ignored (you may simply pass None as pfile).</span>
 <span class="sd">        **Returns**</span>
@@ -325,11 +365,11 @@
         <span class="c1"># Ensure correct pfile format, and that we even need to parse it.</span>
         <span class="kn">import</span> <span class="nn">squid.forcefields.opls</span> <span class="k">as</span> <span class="nn">opls_utils</span>
 
-        <span class="k">if</span> <span class="n">pfptr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">atom_types</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">opls_utils</span><span class="o">.</span><span class="n">parse_pfile</span><span class="p">(</span><span class="n">pfptr</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pfile_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">atom_types</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">opls_utils</span><span class="o">.</span><span class="n">parse_pfile</span><span class="p">(</span><span class="n">pfile_name</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="p">[</span>
-            <span class="bp">cls</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">t</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">t</span><span class="o">.</span><span class="n">vdw_r</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="n">t</span><span class="o">.</span><span class="n">vdw_e</span><span class="p">)</span>
+            <span class="bp">cls</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">t</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">],</span> <span class="n">sigma</span><span class="o">=</span><span class="n">t</span><span class="p">[</span><span class="s2">&quot;vdw_r&quot;</span><span class="p">],</span> <span class="n">epsilon</span><span class="o">=</span><span class="n">t</span><span class="p">[</span><span class="s2">&quot;vdw_e&quot;</span><span class="p">])</span>
             <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">atom_types</span> <span class="k">if</span> <span class="n">check_restriction</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">restrict</span><span class="p">)</span>
         <span class="p">]</span></div>
 
@@ -353,12 +393,86 @@
         <span class="n">LJ_objs</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">atype</span> <span class="ow">in</span> <span class="n">atom_types</span><span class="p">:</span>
-            <span class="n">eps</span> <span class="o">=</span> <span class="n">random_in_range</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">))</span>
-            <span class="n">sig</span> <span class="o">=</span> <span class="n">random_in_range</span><span class="p">((</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">))</span>
+            <span class="n">eps</span> <span class="o">=</span> <span class="n">random_in_range</span><span class="p">(</span><span class="n">SIGMA_BOUNDS</span><span class="p">)</span>
+            <span class="n">sig</span> <span class="o">=</span> <span class="n">random_in_range</span><span class="p">(</span><span class="n">EPSILON_BOUNDS</span><span class="p">)</span>
             <span class="n">LJ_objs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">cls</span><span class="p">(</span><span class="n">atype</span><span class="p">,</span> <span class="n">sig</span><span class="p">,</span> <span class="n">eps</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">LJ_objs</span></div></div>
 
+
+<span class="k">def</span> <span class="nf">run_unit_tests</span><span class="p">():</span>
+    <span class="c1"># Ensure we do not allow a blank Coul</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">LJ</span><span class="p">(</span>
+            <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;LJ initialization failed!&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="c1"># Ensure we do not allow a blank LJ (which should be None on all</span>
+    <span class="c1"># by default)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">LJ</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;LJ initialization failed!&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># Ensure strings have not changed</span>
+    <span class="n">lj1</span> <span class="o">=</span> <span class="n">LJ</span><span class="p">(</span>
+        <span class="n">index</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.3</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">0.2</span>
+    <span class="p">)</span>
+    <span class="n">lj1_s</span> <span class="o">=</span> <span class="s2">&quot;1 1.3000 0.2000&quot;</span>
+    <span class="k">assert</span> <span class="n">lj1_s</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">lj1</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="s2">&quot;Error - String formatting has changed&quot;</span>
+    <span class="n">lj2</span> <span class="o">=</span> <span class="n">LJ</span><span class="p">(</span>
+        <span class="n">index</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.3</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">0.2</span>
+    <span class="p">)</span>
+    <span class="n">lj2_s</span> <span class="o">=</span> <span class="s2">&quot;3 1.3000 0.2000&quot;</span>
+    <span class="k">assert</span> <span class="n">lj2_s</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">lj2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="s2">&quot;Error - String formatting has changed&quot;</span>
+
+    <span class="n">lj2_hold</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">lj2</span><span class="p">)</span>
+    <span class="n">lj2</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">lj2</span><span class="o">.</span><span class="n">unpack</span><span class="p">())</span>
+    <span class="k">assert</span> <span class="n">lj2_hold</span> <span class="o">==</span> <span class="n">lj2</span><span class="p">,</span> <span class="s2">&quot;Error - Packing and Unpacking has failed&quot;</span>
+
+    <span class="c1"># Comparison is done only by index.  Thus, these should still equate!</span>
+    <span class="n">lj2</span><span class="o">.</span><span class="n">charge</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">assert</span> <span class="n">lj2_hold</span> <span class="o">==</span> <span class="n">lj2</span><span class="p">,</span> <span class="s2">&quot;Error - Unable to compare atoms in LJ&quot;</span>
+    <span class="c1"># And these should not equate</span>
+    <span class="n">lj2</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="s2">&quot;32113&quot;</span>
+    <span class="k">assert</span> <span class="n">lj2_hold</span> <span class="o">!=</span> <span class="n">lj2</span><span class="p">,</span> <span class="s2">&quot;Error - Unable to compare atoms in LJ&quot;</span>
+
+    <span class="c1"># Should unpack as index then charge</span>
+    <span class="n">lj2</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="s2">&quot;12&quot;</span>
+    <span class="n">lj2</span><span class="o">.</span><span class="n">charge</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.3</span>
+    <span class="n">should_be</span> <span class="o">=</span> <span class="p">[</span><span class="n">lj2</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">lj2</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="n">lj2</span><span class="o">.</span><span class="n">epsilon</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="n">x</span> <span class="o">==</span> <span class="n">y</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">lj2</span><span class="o">.</span><span class="n">unpack</span><span class="p">(),</span> <span class="n">should_be</span><span class="p">)]),</span>\
+        <span class="s2">&quot;Error - Unpack is not correct!&quot;</span>
+
+    <span class="c1"># Test parsing of a line</span>
+    <span class="n">lj3</span> <span class="o">=</span> <span class="n">LJ</span><span class="p">(</span><span class="n">line</span><span class="o">=</span><span class="s2">&quot;2 1.4 1.1&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">lj3</span><span class="o">.</span><span class="n">index</span> <span class="o">==</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;Error - Failed to parse index&quot;</span>
+    <span class="k">assert</span> <span class="n">lj3</span><span class="o">.</span><span class="n">sigma</span> <span class="o">==</span> <span class="mf">1.4</span><span class="p">,</span> <span class="s2">&quot;Error - Failed to parse sigma&quot;</span>
+    <span class="k">assert</span> <span class="n">lj3</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">==</span> <span class="mf">1.1</span><span class="p">,</span> <span class="s2">&quot;Error - Failed to parse epsilon&quot;</span>
+
+    <span class="c1"># Test lj packing and unpacking more robustly</span>
+    <span class="n">lj1</span> <span class="o">=</span> <span class="n">LJ</span><span class="p">(</span>
+        <span class="n">index</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.3</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">0.2</span>
+    <span class="p">)</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">lj1</span><span class="o">.</span><span class="n">unpack</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">values</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="mf">1.3</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span>\
+        <span class="s2">&quot;Error - Failed to unpack.&quot;</span>
+    <span class="n">lj1</span><span class="o">.</span><span class="n">pack</span><span class="p">([</span><span class="mf">1.4</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="n">lj1</span><span class="o">.</span><span class="n">sigma</span> <span class="o">==</span> <span class="mf">1.4</span> <span class="ow">and</span> <span class="n">lj1</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">==</span> <span class="mf">0.3</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - Failed to pack.&quot;</span>
+
+    <span class="n">lj1</span><span class="o">.</span><span class="n">pack</span><span class="p">([</span><span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span>
+        <span class="n">lj1</span><span class="o">.</span><span class="n">index</span> <span class="o">==</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+        <span class="n">lj1</span><span class="o">.</span><span class="n">sigma</span> <span class="o">==</span> <span class="mf">1.5</span><span class="p">,</span>
+        <span class="n">lj1</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">==</span> <span class="mf">0.4</span><span class="p">]),</span>\
+        <span class="s2">&quot;Error - Failed to pack.&quot;</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run_unit_tests</span><span class="p">()</span>
 </pre></div>
 
           </div>
@@ -366,7 +480,7 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../index.html">Table Of Contents</a></h3>
+<h3><a href="../index.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../squid.html">Squid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../codebase.html">Codebase</a></li>
@@ -398,13 +512,13 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2016, Henry Herbol.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

@@ -6,13 +6,16 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>lbfgs &#8212; Squid 0.0.1 documentation</title>
+    <title>lbfgs &#8212; Squid 2.0.0 documentation</title>
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
   </head><body>
@@ -25,7 +28,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -39,7 +42,7 @@
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 
-<span class="kn">from</span> <span class="nn">squid</span> <span class="k">import</span> <span class="n">units</span>
+<span class="kn">from</span> <span class="nn">squid.utils</span> <span class="k">import</span> <span class="n">units</span>
 <span class="kn">from</span> <span class="nn">squid.optimizers.backtrack</span> <span class="k">import</span> <span class="n">backtrack</span>
 <span class="kn">from</span> <span class="nn">squid.constants</span> <span class="k">import</span> <span class="n">FAIL_CONVERGENCE</span>
 <span class="kn">from</span> <span class="nn">squid.constants</span> <span class="k">import</span> <span class="n">STEP_SIZE_TOO_SMALL</span>
@@ -48,7 +51,7 @@
 <span class="kn">from</span> <span class="nn">squid.constants</span> <span class="k">import</span> <span class="n">G_RMS_CONVERGENCE</span>
 
 
-<div class="viewcode-block" id="lbfgs"><a class="viewcode-back" href="../codebase.html#lbfgs.lbfgs">[docs]</a><span class="k">def</span> <span class="nf">lbfgs</span><span class="p">(</span><span class="n">params</span><span class="p">,</span>
+<div class="viewcode-block" id="lbfgs"><a class="viewcode-back" href="../optimizers.html#lbfgs.lbfgs">[docs]</a><span class="k">def</span> <span class="nf">lbfgs</span><span class="p">(</span><span class="n">params</span><span class="p">,</span>
           <span class="n">gradient</span><span class="p">,</span>
           <span class="n">NEB_obj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
           <span class="n">new_opt_params</span><span class="o">=</span><span class="p">{},</span>
@@ -140,7 +143,7 @@
     <span class="n">max_step</span> <span class="o">=</span> <span class="mf">0.04</span>
     <span class="n">target_function</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">armijo_line_search_factor</span> <span class="o">=</span> <span class="mf">1E-4</span>
-    <span class="n">linesearch</span> <span class="o">=</span> <span class="s1">&#39;backtrack&#39;</span>
+    <span class="n">linesearch</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># &#39;backtrack&#39;</span>
     <span class="n">reset_when_in_trouble</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">reset_step_size</span> <span class="o">=</span> <span class="mi">20</span>
     <span class="n">accelerate</span> <span class="o">=</span> <span class="kc">True</span>
@@ -243,7 +246,7 @@
 <span class="sd">        However, there are some correction added to the algorithm.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">grad</span><span class="p">)</span> <span class="o">*</span> <span class="n">scale</span>
-        <span class="n">indices</span> <span class="o">=</span> <span class="n">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
         <span class="c1"># Compute right product</span>
         <span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">indices</span><span class="p">):</span>
@@ -533,7 +536,7 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../index.html">Table Of Contents</a></h3>
+<h3><a href="../index.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../squid.html">Squid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../codebase.html">Codebase</a></li>
@@ -565,13 +568,13 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Squid 0.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2016, Henry Herbol.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>
