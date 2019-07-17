@@ -18,8 +18,7 @@ An example of using this is as follows:
 
 '''
 import os
-import files
-
+from squid.files import write_xyz
 from squid.files.misc import which
 
 
@@ -211,7 +210,7 @@ def ovito_xyz_to_gif(
 
     # For each frame, generate an image
     for i, frame in enumerate(frames):
-        files.write_xyz(frame, "tmp.xyz")
+        write_xyz(frame, "tmp.xyz")
         ovito_xyz_to_image(
             "tmp.xyz", scratch,
             fname="%04d" % i,
