@@ -42,7 +42,7 @@
 <span></span><span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">squid.utils</span> <span class="k">import</span> <span class="n">units</span>
+<span class="kn">from</span> <span class="nn">squid</span> <span class="k">import</span> <span class="n">units</span>
 <span class="kn">from</span> <span class="nn">squid.optimizers.backtrack</span> <span class="k">import</span> <span class="n">backtrack</span>
 <span class="kn">from</span> <span class="nn">squid.constants</span> <span class="k">import</span> <span class="n">FAIL_CONVERGENCE</span>
 <span class="kn">from</span> <span class="nn">squid.constants</span> <span class="k">import</span> <span class="n">STEP_SIZE_TOO_SMALL</span>
@@ -140,7 +140,7 @@
     <span class="n">max_step</span> <span class="o">=</span> <span class="mf">0.2</span>
     <span class="n">target_function</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">armijo_line_search_factor</span> <span class="o">=</span> <span class="mf">1E-4</span>
-    <span class="n">linesearch</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># &#39;backtrack&#39;</span>
+    <span class="n">linesearch</span> <span class="o">=</span> <span class="s1">&#39;backtrack&#39;</span>
     <span class="n">reset_when_in_trouble</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">reset_step_size</span> <span class="o">=</span> <span class="mi">20</span>
     <span class="n">accelerate</span> <span class="o">=</span> <span class="kc">True</span>

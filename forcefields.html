@@ -46,7 +46,7 @@ as well as several functions to parse forcefield files.</p>
 <li><a class="reference internal" href="#connectors.Bond" title="connectors.Bond"><code class="xref py py-class docutils literal notranslate"><span class="pre">connectors.Bond</span></code></a></li>
 <li><a class="reference internal" href="#connectors.Angle" title="connectors.Angle"><code class="xref py py-class docutils literal notranslate"><span class="pre">connectors.Angle</span></code></a></li>
 <li><a class="reference internal" href="#connectors.Dihedral" title="connectors.Dihedral"><code class="xref py py-class docutils literal notranslate"><span class="pre">connectors.Dihedral</span></code></a></li>
-<li><code class="xref py py-class docutils literal notranslate"><span class="pre">coulomb.Coul</span></code></li>
+<li><a class="reference internal" href="#coulomb.Coul" title="coulomb.Coul"><code class="xref py py-class docutils literal notranslate"><span class="pre">coulomb.Coul</span></code></a></li>
 <li><a class="reference internal" href="#lj.LJ" title="lj.LJ"><code class="xref py py-class docutils literal notranslate"><span class="pre">lj.LJ</span></code></a></li>
 <li><a class="reference internal" href="#morse.Morse" title="morse.Morse"><code class="xref py py-class docutils literal notranslate"><span class="pre">morse.Morse</span></code></a></li>
 <li><a class="reference internal" href="#tersoff.Tersoff" title="tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">tersoff.Tersoff</span></code></a></li>
@@ -327,6 +327,238 @@ charge.</dd>
 ensure data types are appropriate.</p>
 </dd></dl>
 
+</dd></dl>
+
+<span class="target" id="module-coulomb"></span><p>The coulomb object.  This stores the index and charge.</p>
+<dl class="class">
+<dt id="coulomb.Coul">
+<em class="property">class </em><code class="descclassname">coulomb.</code><code class="descname">Coul</code><span class="sig-paren">(</span><em>index=None</em>, <em>charge=None</em>, <em>mass=None</em>, <em>element=None</em>, <em>line=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coulomb.html#Coul"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coulomb.Coul" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the coulomb object.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>index: <em>str or int</em></dt>
+<dd>The index of the atom type.</dd>
+<dt>charge: <em>float</em></dt>
+<dd>The charge.</dd>
+<dt>line: <em>str</em></dt>
+<dd>A line from a parameter file to be parsed.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd><dl class="first last docutils">
+<dt>coulomb: <a class="reference internal" href="#coulomb.Coul" title="coulomb.Coul"><code class="xref py py-class docutils literal notranslate"><span class="pre">Coul</span></code></a></dt>
+<dd>A Coul object.</dd>
+</dl>
+</dd>
+</dl>
+<dl class="method">
+<dt id="coulomb.Coul.fix">
+<code class="descname">fix</code><span class="sig-paren">(</span><em>params='all'</em>, <em>value=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coulomb.html#Coul.fix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coulomb.Coul.fix" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will fix these parameters by assigning bounds to the values themselves.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="coulomb.Coul.generate">
+<em class="property">classmethod </em><code class="descname">generate</code><span class="sig-paren">(</span><em>atom_types</em>, <em>elems</em>, <em>signs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coulomb.html#Coul.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coulomb.Coul.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Randomly generate parameters for coulomb.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>atom_types: <em>list, str</em></dt>
+<dd>A list of all the atom types to have parameters generated for.</dd>
+<dt>elems: <em>list, str</em></dt>
+<dd>List of the elements (in the same order as atom_types).</dd>
+<dt>signs: <em>list, float</em></dt>
+<dd>The list of the signs of the charges (in the same order as the atom_types).</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>coul_objs: <em>list, Coul</em></dt>
+<dd>Returns a list of Coul objects.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="coulomb.Coul.load_opls">
+<em class="property">classmethod </em><code class="descname">load_opls</code><span class="sig-paren">(</span><em>atom_types</em>, <em>pfptr=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coulomb.html#Coul.load_opls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coulomb.Coul.load_opls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a parameter file, importthe Coulomb parameters if possible.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>atom_types: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Struct</span></code></dt>
+<dd>Atom types from a parsed opls parameter file.</dd>
+<dt>pfptr: <em>str</em></dt>
+<dd>The name of a parameter file to be parsed.  If specified,
+then pfile is ignored (you may simply pass None as pfile).</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd><dl class="first last docutils">
+<dt>coul_objs: <em>list, Coul</em>, or <em>None</em></dt>
+<dd>Returns a list of Coul objects if possible, else None.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="coulomb.Coul.load_smrff">
+<em class="property">classmethod </em><code class="descname">load_smrff</code><span class="sig-paren">(</span><em>pfile</em>, <em>pfptr=None</em>, <em>restrict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coulomb.html#Coul.load_smrff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coulomb.Coul.load_smrff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a parameter file, inport the coulomb parameters if possible.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>pfile: <em>str</em></dt>
+<dd>A parsed smrff parameter file input string (no comments or
+trailing white spaces)</dd>
+<dt>pfptr: <em>str</em></dt>
+<dd>The name of a parameter file to be parsed.  If specified,
+then pfile is ignored (you may simply pass None as pfile).</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd><dl class="first last docutils">
+<dt>coul_objs: <em>list, Coul</em>, or <em>None</em></dt>
+<dd>Returns a list of Coul objects if possible, else None.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="coulomb.Coul.pack">
+<code class="descname">pack</code><span class="sig-paren">(</span><em>params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coulomb.html#Coul.pack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coulomb.Coul.pack" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function packs the coulomb object from a list.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list</em></dt>
+<dd>A list holding the index and the charge.  Note, if you wish to
+only assign charge, then do so manually.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="coulomb.Coul.parse_line">
+<em class="property">static </em><code class="descname">parse_line</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coulomb.html#Coul.parse_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coulomb.Coul.parse_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse line inputs and assign to this object.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>line: <em>str</em></dt>
+<dd>A string that holds coulomb information.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="coulomb.Coul.unpack">
+<code class="descname">unpack</code><span class="sig-paren">(</span><em>with_indices=True</em>, <em>with_bounds=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coulomb.html#Coul.unpack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coulomb.Coul.unpack" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function unpacks the coulomb object into a list.
+<strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>with_indices: <em>bool, optional</em></dt>
+<dd>Whether to also include the indices in the list.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>Returns</strong></dt>
+<dd><dl class="first last docutils">
+<dt>coul: <em>list, str/float</em></dt>
+<dd>A list, holding the string of the index and the float of the charge.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="coulomb.Coul.validate">
+<code class="descname">validate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/coulomb.html#Coul.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coulomb.Coul.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will validate data integrity.  
+In this case, we simply ensure data types are appropriate.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-helper"></span><dl class="function">
+<dt id="helper.check_restriction">
+<code class="descclassname">helper.</code><code class="descname">check_restriction</code><span class="sig-paren">(</span><em>p</em>, <em>restrict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helper.html#check_restriction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#helper.check_restriction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if p is within the restricted set.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>p: <em>obj</em></dt>
+<dd>Some parameter object, such as Coulomb, Morse, etc.</dd>
+<dt>restrict: <em>list, int</em></dt>
+<dd>A list of indices that we want to use.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>contained: <em>bool</em></dt>
+<dd>Whether p is completely in restrict (True) or not (False).</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="helper.is_struct">
+<code class="descclassname">helper.</code><code class="descname">is_struct</code><span class="sig-paren">(</span><em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helper.html#is_struct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#helper.is_struct" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function essentially does isinstance(p, struct) without needing
+to import squid.structures.  Currently there is a cyclic import that would
+make the later annoying to deal with.  NOTE - HOT FIX - REMOVE ASAP.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>p: <em>obj</em></dt>
+<dd>Some parameter object, such as Coulomb, Morse, etc.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>isStruct: <em>bool</em></dt>
+<dd>Whether p is a Struct (True) or not (False).</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="helper.random_in_range">
+<code class="descclassname">helper.</code><code class="descname">random_in_range</code><span class="sig-paren">(</span><em>bounds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helper.html#random_in_range"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#helper.random_in_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a random number in the given bounds: [lower, upper).</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>bounds: <em>list, float</em></dt>
+<dd>A lower and upper bound.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>rand: <em>float</em></dt>
+<dd>A random number in the specified range.</dd>
+</dl>
+</div></blockquote>
 </dd></dl>
 
 <span class="target" id="module-lj"></span><p>The Lennard-Jones object.  This stores the index and LJ parameters.</p>

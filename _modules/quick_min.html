@@ -41,7 +41,7 @@
   <h1>Source code for quick_min</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">squid.utils</span> <span class="k">import</span> <span class="n">units</span>
+<span class="kn">from</span> <span class="nn">squid</span> <span class="k">import</span> <span class="n">units</span>
 <span class="kn">from</span> <span class="nn">squid.constants</span> <span class="k">import</span> <span class="n">FAIL_CONVERGENCE</span>
 <span class="kn">from</span> <span class="nn">squid.constants</span> <span class="k">import</span> <span class="n">MAXITER_CONVERGENCE</span>
 <span class="kn">from</span> <span class="nn">squid.constants</span> <span class="k">import</span> <span class="n">G_MAX_CONVERGENCE</span>
@@ -153,7 +153,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">mag2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
         <span class="k">if</span> <span class="n">mag2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Can&#39;t project onto a zero vector&quot;</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="s2">&quot;Can&#39;t project onto a zero vector&quot;</span>
             <span class="k">return</span> <span class="n">v1</span>
         <span class="k">return</span> <span class="n">v2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">)</span> <span class="o">/</span> <span class="n">mag2</span>
 
@@ -216,7 +216,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">v</span> <span class="o">*=</span> <span class="mf">0.0</span>
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Zeroed Velocities&#39;</span><span class="p">)</span>
+                <span class="nb">print</span> <span class="s1">&#39;Zeroed Velocities&#39;</span>
 
         <span class="k">if</span> <span class="n">euler</span><span class="p">:</span>
             <span class="n">v</span> <span class="o">+=</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">forces</span>
