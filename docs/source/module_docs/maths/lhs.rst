@@ -1,0 +1,2 @@
+.. automodule:: maths.lhs
+    :members:

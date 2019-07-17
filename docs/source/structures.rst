@@ -13,10 +13,10 @@ We also store objects to hold output simulation data:
     - :class:`results.sim_out` - More generic output
 
 Module Files:
-    - :doc:`atom <./module_docs/atom>`
-    - :doc:`molecule <./module_docs/molecule>`
-    - :doc:`results <./module_docs/results>`
-    - :doc:`system <./module_docs/system>`
-    - :doc:`topology <./module_docs/topology>`
+    - :doc:`atom <./module_docs/structures/atom>`
+    - :doc:`molecule <./module_docs/structures/molecule>`
+    - :doc:`results <./module_docs/structures/results>`
+    - :doc:`system <./module_docs/structures/system>`
+    - :doc:`topology <./module_docs/structures/topology>`
 
 ------------

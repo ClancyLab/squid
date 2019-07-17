@@ -1,30 +1,18 @@
-The optimizers module contains various functions aiding in optimization.
-Several of these approaches are founded on methods within scipy with
-minor alterations made.
+The optimizers module contains various functions aiding in optimization.  Several of these approaches are founded on methods within scipy with minor alterations made here to aid in the internal use of NEB optimization.  If you need to use an optimizer, we recommend going straight to Scipy and using their optimizers, as they will remain more up-to-date.  These have injected features allowing for use with the internal squid NEB and ANEB calculations.
 
-- :func:`steepest_descent`
-- :func:`bfgs`
-- :func:`lbfgs`
-- :func:`quick_min`
-- :func:`fire`
-- :func:`conjugate_gradient`
+    - :func:`steepest_descent`
+    - :func:`bfgs`
+    - :func:`lbfgs`
+    - :func:`quick_min`
+    - :func:`fire`
+    - :func:`conjugate_gradient`
+
+Module Files:
+    - :doc:`steepest_descent <./module_docs/optimizers/steepest_descent>`
+    - :doc:`bfgs <./module_docs/optimizers/bfgs>`
+    - :doc:`lbfgs <./module_docs/optimizers/lbfgs>`
+    - :doc:`quick_min <./module_docs/optimizers/quick_min>`
+    - :doc:`fire <./module_docs/optimizers/fire>`
+    - :doc:`conjugate_gradient <./module_docs/optimizers/conjugate_gradient>`
 
 ------------
-
-.. automodule:: steepest_descent
-    :members:
-
-.. automodule:: bfgs
-    :members:
-
-.. automodule:: lbfgs
-    :members:
-
-.. automodule:: quick_min
-    :members:
-
-.. automodule:: fire
-    :members:
-
-.. automodule:: conjugate_gradient
-    :members:

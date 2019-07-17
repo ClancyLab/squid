@@ -24,14 +24,14 @@ Helper Code:
     - :func:`smrff.parse_pfile` - A function to parse the SMRFF parameter file.
 
 Module Files:
-    - :doc:`coulomb <./module_docs/coulomb>`
-    - :doc:`lj <./module_docs/lj>`
-    - :doc:`morse <./module_docs/morse>`
-    - :doc:`tersoff <./module_docs/tersoff>`
-    - :doc:`opls <./module_docs/opls>`
-    - :doc:`smrff <./module_docs/smrff>`
-    - :doc:`connectors <./module_docs/connectors>`
-    - :doc:`helper <./module_docs/helper>`
-    - :doc:`parameters <./module_docs/parameters>`
+    - :doc:`coulomb <./module_docs/forcefields/coulomb>`
+    - :doc:`lj <./module_docs/forcefields/lj>`
+    - :doc:`morse <./module_docs/forcefields/morse>`
+    - :doc:`tersoff <./module_docs/forcefields/tersoff>`
+    - :doc:`opls <./module_docs/forcefields/opls>`
+    - :doc:`smrff <./module_docs/forcefields/smrff>`
+    - :doc:`connectors <./module_docs/forcefields/connectors>`
+    - :doc:`helper <./module_docs/forcefields/helper>`
+    - :doc:`parameters <./module_docs/forcefields/parameters>`
 
 ------------

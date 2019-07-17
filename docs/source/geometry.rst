@@ -42,9 +42,9 @@ Once again, all the above can be accessed directly from the geometry module, as 
 
 
 Module Files:
-    - :doc:`misc <./module_docs/geom_misc>`
-    - :doc:`packmol <./module_docs/packmol>`
-    - :doc:`spatial <./module_docs/spatial>`
-    - :doc:`transform <./module_docs/transform>`
+    - :doc:`misc <./module_docs/geometry/misc>`
+    - :doc:`packmol <./module_docs/geometry/packmol>`
+    - :doc:`spatial <./module_docs/geometry/spatial>`
+    - :doc:`transform <./module_docs/geometry/transform>`
 
 ------------

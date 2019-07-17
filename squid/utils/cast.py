@@ -1,13 +1,19 @@
-"""
-This script holds simple functions to handle data types and common errors
-while returning error messages that should explain the error to the user.
-"""
 import itertools
 
 
 def is_numeric(x):
     """
     A simple function to test if x can be cast to a float.
+
+    **Parameters**
+
+        v: *numeric-object*
+            Some variable that should be numeric.
+
+    **Returns**
+
+        valid: *bool*
+            Whether the object is numeric or not.
     """
     try:
         float(x)
@@ -19,6 +25,16 @@ def is_numeric(x):
 def is_array(v):
     """
     Simply check if v is array like
+
+    **Parameters**
+
+        v: *array-like*
+            Some array like object.
+
+    **Returns**
+
+        valid: *bool*
+            Whether the object is array like or not.
     """
     return hasattr(v, "__len__")
 
@@ -27,6 +43,20 @@ def check_vec(v, length=3, numeric=True):
     """
     Given what should be a vector of N values, we check that they
     are indeed valid.
+
+    **Parameters**
+
+        v: *array-like*
+            Some array like object.
+        length: *int, optional*
+            The required length of the array.
+        numeric: *bool, optional*
+            Whether to require the array be of numerical values or not.
+
+    **Returns**
+
+        valid: *bool*
+            Whether the array follows the specifications defined or not.
     """
     if not hasattr(v, "__len__"):
         return False
@@ -41,6 +71,19 @@ def assert_vec(v, length=3, numeric=True):
     """
     Given what should be a vector of N values, we assert that they
     are indeed valid.
+
+    **Parameters**
+
+        v: *array-like*
+            Some array like object.
+        length: *int, optional*
+            The required length of the array.
+        numeric: *bool, optional*
+            Whether to require the array be of numerical values or not.
+
+    **Returns**
+
+        None
     """
     assert check_vec(v, length=length, numeric=numeric),\
         "Error - Invalid vector."
@@ -103,6 +146,16 @@ def simplify_numerical_array(values):
     '''
     Given integer values, simplify to a numerical array.  Note, values may
     also be given as a comma separated string.  This is used in jobarray.
+
+    **Parameters**
+
+        values: *list, int* or *str*
+            A list of integers, or a comma separated string of integers.
+
+    **Returns**
+
+        simple_string: *str*
+            A single string simplifying the order.
     '''
     # Step 1 - Appropriately parse out values so we have one long int array
     if isinstance(values, str):
