@@ -1,2 +1,2 @@
-.. automodule:: squid.post_process.vmd
+.. automodule:: post_process.vmd
     :members:

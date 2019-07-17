@@ -1,2 +1,2 @@
-.. automodule:: squid.post_process.debyer
+.. automodule:: post_process.debyer
     :members:

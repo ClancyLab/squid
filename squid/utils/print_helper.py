@@ -173,11 +173,24 @@ def printProgressBar(iteration, total, prefix='', suffix='', decimals=1,
 
 
 def bytes2human(n):
-    # http://code.activestate.com/recipes/578019
-    # >>> bytes2human(10000)
-    # '9.8K'
-    # >>> bytes2human(100001221)
-    # '95.4M'
+    """
+    Convert n bytes (as integer) to a human readable string.  Code was found
+    online at activestate (see references).
+
+    **Parameters**
+
+        n: *int*
+            The number of bytes.
+
+    **Returns**
+
+        n_in_str: *str*
+            The bytes in string format.
+
+    **References**
+
+        - http://code.activestate.com/recipes/578019
+    """
     symbols = ('K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y')
     prefix = {}
     for i, s in enumerate(symbols):
