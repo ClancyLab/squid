@@ -1,4 +1,4 @@
-"""
+'''
 The results module contains data structures to hold simulation output.
 
 - :class:`DFT_out`
@@ -6,11 +6,11 @@ The results module contains data structures to hold simulation output.
 
 ------------
 
-"""
+'''
 
 
 class DFT_out(object):
-    """
+    '''
     A generic class to hold dft data.
 
     **Parameters**
@@ -72,7 +72,7 @@ class DFT_out(object):
             Whether the simulation completed normally (True), or not (False).
         warnings: *list, str*
             Warnings output by the simulation.
-    """
+    '''
 
     def __init__(self, name, dft='orca'):
         self.name = name
@@ -104,7 +104,7 @@ class DFT_out(object):
 
 
 class sim_out(object):
-    """
+    '''
     A generic class to hold simulation data, particularly lammps trajectory
     files.
 
@@ -133,7 +133,7 @@ class sim_out(object):
             List of box bounds for each timestep.
         box_bounds: :class:`structures.Struct`
             List of box bounds for the final timestep.
-    """
+    '''
 
     def __init__(self, name, program='lammps'):
         self.name = name

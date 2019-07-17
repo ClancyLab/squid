@@ -7,7 +7,7 @@ from squid.structures.atom import Atom
 
 
 def read(input_file):
-    """
+    '''
     General read in of all possible data from an Orca output file (.out).
     It should be mentioned that atomic positions are 0 indexed.
 
@@ -20,7 +20,7 @@ def read(input_file):
 
         data: :class:`results.DFT_out`
             Generic DFT output object containing all parsed results.
-    """
+    '''
     # Check file exists, and open
     # Allow absolute paths as filenames
     if input_file.startswith('/'):
@@ -308,7 +308,7 @@ Lowest energy orbital is empty.")
 
 # A function to parse orca.engrad files
 def engrad_read(input_file, force='Ha/Bohr', pos='Bohr'):
-    """
+    '''
     General read in of all possible data from an Orca engrad file
     (.orca.engrad).
 
@@ -328,7 +328,7 @@ def engrad_read(input_file, force='Ha/Bohr', pos='Bohr'):
             to each atom.
         energy: *float*
             The total energy of this simulation.
-    """
+    '''
     if not input_file.endswith('.engrad'):
         input_file = 'orca/%s/%s.orca.engrad' % (input_file, input_file)
     if not os.path.isfile(input_file):

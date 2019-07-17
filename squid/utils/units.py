@@ -3,7 +3,7 @@ from squid.constants import ENERGY, PRESSURE, DISTANCE, PERIODIC_TABLE
 
 
 def convert_energy(e0, e1, e_val):
-    """
+    '''
     Convert energy units.
 
     **Parameters**
@@ -19,7 +19,7 @@ def convert_energy(e0, e1, e_val):
 
         energy: *float*
             Converted e_val to units of e1.
-    """
+    '''
 
     if e_val == 0:
         return 0
@@ -36,7 +36,7 @@ def convert_energy(e0, e1, e_val):
 
 
 def convert_pressure(p0, p1, p_val):
-    """
+    '''
     Convert pressure units.
 
     **Parameters**
@@ -52,7 +52,7 @@ def convert_pressure(p0, p1, p_val):
 
         pressure: *float*
             Converted p_val to units of p1.
-    """
+    '''
     if p_val == 0:
         return 0
     if p0 == p1:
@@ -62,7 +62,7 @@ def convert_pressure(p0, p1, p_val):
 
 
 def convert_dist(d0, d1, d_val):
-    """
+    '''
     Convert distance units.
 
     **Parameters**
@@ -78,7 +78,7 @@ def convert_dist(d0, d1, d_val):
 
         distance: *float*
             Converted d_val to units of d1.
-    """
+    '''
     if d_val == 0:
         return 0
     if d0 == d1:
@@ -88,7 +88,7 @@ def convert_dist(d0, d1, d_val):
 
 
 def elem_i2s(elem_int):
-    """
+    '''
     Get the elemental symbol, given its atomic number.
 
     **Parameters**
@@ -100,7 +100,7 @@ def elem_i2s(elem_int):
 
         elem_sym: *str*
             Elemental symbol.
-    """
+    '''
     if isinstance(elem_int, str):
         return elem_int
     i = int(elem_int)
@@ -113,7 +113,7 @@ PERIODIC_TABLE." % i)
 
 
 def elem_s2i(elem_sym):
-    """
+    '''
     Get the atomic number, given its elemental symbol.
 
     **Parameters**
@@ -125,7 +125,7 @@ def elem_s2i(elem_sym):
 
         elem_int: *int*
             Atomic number.
-    """
+    '''
 
     # Else convert it
     for i in range(1, len(PERIODIC_TABLE)):
@@ -137,7 +137,7 @@ def elem_s2i(elem_sym):
 
 
 def elem_weight(elem):
-    """
+    '''
     Get the weight of an element, given its symbol or atomic number.
 
     **Parameters**
@@ -149,7 +149,7 @@ def elem_weight(elem):
 
         elem_weight: *float*
             Weight of the element in AMU.
-    """
+    '''
     if type(elem) == str:
         return PERIODIC_TABLE[elem_s2i(elem)]['weight']
     if type(elem) == int:
@@ -159,7 +159,7 @@ def elem_weight(elem):
 
 
 def elem_sym_from_weight(weight, delta=1e-1):
-    """
+    '''
     Get the element that best matches the given weight (in AMU).
 
     **Parameters**
@@ -173,7 +173,7 @@ def elem_sym_from_weight(weight, delta=1e-1):
 
         elem_sym: *str*
             The elemental symbol.
-    """
+    '''
     for elem in PERIODIC_TABLE[1:]:
         if abs(weight - elem['weight']) < delta:
             return elem['sym']
@@ -181,7 +181,7 @@ def elem_sym_from_weight(weight, delta=1e-1):
 
 
 def convert(old, new, val):
-    """
+    '''
     A generic converter of fractional units.  This works only for one unit in
     the numerator and denomenator (such as Ha/Ang to eV/Bohr).
 
@@ -198,7 +198,7 @@ def convert(old, new, val):
 
         new_val: *float*
             Converted value in units of new.
-    """
+    '''
     if val == 0:
         return 0
 

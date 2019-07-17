@@ -1,10 +1,10 @@
-"""
+'''
 
 - :class:`Molecule`
 
 ------------
 
-"""
+'''
 
 __docformat__ = 'reStructuredText'
 
@@ -23,7 +23,7 @@ import numpy as np
 
 
 class Molecule(object):
-    """
+    '''
     A molecule object to store atoms and any/all associated
     interatomic connections.
 
@@ -50,7 +50,7 @@ class Molecule(object):
 
         molecule: :class:`structures.molecule.Molecule`
             The Molecule class container.
-    """
+    '''
 
     def __init__(self, atoms,
                  bonds=[], angles=[], dihedrals=[],
@@ -75,7 +75,7 @@ class Molecule(object):
         bonds = "\n    ".join(map(str, self.bonds))
         angles = "\n    ".join(map(str, self.angles))
         dihedrals = "\n    ".join(map(str, self.dihedrals))
-        return """
+        return '''
 ATOMS
     %s
 BONDS (molecule_index: index)
@@ -84,10 +84,10 @@ ANGLES (molecule_index: index)
     %s
 DIHERALS (molecule_index: index)
     %s
-""" % (atoms, bonds, angles, dihedrals)
+''' % (atoms, bonds, angles, dihedrals)
 
     def __add__(self, other):
-        """
+        '''
         If given some 3D array, offset all atomic coordinates.
 
         **Parameters**
@@ -99,14 +99,14 @@ DIHERALS (molecule_index: index)
         **Returns**
 
             None
-        """
+        '''
         cast.assert_vec(other, length=3, numeric=True)
         new = copy.deepcopy(self)
         new.translate(other)
         return new
 
     def __sub__(self, other):
-        """
+        '''
         If given some 3D array, offset all atomic coordinates.
 
         **Parameters**
@@ -118,12 +118,12 @@ DIHERALS (molecule_index: index)
         **Returns**
 
             None
-        """
+        '''
         cast.assert_vec(other, length=3, numeric=True)
         return self.__add__(-np.array(other, dtype=float))
 
     def __mul__(self, other):
-        """
+        '''
         If given some 3D array, scale all atomic coordinates.
 
         **Parameters**
@@ -135,14 +135,14 @@ DIHERALS (molecule_index: index)
         **Returns**
 
             None
-        """
+        '''
         cast.assert_vec(other, length=3, numeric=True)
         new = copy.deepcopy(self)
         new.scale(other)
         return new
 
     def __truediv__(self, other):
-        """
+        '''
         If given some 3D array, scale all atomic coordinates.
 
         **Parameters**
@@ -154,7 +154,7 @@ DIHERALS (molecule_index: index)
         **Returns**
 
             None
-        """
+        '''
         assert 0.0 not in other,\
             "Error - Cannot divide by 0!"
         cast.assert_vec(other, length=3, numeric=True)
@@ -179,7 +179,7 @@ DIHERALS (molecule_index: index)
         )
 
     def reassign_indices(self, offset=0):
-        """
+        '''
         Simply reassign atomic indices based on their current positions
         in the atoms array.  This is zero indexed, unless otherwise specified.
         Further, assign the molecule_index of the atoms to be the same as this
@@ -193,24 +193,24 @@ DIHERALS (molecule_index: index)
         **Returns**
 
             None
-        """
+        '''
         for i, a in enumerate(self.atoms):
             a.index = i + offset
             a.molecule_index = self.molecule_index
 
     def flatten(self):
-        """
+        '''
         Flatten out all atoms into a 1D array.
 
         **Returns**
 
             atoms: *list, float*
                 A 1D array of atomic positions.
-        """
+        '''
         return np.array([a.flatten() for a in self.atoms]).flatten()
 
     def net_charge(self):
-        """
+        '''
         Return the net charge of the molecule.  This requires that atoms
         have charges associated with them.
 
@@ -218,14 +218,14 @@ DIHERALS (molecule_index: index)
 
             charge: *float*
                 The atomic charge of the system.
-        """
+        '''
         return float(sum([
             a.charge for a in self.atoms
             if hasattr(a, "charge") and a.charge is not None
         ]))
 
     def rotate(self, m, around="com"):
-        """
+        '''
         Rotate the molecule by the given matrix *m*.
 
         **Parameters**
@@ -240,11 +240,11 @@ DIHERALS (molecule_index: index)
         **Returns**
 
             None
-        """
+        '''
         misc.rotate_atoms(self.atoms, m, around=around)
 
     def translate(self, v):
-        """
+        '''
         Apply a translation to this molecule.
 
         **Parameters**
@@ -256,13 +256,13 @@ DIHERALS (molecule_index: index)
         **Returns**
 
             None
-        """
+        '''
         cast.assert_vec(v, length=3, numeric=True)
         for a in self.atoms:
             a.translate(v)
 
     def scale(self, v):
-        """
+        '''
         Apply a scalar to this molecule.
 
         **Parameters**
@@ -274,13 +274,13 @@ DIHERALS (molecule_index: index)
         **Returns**
 
             None
-        """
+        '''
         cast.assert_vec(v, length=3, numeric=True)
         for a in self.atoms:
             a.scale(v)
 
     def set_positions(self, positions, new_atom_list=False):
-        """
+        '''
         Manually specify atomic positions of your molecule.
 
         **Parameters**
@@ -299,7 +299,7 @@ DIHERALS (molecule_index: index)
         **Returns**
 
             None
-        """
+        '''
         positions = np.array(positions).flatten().reshape((-1, 3))
         if len(positions) != len(self.atoms) and not new_atom_list:
             raise Exception("Position list does not hold the same number \
@@ -313,7 +313,7 @@ set_positions.")
                 a.set_position(b)
 
     def get_center_of_geometry(self, skip_H=False):
-        """
+        '''
         Calculate the center of geometry of the molecule.
 
         **Parameters**
@@ -327,11 +327,11 @@ set_positions.")
             cog: *np.array, float*
                 A np.array of the x, y, and z coordinate
                 of the center of geometry.
-        """
+        '''
         return misc.get_center_of_geometry(self.atoms, skip_H=skip_H)
 
     def get_center_of_mass(self, skip_H=False):
-        """
+        '''
         Calculate the center of mass of the molecule.
 
         **Parameters**
@@ -344,11 +344,11 @@ set_positions.")
 
             com: *np.array, float*
                 A np.array of the x, y, and z coordinate of the center of mass.
-        """
+        '''
         return misc.get_center_of_mass(self.atoms, skip_H=skip_H)
 
     def merge(self, other, deepcopy=False):
-        """
+        '''
         This function merges another molecule into this one, offsetting
         indices as needed.  When merging, the atom indices of this molecule
         is reassigned.  Futher, if deepcopy is False, then the atom indices
@@ -366,7 +366,7 @@ set_positions.")
         **Returns**
 
             None
-        """
+        '''
         self.reassign_indices()
         local_other = other
         if deepcopy:
@@ -379,14 +379,14 @@ set_positions.")
         self.dihedrals += other.dihedrals
 
     def assign_angles_and_dihedrals(self):
-        """
+        '''
         Given a list of atom structures with bonded information, calculate
         angles and dihedrals.
 
         **Returns**
 
             None
-        """
+        '''
 
         # Get a list of bonded interactions to each atom.
         bonded = [

@@ -9,7 +9,7 @@ from squid import constants
 
 
 def color_set(s, c):
-    """
+    '''
     Colourize a string for linux terminal output.
 
     **Parameters**
@@ -23,7 +23,7 @@ def color_set(s, c):
 
         s: *str*
             Coloured or formatted string.
-    """
+    '''
     return constants.COLOR[c] + str(s) + constants.COLOR['ENDC']
 
 
@@ -31,7 +31,7 @@ colour_set = color_set
 
 
 def strip_color(s):
-    """
+    '''
     Remove colour and/or string formatting due to linux escape sequences.
 
     **Parameters**
@@ -43,7 +43,7 @@ def strip_color(s):
 
         s: *str*
             Unformatted string.
-    """
+    '''
     for c in constants.COLOUR:
         col = constants.COLOUR[c]
         while col in s:
@@ -55,7 +55,7 @@ strip_colour = strip_color
 
 
 def spaced_print(sOut, delim=['\t', ' '], buf=4):
-    """
+    '''
     Given a list of strings, or a string with new lines, this will
     reformat the string with spaces to split columns.  Note, this
     only works if there are no headers to the input string/list of strings.
@@ -73,7 +73,7 @@ def spaced_print(sOut, delim=['\t', ' '], buf=4):
 
         spaced_s: *str*
             Appropriately spaced output string.
-    """
+    '''
     s_len = []
     if type(sOut) == str:
         sOut = sOut.split('\n')
@@ -107,7 +107,7 @@ def spaced_print(sOut, delim=['\t', ' '], buf=4):
 
 def printProgressBar(iteration, total, prefix='', suffix='', decimals=1,
                      length=20, fill='+', buf=None, pad=False):
-    """
+    '''
     NOTE! THIS IS COPIED FROM STACK OVERFLOW (with minor changes),
     USER Greenstick
     Link: https://stackoverflow.com/a/34325723
@@ -132,7 +132,7 @@ def printProgressBar(iteration, total, prefix='', suffix='', decimals=1,
             Bar fill character.
         pad: *bool, optional*
             Whether to pad the right side with spaces until terminal width.
-    """
+    '''
     if buf is not None:
         if not hasattr(printProgressBar, "buf"):
             setattr(printProgressBar, "buf", buf)
@@ -173,7 +173,7 @@ def printProgressBar(iteration, total, prefix='', suffix='', decimals=1,
 
 
 def bytes2human(n):
-    """
+    '''
     Convert n bytes (as integer) to a human readable string.  Code was found
     online at activestate (see references).
 
@@ -190,7 +190,7 @@ def bytes2human(n):
     **References**
 
         - http://code.activestate.com/recipes/578019
-    """
+    '''
     symbols = ('K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y')
     prefix = {}
     for i, s in enumerate(symbols):

@@ -6,7 +6,7 @@ OPLS_FILE = "/".join(os.path.realpath(__file__).split("/")[:-1]) +\
 
 
 def parse_pfile(parameter_file=OPLS_FILE, pair_style='lj/cut'):
-    """
+    '''
     Reads an opls parameter file written in the Tinker file format.
 
     **Parameters**
@@ -31,7 +31,7 @@ def parse_pfile(parameter_file=OPLS_FILE, pair_style='lj/cut'):
         dihedral_types: *list,* :class:`structures.Struct`
             A list of the forcefield types for dihedrals, stored as
             :class:`structures.Struct`.
-    """
+    '''
     (atom_types, bond_types,
         angle_types, dihedral_types) = [], [], [], []
 

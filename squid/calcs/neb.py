@@ -1,4 +1,4 @@
-"""
+'''
 The NEB module simplifies the submission of Nudged Elastic Band simulations.
 
 - :func:`g09_start_job`
@@ -8,7 +8,7 @@ The NEB module simplifies the submission of Nudged Elastic Band simulations.
 - :class:`NEB`
 
 ------------
-"""
+'''
 # System imports
 import sys
 from scipy.linalg import block_diag
@@ -54,7 +54,7 @@ def g09_start_job(NEB,
                   mem,
                   priority,
                   extra_keywords={}):
-    """
+    '''
     A method for submitting a single point calculation using Gaussian09 for
     NEB calculations.
 
@@ -94,7 +94,7 @@ def g09_start_job(NEB,
 
         g09_job: :class:`jobs.Job`
             A job container holding the g09 simulation.
-    """
+    '''
     NEB.calls_to_force += 1
     if NEB.step > 0:
         guess = ' Guess=Read'
@@ -124,7 +124,7 @@ def g09_start_job(NEB,
 
 
 def g09_results(NEB, step_to_use, i, state):
-    """
+    '''
     A method for reading in the output of Gaussian09 single point calculations
     for NEB calculations. This will both (a) assign forces to the atoms stored
     in state and (b) return the energy and atoms.
@@ -149,7 +149,7 @@ def g09_results(NEB, step_to_use, i, state):
         new_atoms: *list,* :class:`structures.Atom`
             A list of atoms with the forces attached in units of Hartree per
             Angstrom (Ha/Ang).
-    """
+    '''
     result = g09.parse_atoms('%s-%d-%d' % (NEB.name, step_to_use, i),
                              check_convergence=False,
                              parse_all=False)
@@ -193,7 +193,7 @@ def orca_start_job(NEB,
                    mem,
                    priority,
                    extra_keywords={}):
-    """
+    '''
     A method for submitting a single point calculation using Orca for NEB
     calculations.
 
@@ -232,7 +232,7 @@ def orca_start_job(NEB,
 
         orca_job: :class:`jobs.Job`
             A job container holding the orca simulation.
-    """
+    '''
     NEB.calls_to_force += 1
     if NEB.step > 0:
         previous = '%s-%d-%d' % (NEB.name, NEB.step - 1, i)
@@ -259,7 +259,7 @@ def orca_start_job(NEB,
 
 
 def orca_results(NEB, step_to_use, i, state):
-    """
+    '''
     A method for reading in the output of Orca single point calculations for
     NEB calculations. This will both (a) assign forces to the atoms stored
     in state and (b) return the energy and atoms.
@@ -284,7 +284,7 @@ def orca_results(NEB, step_to_use, i, state):
         new_atoms: *list,* :class:`structures.Atom`
             A list of atoms with the forces attached in units of Hartree per
             Angstrom (Ha/Ang).
-    """
+    '''
     read_data = orca.engrad_read('%s-%d-%d' % (NEB.name, step_to_use, i),
                                  force='Ha/Ang',
                                  pos='Ang')
@@ -298,7 +298,7 @@ def orca_results(NEB, step_to_use, i, state):
 
 # Class to contain working variables
 class NEB:
-    """
+    '''
     A method for determining the minimum energy pathway of a reaction using
     DFT. Note, this method was written for atomic orbital DFT codes; however,
     is potentially generalizable to other programs.
@@ -392,7 +392,7 @@ class NEB:
         * Henkelman, G.; Uberuaga, B. P.; Jonsson, H. Journal of Chemical
           Physics 2000, 113.
         * Atomic Simulation Environment - https://wiki.fysik.dtu.dk/ase/
-    """
+    '''
     error, gradient = None, None
 
     def __init__(self,

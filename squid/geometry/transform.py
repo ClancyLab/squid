@@ -14,7 +14,7 @@ from squid.geometry.spatial import orthogonal_procrustes
 # centroid around the structure, and (2) rotate the ellipsoid and positions
 # to align along the x-axis
 def align_centroid(atoms, recenter=True, skip_H=True):
-    """
+    '''
     Generate a Minimum Volume Enclosing Ellipsoid (MVEE) around atomic
     species to align the atoms along the x-axis.
 
@@ -38,7 +38,7 @@ def align_centroid(atoms, recenter=True, skip_H=True):
             Rotated positive definite symmetric matrix of the ellipsoid's
             center form. This contains the ellipsoid's orientation and
             eccentricity.
-    """
+    '''
 
     # If there is only one atom here, have the centroid be a sphere.
     if len(atoms) == 1:
@@ -77,7 +77,7 @@ def align_centroid(atoms, recenter=True, skip_H=True):
 # with translation and no reflection (Partial Procrustes)
 def procrustes(frames, count_atoms=None,
                append_in_loop=True, reflection=False):
-    """
+    '''
     Propogate rotation along a list of lists of atoms to smooth out
     transitions between consecutive frames. This is done by rigid rotation
     and translation (no scaling and no inversions).  Rotation starts
@@ -108,7 +108,7 @@ def procrustes(frames, count_atoms=None,
 
         For more information, see :func:`orthogonal_procrustes`.
 
-    """
+    '''
     if not count_atoms:
         count_atoms = range(len(frames[0]))
 
@@ -148,7 +148,7 @@ def procrustes(frames, count_atoms=None,
 
 
 def interpolate(frame_1, frame_2, N):
-    """
+    '''
     Linearly interpolate N frames between two given frames.
 
     **Parameters**
@@ -164,7 +164,7 @@ def interpolate(frame_1, frame_2, N):
 
         frames: *list, list, float*
             List of interpolated frames, inclusive of frame_1 and frame_2.
-    """
+    '''
     assert isinstance(frame_1, list),\
         "Error - frame_1 should be a list of Atom objects."
     assert isinstance(frame_2, list),\
@@ -193,7 +193,7 @@ def smooth_xyz(frames,
                use_procrustes=True,
                fname=None,
                verbose=False):
-    """
+    '''
     Smooth out an xyz file by linearly interpolating frames to minimize the
     maximum motion between adjacent frames.  Further, this can use procrustes
     to best overlap adjacent frames.
@@ -224,7 +224,7 @@ def smooth_xyz(frames,
 
         frames: *list, list,* :class:`structures.Atom`
             Returns a list of smoothed frames
-    """
+    '''
 
     assert len(frames) > 1,\
         "Error - You must have more than 1 frame if you want to interpolate."
@@ -306,7 +306,7 @@ def smooth_xyz(frames,
 
 
 def perturbate(atoms, dx=0.1, dr=5, around="com", rotate=True):
-    """
+    '''
     Given a list of atomic coordinates, randomly perturbate them and apply
     a slight rotation.
 
@@ -328,7 +328,7 @@ def perturbate(atoms, dx=0.1, dr=5, around="com", rotate=True):
 
         perturbated_atoms: *list,* :class:`structures.atom.Atom`
             The perturbated list of atomic coordinates.
-    """
+    '''
     for a in atoms:
         rand_step = [np.random.random() * dx for i in range(3)]
         a.translate(rand_step)

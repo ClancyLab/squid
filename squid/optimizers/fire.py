@@ -11,7 +11,7 @@ def fire(params,
          gradient,
          NEB_obj=None,
          new_opt_params={}):
-    """
+    '''
     A FIRE optimizer, overloaded for NEB use.
 
     *Parameters*
@@ -68,7 +68,7 @@ def fire(params,
             identified in the constants file.
         iters: *int*
             The number of iterations the optimizer ran for.
-    """
+    '''
 
     # Here we adjust parameters accordingly ----------------------------------
     dt = 0.1

@@ -5,7 +5,7 @@ from squid.jobs.container import JobObject
 
 
 def Job(name, **kwargs):
-    """
+    '''
     This function will return a job object depending on the queue system.
 
     **Parameters**
@@ -20,7 +20,7 @@ def Job(name, **kwargs):
         jobContainer: :class:`squid.jobs.container.JobObject`
             A job object, or a class built off of it, to handle job
             submission to a given queue manager.
-    """
+    '''
     queueing_system = get_queue_manager()
     if queueing_system is None:
         return JobObject(name, **kwargs)
@@ -39,7 +39,7 @@ def Job(name, **kwargs):
 
 
 def get_queue_manager():
-    """
+    '''
     This function will determine what the current queueing system is, and
     return relevant functionality.
 
@@ -47,7 +47,7 @@ def get_queue_manager():
 
         queue_manager: *str*
             The name of the queue manager as either slurm, nbs, or None.
-    """
+    '''
     # Determine the queuing system
     sbatch = which("sbatch")
     jsub = which("jsub")
@@ -60,14 +60,14 @@ def get_queue_manager():
 
 
 def get_available_queues():
-    """
+    '''
     Get a list of all available queues to submit a job to.
 
     **Returns**
 
         avail_queues: *list, str*
             A list of available queues by name.
-    """
+    '''
     queueing_system = get_queue_manager()
     if queueing_system is None:
         return []
@@ -86,7 +86,7 @@ def get_available_queues():
 
 
 def get_all_jobs(detail=0):
-    """
+    '''
     Get a list of all jobs currently on your queue.  The *detail*
     variable can be used to specify how much information you want returned.
 
@@ -116,13 +116,13 @@ def get_all_jobs(detail=0):
                          job status,
                          queue,
                          number of processors)
-    """
+    '''
     return get_running_jobs(detail=detail) +\
         get_pending_jobs(detail=detail)
 
 
 def get_running_jobs(detail=0):
-    """
+    '''
     Get a list of all jobs currently running on your queue.  The *detail*
     variable can be used to specify how much information you want returned.
 
@@ -152,7 +152,7 @@ def get_running_jobs(detail=0):
                          job status,
                          queue,
                          number of processors)
-    """
+    '''
     queueing_system = get_queue_manager()
     if queueing_system is None:
         return []
@@ -171,7 +171,7 @@ def get_running_jobs(detail=0):
 
 
 def get_pending_jobs(detail=0):
-    """
+    '''
     Get a list of all jobs currently pending on your queue.
     The *detail* variable can be used to specify how much information
     you want returned.
@@ -202,7 +202,7 @@ def get_pending_jobs(detail=0):
                          job status,
                          queue,
                          number of processors)
-    """
+    '''
     queueing_system = get_queue_manager()
     if queueing_system is None:
         return []

@@ -15,7 +15,7 @@ OPLS_FILE = "/".join(os.path.realpath(__file__).split("/")[:-1]) +\
 
 
 class System(object):
-    """
+    '''
     A system object to store molecules for one's simulations.
 
     **Parameters**
@@ -33,7 +33,7 @@ class System(object):
 
         system: :class:`structures.system.System`
             The System class container.
-    """
+    '''
 
     def __init__(self, name,
                  box_size=(10.0, 10.0, 10.0), box_angles=(90.0, 90.0, 90.0),
@@ -57,7 +57,7 @@ class System(object):
 
         EPS = 1E-3
         if any([abs(ba - 90) > EPS for ba in box_angles]):
-            """
+            '''
             If the angles are not 90, the system is triclinic.  So we will set
             the relative information here.  For LAMMPS, trigonal vectors are
             established by using xy, xz, and yz:
@@ -67,7 +67,7 @@ class System(object):
                 C = (xz, yz, zhi - zlo)
             Formula for converting (a, b, c, alpha, beta, gamma) to
             (lx, ly, lz, xy, xz, yz) taken from online lammps help.
-            """
+            '''
             self.xlo, self.ylo, self.zlo = 0.0, 0.0, 0.0
 
             self.xhi = a
@@ -78,10 +78,10 @@ class System(object):
                        self.xy * self.xz) / self.yhi
             self.zhi = np.sqrt(c**2 - self.xz**2 - self.yz**2)
         else:
-            """
+            '''
             Otherwise, we have a monoclinic box.  We will set the
             center to the euclidean origin.
-            """
+            '''
             self.xlo = -a / 2.0
             self.ylo = -b / 2.0
             self.zlo = -c / 2.0
@@ -100,7 +100,7 @@ class System(object):
             m1 == m2 for m1, m2 in zip(self.molecules, other.molecules)])
 
     def __add__(self, other):
-        """
+        '''
         If given some 3D array, offset all atomic coordinates.
 
         **Parameters**
@@ -112,7 +112,7 @@ class System(object):
         **Returns**
 
             None
-        """
+        '''
         cast.assert_vec(other, length=3, numeric=True)
         new = copy.deepcopy(self)
         for i, mol in enumerate(new.molecules):
@@ -120,7 +120,7 @@ class System(object):
         return new
 
     def __sub__(self, other):
-        """
+        '''
         If given some 3D array, offset all atomic coordinates.
 
         **Parameters**
@@ -132,12 +132,12 @@ class System(object):
         **Returns**
 
             None
-        """
+        '''
         cast.assert_vec(other, length=3, numeric=True)
         return self.__add__(-np.array(other, dtype=float))
 
     def __mul__(self, other):
-        """
+        '''
         If given some 3D array, scale all atomic coordinates.
 
         **Parameters**
@@ -149,7 +149,7 @@ class System(object):
         **Returns**
 
             None
-        """
+        '''
         cast.assert_vec(other, length=3, numeric=True)
         new = copy.deepcopy(self)
         for i, mol in enumerate(new.molecules):
@@ -157,7 +157,7 @@ class System(object):
         return new
 
     def __truediv__(self, other):
-        """
+        '''
         If given some 3D array, scale all atomic coordinates.
 
         **Parameters**
@@ -169,7 +169,7 @@ class System(object):
         **Returns**
 
             None
-        """
+        '''
         assert 0.0 not in other,\
             "Error - Cannot divide by 0!"
         cast.assert_vec(other, length=3, numeric=True)
@@ -181,7 +181,7 @@ class System(object):
         return self.atom_labels.index(index) + 1
 
     def add(self, molecule, mol_offset=1, deepcopy=True):
-        """
+        '''
         A function to add a molecule to this system.  Note, this addition can
         be either a deepcopy or not.  If it is not a deepcopy, then the
         molecule is added as a pointer and can be adjusted externally. By
@@ -201,7 +201,7 @@ class System(object):
 
             None
 
-        """
+        '''
 
         assert isinstance(molecule, Molecule),\
             "Error - molecule should be a Molecule object."
@@ -223,7 +223,7 @@ class System(object):
         self.dihedrals += local_molecule.dihedrals
 
     def contains_molecule(self, molecule):
-        """
+        '''
         Check if this system contains a molecule, based on the atoms, bonds,
         angles and dihedrals.
 
@@ -239,11 +239,11 @@ class System(object):
                 is contained within this System object.  This implies that
                 all atoms, bonds, angles, and dihedrals within the molecule are
                 present in a molecule within the system.
-        """
+        '''
         return molecule in self.molecules
 
     def reassign_indices(self, mol_offset=1, atom_offset=1):
-        """
+        '''
         Given a system of many molecules and atoms, reassign all the indices
         to be consistent.
 
@@ -259,14 +259,14 @@ class System(object):
         **Returns**
 
             None
-        """
+        '''
         for i, m in enumerate(self.molecules):
             m.molecule_index = i + mol_offset
             m.reassign_indices(offset=atom_offset)
             atom_offset += len(m.atoms)
 
     def get_center_of_geometry(self, skip_H=False):
-        """
+        '''
         Calculate the center of geometry of the system.
 
         **Parameters**
@@ -280,11 +280,11 @@ class System(object):
             cog: *np.array, float*
                 A np.array of the x, y, and z coordinate
                 of the center of geometry.
-        """
+        '''
         return misc.get_center_of_geometry(self.atoms, skip_H=skip_H)
 
     def get_center_of_mass(self, skip_H=False):
-        """
+        '''
         Calculate the center of mass of the system.
 
         **Parameters**
@@ -297,11 +297,11 @@ class System(object):
 
             com: *np.array, float*
                 A np.array of the x, y, and z coordinate of the center of mass.
-        """
+        '''
         return misc.get_center_of_mass(self.atoms, skip_H=skip_H)
 
     def rotate(self, m, around="com"):
-        """
+        '''
         Rotate the system by the given matrix *m*.
 
         **Parameters**
@@ -316,7 +316,7 @@ class System(object):
         **Returns**
 
             None
-        """
+        '''
         misc.rotate_atoms(self.atoms, m, around=around)
 
     def set_types(self, opls_file=OPLS_FILE, smrff_file=None):
@@ -349,7 +349,7 @@ class System(object):
         self.parameters.set_all_masks(True)
 
     def dump_pair_coeffs(self):
-        """
+        '''
         Will try to dump all available pair coefficients.  Currently, this
         means that Coulomb, Lennard-Jones, and Morse will be attempted.
         If you prefer that one or another not be output, you must set the
@@ -364,7 +364,7 @@ class System(object):
         Note - this function dumps pair coeffs for the input script, NOT the
         data file.  If you wish for the alternative, see
         dump_pair_coeffs_data()
-        """
+        '''
         assert self.atom_labels is not None,\
             "Error - You must first run set_types before this works."
 
@@ -382,7 +382,7 @@ class System(object):
         ])
 
     def dump_pair_coeffs_data(self):
-        """
+        '''
         Will try to dump all available pair coefficients.  Currently, this
         means that Coulomb, Lennard-Jones, and Morse will be attempted.
         If you prefer that one or another not be output, you must set the
@@ -396,7 +396,7 @@ class System(object):
 
         Note - this function dumps pair coeffs for the data file, NOT the
         input script.  If you wish for the alternative, see dump_pair_coeffs()
-        """
+        '''
         assert self.atom_labels is not None,\
             "Error - You must first run set_types before this works."
 
@@ -578,7 +578,7 @@ def run_unit_tests():
     test_system.add(m1b)
     test_system.add(m2)
 
-    test_str = """
+    test_str = '''
 ATOMS
     molecule_index: 1 and index: 0
     x, y, z = (0.000, 0.000, 0.000)
@@ -674,7 +674,7 @@ BONDS (molecule_index: index)
 ANGLES (molecule_index: index)
     
 DIHERALS (molecule_index: index)
-""".strip()
+'''.strip()
 
     assert str(test_system).strip() == test_str,\
         "Error - String casting of system has failed."

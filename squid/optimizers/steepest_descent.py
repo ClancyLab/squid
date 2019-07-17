@@ -14,7 +14,7 @@ def steepest_descent(params,
                      new_opt_params={},
                      extra_args_gradient=None,
                      extra_args_target=None):
-    """
+    '''
     A steepest descent optimizer, overloaded for NEB use.
 
     *Parameters*
@@ -79,7 +79,7 @@ def steepest_descent(params,
             identified in the constants file.
         iters: *int*
             The number of iterations the optimizer ran for.
-    """
+    '''
 
     # Here we adjust parameters accordingly ----------------------------------
     step_size = 0.1

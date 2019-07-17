@@ -15,7 +15,7 @@ CHARGE_LOWER_LIMIT = 0.0
 
 
 class Coul(object):
-    """
+    '''
     Initialize the coulomb object.  This should be done with either individual
     information (index, charge, mass, element) or parsed from a string (line).
 
@@ -50,7 +50,7 @@ class Coul(object):
 
         coulomb: :class:`squid.structures.Coul`
             A Coul object.
-    """
+    '''
 
     def __init__(self, index=None, charge=None,
                  mass=None, element=None, line=None):
@@ -83,7 +83,7 @@ Either specify index and charge, or the line to be parsed, but not both.")
         self.validate()
 
     def __repr__(self):
-        """
+        '''
         This prints out a representation of this coulomb object, in the format
         that is output to the smrff parameter file.
 
@@ -92,7 +92,7 @@ Either specify index and charge, or the line to be parsed, but not both.")
             coul: *str*
                 A string representation of Coul.  The index and the charge (to
                 2 decimal places), separated by a space.
-        """
+        '''
         return self._printer(bounds=None)
 
     def __eq__(self, other):
@@ -110,7 +110,7 @@ Either specify index and charge, or the line to be parsed, but not both.")
         return hash(self.index)
 
     def _printer(self, bounds=None):
-        """
+        '''
         This prints out a representation of this Coul object, in the format
         that is output to the smrff parameter file.
 
@@ -126,7 +126,7 @@ Either specify index and charge, or the line to be parsed, but not both.")
             Coul: *str*
                 A string representation of Coul.  The index and the charge (to
                 2 decimal places), separated by a space.
-        """
+        '''
         self.validate()
         if bounds is not None:
             return "%s %.2f %s %.4f" % (
@@ -144,7 +144,7 @@ Either specify index and charge, or the line to be parsed, but not both.")
         return self._printer(bounds=1)
 
     def unpack(self, with_indices=True, with_bounds=False):
-        """
+        '''
         This function unpacks the coulomb object into a list.
 
         **Parameters**
@@ -159,7 +159,7 @@ Either specify index and charge, or the line to be parsed, but not both.")
             coul: *list, str/float*
                 A list, holding the string of the index and the float of
                 the charge.
-        """
+        '''
         self.validate()
 
         pkg = []
@@ -177,7 +177,7 @@ Either specify index and charge, or the line to be parsed, but not both.")
         return pkg[0]
 
     def pack(self, params):
-        """
+        '''
         This function packs the coulomb object from a list.
 
         **Parameters**
@@ -189,7 +189,7 @@ Either specify index and charge, or the line to be parsed, but not both.")
         **Returns**
 
             None
-        """
+        '''
         assert len(params) in [1, 2],\
             "In Coul, tried packing %d parameters. \
 Should be either 1 or 2!" % len(params)
@@ -200,10 +200,10 @@ Should be either 1 or 2!" % len(params)
         self.validate()
 
     def validate(self):
-        """
+        '''
         This function will validate data integrity.
         In this case, we simply ensure data types are appropriate.
-        """
+        '''
         self.index, self.charge = str(self.index), float(self.charge)
         assert abs(self.charge) <= CHARGE_UPPER_LIMIT,\
             "In Coul, tried assigning an unreasonably large charge! \
@@ -214,7 +214,7 @@ Should be either 1 or 2!" % len(params)
 
     @staticmethod
     def parse_line(line):
-        """
+        '''
         Parse line inputs and assign to this object.
 
         **Parameters**
@@ -232,7 +232,7 @@ Should be either 1 or 2!" % len(params)
                 The atomic symbol.
             mass: *float*
                 The atomic mass.
-        """
+        '''
         line = line.strip().split()
         assert len(line) == 4,\
             "Error - line (%s) is not correct." % str(line)
@@ -243,7 +243,7 @@ Should be either 1 or 2!" % len(params)
         return index, charge, element, mass
 
     def assign_line(self, line):
-        """
+        '''
         Parse line.
 
         **Parameters**
@@ -254,13 +254,13 @@ Should be either 1 or 2!" % len(params)
         **Returns**
 
             None
-        """
+        '''
         self.index, self.charge, self.element, self.mass =\
             self.parse_line(line)
         self.validate()
 
     def fix(self, params='all', value=None):
-        """
+        '''
         This will fix these parameters by assigning bounds to the
         values themselves.
 
@@ -276,7 +276,7 @@ Should be either 1 or 2!" % len(params)
         **Returns**
 
             None
-        """
+        '''
         if params in ['all', 'charge']:
             if value is not None:
                 if isinstance(value, list) or isinstance(value, tuple):
@@ -293,7 +293,7 @@ Should be either 1 or 2!" % len(params)
 
     @classmethod
     def load_smrff(cls, parsed_file, pfile_name=None, restrict=None):
-        """
+        '''
         Given a parameter file, inport the coulomb parameters if possible.
 
         **Parameters**
@@ -313,7 +313,7 @@ Should be either 1 or 2!" % len(params)
 
             coul_objs: *list,* :class:`squid.structures.Coul`, or *None*
                 Returns a list of Coul objects if possible, else None.
-        """
+        '''
         import squid.forcefields.smrff as smrff_utils
 
         # Ensure correct pfile format, and that we even need to parse it.
@@ -335,7 +335,7 @@ Should be either 1 or 2!" % len(params)
 
     @classmethod
     def load_opls(cls, atom_types, pfile_name=None, restrict=None):
-        """
+        '''
         Given a parameter file, import the Coulomb parameters if possible.
 
         **Parameters**
@@ -353,7 +353,7 @@ Should be either 1 or 2!" % len(params)
 
             coul_objs: *list,* :class:`squid.structures.Coul`, or *None*
                 Returns a list of Coul objects if possible, else None.
-        """
+        '''
         import squid.forcefields.opls as opls_utils
 
         # Ensure correct pfile format, and that we even need to parse it.
@@ -368,7 +368,7 @@ Should be either 1 or 2!" % len(params)
 
     @classmethod
     def generate(cls, atom_types, elems, signs):
-        """
+        '''
         Randomly generate parameters for coulomb.
 
         **Parameters**
@@ -385,7 +385,7 @@ Should be either 1 or 2!" % len(params)
 
             coul_objs: *list,* :class:`squid.structures.Coul`
                 Returns a list of Coul objects.
-        """
+        '''
         from helper import random_in_range
 
         coul_objs = []

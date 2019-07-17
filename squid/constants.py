@@ -1,4 +1,4 @@
-"""
+'''
 Constants useful for calculations
 
 ENERGY: *dict*
@@ -74,7 +74,7 @@ COLOUR = COLOR: *dict*
 
 ------------
 
-"""
+'''
 
 import math
 # Everything is converted to Joules

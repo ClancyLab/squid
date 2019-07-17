@@ -8,7 +8,7 @@ from squid.jobs.queue_manager import get_queue_manager
 
 
 def submit_job(name, job_to_submit, **kwargs):
-    """
+    '''
     Code to submit a simulation to the specified queue and queueing system.
 
     **Parameters**
@@ -23,7 +23,7 @@ def submit_job(name, job_to_submit, **kwargs):
     **Returns**
 
         None
-    """
+    '''
     queueing_system = get_queue_manager()
     queue = None
     if "queue" in kwargs:
@@ -56,7 +56,7 @@ def submit_job(name, job_to_submit, **kwargs):
 
 
 def pysub(name, **kwargs):
-    """
+    '''
     Submission of python scripts to run on your queue.
 
     **Parameters**
@@ -87,7 +87,7 @@ def pysub(name, **kwargs):
     **Returns**
 
         None
-    """
+    '''
     queueing_system = get_queue_manager()
     # Assess if we need to do mpirun or not
     params = {

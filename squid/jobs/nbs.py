@@ -9,7 +9,7 @@ from squid.utils.cast import is_numeric, is_array
 
 
 class Job(JobObject):
-    """
+    '''
     Job class to wrap simulations for queue submission.
 
     **Parameters**
@@ -22,21 +22,21 @@ class Job(JobObject):
     **Returns**
 
         This :class:`Job` object.
-    """
+    '''
     def get_all_jobs(detail=3):
         return get_job("RUNNING", detail=detail) +\
             get_job("PENDING", detail=detail)
 
 
 def get_nbs_queues():
-    """
+    '''
     Get a list of all available queues to submit a job to.
 
     **Returns**
 
         avail_queues: *list, str*
             A list of available queues by name.
-    """
+    '''
     qlist_path = which("qlist")
     p = subprocess.Popen([qlist_path], shell=False,
                          stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -62,7 +62,7 @@ def _test_jlist():
 
 
 def get_job(s_flag, detail=0):
-    """
+    '''
     Get a list of all jobs currently on your queue.  From this, only return
     the values that have s_flag in them.  The *detail* variable can be used
     to specify how much information you want returned.
@@ -93,7 +93,7 @@ def get_job(s_flag, detail=0):
                          job status,
                          queue,
                          number of processors)
-    """
+    '''
     detail = int(detail)
 
     main_detail = detail
@@ -172,7 +172,7 @@ def get_job(s_flag, detail=0):
 
 
 def submit_job(name, job_to_submit, **kwargs):
-    """
+    '''
     Code to submit a simulation to the specified queue and queueing system.
 
     **Parameters**
@@ -187,7 +187,7 @@ def submit_job(name, job_to_submit, **kwargs):
     **Returns**
 
         None
-    """
+    '''
     # Store the defaults
     params = {
         "queue": "shared",

@@ -1,11 +1,11 @@
-"""
+'''
 The vmd package automates various vmd post-processing tasks.
 
 - :func:`plot_MO_from_cube`
 
 ------------
 
-"""
+'''
 
 from subprocess import Popen
 
@@ -121,7 +121,7 @@ def plot_MO_from_cube(fptrs, wireframe=True, hide=True, iso=0.04):
         vmd_gen_cube = vmd_gen_cube.replace("$ISO$", str(iso))
 
     def _buf_replace(buf, sid, val):
-        """
+        '''
         A function to find all instances of sid in buf and replace it.
 
         **Parameters**
@@ -137,7 +137,7 @@ def plot_MO_from_cube(fptrs, wireframe=True, hide=True, iso=0.04):
 
             replaced_buf: *str*
                 A string with all instances of sid replaced by val.
-        """
+        '''
         while str(sid) in buf:
             buf = buf.replace(str(sid), str(val))
 

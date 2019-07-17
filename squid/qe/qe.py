@@ -1,4 +1,4 @@
-"""
+'''
 The Quantum Espresso module.  This works as a python wrapper of quantum
 espresso.
 
@@ -7,11 +7,11 @@ espresso.
 
 ------------
 
-"""
+'''
 
 
 def read(input_file):
-    """
+    '''
     General read in of all possible data from a Quantum Espresso output file.
 
     **Parameters**
@@ -24,7 +24,7 @@ def read(input_file):
         data: :class:`results.DFT_out`
             Generic DFT output object containing all parsed results.
 
-    """
+    '''
     raise Exception("THIS HAS NOT BEEN WRITTEN YET!")
 
 
@@ -32,7 +32,7 @@ def job(run_name, cards,
         queue=None, walltime="00:30:00", sandbox=False, procs=1,
         previous=None, mem=2000, priority=None, xhost=None,
         redundancy=False):
-    """
+    '''
     Wrapper to submitting a Quantum Espresso simulation.
 
     **Parameters**
@@ -67,5 +67,5 @@ def job(run_name, cards,
 
         job: :class:`jobs.Job`
             Teturn the job container.
-    """
+    '''
     raise Exception("THIS HAS NOT BEEN WRITTEN YET!")

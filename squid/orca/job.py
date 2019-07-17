@@ -217,7 +217,7 @@ def job(run_name, route=None, atoms=[], extra_section='', grad=False,
         redundancy=False, use_NBS_sandbox=False, unique_name=True,
         previous=None, mem=2000, priority=None, xhost=None,
         slurm_allocation=None):
-    """
+    '''
     Wrapper to submitting an Orca simulation.
 
     **Parameters**
@@ -293,7 +293,7 @@ def job(run_name, route=None, atoms=[], extra_section='', grad=False,
 
         job: :class:`jobs.Job`
             Teturn the job container.
-    """
+    '''
     assert any([route is not None, previous is not None]),\
         "Error - You must specify ate least one: route, previous."
 

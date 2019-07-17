@@ -3,7 +3,7 @@ from squid.utils import units
 
 
 def get_center_of_geometry(atoms, skip_H=False):
-    """
+    '''
     Calculate the center of geometry of the molecule.
 
     **Parameters**
@@ -19,7 +19,7 @@ def get_center_of_geometry(atoms, skip_H=False):
         cog: *np.array, float*
             A np.array of the x, y, and z coordinate
             of the center of geometry.
-    """
+    '''
     if len(atoms) == 0:
         return [0.0, 0.0, 0.0]
 
@@ -31,7 +31,7 @@ def get_center_of_geometry(atoms, skip_H=False):
 
 
 def get_center_of_mass(atoms, skip_H=False):
-    """
+    '''
     Calculate the center of mass of the molecule.
 
     **Parameters**
@@ -46,7 +46,7 @@ def get_center_of_mass(atoms, skip_H=False):
 
         com: *np.array, float*
             A np.array of the x, y, and z coordinate of the center of mass.
-    """
+    '''
     if len(atoms) == 0:
         return (0.0, 0.0, 0.0)
 
@@ -66,7 +66,7 @@ def get_center_of_mass(atoms, skip_H=False):
 
 
 def rotate_atoms(atoms, m, around="com"):
-    """
+    '''
     Rotate atoms by the given matrix *m*.  Note, this happens in place.  That
     means that the atoms in the input list will themselves be rotated.  This
     is done so that we may rotate molecules and systems using the same code!
@@ -88,7 +88,7 @@ def rotate_atoms(atoms, m, around="com"):
 
         atoms: *list,* :class:`structures.atom.Atom`
             The rotated atomic coordinates.
-    """
+    '''
     if around is None or around.strip().lower() is "none":
         center = None
     elif around.strip().lower() == "com":

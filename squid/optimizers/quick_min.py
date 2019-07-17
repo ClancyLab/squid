@@ -11,7 +11,7 @@ def quick_min(params,
               gradient,
               NEB_obj=None,
               new_opt_params={}):
-    """
+    '''
     A quick min optimizer, overloaded for NEB use.
     Note, this will ONLY work for use within the NEB code.
 
@@ -59,7 +59,7 @@ def quick_min(params,
             identified in the constants file.
         iters: *int*
             The number of iterations the optimizer ran for.
-    """
+    '''
 
     # Here we adjust parameters accordingly ----------------------------------
     dt = 0.001
@@ -105,11 +105,11 @@ def quick_min(params,
     callback = opt_params['callback']
 
     def _vproj(v1, v2):
-        """
+        '''
         Returns the projection of v1 onto v2
         Parameters:
             v1, v2: np vectors
-        """
+        '''
         mag2 = np.linalg.norm(v2)**2
         if mag2 == 0:
             print("Can't project onto a zero vector")

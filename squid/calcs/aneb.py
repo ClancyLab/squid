@@ -1,4 +1,4 @@
-"""
+'''
 The Auto ANEB module simplifies the submission of Auto Nudged Elastic Band simulations.
 
 NOTE! This module is still in a very rough beta.  It has been hacked together from the
@@ -48,7 +48,7 @@ The following code has been tested out to some moderate success for now:
 
 ------------
 
-"""
+'''
 # System imports
 import sys
 from scipy.linalg import block_diag
@@ -177,7 +177,7 @@ def g09_start_job(ANEB,
                   extra_section,
                   mem,
                   priority):
-    """
+    '''
     A method for submitting a single point calculation using Gaussian09 for
     ANEB calculations.
 
@@ -213,7 +213,7 @@ def g09_start_job(ANEB,
 
         g09_job: :class:`jobs.Job`
             A job container holding the g09 simulation.
-    """
+    '''
     ANEB.calls_to_force += 1
     if ANEB.step > 0:
         guess = ' Guess=Read'
@@ -242,7 +242,7 @@ def g09_start_job(ANEB,
 
 
 def g09_results(ANEB, step_to_use, i, state):
-    """
+    '''
     A method for reading in the output of Gaussian09 single point calculations
     for ANEB calculations. This will both (a) assign forces to the atoms stored
     in state and (b) return the energy and atoms.
@@ -267,7 +267,7 @@ def g09_results(ANEB, step_to_use, i, state):
         new_atoms: *list,* :class:`structures.Atom`
             A list of atoms with the forces attached in units of Hartree per
             Angstrom (Ha/Ang).
-    """
+    '''
     result = g09.parse_atoms('%s-%d-%d' % (ANEB.name, step_to_use, i),
                              check_convergence=False,
                              parse_all=False)
@@ -309,7 +309,7 @@ def orca_start_job(ANEB,
                    extra_section,
                    mem,
                    priority):
-    """
+    '''
     A method for submitting a single point calculation using Orca for ANEB
     calculations.
 
@@ -344,7 +344,7 @@ def orca_start_job(ANEB,
 
         orca_job: :class:`jobs.Job`
             A job container holding the orca simulation.
-    """
+    '''
     ANEB.calls_to_force += 1
     return orca.job('%s-%d-%d' % (ANEB.name, ANEB.step, i),
                     ANEB.theory,
@@ -360,7 +360,7 @@ def orca_start_job(ANEB,
 
 
 def orca_results(ANEB, step_to_use, i, state):
-    """
+    '''
     A method for reading in the output of Orca single point calculations for
     ANEB calculations. This will both (a) assign forces to the atoms stored
     in state and (b) return the energy and atoms.
@@ -385,7 +385,7 @@ def orca_results(ANEB, step_to_use, i, state):
         new_atoms: *list,* :class:`structures.Atom`
             A list of atoms with the forces attached in units of Hartree per
             Angstrom (Ha/Ang).
-    """
+    '''
     read_data = orca.engrad_read('%s-%d-%d' % (ANEB.name, step_to_use, i),
                                  force='Ha/Ang',
                                  pos='Ang')
@@ -399,7 +399,7 @@ def orca_results(ANEB, step_to_use, i, state):
 
 # Class to contain working variables
 class ANEB:
-    """
+    '''
     A method for determining the minimum energy pathway of a reaction using
     DFT. Note, this method was written for atomic orbital DFT codes; however,
     is potentially generalizable to other programs.
@@ -497,7 +497,7 @@ class ANEB:
         * Atomic Simulation Environment - https://wiki.fysik.dtu.dk/ase/
         * Kolsbjerg, E. L.; Groves, M. N.; Hammer, B. The Journal of 
           Chemical Physics 2016, 145.
-    """
+    '''
     error, gradient = None, None
 
     def __init__(self,

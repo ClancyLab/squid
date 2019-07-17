@@ -1,4 +1,4 @@
-"""
+'''
 The Rate Calculation module takes themochemistry information from an Orca 
 single point calculation and calculates the exponential pre-factor of the 
 Arrhenius equation at a specified temperature. The algorithm uses Transition
@@ -13,7 +13,7 @@ kinetics.
 
 ------------
 
-"""
+'''
 
 # System imports
 import sys
@@ -23,7 +23,7 @@ from squid import constants
 
 
 def translation(molecule, T):
-    """
+    '''
     Calculates the translational partition function for a reactant.
 
     **Parameters**
@@ -36,7 +36,7 @@ def translation(molecule, T):
 
         qtrans: *float*
             The partition function for translation of a reactant.
-    """
+    '''
 
     # Constants
     k_b = constants.K_b  # m^2kg/s^2K
@@ -62,7 +62,7 @@ def translation(molecule, T):
 
 
 def vibration(molecule, T):
-    """
+    '''
     Calculates the vibrational partition function for a reactant.
 
     **Parameters**
@@ -75,7 +75,7 @@ def vibration(molecule, T):
 
         qvib: *float*
             The partition function for vibration of a reactant.
-    """
+    '''
 
     raise Exception("Error - Forgot to define c in this code. What is it?")
 
@@ -115,7 +115,7 @@ def vibration(molecule, T):
 
 
 def rotation(molecule):
-    """
+    '''
     Calculates the rotational partition function for a reactant.
 
     **Parameters**
@@ -128,7 +128,7 @@ def rotation(molecule):
 
         qrot: *float*
             The partition function for rotation of a reactant.
-    """
+    '''
 
     lines = []
     qrot = 0
@@ -156,7 +156,7 @@ def rotation(molecule):
 
 
 def activation_energy(molecule):
-    """
+    '''
     Extracts the final energy of a reactant from an Orca output file.
 
     **Parameters**
@@ -169,7 +169,7 @@ def activation_energy(molecule):
 
         E_tmp: *float*
             The energy of the optimized reactant.
-    """
+    '''
 
     lines = []
     E_tmp = 0
@@ -189,10 +189,10 @@ def activation_energy(molecule):
 
 
 def get_rate():
-    """
+    '''
     Calculate the pre-exponential factor of the Arrenhius equation
     for a reaction, using Transition State Theory (TST)
-    """
+    '''
 
     elems = [x['sym'] for x in constants.PERIODIC_TABLE[1:]]
     mw = [x['weight'] for x in constants.PERIODIC_TABLE[1:]]

@@ -1,4 +1,4 @@
-"""
+'''
 The visualization module automates some visualization procedures for
 post processing data.
 
@@ -16,7 +16,7 @@ An example of using this is as follows:
 
 ------------
 
-"""
+'''
 import os
 import files
 
@@ -31,7 +31,7 @@ def ovito_xyz_to_image(
         renderer="OpenGLRenderer",
         display_cell=False,
         renderer_settings={}):
-    """
+    '''
     This function will, using the ovito python api, generate a png image of an
     xyz file.
 
@@ -61,7 +61,7 @@ def ovito_xyz_to_image(
     **Returns**
 
         None
-    """
+    '''
 
     ovitos_path = which("ovitos")
     assert ovitos_path is not None,\
@@ -152,7 +152,7 @@ def ovito_xyz_to_gif(
         renderer="OpenGLRenderer",
         renderer_settings={},
         overwrite=False):
-    """
+    '''
     This function will, using the ovito python api, generate either a single
     image or a gif of the input frames.  Note, a gif is only generated when
     more than one frame exists.
@@ -186,7 +186,7 @@ def ovito_xyz_to_gif(
     **Returns**
 
         None
-    """
+    '''
 
     convert_path = which("convert")
     assert convert_path is not None,\

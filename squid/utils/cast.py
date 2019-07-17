@@ -2,7 +2,7 @@ import itertools
 
 
 def is_numeric(x):
-    """
+    '''
     A simple function to test if x can be cast to a float.
 
     **Parameters**
@@ -14,7 +14,7 @@ def is_numeric(x):
 
         valid: *bool*
             Whether the object is numeric or not.
-    """
+    '''
     try:
         float(x)
         return True
@@ -23,7 +23,7 @@ def is_numeric(x):
 
 
 def is_array(v):
-    """
+    '''
     Simply check if v is array like
 
     **Parameters**
@@ -35,12 +35,12 @@ def is_array(v):
 
         valid: *bool*
             Whether the object is array like or not.
-    """
+    '''
     return hasattr(v, "__len__")
 
 
 def check_vec(v, length=3, numeric=True):
-    """
+    '''
     Given what should be a vector of N values, we check that they
     are indeed valid.
 
@@ -57,7 +57,7 @@ def check_vec(v, length=3, numeric=True):
 
         valid: *bool*
             Whether the array follows the specifications defined or not.
-    """
+    '''
     if not hasattr(v, "__len__"):
         return False
     if length is not None and len(v) != length:
@@ -68,7 +68,7 @@ def check_vec(v, length=3, numeric=True):
 
 
 def assert_vec(v, length=3, numeric=True):
-    """
+    '''
     Given what should be a vector of N values, we assert that they
     are indeed valid.
 
@@ -84,16 +84,16 @@ def assert_vec(v, length=3, numeric=True):
     **Returns**
 
         None
-    """
+    '''
     assert check_vec(v, length=length, numeric=numeric),\
         "Error - Invalid vector."
 
 
 def _u_assert_vec():
-    """
+    '''
     Run a unit test on assert_3d_vec.  Ensure that common things that should
     fail, fail (ie - pass an assertion), and those that should pass, pass.
-    """
+    '''
     check_these_out = [
         (1, 2, "3234"),
         (1, 2, 3, 4, 5),

@@ -271,7 +271,7 @@ line to be parsed, but not both.")
                 )
 
     def dump_line(self):
-        """
+        '''
         This function will output the pair_coeff line for tersoff in LAMMPS.
         Note - This line output only exists if SMRFF is installed.
 
@@ -279,7 +279,7 @@ line to be parsed, but not both.")
 
             line: *str*
                 A pair_coeff line output in tersoff.
-        """
+        '''
         return "pair_coeff * * tersoff " + self._printer(with_indices=True, bounds=None).replace("\n\t\t", " ").strip()
 
     def print_lower(self):
@@ -612,7 +612,7 @@ positive such that R >= D!" % (str(self.indices), self.R, self.D)
 
     @staticmethod
     def parse_line(line):
-        """
+        '''
         Parse line inputs.
 
         **Parameters**
@@ -652,7 +652,7 @@ positive such that R >= D!" % (str(self.indices), self.R, self.D)
                 Tersoff Parameter.
             A: *float*
                 Tersoff Parameter.
-        """
+        '''
         line = line.strip().split()
         indices = (line[0], line[1], line[2])
         m = float(line[3])
@@ -674,7 +674,7 @@ positive such that R >= D!" % (str(self.indices), self.R, self.D)
             n, beta, lambda2, B, R, D, lambda1, A
 
     def assign_line(self, line, validate=True):
-        """
+        '''
         Parse line inputs and assign to this object.
 
         **Parameters**
@@ -685,7 +685,7 @@ positive such that R >= D!" % (str(self.indices), self.R, self.D)
         **Returns**
 
             None
-        """
+        '''
         (self.indices, self.m, self.gamma, self.lambda3, self.c, self.d,
          self.costheta0, self.n, self.beta, self.lambda2, self.B, self.R,
          self.D, self.lambda1, self.A) = self.parse_line(line)

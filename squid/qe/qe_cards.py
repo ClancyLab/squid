@@ -1,4 +1,4 @@
-"""
+'''
 The Quantum Espresso card module.  This works as a python wrapper of
 cards used within quantum espresso.
 
@@ -11,11 +11,11 @@ cards used within quantum espresso.
 
 ------------
 
-"""
+'''
 
 
 class QeControl:
-    """
+    '''
     The control card.  This is where the simulation type and background
     details are contained.
 
@@ -109,7 +109,7 @@ class QeControl:
             In the instance of having a counter charge, setting monopole to
             True allows the user to define a charged plate instead of the
             default homogenous background charge.
-    """
+    '''
 
     def __init__(self, calculation="scf", title="", verbosity="low",
                  restart_mode="from_scratch", wf_collect=False, nstep=None,
@@ -118,10 +118,10 @@ class QeControl:
 
 
 class QeAtomicCoords:
-    """
+    '''
     This card combines the ATOMIC_SPECIES, ATOMIC_POSITIONS, and K_POINTS
     cards.
-    """
+    '''
 
     def __init__(self):
         raise Exception("THIS HAS NOT BEEN WRITTEN YET!")

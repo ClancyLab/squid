@@ -246,7 +246,7 @@ larger than 0! It is %f" % (self.index, self.epsilon)
 
     @staticmethod
     def parse_line(line):
-        """
+        '''
         Parse line inputs.
 
         **Parameters**
@@ -262,7 +262,7 @@ larger than 0! It is %f" % (self.index, self.epsilon)
                 The position where the potential well equals 0.
             epsilon: *float*
                 The depth of the well.
-        """
+        '''
         line = line.strip().split()
         index = line[0]
         sigma = float(line[1])
@@ -270,7 +270,7 @@ larger than 0! It is %f" % (self.index, self.epsilon)
         return index, sigma, epsilon
 
     def assign_line(self, line):
-        """
+        '''
         Parse line inputs and assign to this object.
 
         **Parameters**
@@ -281,12 +281,12 @@ larger than 0! It is %f" % (self.index, self.epsilon)
         **Returns**
 
             None
-        """
+        '''
         self.index, self.sigma, self.epsilon = self.parse_line(line)
         self.validate()
 
     def fix(self, params='all', value=None):
-        """
+        '''
         This will fix these parameters by assigning bounds to the
         values themselves.
 
@@ -303,7 +303,7 @@ larger than 0! It is %f" % (self.index, self.epsilon)
         **Returns**
 
             None
-        """
+        '''
         if params == 'all':
             if value is not None:
                 assert isinstance(value, list) or isinstance(value, tuple),\

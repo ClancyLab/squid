@@ -83,7 +83,7 @@ def job(run_name, input_script, system=None,
         params=None,
         unique_name=True,
         slurm_allocation=None):
-    """
+    '''
     Wrapper to submitting a LAMMPs simulation.
 
     **Parameters**
@@ -146,7 +146,7 @@ def job(run_name, input_script, system=None,
         job: :class:`jobs.Job`
             If running locally, return the process handle, else return the
             job container.
-    """
+    '''
     if len(run_name) > 31 and queue is not None:
         raise Exception("Job name too long (%d) for NBS. Max character \
 length is 31." % len(run_name))

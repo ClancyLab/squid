@@ -4,7 +4,7 @@ import pyDOE.doe_lhs as lhs
 
 
 def create_lhs(N_points, N_samples, sample_bounds, params=None):
-    """
+    '''
     Generate a latin hypercube sample for an n dimensional space specified by
     the sample_bounds keyword.  An example is to call create_lhs to sample the
     lennard jones parameter space:
@@ -46,7 +46,7 @@ def create_lhs(N_points, N_samples, sample_bounds, params=None):
             A list of lists, each holding a 1D array of points chosen from the
             LHC method.  Note, if params was specified then instead a list of
             dictionaries is returned.
-    """
+    '''
 
     # Generate our sample list.  lhs_points is a list of N_samples, each
     # being a tuple of N_points.  Note, lhs returns in the range of 0 to 1.

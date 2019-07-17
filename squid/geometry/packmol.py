@@ -23,7 +23,7 @@ def packmol(system_obj, molecules, molecule_ratio=(1,),
             density=1.0, seed=1, persist=True, number=None,
             additional="", custom=None, extra_block_at_end='',
             extra_block_at_beginning='', tolerance=2.0):
-    """
+    '''
     Given a list of molecules, pack this system appropriately.  Note,
     we now will pack around what is already within the system!  This is
     done by first generating a packmol block for the system at hand,
@@ -76,7 +76,7 @@ def packmol(system_obj, molecules, molecule_ratio=(1,),
 
         * Packmol - http://www.ime.unicamp.br/~martinez/packmol/home.shtml
 
-    """
+    '''
     if not os.path.exists('sys_packmol'):
         os.mkdir('sys_packmol')
     os.chdir('sys_packmol')

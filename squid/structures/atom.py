@@ -1,11 +1,11 @@
-"""
+'''
 The atom object holds atomic information in and transformations.
 
 - :class:`Atom`
 
 ------------
 
-"""
+'''
 
 __docformat__ = 'reStructuredText'
 
@@ -16,7 +16,7 @@ import numpy as np
 
 
 class Atom(object):
-    """
+    '''
     A structure to hold atom information.
 
     **Parameters**
@@ -42,7 +42,7 @@ class Atom(object):
 
         atom: :class:`structures.Atom`
             The Atom class container.
-    """
+    '''
 
     def __init__(self, element, x, y, z,
                  index=None, molecule_index=1, label=None,
@@ -94,11 +94,11 @@ class Atom(object):
         return self.__truediv__(other)
 
     def __eq__(self, other):
-        """
+        '''
         We check atom equivalence by saying all propertiess are the same.
         This is because it makes no sense to have two identical atoms exist
         in a simulation.
-        """
+        '''
         return all([
             self.element == other.element,
             self.x == other.x,
@@ -114,18 +114,18 @@ class Atom(object):
         ])
 
     def __hash__(self):
-        """
+        '''
         To generate a hash (for sets), we follow the same idea as __eq__.
         That is, the hash is based on all the properties of the atom.
-        """
+        '''
         return hash(
             (self.element, self.x, self.y, self.z,
              self.index, self.molecule_index, self.label))
 
     def _cleanup(self):
-        """
+        '''
         Ensure all data types are correctly assigned.
-        """
+        '''
         if self.element is not None:
             self.element = str(self.element)
         if self.x is not None:
@@ -150,7 +150,7 @@ class Atom(object):
             self.charge = float(self.charge)
 
     def translate(self, v):
-        """
+        '''
         Translate the atom by a vector.
 
         **Parameters**
@@ -162,14 +162,14 @@ class Atom(object):
         **Returns**
 
             None
-        """
+        '''
         cast.assert_vec(v, length=3, numeric=True)
         self.x += float(v[0])
         self.y += float(v[1])
         self.z += float(v[2])
 
     def scale(self, v):
-        """
+        '''
         Scale the atom by a vector.  This can be useful if we want to
         change coordinate systems.
 
@@ -182,25 +182,25 @@ class Atom(object):
         **Returns**
 
             None
-        """
+        '''
         cast.assert_vec(v, length=3, numeric=True)
         self.x *= float(v[0])
         self.y *= float(v[1])
         self.z *= float(v[2])
 
     def flatten(self):
-        """
+        '''
         Obtain simplified position output.
 
         **Returns**
 
             pos: *np.array, float*
                 A numpy array holding the x, y, and z position of this atom.
-        """
+        '''
         return np.array([self.x, self.y, self.z])
 
     def unravel(self):
-        """
+        '''
         Like flatten; however, this method will unravel all properties of
         the atom into a tuple.
 
@@ -210,7 +210,7 @@ class Atom(object):
                 Return all atom properties as they are, in the following
                 order:
                     element, x, y, z, index, molecule_index, label, charge
-        """
+        '''
         return (
             self.element,
             self.x, self.y, self.z,
@@ -218,7 +218,7 @@ class Atom(object):
         )
 
     def set_position(self, pos):
-        """
+        '''
         Manually set the atomic positions by passing a tuple/list.
 
         **Parameters**
@@ -229,7 +229,7 @@ class Atom(object):
         **Returns**
 
             None
-        """
+        '''
         cast.assert_vec(pos, length=3, numeric=True)
         self.x = pos[0]
         self.y = pos[1]
@@ -239,7 +239,7 @@ class Atom(object):
         return Atom(*self.unravel())
 
     def get_id_tag(self):
-        """
+        '''
         Return the id tag of this atom.  This is defined as:
 
             molecule_index:index
@@ -251,7 +251,7 @@ class Atom(object):
             None:None
 
         Are all possible.
-        """
+        '''
         return "%s:%s" % (str(self.molecule_index), str(self.index))
 
 
@@ -278,9 +278,9 @@ def run_unit_tests():
     a4ha = a4 / scalar
     a4hb = Atom("I", *(coords / scalar))
 
-    a4_str = """molecule_index: 1 and index: None
+    a4_str = '''molecule_index: 1 and index: None
     x, y, z = (-1.200, 1.200, 3.100)
-    element = I and label = None and charge = None"""
+    element = I and label = None and charge = None'''
 
     coords = np.random.random(3)
     a5 = Atom("Br", *coords)

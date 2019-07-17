@@ -5,7 +5,7 @@ from scipy.linalg.decomp_svd import svd
 
 
 def motion_per_frame(frames):
-    """
+    '''
     Determine the root mean squared difference between atomic positions
     of adjacent frames.  Note, as we have differences between frames, this
     means that we return len(frames) - 1 values.
@@ -20,7 +20,7 @@ def motion_per_frame(frames):
         motion: *np.array, float*
             List of motion between consecutive frames (frame_i vs
             frame_(i - 1)).
-    """
+    '''
     per_state_avg = [0.0 for s in frames[1:]]
     for atom_list in zip(*frames):
         for i in range(1, len(atom_list)):
@@ -34,7 +34,7 @@ def motion_per_frame(frames):
 
 
 def rotation_matrix(axis, theta, units="deg"):
-    """
+    '''
     Obtain a left multiplication rotation matrix, given the axis and angle you
     wish to rotate by. By default it assumes units of degrees.  If theta is in
     radians, set units to rad.
@@ -56,7 +56,7 @@ def rotation_matrix(axis, theta, units="deg"):
     **References**
 
         * http://stackoverflow.com/questions/6802577/python-rotation-of-3d-vector/25709323#25709323
-    """
+    '''
     cast.assert_vec(axis, length=3, numeric=True)
     axis = np.array(axis)
     assert cast.is_numeric(theta),\
@@ -72,7 +72,7 @@ def rotation_matrix(axis, theta, units="deg"):
 
 def random_rotation_matrix(limit_angle=None, lower_bound=0.1,
                            MAXITER=1000000):
-    """
+    '''
     Generate a random rotation matrix.
 
     **Parameters**
@@ -96,7 +96,7 @@ def random_rotation_matrix(limit_angle=None, lower_bound=0.1,
     **References**
 
         * http://tog.acm.org/resources/GraphicsGems/, Ed III
-    """
+    '''
     if limit_angle is not None and limit_angle < lower_bound:
         return np.eye(3).tolist()
 
@@ -153,7 +153,7 @@ Unable to find a matrix within %d loops." % MAXITER)
 
 
 def orthogonal_procrustes(A, ref_matrix, reflection=False):
-    """
+    '''
     Using the orthogonal procrustes method, we find the unitary matrix R with
     det(R) > 0 such that ||A*R - ref_matrix||^2 is minimized.  This varies
     from that within scipy by the addition of the reflection term, allowing
@@ -221,7 +221,7 @@ def orthogonal_procrustes(A, ref_matrix, reflection=False):
           _procrustes.py#L14
         * http://compgroups.net/comp.soft-sys.matlab/procrustes-analysis
           -without-reflection/896635
-    """
+    '''
 
     assert hasattr(A, "__len__") and hasattr(ref_matrix, "__len__"),\
         "Error - A and ref_matrix must be lists of atomic coordinates!"
@@ -255,7 +255,7 @@ def orthogonal_procrustes(A, ref_matrix, reflection=False):
 
 
 def mvee(points, tol=0.001):
-    """
+    '''
     Generate a Minimum Volume Enclosing Ellipsoid (MVEE) around atomic species.
     The ellipsoid is calculated for the "center form": (x-c).T * A * (x-c) = 1
 
@@ -291,7 +291,7 @@ def mvee(points, tol=0.001):
 
         * https://www.mathworks.com/matlabcentral/fileexchange/9542-minimum-volume-enclosing-ellipsoid?requestedDomain=www.mathworks.com
         * http://stackoverflow.com/questions/14016898/port-matlab-bounding-ellipsoid-code-to-python/14025140#14025140
-    """
+    '''
 
     points = np.asmatrix(np.array([
         a.flatten() for a in points

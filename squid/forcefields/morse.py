@@ -309,7 +309,7 @@ Should be either 3, 4, or 5!" % len(params)
 
     @staticmethod
     def parse_line(line):
-        """
+        '''
         Parse line inputs.
 
         **Parameters**
@@ -329,7 +329,7 @@ Should be either 3, 4, or 5!" % len(params)
                 The interatomic distance associated with the minimum.
             rc: *float*
                 The cutoff of the potential.
-        """
+        '''
         line = line.strip().split()
         assert len(line) in [5, 6],\
             "Error - Invalid line to parse!"
@@ -345,7 +345,7 @@ Should be either 3, 4, or 5!" % len(params)
         return indices, D0, alpha, r0, rc
 
     def assign_line(self, line):
-        """
+        '''
         Parse line inputs and assign to this object.
 
         **Parameters**
@@ -356,13 +356,13 @@ Should be either 3, 4, or 5!" % len(params)
         **Returns**
 
             None
-        """
+        '''
         self.indices, self.D0, self.alpha, self.r0, self.rc =\
             self.parse_line(line)
         self.validate()
 
     def fix(self, params='all', value=None):
-        """
+        '''
         This will fix these parameters by assigning bounds to the
         values themselves.
 
@@ -379,7 +379,7 @@ Should be either 3, 4, or 5!" % len(params)
         **Returns**
 
             None
-        """
+        '''
         if params == 'all':
             if value is not None:
                 assert isinstance(value, list) or isinstance(value, tuple),\

@@ -44,7 +44,7 @@ OPLS_FILE = "/".join(os.path.realpath(__file__).split("/")[:-1]) +\
 
 
 class Parameters(object):
-    """
+    '''
     A Parameters object that holds force field parameters.  It requires the
     input of which atom types to get parameters for, so as to not read in an
     entire force field.
@@ -91,7 +91,7 @@ class Parameters(object):
 
         params: :class:`Parameters`
             This object.
-    """
+    '''
 
     def __init__(self, restrict, opls_file=OPLS_FILE, smrff_file=None):
         #####################################
@@ -1193,7 +1193,7 @@ def run_unit_tests():
         smrff_file=TEST_SMRFF_FILE
     )
     params.set_all_masks(True)
-    params_s = """
+    params_s = '''
 COULOMB
 82 -0.06 C 12.0110
 86 0.00 C 12.0110
@@ -1273,7 +1273,7 @@ c0  0   1   xA  xB  2.5 0.5 3.0 4.5 0.5 5.0 6.5 0.5 7.0
 c1  0   1   xA  xB  2.5 0.5 3.0 4.5 0.5 5.0
 c2  0   1   xA  xB  2.5 0.5 3.0 4.5 0.5 5.0
 END
-""".strip().split()
+'''.strip().split()
     params_s_chk = str(params).strip().split()
     assert all([a == b for a, b in zip(params_s, params_s_chk)]),\
         "Error - String format output of Parameters has changed."

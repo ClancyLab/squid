@@ -6,7 +6,7 @@ from squid.structures.atom import Atom
 
 
 def get_angle(a, center=None, b=None, deg=True):
-    """
+    '''
     Determine the angle between three atoms.  In this case, determine the angle
     a-center-b.
 
@@ -25,7 +25,7 @@ def get_angle(a, center=None, b=None, deg=True):
 
         theta: *float*
             Return the angle, default is degrees.
-    """
+    '''
     # Error handling
     assert any([
         all([
@@ -62,7 +62,7 @@ def get_angle(a, center=None, b=None, deg=True):
 
 
 def get_dihedral_angle(a, b=None, c=None, d=None, deg=True):
-    """
+    '''
     Use the Praxeolitic formula to determine the dihedral angle between
     4 atoms.
 
@@ -87,7 +87,7 @@ def get_dihedral_angle(a, b=None, c=None, d=None, deg=True):
     **References**
 
         * http://stackoverflow.com/a/34245697
-    """
+    '''
     # Error handling
     assert any([
         all([
@@ -137,7 +137,7 @@ def get_dihedral_angle(a, b=None, c=None, d=None, deg=True):
 
 
 class Connector(object):
-    """
+    '''
     The Connector class works to hold connection information between atoms.
     This is used primarily for bonds, angles, and dihedrals.  A corresponding
     length and angle can also be held in the object (defaults to None).
@@ -156,7 +156,7 @@ class Connector(object):
 
         connection: :class:`structures.topology.Connector`
             This connector object.
-    """
+    '''
 
     def __init__(self, atoms, length=None, angle=None):
         assert any([
@@ -178,11 +178,11 @@ class Connector(object):
         ]), str(self.length), str(self.angle))
 
     def __eq__(self, other):
-        """
+        '''
         We check atom equivalence by saying all propertiess are the same.
         This is because it makes no sense to have two identical atoms exist
         in a simulation.
-        """
+        '''
         return all([
             all([a == b for a, b in zip(self.atoms, other.atoms)]),
             self.length == other.length,
@@ -190,10 +190,10 @@ class Connector(object):
         ])
 
     def __hash__(self):
-        """
+        '''
         To generate a hash (for sets), we follow the same idea as __eq__.
         That is, the hash is based on all the properties of the atom.
-        """
+        '''
         return hash(
             tuple(
                 list(map(hash, self.atoms)) + [self.length, self.angle]

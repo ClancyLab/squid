@@ -1,4 +1,4 @@
-"""
+'''
 Python hooks for the debyer code.
 Link: https://debyer.readthedocs.io/en/latest/
 
@@ -6,7 +6,7 @@ Link: https://debyer.readthedocs.io/en/latest/
 
 ------------
 
-"""
+'''
 
 import os
 import random
@@ -17,7 +17,7 @@ from squid.files.xyz_io import write_xyz
 
 def get_pdf(frames, start=0.0, stop=5.0, step=0.1, cutoff=10.0,
             rho=1.0, quanta=0.001, output=None, persist=False):
-    """
+    '''
     Obtain the pair distribution function of a list of atoms using
     the Debyer code.
 
@@ -55,7 +55,7 @@ def get_pdf(frames, start=0.0, stop=5.0, step=0.1, cutoff=10.0,
     **References**
 
         * https://debyer.readthedocs.io/en/latest/
-    """
+    '''
 
     debyer_path = which("debyer")
     assert debyer_path is not None,\

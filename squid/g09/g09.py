@@ -1,4 +1,4 @@
-"""
+'''
 The g09 module contains python functions for interfacing with the Gaussian09
 DFT software package. NOTE! Due to implementation restrictions this code will
 only work on the ICSE cluster.  Primarily the g09 job submission command is
@@ -10,7 +10,7 @@ specific to the ICSE system.
 
 ------------
 
-"""
+'''
 # System imports
 import os
 import sys
@@ -79,7 +79,7 @@ def job(run_name,
         neb=[False, None, None, None],
         err=False,
         mem=25):
-    """
+    '''
     Wrapper to submitting an Gaussian09 simulation.
 
     **Parameters**
@@ -123,7 +123,7 @@ def job(run_name,
         job: *subprocess.Popen or* :class:`jobs.Job`
             If running locally, return the process handle, else return
             the job container.
-    """
+    '''
 
     # Header for the input file
     head = '#' +\
@@ -743,7 +743,7 @@ print('Binding Energy = '+str(sp_corr + geom_corr)+' '+s_units)'''
 
 
 def read(input_file):
-    """
+    '''
     General read in of all possible data from an Gaussian09 output file (.log).
 
     **Parameters**
@@ -755,7 +755,7 @@ def read(input_file):
 
         data: :class:`results.DFT_out`
             Generic DFT output object containing all parsed results.
-    """
+    '''
     data = results.DFT_out(input_file, 'g09')
 
     data.frames = parse_atoms(input_file,

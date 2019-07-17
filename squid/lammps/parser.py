@@ -1,4 +1,4 @@
-"""
+'''
 The LMP_Parser code is code from the pizza.py toolkit
 (www.cs.sandia.gov/~sjplimp/pizza.html) developed by Steve Plimpton
 (sjplimp@sandia.gov) with some additional warning interspersed through
@@ -8,7 +8,7 @@ the thermo output.
 
 ------------
 
-"""
+'''
 # Pizza.py toolkit, www.cs.sandia.gov/~sjplimp/pizza.html
 # Steve Plimpton, sjplimp@sandia.gov, Sandia National Laboratories
 #
@@ -25,7 +25,7 @@ from os import popen
 
 oneline = "Read LAMMPS log files and extract thermodynamic data"
 
-docstr = """
+docstr = '''
 l = log("file1")                     read in one or more log files
 l = log("log1 log2.gz")              can be gzipped
 l = log("file*")                     wildcard expands to multiple files
@@ -47,7 +47,7 @@ l.write("file.txt")          write all vectors to a file
 l.write("file.txt","Time","PE",...)  write listed vectors to a file
 
     get and write allow abbreviated (uniquely) vector names
-"""
+'''
 
 # History
 #   8/05, Steve Plimpton (SNL): original version
@@ -75,7 +75,7 @@ except NameError:
 
 # Class definition
 class LMP_Parser(object):
-    """
+    '''
     Class object to assist in parsing lammps outputs.
 
     **Parameters**
@@ -115,7 +115,7 @@ class LMP_Parser(object):
     **Returns**
 
         This :class:`LMP_Parser` object.
-    """
+    '''
     # --------------------------------------------------------------------
 
     def __init__(self, *list):
@@ -146,13 +146,13 @@ class LMP_Parser(object):
 
     # --------------------------------------------------------------------
     # read all thermo from all files
-    """
+    '''
     Read all the thermo data from all the files.
 
     **Returns**
 
         None.
-    """
+    '''
 
     def read_all(self):
         self.read_header(self.flist[0])
@@ -170,7 +170,7 @@ class LMP_Parser(object):
 
     # --------------------------------------------------------------------
     def next(self):
-        """
+        '''
         Read the next line of thermo information from the file.
         Note, this is used when two arguments are passed during initialization.
 
@@ -178,7 +178,7 @@ class LMP_Parser(object):
 
             timestep: *int*
                 The timestep of the parsed thermo output.
-        """
+        '''
         if not self.increment:
             raise Exception("cannot read incrementally")
 
@@ -198,7 +198,7 @@ class LMP_Parser(object):
 
     # --------------------------------------------------------------------
     def get(self, *keys):
-        """
+        '''
         Read specific values from thermo output.
 
         **Parameters**
@@ -211,7 +211,7 @@ class LMP_Parser(object):
 
             vecs: *list*
                 Desired outputs.
-        """
+        '''
         if len(keys) == 0:
             raise Exception("no log vectors specified")
 
@@ -243,7 +243,7 @@ class LMP_Parser(object):
 
     # --------------------------------------------------------------------
     def write(self, filename, *keys):
-        """
+        '''
         Write parsed vectors to a file.
 
         **Parameters**
@@ -258,7 +258,7 @@ class LMP_Parser(object):
         **Returns**
 
             None
-        """
+        '''
         if len(keys):
             map = []
             for key in keys:

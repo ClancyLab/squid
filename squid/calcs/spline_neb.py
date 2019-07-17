@@ -1,4 +1,4 @@
-"""
+'''
 The spline_NEB module simplifies the submission of Nudged Elastic Band based,
 curve smoothing simulations.
 
@@ -10,7 +10,7 @@ curve smoothing simulations.
 
 ------------
 
-"""
+'''
 # System imports
 import sys
 from scipy.linalg import block_diag
@@ -55,7 +55,7 @@ def g09_start_job(spline_NEB,
                   initial_guess,
                   extra_section,
                   mem):
-    """
+    '''
     A method for submitting a single point calculation using Gaussian09 for
     spline_NEB calculations.
 
@@ -88,7 +88,7 @@ def g09_start_job(spline_NEB,
 
         g09_job: :class:`jobs.Job`
             A job container holding the g09 simulation.
-    """
+    '''
     if spline_NEB.step > 0:
         guess = ' Guess=Read'
     else:
@@ -116,7 +116,7 @@ def g09_start_job(spline_NEB,
 
 
 def g09_results(spline_NEB, step_to_use, i, state):
-    """
+    '''
     A method for reading in the output of Gaussian09 single point calculations
     for spline_NEB calculations. This will both (a) assign forces to the atoms stored
     in state and (b) return the energy and atoms.
@@ -141,7 +141,7 @@ def g09_results(spline_NEB, step_to_use, i, state):
         new_atoms: *list,* :class:`structures.Atom`
             A list of atoms with the forces attached in units of Hartree per
             Angstrom (Ha/Ang).
-    """
+    '''
     result = g09.parse_atoms('%s-%d-%d' % (spline_NEB.name, step_to_use, i),
                              check_convergence=False,
                              parse_all=False)
@@ -183,7 +183,7 @@ def orca_start_job(spline_NEB,
                    extra_section,
                    mem,
                    priority):
-    """
+    '''
     A method for submitting a single point calculation using Orca for spline_NEB
     calculations.
 
@@ -216,7 +216,7 @@ def orca_start_job(spline_NEB,
 
         orca_job: :class:`jobs.Job`
             A job container holding the orca simulation.
-    """
+    '''
     if spline_NEB.step > 0:
         previous = '%s-%d-%d' % (spline_NEB.name, spline_NEB.step - 1, i)
     else:
@@ -241,7 +241,7 @@ def orca_start_job(spline_NEB,
 
 
 def orca_results(spline_NEB, step_to_use, i, state):
-    """
+    '''
     A method for reading in the output of Orca single point calculations for
     spline_NEB calculations. This will both (a) assign forces to the atoms stored
     in state and (b) return the energy and atoms.
@@ -266,7 +266,7 @@ def orca_results(spline_NEB, step_to_use, i, state):
         new_atoms: *list,* :class:`structures.Atom`
             A list of atoms with the forces attached in units of Hartree per
             Angstrom (Ha/Ang).
-    """
+    '''
     read_data = orca.engrad_read('%s-%d-%d' % (spline_NEB.name, step_to_use, i),
                                  force='Ha/Ang',
                                  pos='Ang')
@@ -280,7 +280,7 @@ def orca_results(spline_NEB, step_to_use, i, state):
 
 # Class to contain working variables
 class spline_NEB:
-    """
+    '''
     A post-processing method for taking a converged minimum energy pathway of a reaction using
     DFT and smoothing the curve to a more Gaussian-like shape. Note, this method was written for atomic orbital DFT codes; however,
     is potentially generalizable to other programs.
@@ -359,7 +359,7 @@ class spline_NEB:
         * Atomic Simulation Environment - https://wiki.fysik.dtu.dk/ase/
         * Kolsbjerg, E. L.; Groves, M. N.; Hammer, B. The Journal of 
           Chemical Physics 2016, 145.
-    """
+    '''
     error, gradient = None, None
 
     def __init__(self,

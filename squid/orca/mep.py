@@ -1,4 +1,4 @@
-"""
+'''
 (c) 2013 Marius Retegan
 License: BSD-2-Clause
 Description: Create a .cube file of the electrostatic potential using ORCA.
@@ -25,7 +25,7 @@ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
-"""
+'''
 
 import os
 import numpy as np

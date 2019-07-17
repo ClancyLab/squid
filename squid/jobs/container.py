@@ -2,7 +2,7 @@ import time
 
 
 class JobObject(object):
-    """
+    '''
     Job class to wrap simulations for queue submission.
 
     **Parameters**
@@ -15,7 +15,7 @@ class JobObject(object):
     **Returns**
 
         This :class:`Job` object.
-    """
+    '''
 
     def __init__(self, name, process_handle=None, job_id=None):
         self.name = name
@@ -23,13 +23,13 @@ class JobObject(object):
         self.job_id = job_id
 
     def wait(self, tsleep=60, verbose=False):
-        """
+        '''
         Hang until simulation has finished.
 
         **Returns**
 
             None
-        """
+        '''
         if self.process_handle is not None:
             self.process_handle.wait()
         else:
@@ -45,14 +45,14 @@ class JobObject(object):
         return []
 
     def is_finished(self):
-        """
+        '''
         Check if simulation has finished or not.
 
         **Returns**
 
             is_on_queue: *bool*
                 Whether the simulation is still running (True), or not (False).
-        """
+        '''
         if self.process_handle is not None:
             return self.process_handle.poll() == 0
         if self.job_id is not None:
