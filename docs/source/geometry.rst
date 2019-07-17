@@ -22,9 +22,9 @@ The packmol module handles the interface between Squid and packmol (http://m3g.i
 
 The misc module holds functions that are not dependent on other squid modules, but can return useful information and simplify coding.
 
-    - :func:`squid.geometry.geometry.misc.get_center_of_geometry`
-    - :func:`squid.geometry.geometry.misc.get_center_of_mass`
-    - :func:`squid.geometry.geometry.misc.rotate_atoms`
+    - :func:`squid.geometry.misc.get_center_of_geometry`
+    - :func:`squid.geometry.misc.get_center_of_mass`
+    - :func:`squid.geometry.misc.rotate_atoms`
 
 Once again, all the above can be accessed directly from the geometry module, as shown in the following pseudo-code example here:
 
