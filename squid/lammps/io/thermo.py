@@ -2,7 +2,7 @@
 
 # def read(run_name, trj_file='', xyz_file='', read_atoms=True,
 #          read_timesteps=True, read_num_atoms=True, read_box_bounds=True):
-#     """
+#     '''
 #     General read in of thermo information from a lammps log file,
 #     as well as (optionally) a lammps trajectory file (.lammpstrj).
 
@@ -43,7 +43,7 @@
 
 #         data: :class:`results.sim_out`
 #             Generic LAMMPs output object containing all parsed results.
-#     """
+#     '''
 #     # Format log file name
 #     # Allow absolute paths as filenames
 #     if run_name.startswith('/'):
@@ -98,7 +98,7 @@
 
 # # A function to return thermo output from lammps log files
 # def read_thermo(run_name, *properties):
-#     """
+#     '''
 #     Read in thermo output from a lammps log file.
 
 #     **Parameters**
@@ -114,7 +114,7 @@
 
 #         lj: :class:`LMP_Parser`
 
-#     """
+#     '''
 #     # Format log_file as needed
 #     log_file = 'lammps/%s/%s.log' % (run_name, run_name)
 #     if not os.path.isfile(log_file):
@@ -147,7 +147,7 @@
 # # Author:  Steve Plimpton (Sandia), sjplimp at sandia.gov
 # # Modified by Yaset Acevedo to use updated log.py included in squid
 # def thermo_2_text(run_name, *properties):
-#     """
+#     '''
 #     This will convert a lammps .log file to a parsed .txt file, isolating
 #     the thermo output.
 
@@ -166,7 +166,7 @@
 #     **Returns**
 
 #         None
-#     """
+#     '''
 #     # Format log_file as needed
 #     log_file = 'lammps/%s/%s.log' % (run_name, run_name)
 #     if not os.path.isfile(log_file):

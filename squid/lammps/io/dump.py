@@ -4,7 +4,7 @@ from squid.structures.atom import Atom
 
 
 def read_dump_gen(fptr, ext=".dump", coordinates=["x", "y", "z"], extras=[]):
-    """
+    '''
     Function to read in a generic dump file.  Currently it (1) requires
     element, x, y, z in the dump.  You can also use xu, yu, and zu if
     the unwraped flag is set to True.
@@ -33,7 +33,7 @@ def read_dump_gen(fptr, ext=".dump", coordinates=["x", "y", "z"], extras=[]):
 
         frames: *list, list* :class:`structures.Atom`
             A list of lists, each holding atom structures.
-    """
+    '''
     # Check if file exists. If not, try subfolder
     if not os.path.exists(fptr + ext) and not os.path.exists(fptr):
         fptr = "lammps/%s/%s" % (fptr, fptr)
@@ -120,7 +120,7 @@ def read_dump_gen(fptr, ext=".dump", coordinates=["x", "y", "z"], extras=[]):
 
 
 def read_dump(fptr, ext=".dump", coordinates=["x", "y", "z"], extras=[]):
-    """
+    '''
     Function to read in a generic dump file.  Currently it (1) requires
     element, x, y, z in the dump.  You can also use xu, yu, and zu if
     the unwraped flag is set to True.
@@ -149,7 +149,7 @@ def read_dump(fptr, ext=".dump", coordinates=["x", "y", "z"], extras=[]):
 
         frames: *list, list* :class:`structures.Atom`
             A list of lists, each holding atom structures.
-    """
+    '''
     frames = [
         frame for frame in read_dump_gen(
             fptr, ext=ext, coordinates=coordinates, extras=extras)]

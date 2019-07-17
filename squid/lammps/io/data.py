@@ -7,7 +7,7 @@
 # # turn off the data you do not need
 # def read_lammps_data(name, read_atoms=True, read_bonds=True,
 #                      read_angles=True, read_dihedrals=True):
-#     """
+#     '''
 #     Helper function for read_lammpstrj to read in larger files.
 
 #     **Parameters**
@@ -35,7 +35,7 @@
 #             A list of angles read in from the data file.
 #         dihedrals: *list,* :class:`structures.Dihedral`
 #             A list of dihedrals read in from the data file.
-#     """
+#     '''
 #     if not name.endswith('.data') and '.' not in name:
 #         name += '.data'
 #     # If file does not exist, return empty lammpstrj object
@@ -162,7 +162,7 @@
 
 
 def write_lammps_data(system, **kwargs):
-    """
+    '''
     Writes a lammps data file from the given system.
 
     Set pair_coeffs_included to True to write pair_coeffs in data file.
@@ -196,7 +196,7 @@ def write_lammps_data(system, **kwargs):
     **Returns**
 
         None
-    """
+    '''
     # Set the types of the system before generating the data file
     system.set_types(**{
         k: kwargs[k] for k in ["opls_file", "smrff_file"] if k in kwargs
