@@ -6,15 +6,15 @@ calcs
 
 .. include:: ./calcs.rst
 
-forcefields
---------------------
-
-.. include:: ./forcefields.rst
-
 files
 --------------------
 
 .. include:: ./files.rst
+
+forcefields
+--------------------
+
+.. include:: ./forcefields.rst
 
 g09
 --------------------
