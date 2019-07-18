@@ -18,7 +18,6 @@ The submission module holds two function that handle submitting a job:
 
 Module Files:
     - :doc:`container <./module_docs/jobs/container>`
-    - :doc:`misc <./module_docs/jobs/misc>`
     - :doc:`nbs <./module_docs/jobs/nbs>`
     - :doc:`queue_manager <./module_docs/jobs/queue_manager>`
     - :doc:`slurm <./module_docs/jobs/slurm>`
