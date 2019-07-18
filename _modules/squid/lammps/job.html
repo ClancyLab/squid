@@ -44,8 +44,7 @@
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">from</span> <span class="nn">squid</span> <span class="k">import</span> <span class="n">jobs</span>
-<span class="kn">from</span> <span class="nn">squid.files.misc</span> <span class="k">import</span> <span class="n">which</span>
-<span class="kn">from</span> <span class="nn">squid.jobs.misc</span> <span class="k">import</span> <span class="n">close_pipes</span>
+<span class="kn">from</span> <span class="nn">squid.files.misc</span> <span class="k">import</span> <span class="n">which</span><span class="p">,</span> <span class="n">close_pipes</span>
 <span class="kn">from</span> <span class="nn">squid.lammps.io.data</span> <span class="k">import</span> <span class="n">write_lammps_data</span>
 
 
@@ -175,9 +174,6 @@
 <span class="sd">            With redundancy on, if the job is submitted and unique_name is on,</span>
 <span class="sd">            then if another job of the same name is running, a pointer to that</span>
 <span class="sd">            job will instead be returned.</span>
-<span class="sd">        lmp_path: *str, optional*</span>
-<span class="sd">            The path to the lammps executable. Note, by default this is the</span>
-<span class="sd">            one defined during installation, saved in sysconst.lmp_path.</span>
 <span class="sd">        slurm_allocation: *str, optional*</span>
 <span class="sd">            Whether to use a slurm allocation for this job or not.  If so,</span>
 <span class="sd">            specify the name.</span>

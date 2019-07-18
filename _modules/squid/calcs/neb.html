@@ -478,6 +478,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ci_img</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ci_N</span> <span class="o">=</span> <span class="n">ci_N</span>
 
+        <span class="c1"># These are variables to make life easier on the user after NEB runs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_iteration_run</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">highest_energy_frame_index</span> <span class="o">=</span> <span class="kc">None</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">no_energy</span> <span class="o">=</span> <span class="n">no_energy</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">new_opt_params</span> <span class="o">=</span> <span class="n">new_opt_params</span>
@@ -535,7 +539,6 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ci_neb</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_energy</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">ERROR</span><span class="se">\n</span><span class="s2">Unable to do climbing image without energy. Let no_energy be False.&quot;</span><span class="p">)</span>
-
 
     <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coords</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">calls_to_calculate</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -600,6 +603,7 @@
 
         <span class="c1"># In climbing image neb, after a few iterations we take the highest</span>
         <span class="c1"># energy image and use that.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">highest_energy_frame_index</span> <span class="o">=</span> <span class="n">V</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">V</span><span class="p">))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ci_neb</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ci_img</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">ci_N</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ci_img</span> <span class="o">=</span> <span class="n">V</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">V</span><span class="p">))</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ci_img</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]:</span>
@@ -773,6 +777,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="n">RMS_force</span>
 
         <span class="c1"># Increment step</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_iteration_run</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>

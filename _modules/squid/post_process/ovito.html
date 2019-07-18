@@ -59,8 +59,34 @@
 
 <span class="sd">&#39;&#39;&#39;</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">from</span> <span class="nn">squid.files</span> <span class="k">import</span> <span class="n">write_xyz</span>
-<span class="kn">from</span> <span class="nn">squid.files.misc</span> <span class="k">import</span> <span class="n">which</span>
+<span class="kn">from</span> <span class="nn">squid.files.misc</span> <span class="k">import</span> <span class="n">which</span><span class="p">,</span> <span class="n">close_pipes</span>
+
+
+<div class="viewcode-block" id="get_ovito_obj"><a class="viewcode-back" href="../../../module_docs/post_process/ovito.html#squid.post_process.ovito.get_ovito_obj">[docs]</a><span class="k">def</span> <span class="nf">get_ovito_obj</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="s2">&quot;2.9.0&quot;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function returns the ovito object.  Note, currently the code below</span>
+<span class="sd">    only works on version 2.9.0.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">ovito_path</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="s2">&quot;ovitos&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Determine version</span>
+    <span class="n">ovito_pipe</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">ovito_path</span><span class="p">,</span> <span class="s2">&quot;-v&quot;</span><span class="p">],</span> <span class="n">shell</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+    <span class="n">stdout</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ovito_pipe</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+
+    <span class="k">assert</span> <span class="s2">&quot;Ovito&quot;</span> <span class="ow">in</span> <span class="n">stdout</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - Unable to access Ovito.  Please ensure it is in your PATH </span><span class="se">\</span>
+<span class="s2">environment variable!&quot;</span>
+    <span class="k">assert</span> <span class="n">version</span> <span class="ow">in</span> <span class="n">stdout</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - Incorrect Ovito version!  It should be </span><span class="si">%s</span><span class="s2">, but is </span><span class="si">%s</span><span class="s2">.&quot;</span>\
+        <span class="o">%</span> <span class="p">(</span><span class="n">version</span><span class="p">,</span> <span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">close_pipes</span><span class="p">(</span><span class="n">ovito_pipe</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ovito_path</span></div>
 
 
 <div class="viewcode-block" id="ovito_xyz_to_image"><a class="viewcode-back" href="../../../module_docs/post_process/ovito.html#squid.post_process.ovito.ovito_xyz_to_image">[docs]</a><span class="k">def</span> <span class="nf">ovito_xyz_to_image</span><span class="p">(</span>
@@ -103,7 +129,7 @@
 <span class="sd">        None</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="n">ovitos_path</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="s2">&quot;ovitos&quot;</span><span class="p">)</span>
+    <span class="n">ovitos_path</span> <span class="o">=</span> <span class="n">get_ovito_obj</span><span class="p">(</span><span class="s2">&quot;2.9.0&quot;</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">ovitos_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span>\
         <span class="s2">&quot;Error - Cannot find ovitos in the PATH env var.&quot;</span>
 
@@ -137,6 +163,7 @@
 <span class="s1">rs = RenderSettings(size=$SIZE, filename=&quot;$SCRATCH$FNAME.png&quot;, renderer=$RENDERER(**settings))</span>
 
 <span class="s1">node = import_file(&quot;$XYZ&quot;, columns=[&quot;Particle Type&quot;, &quot;Position.X&quot;, &quot;Position.Y&quot;, &quot;Position.Z&quot;])</span>
+<span class="s1">node.add_to_scene()</span>
 
 <span class="s1">cell = node.source.cell</span>
 <span class="s1">cell.display.enabled = $DISPLAY_CELL</span>
@@ -232,6 +259,9 @@
     <span class="k">assert</span> <span class="n">convert_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span>\
         <span class="s2">&quot;Error - Cannot find convert in the PATH env var.&quot;</span>
 
+    <span class="k">if</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gif&quot;</span><span class="p">):</span>
+        <span class="n">fname</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.gif&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
     <span class="c1"># First ensure we have frames and things in the correct format</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">frames</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
@@ -273,7 +303,8 @@
         <span class="p">]</span>
         <span class="k">for</span> <span class="n">s_id</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">holders</span><span class="p">:</span>
             <span class="n">cmd</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">s_id</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span></div>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">&quot;output.gif&quot;</span><span class="p">,</span> <span class="n">fname</span> <span class="o">+</span> <span class="s2">&quot;.gif&quot;</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
