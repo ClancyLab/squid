@@ -1,0 +1,553 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>squid.lammps.parser &#8212; Squid 2.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Squid 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for squid.lammps.parser</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">The LMP_Parser code is code from the pizza.py toolkit</span>
+<span class="sd">(www.cs.sandia.gov/~sjplimp/pizza.html) developed by Steve Plimpton</span>
+<span class="sd">(sjplimp@sandia.gov) with some additional warning interspersed through</span>
+<span class="sd">the thermo output.</span>
+
+<span class="sd">- :class:`LMP_Parser`</span>
+
+<span class="sd">------------</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="c1"># Pizza.py toolkit, www.cs.sandia.gov/~sjplimp/pizza.html</span>
+<span class="c1"># Steve Plimpton, sjplimp@sandia.gov, Sandia National Laboratories</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (2005) Sandia Corporation.  Under the terms of Contract</span>
+<span class="c1"># DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains</span>
+<span class="c1"># certain rights in this software.  This software is distributed under</span>
+<span class="c1"># the GNU General Public License.</span>
+<span class="c1"># Imports and external programs</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">popen</span>
+<span class="c1"># log tool</span>
+
+<span class="n">oneline</span> <span class="o">=</span> <span class="s2">&quot;Read LAMMPS log files and extract thermodynamic data&quot;</span>
+
+<span class="n">docstr</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">l = log(&quot;file1&quot;)                     read in one or more log files</span>
+<span class="s1">l = log(&quot;log1 log2.gz&quot;)              can be gzipped</span>
+<span class="s1">l = log(&quot;file*&quot;)                     wildcard expands to multiple files</span>
+<span class="s1">l = log(&quot;log.lammps&quot;,0)              two args = store filename, but don&#39;t read</span>
+
+<span class="s1">    incomplete and duplicate thermo entries are deleted</span>
+
+<span class="s1">time = l.next()                      read new thermo info from file</span>
+
+<span class="s1">    used with 2-argument constructor to allow reading thermo incrementally</span>
+<span class="s1">    return time stamp of last thermo read</span>
+<span class="s1">    return -1 if no new thermo since last read</span>
+
+<span class="s1">nvec = l.nvec                        # of vectors of thermo info</span>
+<span class="s1">nlen = l.nlen                        length of each vectors</span>
+<span class="s1">names = l.names                      list of vector names</span>
+<span class="s1">t,pe,... = l.get(&quot;Time&quot;,&quot;KE&quot;,...)    return one or more vectors of values</span>
+<span class="s1">l.write(&quot;file.txt&quot;)          write all vectors to a file</span>
+<span class="s1">l.write(&quot;file.txt&quot;,&quot;Time&quot;,&quot;PE&quot;,...)  write listed vectors to a file</span>
+
+<span class="s1">    get and write allow abbreviated (uniquely) vector names</span>
+<span class="s1">&#39;&#39;&#39;</span>
+
+<span class="c1"># History</span>
+<span class="c1">#   8/05, Steve Plimpton (SNL): original version</span>
+<span class="c1">#   12/15, Yaset Acevedo: Allows for warnings interspersed through</span>
+<span class="c1">#                         the thermo output</span>
+
+<span class="c1"># ToDo list</span>
+
+<span class="c1"># Variables</span>
+<span class="c1">#   nvec = # of vectors</span>
+<span class="c1">#   nlen = length of each vector</span>
+<span class="c1">#   names = list of vector names</span>
+<span class="c1">#   ptr = dictionary, key = name, value = index into data for which column</span>
+<span class="c1">#   data[i][j] = 2d array of floats, i = 0 to # of entries, j = 0 to nvecs-1</span>
+<span class="c1">#   style = style of LAMMPS log file, 1 = multi, 2 = one, 3 = gran</span>
+<span class="c1">#   firststr = string that begins a thermo section in log file</span>
+<span class="c1">#   increment = 1 if log file being read incrementally</span>
+<span class="c1">#   eof = ptr into incremental file for where to start next read</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">PIZZA_GUNZIP</span>
+<span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+    <span class="n">PIZZA_GUNZIP</span> <span class="o">=</span> <span class="s2">&quot;gunzip&quot;</span>
+
+
+<span class="c1"># Class definition</span>
+<div class="viewcode-block" id="LMP_Parser"><a class="viewcode-back" href="../../../codebase.html#squid.lammps.parser.LMP_Parser">[docs]</a><span class="k">class</span> <span class="nc">LMP_Parser</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Class object to assist in parsing lammps outputs.</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">        list: *str*</span>
+<span class="sd">            Path to the lammps log file that is to be parsed. Note,</span>
+<span class="sd">            several files can be included in this string as long as</span>
+<span class="sd">            they are separated by spaces.</span>
+<span class="sd">        read_all: *int, optional*</span>
+<span class="sd">            If this is set to 0, don&#39;t read in the whole file upon</span>
+<span class="sd">            initialization. This lets you use the :func:`next`</span>
+<span class="sd">            functionality.</span>
+
+<span class="sd">    **Contains**</span>
+
+<span class="sd">        nvec: *int*</span>
+<span class="sd">            Number of vectors.</span>
+<span class="sd">        nlen: *int*</span>
+<span class="sd">            Length of each vector.</span>
+<span class="sd">        names: *list, str*</span>
+<span class="sd">            List of vector names.</span>
+<span class="sd">        ptr: *dict*</span>
+<span class="sd">            Dictionary corresponding the thermo keys to which column</span>
+<span class="sd">            of the output they reside in. ptr[thermo_key] = which</span>
+<span class="sd">            column this data is in</span>
+<span class="sd">        data: *list, list, float*</span>
+<span class="sd">            Raw data from file, organized into 2d array.</span>
+<span class="sd">        style: *int*</span>
+<span class="sd">            What style the LAMMPs log file is in. 1 = multi, 2 = one, 3 = gran</span>
+<span class="sd">        firststr: *str*</span>
+<span class="sd">            String that begins a thermo section in log file.</span>
+<span class="sd">        increment: *int*</span>
+<span class="sd">            1 if log file being read incrementally</span>
+<span class="sd">        eof: *int*</span>
+<span class="sd">            ptr into incremental file for where to start next read</span>
+
+<span class="sd">    **Returns**</span>
+
+<span class="sd">        This :class:`LMP_Parser` object.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># --------------------------------------------------------------------</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="nb">list</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nvec</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ptr</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Stores when log file was last modified in seconds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_modified</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+
+        <span class="c1"># flist = list of all log file names</span>
+
+        <span class="n">words</span> <span class="o">=</span> <span class="nb">list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flist</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">flist</span> <span class="o">+=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flist</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;No log file specified&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">increment</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_all</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flist</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Can only incrementally read one log file&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">increment</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eof</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># --------------------------------------------------------------------</span>
+    <span class="c1"># read all thermo from all files</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Read all the thermo data from all the files.</span>
+
+<span class="sd">    **Returns**</span>
+
+<span class="sd">        None.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">read_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">read_header</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flist</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nvec</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Log file has no values&quot;</span><span class="p">)</span>
+
+        <span class="c1"># read all files</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">flist</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_one</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+        <span class="c1"># sort entries by timestep, cull duplicates</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">compare</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cull</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nlen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="c1"># --------------------------------------------------------------------</span>
+<div class="viewcode-block" id="LMP_Parser.next"><a class="viewcode-back" href="../../../codebase.html#squid.lammps.parser.LMP_Parser.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Read the next line of thermo information from the file.</span>
+<span class="sd">        Note, this is used when two arguments are passed during initialization.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            timestep: *int*</span>
+<span class="sd">                The timestep of the parsed thermo output.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">increment</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;cannot read incrementally&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nvec</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flist</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_header</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flist</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nvec</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">eof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_one</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flist</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">eof</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span></div>
+
+    <span class="c1"># --------------------------------------------------------------------</span>
+<div class="viewcode-block" id="LMP_Parser.get"><a class="viewcode-back" href="../../../codebase.html#squid.lammps.parser.LMP_Parser.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">keys</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Read specific values from thermo output.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            keys: *str*</span>
+<span class="sd">                Which thermo outputs you want by ID.  Not, this is as many</span>
+<span class="sd">                requests as you want.  ex. l.get(&quot;Time&quot;, &quot;KE&quot;, ...)</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            vecs: *list*</span>
+<span class="sd">                Desired outputs.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;no log vectors specified&quot;</span><span class="p">)</span>
+
+        <span class="nb">map</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ptr</span><span class="p">:</span>
+                <span class="nb">map</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ptr</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nvec</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="n">index</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="nb">map</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;unique log vector </span><span class="si">%s</span><span class="s2"> not found&quot;</span> <span class="o">%</span> <span class="n">key</span><span class="p">)</span>
+
+        <span class="n">vecs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)):</span>
+            <span class="n">vecs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nlen</span> <span class="o">*</span> <span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nlen</span><span class="p">):</span>
+                <span class="n">vecs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="nb">map</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">vecs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">vecs</span></div>
+
+    <span class="c1"># --------------------------------------------------------------------</span>
+<div class="viewcode-block" id="LMP_Parser.write"><a class="viewcode-back" href="../../../codebase.html#squid.lammps.parser.LMP_Parser.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">keys</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Write parsed vectors to a file.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            filename: *str*</span>
+<span class="sd">                The name of the file you want to dump all your outputs to.</span>
+
+<span class="sd">            keys: *str, optional*</span>
+<span class="sd">                Which specific vectors you want output to the file.</span>
+<span class="sd">                ex. &gt;&gt;&gt; l.write(&quot;file.txt&quot;,&quot;Time&quot;, &quot;KE&quot;, ...)</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">):</span>
+            <span class="nb">map</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ptr</span><span class="p">:</span>
+                    <span class="nb">map</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ptr</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nvec</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+                            <span class="n">index</span> <span class="o">=</span> <span class="n">i</span>
+                    <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="nb">map</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                            <span class="s2">&quot;unique log vector </span><span class="si">%s</span><span class="s2"> not found&quot;</span> <span class="o">%</span> <span class="n">key</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">map</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nvec</span><span class="p">)</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nlen</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">map</span><span class="p">)):</span>
+                <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">f</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="nb">map</span><span class="p">[</span><span class="n">j</span><span class="p">]],</span>
+            <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">f</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+    <span class="c1"># --------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">compare</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="c1"># --------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">cull</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># --------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">read_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
+        <span class="n">str_multi</span> <span class="o">=</span> <span class="s2">&quot;----- Step&quot;</span>
+        <span class="n">str_one</span> <span class="o">=</span> <span class="s2">&quot;Step &quot;</span>
+
+        <span class="k">if</span> <span class="n">file</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">==</span> <span class="s2">&quot;.gz&quot;</span><span class="p">:</span>
+            <span class="n">txt</span> <span class="o">=</span> <span class="n">popen</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> -c </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">PIZZA_GUNZIP</span><span class="p">,</span> <span class="n">file</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">txt</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">txt</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">str_multi</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">firststr</span> <span class="o">=</span> <span class="n">str_multi</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">txt</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">str_one</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">firststr</span> <span class="o">=</span> <span class="n">str_one</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">s1</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">firststr</span><span class="p">)</span>
+            <span class="n">s2</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">--&quot;</span><span class="p">,</span> <span class="n">s1</span><span class="p">)</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="s2">&quot;\s(\S*)\s*=&quot;</span>
+            <span class="n">keywords</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">txt</span><span class="p">[</span><span class="n">s1</span><span class="p">:</span><span class="n">s2</span><span class="p">])</span>
+            <span class="n">keywords</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Step&quot;</span><span class="p">)</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">keyword</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">keyword</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ptr</span><span class="p">[</span><span class="n">keyword</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">s1</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">firststr</span><span class="p">)</span>
+            <span class="n">s2</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">s1</span><span class="p">)</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">txt</span><span class="p">[</span><span class="n">s1</span><span class="p">:</span><span class="n">s2</span><span class="p">]</span>
+            <span class="n">words</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">words</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">words</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ptr</span><span class="p">[</span><span class="n">words</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">i</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nvec</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+
+    <span class="c1"># --------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">read_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="nb">list</span><span class="p">):</span>
+
+        <span class="c1"># if 2nd arg exists set file ptr to that value</span>
+        <span class="c1"># read entire (rest of) file into txt</span>
+
+        <span class="n">file</span> <span class="o">=</span> <span class="nb">list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">file</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">==</span> <span class="s2">&quot;.gz&quot;</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">popen</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> -c </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">PIZZA_GUNZIP</span><span class="p">,</span> <span class="n">file</span><span class="p">),</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="nb">list</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">txt</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">file</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">==</span> <span class="s2">&quot;.gz&quot;</span><span class="p">:</span>
+            <span class="n">eof</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">eof</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="n">start</span> <span class="o">=</span> <span class="n">last</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">last</span><span class="p">:</span>
+
+            <span class="c1"># chunk = contiguous set of thermo entries (line or multi-line)</span>
+            <span class="c1"># s1 = 1st char on 1st line of chunk</span>
+            <span class="c1"># s2 = 1st char on line after chunk</span>
+            <span class="c1"># set last = 1 if this is last chunk in file, leave 0 otherwise</span>
+            <span class="c1"># set start = position in file to start looking for next chunk</span>
+            <span class="c1"># rewind eof if final entry is incomplete</span>
+
+            <span class="n">s1</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">firststr</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+            <span class="n">s2</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Loop time of&quot;</span><span class="p">,</span> <span class="n">start</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># ACE EDIT***************************</span>
+            <span class="n">s3</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="c1"># Check if there is an warning message on the line prior</span>
+            <span class="c1"># to &quot;Loop time of&quot;</span>
+            <span class="n">s3</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;WARNING&quot;</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">)</span>
+            <span class="c1"># Change s2 to reflect new position if appropriate</span>
+            <span class="k">if</span> <span class="n">s3</span> <span class="o">&lt;</span> <span class="n">s2</span> <span class="ow">and</span> <span class="n">s3</span> <span class="o">&gt;</span> <span class="n">s1</span><span class="p">:</span>
+                <span class="n">s2</span> <span class="o">=</span> <span class="n">s3</span>
+            <span class="c1"># ***********************************</span>
+
+            <span class="k">if</span> <span class="n">s2</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">s2</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span> <span class="n">start</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">s1</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">s2</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">s1</span> <span class="o">&lt;</span> <span class="n">s2</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">s1</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">s1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">s1</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">s2</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">s2</span> <span class="o">&lt;</span> <span class="n">s1</span><span class="p">:</span>
+                <span class="n">s1</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">elif</span> <span class="n">s1</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">s2</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">last</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">s1</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">elif</span> <span class="n">s1</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">s2</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">last</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">s2</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">--&quot;</span><span class="p">,</span> <span class="n">s1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">s1</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">s1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+                    <span class="n">s2</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">s1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+                    <span class="n">eof</span> <span class="o">-=</span> <span class="nb">len</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span> <span class="o">-</span> <span class="n">s2</span>
+            <span class="k">elif</span> <span class="n">s1</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">s2</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>     <span class="c1"># found neither</span>
+                                            <span class="c1"># could be end-of-file section</span>
+                                            <span class="c1"># or entire read was one chunk</span>
+
+                <span class="k">if</span> <span class="n">txt</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Loop time of&quot;</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span> <span class="o">==</span> <span class="n">start</span><span class="p">:</span>
+                    <span class="n">eof</span> <span class="o">-=</span> <span class="nb">len</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span> <span class="o">-</span> <span class="n">start</span>
+                    <span class="k">break</span>
+                <span class="k">if</span> <span class="n">txt</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span> <span class="o">==</span> <span class="n">start</span><span class="p">:</span>
+                    <span class="n">eof</span> <span class="o">-=</span> <span class="nb">len</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span> <span class="o">-</span> <span class="n">start</span>
+                    <span class="k">break</span>
+
+                <span class="c1"># entire read is a chunk</span>
+                <span class="n">last</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">s1</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">s2</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">--&quot;</span><span class="p">,</span> <span class="n">s1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">s2</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">s1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+                    <span class="n">eof</span> <span class="o">-=</span> <span class="nb">len</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span> <span class="o">-</span> <span class="n">s2</span>
+                    <span class="k">if</span> <span class="n">s1</span> <span class="o">==</span> <span class="n">s2</span><span class="p">:</span>
+                        <span class="k">break</span>
+
+            <span class="n">chunk</span> <span class="o">=</span> <span class="n">txt</span><span class="p">[</span><span class="n">s1</span><span class="p">:</span><span class="n">s2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">s2</span>
+
+            <span class="c1"># ACE EDIT***************************</span>
+            <span class="c1"># Correct start position if s3 was utilized</span>
+            <span class="k">if</span> <span class="n">s3</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">s3</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Loop time of&quot;</span><span class="p">,</span> <span class="n">start</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="n">s3</span>
+            <span class="c1"># ***********************************</span>
+
+            <span class="c1"># split chunk into entries</span>
+            <span class="c1"># parse each entry for numeric fields, append to data</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">sections</span> <span class="o">=</span> <span class="n">chunk</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">--&quot;</span><span class="p">)</span>
+                <span class="n">pat1</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;Step\s*(\S*)\s&quot;</span><span class="p">)</span>
+                <span class="n">pat2</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;=\s*(\S*)&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">sections</span><span class="p">:</span>
+                    <span class="n">word1</span> <span class="o">=</span> <span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">pat1</span><span class="p">,</span> <span class="n">section</span><span class="p">)</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)]</span>
+                    <span class="n">word2</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pat2</span><span class="p">,</span> <span class="n">section</span><span class="p">)</span>
+                    <span class="n">words</span> <span class="o">=</span> <span class="n">word1</span> <span class="o">+</span> <span class="n">word2</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">words</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">lines</span> <span class="o">=</span> <span class="n">chunk</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+                    <span class="n">words</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">words</span><span class="p">))</span>
+
+            <span class="c1"># print last timestep of chunk</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">eof</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../squid.html">Squid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../console_scripts.html">Console Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Squid 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Henry Herbol.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

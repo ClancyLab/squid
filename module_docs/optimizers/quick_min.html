@@ -1,0 +1,155 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>&lt;no title&gt; &#8212; Squid 2.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-squid.optimizers.quick_min"></span><dl class="function">
+<dt id="squid.optimizers.quick_min.quick_min">
+<code class="descclassname">squid.optimizers.quick_min.</code><code class="descname">quick_min</code><span class="sig-paren">(</span><em>params</em>, <em>gradient</em>, <em>NEB_obj=None</em>, <em>new_opt_params={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/optimizers/quick_min.html#quick_min"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.optimizers.quick_min.quick_min" title="Permalink to this definition">¶</a></dt>
+<dd><p>A quick min optimizer, overloaded for NEB use.
+Note, this will ONLY work for use within the NEB code.</p>
+<p><em>Parameters</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of parameters to be optimized.</dd>
+<dt>gradient: <em>func</em></dt>
+<dd>A function that, given params, returns the gradient.</dd>
+<dt>NEB_obj: <code class="xref py py-class docutils literal notranslate"><span class="pre">neb.NEB</span></code></dt>
+<dd>An NEB object to use.</dd>
+<dt>new_opt_params: <em>dict</em></dt>
+<dd><p class="first">A dictionary holding any changes to the optimization algorithm’s
+parameters.  This includes the following -</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>dt: <em>float</em></dt>
+<dd>Time step size to take.</dd>
+<dt>max_step: <em>float</em></dt>
+<dd>The maximum step size to take.</dd>
+<dt>viscosity: <em>float</em></dt>
+<dd>The viscosity within a verlet step (used if euler is
+False).</dd>
+<dt>euler: <em>bool</em></dt>
+<dd>Whether to make an euler step or not.</dd>
+<dt>maxiter: <em>int</em></dt>
+<dd>Maximum number of iterations for the optimizer to run.
+If None, then the code runs indefinitely.</dd>
+<dt>g_rms: <em>float</em></dt>
+<dd>The RMS value for which to optimize the gradient to.</dd>
+<dt>g_max: <em>float</em></dt>
+<dd>The maximum gradient value to be allowed.</dd>
+<dt>fit_rigid: <em>bool</em></dt>
+<dd>Remove erroneous rotation and translations during NEB.</dd>
+<dt>verbose: <em>bool</em></dt>
+<dd>Whether to have additional output.</dd>
+<dt>callback: <em>func, optional</em></dt>
+<dd>A function to be run after each optimization loop.</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+<p><em>Returns</em></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>params: <em>list, float</em></dt>
+<dd>A list of the optimized parameters.</dd>
+<dt>code: <em>int</em></dt>
+<dd>An integer describing how the algorithm converged.  This can be
+identified in the constants file.</dd>
+<dt>iters: <em>int</em></dt>
+<dd>The number of iterations the optimizer ran for.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../squid.html">Squid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../console_scripts.html">Console Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/module_docs/optimizers/quick_min.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Henry Herbol.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,143 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>&lt;no title&gt; &#8212; Squid 2.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p>To handle forcefields in Molecular Dynamics, the various components are subdivided into objects.  These are then stored in an overarching <a class="reference internal" href="codebase.html#squid.forcefields.parameters.Parameters" title="squid.forcefields.parameters.Parameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.parameters.Parameters</span></code></a> object, which is the main interface a user should use.</p>
+<p>Main user interface:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="codebase.html#squid.forcefields.parameters.Parameters" title="squid.forcefields.parameters.Parameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.parameters.Parameters</span></code></a></li>
+</ul>
+</div></blockquote>
+<p>Subdivided objects:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="codebase.html#squid.forcefields.connectors.HarmonicConnector" title="squid.forcefields.connectors.HarmonicConnector"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.connectors.HarmonicConnector</span></code></a> - A generic connector object.</li>
+<li><a class="reference internal" href="codebase.html#squid.forcefields.connectors.Bond" title="squid.forcefields.connectors.Bond"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.connectors.Bond</span></code></a> - Derived from the HarmonicConnector, this handles Bonds.</li>
+<li><a class="reference internal" href="codebase.html#squid.forcefields.connectors.Angle" title="squid.forcefields.connectors.Angle"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.connectors.Angle</span></code></a> - Derived from the HarmonicConnector, this handles Angles.</li>
+<li><a class="reference internal" href="codebase.html#squid.forcefields.connectors.Dihedral" title="squid.forcefields.connectors.Dihedral"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.connectors.Dihedral</span></code></a> - Derived from the HarmonicConnector, this handles Dihedrals.</li>
+</ul>
+</div></blockquote>
+<p>Supported Potentials:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="codebase.html#squid.forcefields.coulomb.Coul" title="squid.forcefields.coulomb.Coul"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.coulomb.Coul</span></code></a> - An object to handle Coulombic information.  This also holds other pertinent atomic information (element, mass, etc).</li>
+<li><a class="reference internal" href="codebase.html#squid.forcefields.lj.LJ" title="squid.forcefields.lj.LJ"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.lj.LJ</span></code></a> - An object to handle the Lennard-Jones information.</li>
+<li><a class="reference internal" href="codebase.html#squid.forcefields.morse.Morse" title="squid.forcefields.morse.Morse"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.morse.Morse</span></code></a> - An object to handle Morse information.</li>
+<li><a class="reference internal" href="codebase.html#squid.forcefields.tersoff.Tersoff" title="squid.forcefields.tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.tersoff.Tersoff</span></code></a> - An object to handle Tersoff information.</li>
+</ul>
+</div></blockquote>
+<p>Helper Code:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="codebase.html#squid.forcefields.opls.parse_pfile" title="squid.forcefields.opls.parse_pfile"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.forcefields.opls.parse_pfile()</span></code></a> - A function to parse the OPLS parameter file.</li>
+<li><a class="reference internal" href="codebase.html#squid.forcefields.smrff.parse_pfile" title="squid.forcefields.smrff.parse_pfile"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.forcefields.smrff.parse_pfile()</span></code></a> - A function to parse the SMRFF parameter file.</li>
+</ul>
+</div></blockquote>
+<dl class="docutils">
+<dt>Module Files:</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="module_docs/forcefields/coulomb.html"><span class="doc">coulomb</span></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/lj.html"><span class="doc">lj</span></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/morse.html"><span class="doc">morse</span></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/tersoff.html"><span class="doc">tersoff</span></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/opls.html"><span class="doc">opls</span></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/smrff.html"><span class="doc">smrff</span></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/connectors.html"><span class="doc">connectors</span></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/helper.html"><span class="doc">helper</span></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/parameters.html"><span class="doc">parameters</span></a></li>
+</ul>
+</dd>
+</dl>
+<hr class="docutils" />
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="squid.html">Squid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="console_scripts.html">Console Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/forcefields.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Henry Herbol.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>
