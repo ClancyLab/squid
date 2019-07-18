@@ -12,7 +12,7 @@ if __name__ == "__main__":
 
     # Step 1 - Generate the bad initial guess
     print("Step 1 - Generate the bad initial guess...")
-    H_coords = [(2, 0), (2, 1), (1, 1), (0, 1), (-1, 1), (-1, 0)]
+    H_coords = [(2, 0), (2, 0.5), (1, 1), (0, 1), (-1, 0.5), (-1, 0)]
     CNH_frames = [[
         structures.Atom("C", 0, 0, 0),
         structures.Atom("N", 1, 0, 0),
@@ -44,7 +44,7 @@ if __name__ == "__main__":
     # Step 4 - Smooth out the band to 10 frames
     print("Step 4 - Smooth out the band...")
     CNH_frames = geometry.smooth_xyz(
-        CNH_frames, N_frames=10,
+        CNH_frames, N_frames=8,
         use_procrustes=True
     )
     # Save smoothed band
@@ -58,3 +58,28 @@ if __name__ == "__main__":
     CNH_frames = neb_handle.optimize()[-1]
     # Save final band
     files.write_xyz(CNH_frames, "final.xyz")
+
+    # Step 6 - Isolate the peak frame, and converge to the transition state
+    print("Step 6 - Calculating Transition State...")
+    ts_job = orca.job(
+        "CNH_TS", "! HF-3c OptTS NumFreq",
+        extra_section='''
+%geom
+    Calc_Hess true
+    NumHess true
+    Recalc_Hess 5
+    end
+''',
+        atoms=CNH_frames[neb_handle.highest_energy_frame_index], queue=None
+    )
+    ts_job.wait()
+
+    # Ensure we did find the transition state
+    data = orca.read("CNH_TS")
+    vib_freq = data.vibfreq
+    if sum([int(v < 0) for v in vib_freq]) == 1:
+        print("    Isolated a transition state with exactly 1 negative vibfreq.")
+        print("    Saving it to CNH_ts.xyz")
+        files.write_xyz(data.atoms, "CNH_ts.xyz")
+    else:
+        print("FAILED!")

@@ -6,7 +6,7 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = ../../squid-docs
-SOURCEDIR     = ../../2.0.0
+SOURCEDIR     = ../../squid
 PDFBUILDDIR   = /tmp
 PDF           = ../manual.pdf
 

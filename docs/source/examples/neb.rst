@@ -1,7 +1,7 @@
 Nudged Elastic Band Demo
 ------------------------
 
-The below code shows how one can generate a reaction pathway, and ultimately run NEB on it to find the minimum energy pathway (MEP).  Note, the endpoints and NEB should use the same DFT level of theory, otherwise your endpoints may not remain local minima within the potential energy surface.
+The below code shows how one can generate a reaction pathway, and ultimately run NEB on it to find the minimum energy pathway (MEP).  Further, it automates the submission of an eigenvector following Transition State optimization from the peak, and verifies a transition state was found.  Note, the endpoints and NEB should use the same DFT level of theory, otherwise your endpoints may not remain local minima within the potential energy surface.
 
 .. code-block:: python
 
@@ -19,7 +19,7 @@ The below code shows how one can generate a reaction pathway, and ultimately run
 
         # Step 1 - Generate the bad initial guess
         print("Step 1 - Generate the bad initial guess...")
-        H_coords = [(2, 0), (2, 1), (1, 1), (0, 1), (-1, 1), (-1, 0)]
+        H_coords = [(2, 0), (2, 0.5), (1, 1), (0, 1), (-1, 0.5), (-1, 0)]
         CNH_frames = [[
             structures.Atom("C", 0, 0, 0),
             structures.Atom("N", 1, 0, 0),
@@ -51,7 +51,7 @@ The below code shows how one can generate a reaction pathway, and ultimately run
         # Step 4 - Smooth out the band to 10 frames
         print("Step 4 - Smooth out the band...")
         CNH_frames = geometry.smooth_xyz(
-            CNH_frames, N_frames=10,
+            CNH_frames, N_frames=8,
             use_procrustes=True
         )
         # Save smoothed band
@@ -66,6 +66,31 @@ The below code shows how one can generate a reaction pathway, and ultimately run
         # Save final band
         files.write_xyz(CNH_frames, "final.xyz")
 
+        # Step 6 - Isolate the peak frame, and converge to the transition state
+        print("Step 6 - Calculating Transition State...")
+        ts_job = orca.job(
+            "CNH_TS", "! HF-3c OptTS NumFreq",
+            extra_section='''
+    %geom
+        Calc_Hess true
+        NumHess true
+        Recalc_Hess 5
+        end
+    ''',
+            atoms=CNH_frames[neb_handle.highest_energy_frame_index], queue=None
+        )
+        ts_job.wait()
+
+        # Ensure we did find the transition state
+        data = orca.read("CNH_TS")
+        vib_freq = data.vibfreq
+        if sum([int(v < 0) for v in vib_freq]) == 1:
+            print("    Isolated a transition state with exactly 1 negative vibfreq.")
+            print("    Saving it to CNH_ts.xyz")
+            files.write_xyz(data.atoms, "CNH_ts.xyz")
+        else:
+            print("FAILED!")
+
 
 Example output is as follows:
 
@@ -78,58 +103,51 @@ Example output is as follows:
     Running Climbing Image, starting at iteration 5
 
     Running neb with optimization method LBFGS
-            step_size = 1
-            step_size_adjustment = 0.5
-            max_step = 0.04
-            Using numerical optimization starting hessian approximation.
-            Will reset stored parameters and gradients when stepped bad.
-            Will reset step_size after 20 good steps.
-            Will accelerate step_size after 20 good steps.
-            Will use procrustes to remove rigid rotations and translations
+        step_size = 1
+        step_size_adjustment = 0.5
+        max_step = 0.04
+        Using numerical optimization starting hessian approximation.
+        Will reset stored parameters and gradients when stepped bad.
+        Will reset step_size after 20 good steps.
+        Will accelerate step_size after 20 good steps.
+        Will use procrustes to remove rigid rotations and translations
     Convergence Criteria:
-            g_rms = 0.001 (Ha/Ang) = 0.0272144 (eV/Ang)
-            g_max = 0.001 (Ha/Ang) = 0.0272144 (eV/Ang)
-            maxiter = 1000
+        g_rms = 0.001 (Ha/Ang) = 0.0272144 (eV/Ang)
+        g_max = 0.001 (Ha/Ang) = 0.0272144 (eV/Ang)
+        maxiter = 1000
     ---------------------------------------------
     Step    RMS_F (eV/Ang)  MAX_F (eV/Ang)  MAX_E (kT_300)  Energies (kT_300)
     ----
-    0       29.3377         43.5945         223.9           -92.232 + 209.7 201.3 215.5 215.5 223.9 166.9 147.0 147.0 -24.8
-    1       17.6454         30.5193         180.9           -92.232 + 131.0 103.4 180.9 141.9 160.8  87.5  82.3  85.4 -24.8
-    2       16.7374         28.5847         172.2           -92.232 + 126.9  99.1 172.2 137.6 157.3  84.4  79.1  81.9 -24.8
-    3       9.4617          14.7017         130.7           -92.232 +  94.2  67.9 111.6 107.4 130.7  62.6  54.4  55.6 -24.8
-    4       8.8876          14.0481         128.4           -92.232 +  90.8  65.3 108.5 105.3 128.4  61.1  51.9  53.9 -24.8
-    5       5.2199          9.3786          113.3           -92.232 +  62.7  48.6  90.5  92.7 113.3  52.3  31.6  46.2 -24.8
-    6       4.7052          8.7159          111.4           -92.232 +  56.6  46.6  87.3  91.3 111.4  51.5  27.0  44.8 -24.8
-    7       3.3773          6.7696          109.1           -92.232 +  36.6  42.5  80.3  88.9 109.1  50.3  12.0  40.9 -24.8
-    8       2.6741          5.0084          109.0           -92.232 +  22.4  41.4  78.7  88.5 109.0  50.2   0.2  37.7 -24.8
-    9       2.0768          3.5014          110.2           -92.232 +  11.7  41.3  78.1  88.8 110.2  50.3 -10.0  34.1 -24.8
-    10      1.1286          2.9791          112.4           -92.232 +   8.6  40.5  76.3  88.8 112.4  50.2 -16.0  26.9 -24.8
-    11      0.8364          2.6607          113.2           -92.232 +   8.1  40.5  76.1  89.0 113.2  50.3 -17.1  24.5 -24.8
-    12      0.5762          1.2051          114.7           -92.232 +   8.1  40.4  75.9  89.5 114.7  50.5 -17.7  21.3 -24.8
-    13      0.4408          0.797           115.6           -92.232 +   7.7  40.4  75.8  89.7 115.6  50.6 -18.1  21.2 -24.8
-    14      0.9462          2.1528          116.2           -92.232 +   7.9  40.5  75.9  89.7 116.2  51.0 -17.7  20.6 -24.8
-    15      0.5642          1.2538          116.3           -92.232 +   7.8  40.4  75.7  89.7 116.3  50.4 -17.8  20.5 -24.8
-    16      1.3633          3.5182          116.2           -92.232 +   7.7  40.6  75.9  90.1 116.2  50.4 -17.8  20.7 -24.8
-    17      0.8048          1.859           116.4           -92.232 +   8.0  40.5  75.2  89.8 116.4  50.5 -17.8  18.6 -24.8
-    18      2.0416          5.3815          116.3           -92.232 +  10.5  40.7  75.1  90.3 116.3  51.9 -17.7  17.1 -24.8
-    19      1.8103          6.4053          116.4           -92.232 +  12.7  40.6  74.8  89.3 116.4  49.7 -16.9  14.8 -24.8
-    20      1.652           5.8429          116.4           -92.232 +  11.9  40.6  74.8  89.3 116.4  49.7 -17.0  14.8 -24.8
-    21      0.1428          0.3475          116.3           -92.232 +   7.7  40.5  74.7  89.7 116.3  49.9 -17.9  15.5 -24.8
-    22      0.0558          0.1432          116.3           -92.232 +   7.7  40.5  74.7  89.7 116.3  49.9 -17.9  15.5 -24.8
-    23      0.0377          0.1146          116.3           -92.232 +   7.7  40.5  74.7  89.8 116.3  49.9 -17.9  15.5 -24.8
-    24      0.0229          0.0525          116.3           -92.232 +   7.7  40.5  74.7  89.8 116.3  49.9 -17.9  15.4 -24.8
+    0   28.7949     44.5242     223.9       -92.232 + 109.6 215.5 223.9 182.8  62.4  62.4 -24.8 
+    1   15.339      21.7786     161.1       -92.232 +  44.3 143.0 161.1  88.4  13.7  20.3 -24.8 
+    2   14.6517     20.8575     158.0       -92.232 +  41.7 139.4 158.0  86.2  11.9  17.2 -24.8 
+    3   6.0258      9.376       122.9       -92.232 +  15.2 100.8 122.9  62.8  -5.4  -9.2 -24.8 
+    4   5.6856      8.8098      121.5       -92.232 +  14.5  99.4 121.5  61.5  -5.7  -9.3 -24.8 
+    5   1.8606      3.0362      107.7       -92.232 +   9.4  86.9 107.7  50.6  -8.2 -10.1 -24.8 
+    6   1.1459      3.024       105.3       -92.232 +   9.3  85.5 105.3  49.1  -8.4 -11.0 -24.8 
+    7   0.945       2.5354      105.2       -92.232 +   9.4  84.9 105.2  48.5  -8.5 -11.3 -24.8 
+    8   0.9274      2.0697      107.9       -92.232 +   9.5  84.5 107.9  48.8  -8.5 -11.9 -24.8 
+    9   0.8502      1.9055      110.2       -92.232 +   9.4  84.5 110.2  49.1  -8.6 -12.3 -24.8 
+    10  0.9637      1.7608      114.3       -92.232 +   9.5  85.0 114.3  49.5  -8.4 -13.0 -24.8 
+    11  0.8564      1.4446      115.4       -92.232 +   9.5  84.9 115.4  49.4  -8.4 -13.4 -24.8 
+    12  0.8252      1.2095      116.8       -92.232 +   9.7  84.6 116.8  49.6  -8.2 -14.5 -24.8 
+    13  0.3625      0.742       115.6       -92.232 +   9.6  84.2 115.6  49.3  -8.4 -14.3 -24.8 
+    14  0.8296      1.4249      116.8       -92.232 +   9.9  84.3 116.8  49.9  -8.1 -15.6 -24.8 
+    15  0.6218      1.0318      116.8       -92.232 +   9.8  84.2 116.8  49.8  -8.2 -15.6 -24.8 
+    16  0.2493      0.5738      116.4       -92.232 +   9.7  83.9 116.4  49.6  -8.2 -15.2 -24.8 
+    17  0.1849      0.3175      116.4       -92.232 +   9.7  83.9 116.4  49.6  -8.2 -15.1 -24.8 
+    18  0.1046      0.2349      116.3       -92.232 +   9.8  83.8 116.3  49.7  -8.2 -15.1 -24.8 
+    19  0.0459      0.1069      116.3       -92.232 +   9.8  83.8 116.3  49.7  -8.1 -15.1 -24.8 
+    20  0.0221      0.0458      116.3       -92.232 +   9.8  83.7 116.3  49.7  -8.1 -15.1 -24.8 
 
     NEB converged the RMS force.
     ------------------------------------------------------------------------------------------
-
-
-TODO - THIS IS OLD DOCUMENTATION, UPDATE GRAPH!
 
 With the following graph made using:
 
 .. code-block:: none
 
-    scanDFT neb_test-^-%d 1 10 -neb neb_test-0-0,neb_test-0-11 -c ^,0,34 -t "NEB of CNH Isomerization" -lx "Reaction Coordinate" -ly "Energy (kT_300)" -u kT_300
+    scanDFT CNH-20-%d 1 6 -neb CNH-0-0,CNH-0-7 -t "NEB of CNH Isomerization" -lx "Reaction Coordinate" -ly "Energy" -u eV
 
 .. image:: /imgs/examples/dft/neb_CNH_isomerization/zoomed_plot_scaled.png
 

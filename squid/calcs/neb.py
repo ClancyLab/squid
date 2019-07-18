@@ -437,6 +437,10 @@ class NEB:
         self.ci_img = None
         self.ci_N = ci_N
 
+        # These are variables to make life easier on the user after NEB runs
+        self.last_iteration_run = None
+        self.highest_energy_frame_index = None
+
         self.no_energy = no_energy
 
         self.new_opt_params = new_opt_params
@@ -494,7 +498,6 @@ g09.  If not, you need to manually specify start_job and get_results.")
 
         if self.ci_neb and self.no_energy:
             raise Exception("\nERROR\nUnable to do climbing image without energy. Let no_energy be False.")
-
 
     def calculate(self, coords):
         self.calls_to_calculate += 1
@@ -559,6 +562,7 @@ g09.  If not, you need to manually specify start_job and get_results.")
 
         # In climbing image neb, after a few iterations we take the highest
         # energy image and use that.
+        self.highest_energy_frame_index = V.index(max(V))
         if self.ci_neb and self.ci_img is None and self.step > self.ci_N:
             self.ci_img = V.index(max(V))
             if self.ci_img in [0, len(self.states) - 1]:
@@ -732,6 +736,7 @@ g09.  If not, you need to manually specify start_job and get_results.")
         self.error = RMS_force
 
         # Increment step
+        self.last_iteration_run = self.step
         self.step += 1
 
         if self.callback is not None:
