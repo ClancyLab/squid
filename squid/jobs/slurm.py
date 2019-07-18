@@ -2,9 +2,8 @@ import sys
 import time
 import getpass
 import subprocess
-from squid.files.misc import which
-from squid.jobs.misc import close_pipes
 from squid.jobs.queue_manager import JobObject
+from squid.files.misc import which, close_pipes
 from squid.utils.cast import simplify_numerical_array
 
 

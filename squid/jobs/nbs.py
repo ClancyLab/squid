@@ -2,9 +2,8 @@ import re
 import sys
 import getpass
 import subprocess
-from squid.files.misc import which
-from squid.jobs.misc import close_pipes
 from squid.jobs.container import JobObject
+from squid.files.misc import which, close_pipes
 from squid.utils.cast import is_numeric, is_array
 
 

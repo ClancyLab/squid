@@ -3,7 +3,7 @@ Molecular Orbital Visualization Demo
 
 The below code shows how one can visualize molecular orbitals of a molecule (in this case water) using VMD.
 
-..code-block:: python
+.. code-block:: python
 
     from squid import orca
     from squid import files
@@ -14,15 +14,16 @@ The below code shows how one can visualize molecular orbitals of a molecule (in 
         frames = files.read_xyz('water.xyz')
         job_handle = orca.job(
             'water',
-            '! pw6b95 def2-TZVP D3BJ OPT NumFreq',
+            '! PW6B95 def2-TZVP D3BJ OPT NumFreq',
             atoms=frames,
             queue=None)
         job_handle.wait()
+
         # Next, post process it
         orca.mo_analysis(
             "water", orbital=None,
             HOMO=True, LUMO=True,
-            wireframe=True, hide=True, iso=0.04
+            wireframe=False, hide=True, iso=0.04
         )
 
 In the console output it'll show the following in blue:

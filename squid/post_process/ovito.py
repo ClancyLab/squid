@@ -18,8 +18,34 @@ An example of using this is as follows:
 
 '''
 import os
+import subprocess
 from squid.files import write_xyz
-from squid.files.misc import which
+from squid.files.misc import which, close_pipes
+
+
+def get_ovito_obj(version="2.9.0"):
+    '''
+    This function returns the ovito object.  Note, currently the code below
+    only works on version 2.9.0.
+    '''
+    ovito_path = which("ovitos")
+
+    # Determine version
+    ovito_pipe = subprocess.Popen(
+        [ovito_path, "-v"], shell=False,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout = str(ovito_pipe.stdout.read().strip())
+
+    assert "Ovito" in stdout,\
+        "Error - Unable to access Ovito.  Please ensure it is in your PATH \
+environment variable!"
+    assert version in stdout,\
+        "Error - Incorrect Ovito version!  It should be %s, but is %s."\
+        % (version, stdout.strip().split()[-1])
+
+    close_pipes(ovito_pipe)
+
+    return ovito_path
 
 
 def ovito_xyz_to_image(
@@ -62,7 +88,7 @@ def ovito_xyz_to_image(
         None
     '''
 
-    ovitos_path = which("ovitos")
+    ovitos_path = get_ovito_obj("2.9.0")
     assert ovitos_path is not None,\
         "Error - Cannot find ovitos in the PATH env var."
 
@@ -96,6 +122,7 @@ settings = $SETTINGS
 rs = RenderSettings(size=$SIZE, filename="$SCRATCH$FNAME.png", renderer=$RENDERER(**settings))
 
 node = import_file("$XYZ", columns=["Particle Type", "Position.X", "Position.Y", "Position.Z"])
+node.add_to_scene()
 
 cell = node.source.cell
 cell.display.enabled = $DISPLAY_CELL
@@ -191,6 +218,9 @@ def ovito_xyz_to_gif(
     assert convert_path is not None,\
         "Error - Cannot find convert in the PATH env var."
 
+    if fname.endswith(".gif"):
+        fname.replace(".gif", "")
+
     # First ensure we have frames and things in the correct format
     if isinstance(frames, str):
         frames = open(frames)
@@ -233,3 +263,4 @@ def ovito_xyz_to_gif(
         for s_id, val in holders:
             cmd = cmd.replace(s_id, val)
         os.system(cmd)
+        os.rename("output.gif", fname + ".gif")

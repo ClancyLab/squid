@@ -3,8 +3,7 @@ import sys
 import shutil
 import subprocess
 from squid import jobs
-from squid.files.misc import which
-from squid.jobs.misc import close_pipes
+from squid.files.misc import which, close_pipes
 from squid.lammps.io.data import write_lammps_data
 
 

@@ -1,5 +1,5 @@
 import subprocess
-from squid.files.misc import which
+from squid.files.misc import which, close_pipes
 
 
 def get_orca_obj(parallel=True):
@@ -14,10 +14,10 @@ def get_orca_obj(parallel=True):
 
     orca_path = which("orca")
     # Determine orca version
-    p = subprocess.Popen(
+    orca_pipe = subprocess.Popen(
         [orca_path, "FAKE_FILE"], shell=False,
         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout = str(p.stdout.read().strip())
+    stdout = str(orca_pipe.stdout.read().strip())
     # stderr = str(p.stderr.read().strip())
 
     assert orca_string_id in stdout,\
@@ -39,10 +39,10 @@ required openmpi version for Orca %s" % orca_version
 
         # Find openmpi
         ompi_path = which("mpiexec")
-        p = subprocess.Popen(
+        ompi_pipe = subprocess.Popen(
             [ompi_path, "--V"], shell=False,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout = str(p.stdout.read().strip())
+        stdout = str(ompi_pipe.stdout.read().strip())
         # stderr = str(p.stderr.read().strip())
 
         # Simple check for openmpi
@@ -57,5 +57,8 @@ PATH environment variable!"
             "Error - Incorrect openmpi version for the loaded orca version. \
 Should be openmpi %s (found %s) for orca %s."\
         % (ompi_version_held, ompi_version, orca_version)
+
+    close_pipes(orca_pipe)
+    close_pipes(ompi_pipe)
 
     return orca_path
