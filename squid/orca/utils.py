@@ -29,6 +29,7 @@ environment variable!"
     orca_version = stdout.split(version_string_id)[1].strip().split()[0]
 
     # If running in parallel, ensure we have the correct version of openmpi
+    ompi_pipe = None
     if parallel:
         ompi_version_should_be = {
             "4.1.2": "3.1.3"

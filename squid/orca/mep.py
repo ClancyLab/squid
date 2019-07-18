@@ -40,8 +40,9 @@ def read_vpot(vpot):
     '''
     v = []
     f = open(vpot, "r")
-    f.next()
-    for line in f:
+    for i, line in enumerate(f):
+        if i == 0:
+            continue
         data = line.split()
         v.append(float(data[3]))
     f.close()
@@ -59,7 +60,7 @@ def electrostatic_potential_cubegen(fname, npoints=80):
         fptr.write("%s\n" % str(cmd))
     fptr.close()
 
-    orcaPath = get_orca_obj(parallel=False)[0]
+    orcaPath = get_orca_obj(parallel=False)
 
     print("GENERATING CUBE FILE...\n")
 
