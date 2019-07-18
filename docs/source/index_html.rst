@@ -9,11 +9,10 @@ Squid - Table of Contents
 Contents:
 
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 2
 
     squid
     overview
-    codebase
     console_scripts
     examples
 
