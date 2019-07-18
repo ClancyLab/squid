@@ -1,6 +1,8 @@
 DFT - Electrostatic Potential Mapped on Electron Density Post Processing
 ------------------------------------------------------------------------
 
+We can also readily generate an electrostatic potential mapped onto an electron density isosurface using squid.  One thing to note is that the final results are subjective depending on two primary values, which the user may set in VMD.  These values are found under the *Graphics > Representations* tab as the *Isovalue* listed in *Draw Style* and the *Color Scale Data Range* listed under *Trajectory*.
+
 .. code-block:: python
 
     from squid import orca
@@ -12,13 +14,14 @@ DFT - Electrostatic Potential Mapped on Electron Density Post Processing
         frames = files.read_xyz('water.xyz')
         job_handle = orca.job(
             'water',
-            '! pw6b95 def2-TZVP D3BJ OPT NumFreq',
+            '! PW6B95 def2-TZVP D3BJ OPT NumFreq',
             atoms=frames,
             queue=None)
         job_handle.wait()
+
         # Next, post process it
         orca.pot_analysis(
-            "water", wireframe=True, npoints=80
+            "water", wireframe=False, npoints=80
         )
 
 
