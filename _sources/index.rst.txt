@@ -9,12 +9,13 @@ Squid - Table of Contents
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
-   squid
-   codebase
-   console_scripts
-   examples
+    squid
+    overview
+    console_scripts
+    examples
+
 
 Indices and tables
 ==================

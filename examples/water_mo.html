@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index_html.html">Squid 2.0.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -40,31 +40,28 @@
   <div class="section" id="molecular-orbital-visualization-demo">
 <h1>Molecular Orbital Visualization Demo<a class="headerlink" href="#molecular-orbital-visualization-demo" title="Permalink to this headline">¶</a></h1>
 <p>The below code shows how one can visualize molecular orbitals of a molecule (in this case water) using VMD.</p>
-<p>..code-block:: python</p>
-<blockquote>
-<div><p>from squid import orca
-from squid import files</p>
-<dl class="docutils">
-<dt>if __name__ == “__main__”:</dt>
-<dd><p class="first"># First, calculate relevant information
-frames = files.read_xyz(‘water.xyz’)
-job_handle = orca.job(</p>
-<blockquote>
-<div>‘water’,
-‘! pw6b95 def2-TZVP D3BJ OPT NumFreq’,
-atoms=frames,
-queue=None)</div></blockquote>
-<p>job_handle.wait()
-# Next, post process it
-orca.mo_analysis(</p>
-<blockquote>
-<div>“water”, orbital=None,
-HOMO=True, LUMO=True,
-wireframe=True, hide=True, iso=0.04</div></blockquote>
-<p class="last">)</p>
-</dd>
-</dl>
-</div></blockquote>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">squid</span> <span class="kn">import</span> <span class="n">orca</span>
+<span class="kn">from</span> <span class="nn">squid</span> <span class="kn">import</span> <span class="n">files</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># First, calculate relevant information</span>
+    <span class="n">frames</span> <span class="o">=</span> <span class="n">files</span><span class="o">.</span><span class="n">read_xyz</span><span class="p">(</span><span class="s1">&#39;water.xyz&#39;</span><span class="p">)</span>
+    <span class="n">job_handle</span> <span class="o">=</span> <span class="n">orca</span><span class="o">.</span><span class="n">job</span><span class="p">(</span>
+        <span class="s1">&#39;water&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;! PW6B95 def2-TZVP D3BJ OPT NumFreq&#39;</span><span class="p">,</span>
+        <span class="n">atoms</span><span class="o">=</span><span class="n">frames</span><span class="p">,</span>
+        <span class="n">queue</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+    <span class="n">job_handle</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+
+    <span class="c1"># Next, post process it</span>
+    <span class="n">orca</span><span class="o">.</span><span class="n">mo_analysis</span><span class="p">(</span>
+        <span class="s2">&quot;water&quot;</span><span class="p">,</span> <span class="n">orbital</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="n">HOMO</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">LUMO</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="n">wireframe</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">hide</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">iso</span><span class="o">=</span><span class="mf">0.04</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
 <p>In the console output it’ll show the following in blue:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Representations are as follows:
 
@@ -88,10 +85,10 @@ being blue and negative being red):</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../index.html">Table of Contents</a></h3>
+<h3><a href="../index_html.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../squid.html">Squid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../codebase.html">Codebase</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../console_scripts.html">Console Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
 </ul>
@@ -128,7 +125,7 @@ being blue and negative being red):</p>
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index_html.html">Squid 2.0.0 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

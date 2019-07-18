@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">Squid 2.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index_html.html">Squid 2.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -63,7 +63,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 
-<div class="viewcode-block" id="Molecule"><a class="viewcode-back" href="../../../module_docs/structures/molecule.html#squid.structures.molecule.Molecule">[docs]</a><span class="k">class</span> <span class="nc">Molecule</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Molecule"><a class="viewcode-back" href="../../../codebase.html#squid.structures.molecule.Molecule">[docs]</a><span class="k">class</span> <span class="nc">Molecule</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    A molecule object to store atoms and any/all associated</span>
 <span class="sd">    interatomic connections.</span>
@@ -219,7 +219,7 @@
             <span class="p">)</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="Molecule.reassign_indices"><a class="viewcode-back" href="../../../module_docs/structures/molecule.html#squid.structures.molecule.Molecule.reassign_indices">[docs]</a>    <span class="k">def</span> <span class="nf">reassign_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="Molecule.reassign_indices"><a class="viewcode-back" href="../../../codebase.html#squid.structures.molecule.Molecule.reassign_indices">[docs]</a>    <span class="k">def</span> <span class="nf">reassign_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Simply reassign atomic indices based on their current positions</span>
 <span class="sd">        in the atoms array.  This is zero indexed, unless otherwise specified.</span>
@@ -239,7 +239,7 @@
             <span class="n">a</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="n">offset</span>
             <span class="n">a</span><span class="o">.</span><span class="n">molecule_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">molecule_index</span></div>
 
-<div class="viewcode-block" id="Molecule.flatten"><a class="viewcode-back" href="../../../module_docs/structures/molecule.html#squid.structures.molecule.Molecule.flatten">[docs]</a>    <span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Molecule.flatten"><a class="viewcode-back" href="../../../codebase.html#squid.structures.molecule.Molecule.flatten">[docs]</a>    <span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Flatten out all atoms into a 1D array.</span>
 
@@ -250,7 +250,7 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">])</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Molecule.net_charge"><a class="viewcode-back" href="../../../module_docs/structures/molecule.html#squid.structures.molecule.Molecule.net_charge">[docs]</a>    <span class="k">def</span> <span class="nf">net_charge</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Molecule.net_charge"><a class="viewcode-back" href="../../../codebase.html#squid.structures.molecule.Molecule.net_charge">[docs]</a>    <span class="k">def</span> <span class="nf">net_charge</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Return the net charge of the molecule.  This requires that atoms</span>
 <span class="sd">        have charges associated with them.</span>
@@ -265,7 +265,7 @@
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s2">&quot;charge&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">a</span><span class="o">.</span><span class="n">charge</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="p">]))</span></div>
 
-<div class="viewcode-block" id="Molecule.rotate"><a class="viewcode-back" href="../../../module_docs/structures/molecule.html#squid.structures.molecule.Molecule.rotate">[docs]</a>    <span class="k">def</span> <span class="nf">rotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">around</span><span class="o">=</span><span class="s2">&quot;com&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="Molecule.rotate"><a class="viewcode-back" href="../../../codebase.html#squid.structures.molecule.Molecule.rotate">[docs]</a>    <span class="k">def</span> <span class="nf">rotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">around</span><span class="o">=</span><span class="s2">&quot;com&quot;</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Rotate the molecule by the given matrix *m*.</span>
 
@@ -284,7 +284,7 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">misc</span><span class="o">.</span><span class="n">rotate_atoms</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">around</span><span class="o">=</span><span class="n">around</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Molecule.translate"><a class="viewcode-back" href="../../../module_docs/structures/molecule.html#squid.structures.molecule.Molecule.translate">[docs]</a>    <span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+<div class="viewcode-block" id="Molecule.translate"><a class="viewcode-back" href="../../../codebase.html#squid.structures.molecule.Molecule.translate">[docs]</a>    <span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Apply a translation to this molecule.</span>
 
@@ -302,7 +302,7 @@
         <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span>
             <span class="n">a</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Molecule.scale"><a class="viewcode-back" href="../../../module_docs/structures/molecule.html#squid.structures.molecule.Molecule.scale">[docs]</a>    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+<div class="viewcode-block" id="Molecule.scale"><a class="viewcode-back" href="../../../codebase.html#squid.structures.molecule.Molecule.scale">[docs]</a>    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Apply a scalar to this molecule.</span>
 
@@ -320,7 +320,7 @@
         <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span>
             <span class="n">a</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Molecule.set_positions"><a class="viewcode-back" href="../../../module_docs/structures/molecule.html#squid.structures.molecule.Molecule.set_positions">[docs]</a>    <span class="k">def</span> <span class="nf">set_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">positions</span><span class="p">,</span> <span class="n">new_atom_list</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Molecule.set_positions"><a class="viewcode-back" href="../../../codebase.html#squid.structures.molecule.Molecule.set_positions">[docs]</a>    <span class="k">def</span> <span class="nf">set_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">positions</span><span class="p">,</span> <span class="n">new_atom_list</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Manually specify atomic positions of your molecule.</span>
 
@@ -353,7 +353,7 @@
             <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">positions</span><span class="p">):</span>
                 <span class="n">a</span><span class="o">.</span><span class="n">set_position</span><span class="p">(</span><span class="n">b</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Molecule.get_center_of_geometry"><a class="viewcode-back" href="../../../module_docs/structures/molecule.html#squid.structures.molecule.Molecule.get_center_of_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">get_center_of_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip_H</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Molecule.get_center_of_geometry"><a class="viewcode-back" href="../../../codebase.html#squid.structures.molecule.Molecule.get_center_of_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">get_center_of_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip_H</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Calculate the center of geometry of the molecule.</span>
 
@@ -371,7 +371,7 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="n">misc</span><span class="o">.</span><span class="n">get_center_of_geometry</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">skip_H</span><span class="o">=</span><span class="n">skip_H</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Molecule.get_center_of_mass"><a class="viewcode-back" href="../../../module_docs/structures/molecule.html#squid.structures.molecule.Molecule.get_center_of_mass">[docs]</a>    <span class="k">def</span> <span class="nf">get_center_of_mass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip_H</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Molecule.get_center_of_mass"><a class="viewcode-back" href="../../../codebase.html#squid.structures.molecule.Molecule.get_center_of_mass">[docs]</a>    <span class="k">def</span> <span class="nf">get_center_of_mass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip_H</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Calculate the center of mass of the molecule.</span>
 
@@ -388,7 +388,7 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="n">misc</span><span class="o">.</span><span class="n">get_center_of_mass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">skip_H</span><span class="o">=</span><span class="n">skip_H</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Molecule.merge"><a class="viewcode-back" href="../../../module_docs/structures/molecule.html#squid.structures.molecule.Molecule.merge">[docs]</a>    <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">deepcopy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Molecule.merge"><a class="viewcode-back" href="../../../codebase.html#squid.structures.molecule.Molecule.merge">[docs]</a>    <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">deepcopy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This function merges another molecule into this one, offsetting</span>
 <span class="sd">        indices as needed.  When merging, the atom indices of this molecule</span>
@@ -419,7 +419,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">angles</span> <span class="o">+=</span> <span class="n">other</span><span class="o">.</span><span class="n">angles</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dihedrals</span> <span class="o">+=</span> <span class="n">other</span><span class="o">.</span><span class="n">dihedrals</span></div>
 
-<div class="viewcode-block" id="Molecule.assign_angles_and_dihedrals"><a class="viewcode-back" href="../../../module_docs/structures/molecule.html#squid.structures.molecule.Molecule.assign_angles_and_dihedrals">[docs]</a>    <span class="k">def</span> <span class="nf">assign_angles_and_dihedrals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Molecule.assign_angles_and_dihedrals"><a class="viewcode-back" href="../../../codebase.html#squid.structures.molecule.Molecule.assign_angles_and_dihedrals">[docs]</a>    <span class="k">def</span> <span class="nf">assign_angles_and_dihedrals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Given a list of atom structures with bonded information, calculate</span>
 <span class="sd">        angles and dihedrals.</span>
@@ -580,10 +580,10 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../../../index.html">Table of Contents</a></h3>
+<h3><a href="../../../index_html.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../squid.html">Squid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../codebase.html">Codebase</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../console_scripts.html">Console Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
 </ul>
@@ -613,7 +613,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">Squid 2.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index_html.html">Squid 2.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

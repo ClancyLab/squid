@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index_html.html">Squid 2.0.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -39,37 +39,37 @@
             
   <span class="target" id="module-squid.forcefields.parameters"></span><dl class="class">
 <dt id="squid.forcefields.parameters.Parameters">
-<em class="property">class </em><code class="descclassname">squid.forcefields.parameters.</code><code class="descname">Parameters</code><span class="sig-paren">(</span><em>restrict</em>, <em>opls_file='/home/hherbol/Programs/squid/2.0.0/squid/forcefields/potentials/oplsaa.prm'</em>, <em>smrff_file=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/forcefields/parameters.html#Parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.forcefields.parameters.Parameters" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">squid.forcefields.parameters.</code><code class="descname">Parameters</code><span class="sig-paren">(</span><em>restrict</em>, <em>opls_file='/home/hherbol/programs/squid/squid/forcefields/potentials/oplsaa.prm'</em>, <em>smrff_file=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/forcefields/parameters.html#Parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.forcefields.parameters.Parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>A Parameters object that holds force field parameters.  It requires the
 input of which atom types to get parameters for, so as to not read in an
 entire force field.</p>
 <p>This object contains the following:</p>
 <blockquote>
 <div><ul class="simple">
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.dump_angles" title="squid.forcefields.parameters.Parameters.dump_angles"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_angles()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.dump_bonds" title="squid.forcefields.parameters.Parameters.dump_bonds"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_bonds()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.dump_dihedrals" title="squid.forcefields.parameters.Parameters.dump_dihedrals"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_dihedrals()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.dump_lj_cut_coul_cut" title="squid.forcefields.parameters.Parameters.dump_lj_cut_coul_cut"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_lj_cut_coul_cut()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.dump_lj_cut_coul_long" title="squid.forcefields.parameters.Parameters.dump_lj_cut_coul_long"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_lj_cut_coul_long()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.dump_morse" title="squid.forcefields.parameters.Parameters.dump_morse"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_morse()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.dump_set_charge" title="squid.forcefields.parameters.Parameters.dump_set_charge"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_set_charge()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.dump_smooths" title="squid.forcefields.parameters.Parameters.dump_smooths"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_smooths()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.dump_style" title="squid.forcefields.parameters.Parameters.dump_style"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_style()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.dump_tersoff" title="squid.forcefields.parameters.Parameters.dump_tersoff"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_tersoff()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.fix" title="squid.forcefields.parameters.Parameters.fix"><code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.generate" title="squid.forcefields.parameters.Parameters.generate"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.get_smrff_style" title="squid.forcefields.parameters.Parameters.get_smrff_style"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_smrff_style()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.load_opls" title="squid.forcefields.parameters.Parameters.load_opls"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_opls()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.load_smrff" title="squid.forcefields.parameters.Parameters.load_smrff"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_smrff()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.mapper" title="squid.forcefields.parameters.Parameters.mapper"><code class="xref py py-func docutils literal notranslate"><span class="pre">mapper()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.num_free_parameters" title="squid.forcefields.parameters.Parameters.num_free_parameters"><code class="xref py py-func docutils literal notranslate"><span class="pre">num_free_parameters()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.pack" title="squid.forcefields.parameters.Parameters.pack"><code class="xref py py-func docutils literal notranslate"><span class="pre">pack()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.set_smoothed_pair_potentials" title="squid.forcefields.parameters.Parameters.set_smoothed_pair_potentials"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_smoothed_pair_potentials()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.set_all_masks" title="squid.forcefields.parameters.Parameters.set_all_masks"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_all_masks()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.set_mask" title="squid.forcefields.parameters.Parameters.set_mask"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_mask()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.set_opls_mask" title="squid.forcefields.parameters.Parameters.set_opls_mask"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_opls_mask()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.unpack" title="squid.forcefields.parameters.Parameters.unpack"><code class="xref py py-func docutils literal notranslate"><span class="pre">unpack()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.write_smrff" title="squid.forcefields.parameters.Parameters.write_smrff"><code class="xref py py-func docutils literal notranslate"><span class="pre">write_smrff()</span></code></a></li>
+<li><a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters.dump_angles" title="squid.forcefields.parameters.Parameters.dump_angles"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_angles()</span></code></a></li>
+<li><a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters.dump_bonds" title="squid.forcefields.parameters.Parameters.dump_bonds"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_bonds()</span></code></a></li>
+<li><a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters.dump_dihedrals" title="squid.forcefields.parameters.Parameters.dump_dihedrals"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_dihedrals()</span></code></a></li>
+<li><a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters.dump_lj_cut_coul_cut" title="squid.forcefields.parameters.Parameters.dump_lj_cut_coul_cut"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_lj_cut_coul_cut()</span></code></a></li>
+<li><a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters.dump_lj_cut_coul_long" title="squid.forcefields.parameters.Parameters.dump_lj_cut_coul_long"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_lj_cut_coul_long()</span></code></a></li>
+<li><a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters.dump_morse" title="squid.forcefields.parameters.Parameters.dump_morse"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_morse()</span></code></a></li>
+<li><a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters.dump_set_charge" title="squid.forcefields.parameters.Parameters.dump_set_charge"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_set_charge()</span></code></a></li>
+<li><a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters.dump_smooths" title="squid.forcefields.parameters.Parameters.dump_smooths"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_smooths()</span></code></a></li>
+<li><a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters.dump_style" title="squid.forcefields.parameters.Parameters.dump_style"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_style()</span></code></a></li>
+<li><a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters.dump_tersoff" title="squid.forcefields.parameters.Parameters.dump_tersoff"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_tersoff()</span></code></a></li>
+<li><a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters.fix" title="squid.forcefields.parameters.Parameters.fix"><code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code></a></li>
+<li><a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters.generate" title="squid.forcefields.parameters.Parameters.generate"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate()</span></code></a></li>
+<li><a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters.get_smrff_style" title="squid.forcefields.parameters.Parameters.get_smrff_style"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_smrff_style()</span></code></a></li>
+<li><a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters.load_opls" title="squid.forcefields.parameters.Parameters.load_opls"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_opls()</span></code></a></li>
+<li><a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters.load_smrff" title="squid.forcefields.parameters.Parameters.load_smrff"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_smrff()</span></code></a></li>
+<li><a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters.mapper" title="squid.forcefields.parameters.Parameters.mapper"><code class="xref py py-func docutils literal notranslate"><span class="pre">mapper()</span></code></a></li>
+<li><a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters.num_free_parameters" title="squid.forcefields.parameters.Parameters.num_free_parameters"><code class="xref py py-func docutils literal notranslate"><span class="pre">num_free_parameters()</span></code></a></li>
+<li><a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters.pack" title="squid.forcefields.parameters.Parameters.pack"><code class="xref py py-func docutils literal notranslate"><span class="pre">pack()</span></code></a></li>
+<li><a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters.set_smoothed_pair_potentials" title="squid.forcefields.parameters.Parameters.set_smoothed_pair_potentials"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_smoothed_pair_potentials()</span></code></a></li>
+<li><a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters.set_all_masks" title="squid.forcefields.parameters.Parameters.set_all_masks"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_all_masks()</span></code></a></li>
+<li><a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters.set_mask" title="squid.forcefields.parameters.Parameters.set_mask"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_mask()</span></code></a></li>
+<li><a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters.set_opls_mask" title="squid.forcefields.parameters.Parameters.set_opls_mask"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_opls_mask()</span></code></a></li>
+<li><a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters.unpack" title="squid.forcefields.parameters.Parameters.unpack"><code class="xref py py-func docutils literal notranslate"><span class="pre">unpack()</span></code></a></li>
+<li><a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters.write_smrff" title="squid.forcefields.parameters.Parameters.write_smrff"><code class="xref py py-func docutils literal notranslate"><span class="pre">write_smrff()</span></code></a></li>
 </ul>
 </div></blockquote>
 <p><strong>Parameters</strong></p>
@@ -78,8 +78,8 @@ entire force field.</p>
 <dt>fptr: <em>list, tuple, str, str, optional</em></dt>
 <dd>A list of tuples, holding two strings: the force field type
 (either OPLS or SMRFF right now), and the path to the
-parameter file.  If no path is specified, we will try to grab
-the one assigned in sysconst.</dd>
+parameter file.  If no path is specified, the default OPLS
+parameters stored in squid will be used.</dd>
 <dt>restrict: <em>list, str, optional</em></dt>
 <dd>A list of strings specifying which types are to be used.
 Note, you must have unique types, lest they be overwritten.</dd>
@@ -88,7 +88,7 @@ Note, you must have unique types, lest they be overwritten.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>params: <a class="reference internal" href="#squid.forcefields.parameters.Parameters" title="squid.forcefields.parameters.Parameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parameters</span></code></a></dt>
+<dt>params: <a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters" title="squid.forcefields.parameters.Parameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parameters</span></code></a></dt>
 <dd>This object.</dd>
 </dl>
 </div></blockquote>
@@ -553,10 +553,10 @@ returned.</dd>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../../index.html">Table of Contents</a></h3>
+<h3><a href="../../index_html.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../squid.html">Squid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../codebase.html">Codebase</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../console_scripts.html">Console Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
 </ul>
@@ -593,7 +593,7 @@ returned.</dd>
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">Squid 2.0.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index_html.html">Squid 2.0.0 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

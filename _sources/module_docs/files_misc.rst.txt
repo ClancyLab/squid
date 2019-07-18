@@ -1,2 +1,0 @@
-.. automodule:: files.misc
-    :members:
