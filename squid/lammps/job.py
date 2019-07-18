@@ -134,9 +134,6 @@ def job(run_name, input_script, system=None,
             With redundancy on, if the job is submitted and unique_name is on,
             then if another job of the same name is running, a pointer to that
             job will instead be returned.
-        lmp_path: *str, optional*
-            The path to the lammps executable. Note, by default this is the
-            one defined during installation, saved in sysconst.lmp_path.
         slurm_allocation: *str, optional*
             Whether to use a slurm allocation for this job or not.  If so,
             specify the name.

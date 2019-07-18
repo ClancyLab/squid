@@ -143,7 +143,7 @@ Example output is as follows:
     NEB converged the RMS force.
     ------------------------------------------------------------------------------------------
 
-With the following graph made using:
+With the following graph made using the scanDFT command line tool:
 
 .. code-block:: none
 

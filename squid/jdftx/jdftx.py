@@ -9,7 +9,37 @@ from squid import files
 from squid import geometry
 from squid import structures
 from squid.utils import units
+from squid.files.misc import which
 from squid.structures import results
+
+
+def get_jdftx_obj(parallel=True):
+    '''
+    This function will find the jdftx executable and a corresponding mpi
+    executable.  It will handle errors accordingly.
+
+    **Parameters**
+
+        parallel: *bool, optional*
+            Whether to get corresponding mpiexec info or not.
+
+    **Returns**
+
+        jdftx_path: *str*
+            Path to a lammps executable.
+        mpi_path: *str*
+            Path to an mpi executable.
+    '''
+
+    raise Exception("ERROR - NEED TO FIX/UPDATE")
+
+    # First, look for jdftx_X in order of common names
+    jdftx_path = which("jdftx")
+    jdftx_path_scripts = None
+    assert jdftx_path is not None,\
+        "Error - Please unable to find jdftx executable.  Please ensure it is \
+in your PATH environment variable!"
+    return jdftx_path, jdftx_path_scripts
 
 
 def read(input_file, atom_units="Ang"):
@@ -231,6 +261,8 @@ def job(run_name, atoms, ecut, ecutrho=None, atom_units="Ang", route=None,
         raise Exception("Job name too long (%d) for NBS. \
 Max character length is 31." % len(run_name))
 
+    jdftx_path, jdftx_path_scripts = get_jdftx_obj()
+
     # Generate the orca input file
     os.system('mkdir -p jdftx/%s' % run_name)
 
@@ -257,13 +289,11 @@ Max character length is 31." % len(run_name))
     if threads is None:
         threads = procs
 
-    path_jdftx = sysconst.jdftx_path
-    if path_jdftx.endswith("/"):
-        path_jdftx = path_jdftx[:-1]
+    if jdftx_path.endswith("/"):
+        jdftx_path = jdftx_path[:-1]
 
-    path_jdftx_scripts = sysconst.jdftx_script_path
-    if path_jdftx_scripts.endswith("/"):
-        path_jdftx_scripts = path_jdftx_scripts[:-1]
+    if jdftx_path_scripts.endswith("/"):
+        jdftx_path_scripts = jdftx_path_scripts[:-1]
 
     if atoms is not None:
         if not isinstance(atoms, str):
@@ -281,7 +311,7 @@ Max character length is 31." % len(run_name))
 
     # NOTE! xyzToIonposOpt will convert xyz Angstroms to Bohr
     os.system("%s/xyzToIonposOpt %s.xyz %d > xyzToIonpos.log"
-              % (path_jdftx_scripts, run_name, periodic_distance))
+              % (jdftx_path_scripts, run_name, periodic_distance))
 
     previous_name = None
     if previous:
@@ -293,7 +323,7 @@ Max character length is 31." % len(run_name))
         pseudopotentials = []
         elements = geometry.reduce_list([a.element.lower() for a in atoms])
         all_pps = [fname for fname in os.listdir(
-            "%s/pseudopotentials/GBRV" % path_jdftx)
+            "%s/pseudopotentials/GBRV" % jdftx_path)
             if fname.endswith("uspp") and "pbe" in fname]
         for e in elements:
             potential_pps = []
@@ -378,7 +408,7 @@ include $$NAME$$.ionpos'''
     if queue is None:
         process_handle = subprocess.Popen(
             "%s/jdftx -i %s.in -o %s.out"
-            % (path_jdftx, run_name, run_name), shell=True
+            % (jdftx_path, run_name, run_name), shell=True
         )
     elif queue == 'debug':
         print('Would run %s' % run_name)

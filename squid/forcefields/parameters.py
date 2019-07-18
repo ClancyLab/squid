@@ -81,8 +81,8 @@ class Parameters(object):
         fptr: *list, tuple, str, str, optional*
             A list of tuples, holding two strings: the force field type
             (either OPLS or SMRFF right now), and the path to the
-            parameter file.  If no path is specified, we will try to grab
-            the one assigned in sysconst.
+            parameter file.  If no path is specified, the default OPLS
+            parameters stored in squid will be used.
         restrict: *list, str, optional*
             A list of strings specifying which types are to be used.
             Note, you must have unique types, lest they be overwritten.
