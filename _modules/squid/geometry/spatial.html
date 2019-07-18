@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index_html.html">Squid 2.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Squid 2.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -45,7 +45,7 @@
 <span class="kn">from</span> <span class="nn">scipy.linalg.decomp_svd</span> <span class="k">import</span> <span class="n">svd</span>
 
 
-<div class="viewcode-block" id="motion_per_frame"><a class="viewcode-back" href="../../../codebase.html#squid.geometry.spatial.motion_per_frame">[docs]</a><span class="k">def</span> <span class="nf">motion_per_frame</span><span class="p">(</span><span class="n">frames</span><span class="p">):</span>
+<div class="viewcode-block" id="motion_per_frame"><a class="viewcode-back" href="../../../module_docs/geometry/spatial.html#squid.geometry.spatial.motion_per_frame">[docs]</a><span class="k">def</span> <span class="nf">motion_per_frame</span><span class="p">(</span><span class="n">frames</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Determine the root mean squared difference between atomic positions</span>
 <span class="sd">    of adjacent frames.  Note, as we have differences between frames, this</span>
@@ -74,7 +74,7 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">motion</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="rotation_matrix"><a class="viewcode-back" href="../../../codebase.html#squid.geometry.spatial.rotation_matrix">[docs]</a><span class="k">def</span> <span class="nf">rotation_matrix</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="rotation_matrix"><a class="viewcode-back" href="../../../module_docs/geometry/spatial.html#squid.geometry.spatial.rotation_matrix">[docs]</a><span class="k">def</span> <span class="nf">rotation_matrix</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Obtain a left multiplication rotation matrix, given the axis and angle you</span>
 <span class="sd">    wish to rotate by. By default it assumes units of degrees.  If theta is in</span>
@@ -111,7 +111,7 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="random_rotation_matrix"><a class="viewcode-back" href="../../../codebase.html#squid.geometry.spatial.random_rotation_matrix">[docs]</a><span class="k">def</span> <span class="nf">random_rotation_matrix</span><span class="p">(</span><span class="n">limit_angle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+<div class="viewcode-block" id="random_rotation_matrix"><a class="viewcode-back" href="../../../module_docs/geometry/spatial.html#squid.geometry.spatial.random_rotation_matrix">[docs]</a><span class="k">def</span> <span class="nf">random_rotation_matrix</span><span class="p">(</span><span class="n">limit_angle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
                            <span class="n">MAXITER</span><span class="o">=</span><span class="mi">1000000</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Generate a random rotation matrix.</span>
@@ -193,7 +193,7 @@
 <span class="s2">Unable to find a matrix within </span><span class="si">%d</span><span class="s2"> loops.&quot;</span> <span class="o">%</span> <span class="n">MAXITER</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="orthogonal_procrustes"><a class="viewcode-back" href="../../../codebase.html#squid.geometry.spatial.orthogonal_procrustes">[docs]</a><span class="k">def</span> <span class="nf">orthogonal_procrustes</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">ref_matrix</span><span class="p">,</span> <span class="n">reflection</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="orthogonal_procrustes"><a class="viewcode-back" href="../../../module_docs/geometry/spatial.html#squid.geometry.spatial.orthogonal_procrustes">[docs]</a><span class="k">def</span> <span class="nf">orthogonal_procrustes</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">ref_matrix</span><span class="p">,</span> <span class="n">reflection</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Using the orthogonal procrustes method, we find the unitary matrix R with</span>
 <span class="sd">    det(R) &gt; 0 such that ||A*R - ref_matrix||^2 is minimized.  This varies</span>
@@ -295,7 +295,7 @@
     <span class="k">return</span> <span class="n">R</span><span class="p">,</span> <span class="n">scale</span></div>
 
 
-<div class="viewcode-block" id="mvee"><a class="viewcode-back" href="../../../codebase.html#squid.geometry.spatial.mvee">[docs]</a><span class="k">def</span> <span class="nf">mvee</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">0.001</span><span class="p">):</span>
+<div class="viewcode-block" id="mvee"><a class="viewcode-back" href="../../../module_docs/geometry/spatial.html#squid.geometry.spatial.mvee">[docs]</a><span class="k">def</span> <span class="nf">mvee</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">0.001</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Generate a Minimum Volume Enclosing Ellipsoid (MVEE) around atomic species.</span>
 <span class="sd">    The ellipsoid is calculated for the &quot;center form&quot;: (x-c).T * A * (x-c) = 1</span>
@@ -438,7 +438,7 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../../../index_html.html">Table of Contents</a></h3>
+<h3><a href="../../../index.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../squid.html">Squid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
@@ -471,7 +471,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index_html.html">Squid 2.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Squid 2.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

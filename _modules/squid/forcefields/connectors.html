@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index_html.html">Squid 2.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Squid 2.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -42,7 +42,7 @@
 <span></span><span class="kn">from</span> <span class="nn">squid.forcefields.helper</span> <span class="k">import</span> <span class="n">check_restriction</span>
 
 
-<div class="viewcode-block" id="HarmonicConnector"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.connectors.HarmonicConnector">[docs]</a><span class="k">class</span> <span class="nc">HarmonicConnector</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="HarmonicConnector"><a class="viewcode-back" href="../../../module_docs/forcefields/connectors.html#squid.forcefields.connectors.HarmonicConnector">[docs]</a><span class="k">class</span> <span class="nc">HarmonicConnector</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Initialize a general connector object.  Either pass indices, energies,</span>
 <span class="sd">    and equilibs, or pass a line to be parsed.</span>
@@ -132,7 +132,7 @@
     <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">with_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">)))</span>
 
-<div class="viewcode-block" id="HarmonicConnector.printer"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.connectors.HarmonicConnector.printer">[docs]</a>    <span class="k">def</span> <span class="nf">printer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">with_indices</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">map_indices</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="HarmonicConnector.printer"><a class="viewcode-back" href="../../../module_docs/forcefields/connectors.html#squid.forcefields.connectors.HarmonicConnector.printer">[docs]</a>    <span class="k">def</span> <span class="nf">printer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">with_indices</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">map_indices</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This prints out a representation of this LJ object, in the format</span>
 <span class="sd">        that is output to the smrff parameter file.</span>
@@ -167,7 +167,7 @@
             <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">s</span>
         <span class="k">return</span> <span class="n">s</span></div>
 
-<div class="viewcode-block" id="HarmonicConnector.unpack"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.connectors.HarmonicConnector.unpack">[docs]</a>    <span class="k">def</span> <span class="nf">unpack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_indices</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="HarmonicConnector.unpack"><a class="viewcode-back" href="../../../module_docs/forcefields/connectors.html#squid.forcefields.connectors.HarmonicConnector.unpack">[docs]</a>    <span class="k">def</span> <span class="nf">unpack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_indices</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This function unpacks the LJ object into a list.</span>
 
@@ -187,7 +187,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">energies</span> <span class="o">+</span>\
             <span class="bp">self</span><span class="o">.</span><span class="n">equilibs</span></div>
 
-<div class="viewcode-block" id="HarmonicConnector.pack"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.connectors.HarmonicConnector.pack">[docs]</a>    <span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">with_indices</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="HarmonicConnector.pack"><a class="viewcode-back" href="../../../module_docs/forcefields/connectors.html#squid.forcefields.connectors.HarmonicConnector.pack">[docs]</a>    <span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">with_indices</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This function packs the LJ object from a list.</span>
 
@@ -211,7 +211,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="HarmonicConnector.validate"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.connectors.HarmonicConnector.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="HarmonicConnector.validate"><a class="viewcode-back" href="../../../module_docs/forcefields/connectors.html#squid.forcefields.connectors.HarmonicConnector.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This function will validate data integrity.  In this case, we simply</span>
 <span class="sd">        ensure data types are appropriate.</span>
@@ -237,7 +237,7 @@
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                     <span class="s2">&quot;Error - Something weird was initialized to equilibs.&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="HarmonicConnector.parse_line"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.connectors.HarmonicConnector.parse_line">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="HarmonicConnector.parse_line"><a class="viewcode-back" href="../../../module_docs/forcefields/connectors.html#squid.forcefields.connectors.HarmonicConnector.parse_line">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">parse_line</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parse line inputs.</span>
@@ -253,7 +253,7 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Error - Function has not been done yet.&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="HarmonicConnector.assign_line"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.connectors.HarmonicConnector.assign_line">[docs]</a>    <span class="k">def</span> <span class="nf">assign_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+<div class="viewcode-block" id="HarmonicConnector.assign_line"><a class="viewcode-back" href="../../../module_docs/forcefields/connectors.html#squid.forcefields.connectors.HarmonicConnector.assign_line">[docs]</a>    <span class="k">def</span> <span class="nf">assign_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parse line inputs and assign to this object.</span>
 
@@ -268,7 +268,7 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Error - Function has not been done yet.&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="HarmonicConnector.fix"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.connectors.HarmonicConnector.fix">[docs]</a>    <span class="k">def</span> <span class="nf">fix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="HarmonicConnector.fix"><a class="viewcode-back" href="../../../module_docs/forcefields/connectors.html#squid.forcefields.connectors.HarmonicConnector.fix">[docs]</a>    <span class="k">def</span> <span class="nf">fix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This will fix these parameters by assigning bounds to the</span>
 <span class="sd">        values themselves.</span>
@@ -287,7 +287,7 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Error - Function has not been done yet.&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="HarmonicConnector.load_smrff"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.connectors.HarmonicConnector.load_smrff">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="HarmonicConnector.load_smrff"><a class="viewcode-back" href="../../../module_docs/forcefields/connectors.html#squid.forcefields.connectors.HarmonicConnector.load_smrff">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">load_smrff</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">parsed_file</span><span class="p">,</span> <span class="n">pfile_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">restrict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Given a parameter file, inport the LJ parameters if possible.</span>
@@ -314,7 +314,7 @@
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
             <span class="s2">&quot;Error - load_smrff not implemented for general Connector object.&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="HarmonicConnector.load_opls"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.connectors.HarmonicConnector.load_opls">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="HarmonicConnector.load_opls"><a class="viewcode-back" href="../../../module_docs/forcefields/connectors.html#squid.forcefields.connectors.HarmonicConnector.load_opls">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">load_opls</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">atom_types</span><span class="p">,</span> <span class="n">pfile_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">restrict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Given a parameter file, import the Coulomb parameters if possible.</span>
@@ -339,9 +339,9 @@
             <span class="s2">&quot;Error - load_opls not implemented for general Connector object.&quot;</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="Bond"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.connectors.Bond">[docs]</a><span class="k">class</span> <span class="nc">Bond</span><span class="p">(</span><span class="n">HarmonicConnector</span><span class="p">):</span>
+<div class="viewcode-block" id="Bond"><a class="viewcode-back" href="../../../module_docs/forcefields/connectors.html#squid.forcefields.connectors.Bond">[docs]</a><span class="k">class</span> <span class="nc">Bond</span><span class="p">(</span><span class="n">HarmonicConnector</span><span class="p">):</span>
 
-<div class="viewcode-block" id="Bond.load_opls"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.connectors.Bond.load_opls">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Bond.load_opls"><a class="viewcode-back" href="../../../module_docs/forcefields/connectors.html#squid.forcefields.connectors.Bond.load_opls">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">load_opls</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">bond_types</span><span class="p">,</span> <span class="n">pfile_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">restrict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Given a parameter file, inport the Bond parameters if possible.</span>
@@ -372,9 +372,9 @@
         <span class="p">]</span></div></div>
 
 
-<div class="viewcode-block" id="Angle"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.connectors.Angle">[docs]</a><span class="k">class</span> <span class="nc">Angle</span><span class="p">(</span><span class="n">HarmonicConnector</span><span class="p">):</span>
+<div class="viewcode-block" id="Angle"><a class="viewcode-back" href="../../../module_docs/forcefields/connectors.html#squid.forcefields.connectors.Angle">[docs]</a><span class="k">class</span> <span class="nc">Angle</span><span class="p">(</span><span class="n">HarmonicConnector</span><span class="p">):</span>
 
-<div class="viewcode-block" id="Angle.load_opls"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.connectors.Angle.load_opls">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Angle.load_opls"><a class="viewcode-back" href="../../../module_docs/forcefields/connectors.html#squid.forcefields.connectors.Angle.load_opls">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">load_opls</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">angle_types</span><span class="p">,</span> <span class="n">pfile_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">restrict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Given a parameter file, inport the Angle parameters if possible.</span>
@@ -405,9 +405,9 @@
         <span class="p">]</span></div></div>
 
 
-<div class="viewcode-block" id="Dihedral"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.connectors.Dihedral">[docs]</a><span class="k">class</span> <span class="nc">Dihedral</span><span class="p">(</span><span class="n">HarmonicConnector</span><span class="p">):</span>
+<div class="viewcode-block" id="Dihedral"><a class="viewcode-back" href="../../../module_docs/forcefields/connectors.html#squid.forcefields.connectors.Dihedral">[docs]</a><span class="k">class</span> <span class="nc">Dihedral</span><span class="p">(</span><span class="n">HarmonicConnector</span><span class="p">):</span>
 
-<div class="viewcode-block" id="Dihedral.load_opls"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.connectors.Dihedral.load_opls">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Dihedral.load_opls"><a class="viewcode-back" href="../../../module_docs/forcefields/connectors.html#squid.forcefields.connectors.Dihedral.load_opls">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">load_opls</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dihedral_types</span><span class="p">,</span> <span class="n">pfile_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">restrict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Given a parameter file, inport the Dihedral parameters if possible.</span>
@@ -444,7 +444,7 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../../../index_html.html">Table of Contents</a></h3>
+<h3><a href="../../../index.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../squid.html">Squid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
@@ -477,7 +477,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index_html.html">Squid 2.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Squid 2.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

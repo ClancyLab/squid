@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index_html.html">Squid 2.0.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Squid 2.0.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -41,31 +41,31 @@
 <p>The transform module holds functions that handle molecular transformations.</p>
 <blockquote>
 <div><ul class="simple">
-<li><a class="reference internal" href="codebase.html#squid.geometry.transform.align_centroid" title="squid.geometry.transform.align_centroid"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.transform.align_centroid()</span></code></a> - Align list of atoms to an ellipse along the x-axis.</li>
-<li><a class="reference internal" href="codebase.html#squid.geometry.transform.interpolate" title="squid.geometry.transform.interpolate"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.transform.interpolate()</span></code></a> - Linearly interpolate N frames between a given two frames.</li>
-<li><a class="reference internal" href="codebase.html#squid.geometry.transform.perturbate" title="squid.geometry.transform.perturbate"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.transform.perturbate()</span></code></a> - Perturbate atomic coordinates of a list of atoms.</li>
-<li><a class="reference internal" href="codebase.html#squid.geometry.transform.procrustes" title="squid.geometry.transform.procrustes"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.transform.procrustes()</span></code></a> - Propogate rotations along a list of atoms to minimize rigid rotation, and return the rotation matrices used.</li>
-<li><a class="reference internal" href="codebase.html#squid.geometry.transform.smooth_xyz" title="squid.geometry.transform.smooth_xyz"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.transform.smooth_xyz()</span></code></a> - Iteratively use procrustes and linear interpolation to smooth out a list of atomic coordinates.</li>
+<li><a class="reference internal" href="module_docs/geometry/transform.html#squid.geometry.transform.align_centroid" title="squid.geometry.transform.align_centroid"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.transform.align_centroid()</span></code></a> - Align list of atoms to an ellipse along the x-axis.</li>
+<li><a class="reference internal" href="module_docs/geometry/transform.html#squid.geometry.transform.interpolate" title="squid.geometry.transform.interpolate"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.transform.interpolate()</span></code></a> - Linearly interpolate N frames between a given two frames.</li>
+<li><a class="reference internal" href="module_docs/geometry/transform.html#squid.geometry.transform.perturbate" title="squid.geometry.transform.perturbate"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.transform.perturbate()</span></code></a> - Perturbate atomic coordinates of a list of atoms.</li>
+<li><a class="reference internal" href="module_docs/geometry/transform.html#squid.geometry.transform.procrustes" title="squid.geometry.transform.procrustes"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.transform.procrustes()</span></code></a> - Propogate rotations along a list of atoms to minimize rigid rotation, and return the rotation matrices used.</li>
+<li><a class="reference internal" href="module_docs/geometry/transform.html#squid.geometry.transform.smooth_xyz" title="squid.geometry.transform.smooth_xyz"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.transform.smooth_xyz()</span></code></a> - Iteratively use procrustes and linear interpolation to smooth out a list of atomic coordinates.</li>
 </ul>
 </div></blockquote>
-<p>Note, when using <a class="reference internal" href="codebase.html#squid.geometry.transform.procrustes" title="squid.geometry.transform.procrustes"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.transform.procrustes()</span></code></a> the input frames are being changed! If this is not desired behaviour, and you solely wish for the rotation matrix, then pass in a copy of the frames.</p>
+<p>Note, when using <a class="reference internal" href="module_docs/geometry/transform.html#squid.geometry.transform.procrustes" title="squid.geometry.transform.procrustes"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.transform.procrustes()</span></code></a> the input frames are being changed! If this is not desired behaviour, and you solely wish for the rotation matrix, then pass in a copy of the frames.</p>
 <p>The spatial module holds functions that handle understanding the spatial relationship between atoms/molecules.</p>
 <blockquote>
 <div><ul class="simple">
-<li><a class="reference internal" href="codebase.html#squid.geometry.spatial.motion_per_frame" title="squid.geometry.spatial.motion_per_frame"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.spatial.motion_per_frame()</span></code></a> - Get the inter-frame RMS motion per frame.</li>
-<li><a class="reference internal" href="codebase.html#squid.geometry.spatial.mvee" title="squid.geometry.spatial.mvee"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.spatial.mvee()</span></code></a> - Fit a volume to a list of atomic coordinates.</li>
-<li><a class="reference internal" href="codebase.html#squid.geometry.spatial.orthogonal_procrustes" title="squid.geometry.spatial.orthogonal_procrustes"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.spatial.orthogonal_procrustes()</span></code></a> - Find the rotation matrix that best fits one list of atomic coordinates onto another.</li>
-<li><a class="reference internal" href="codebase.html#squid.geometry.spatial.random_rotation_matrix" title="squid.geometry.spatial.random_rotation_matrix"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.spatial.random_rotation_matrix()</span></code></a> - Generate a random rotation matrix.</li>
-<li><a class="reference internal" href="codebase.html#squid.geometry.spatial.rotation_matrix" title="squid.geometry.spatial.rotation_matrix"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.spatial.rotation_matrix()</span></code></a> - Generate a rotation matrix based on angle and axis.</li>
+<li><a class="reference internal" href="module_docs/geometry/spatial.html#squid.geometry.spatial.motion_per_frame" title="squid.geometry.spatial.motion_per_frame"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.spatial.motion_per_frame()</span></code></a> - Get the inter-frame RMS motion per frame.</li>
+<li><a class="reference internal" href="module_docs/geometry/spatial.html#squid.geometry.spatial.mvee" title="squid.geometry.spatial.mvee"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.spatial.mvee()</span></code></a> - Fit a volume to a list of atomic coordinates.</li>
+<li><a class="reference internal" href="module_docs/geometry/spatial.html#squid.geometry.spatial.orthogonal_procrustes" title="squid.geometry.spatial.orthogonal_procrustes"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.spatial.orthogonal_procrustes()</span></code></a> - Find the rotation matrix that best fits one list of atomic coordinates onto another.</li>
+<li><a class="reference internal" href="module_docs/geometry/spatial.html#squid.geometry.spatial.random_rotation_matrix" title="squid.geometry.spatial.random_rotation_matrix"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.spatial.random_rotation_matrix()</span></code></a> - Generate a random rotation matrix.</li>
+<li><a class="reference internal" href="module_docs/geometry/spatial.html#squid.geometry.spatial.rotation_matrix" title="squid.geometry.spatial.rotation_matrix"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.spatial.rotation_matrix()</span></code></a> - Generate a rotation matrix based on angle and axis.</li>
 </ul>
 </div></blockquote>
-<p>The packmol module handles the interface between Squid and packmol (<a class="reference external" href="http://m3g.iqm.unicamp.br/packmol/home.shtml">http://m3g.iqm.unicamp.br/packmol/home.shtml</a>).  The main functionality here is simply calling <a class="reference internal" href="codebase.html#squid.geometry.packmol.packmol" title="squid.geometry.packmol.packmol"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.packmol.packmol()</span></code></a> on a system object with a set of molecules.</p>
+<p>The packmol module handles the interface between Squid and packmol (<a class="reference external" href="http://m3g.iqm.unicamp.br/packmol/home.shtml">http://m3g.iqm.unicamp.br/packmol/home.shtml</a>).  The main functionality here is simply calling <a class="reference internal" href="module_docs/geometry/packmol.html#squid.geometry.packmol.packmol" title="squid.geometry.packmol.packmol"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.packmol.packmol()</span></code></a> on a system object with a set of molecules.</p>
 <p>The misc module holds functions that are not dependent on other squid modules, but can return useful information and simplify coding.</p>
 <blockquote>
 <div><ul class="simple">
-<li><a class="reference internal" href="codebase.html#squid.geometry.misc.get_center_of_geometry" title="squid.geometry.misc.get_center_of_geometry"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.misc.get_center_of_geometry()</span></code></a></li>
-<li><a class="reference internal" href="codebase.html#squid.geometry.misc.get_center_of_mass" title="squid.geometry.misc.get_center_of_mass"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.misc.get_center_of_mass()</span></code></a></li>
-<li><a class="reference internal" href="codebase.html#squid.geometry.misc.rotate_atoms" title="squid.geometry.misc.rotate_atoms"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.misc.rotate_atoms()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/geometry/misc.html#squid.geometry.misc.get_center_of_geometry" title="squid.geometry.misc.get_center_of_geometry"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.misc.get_center_of_geometry()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/geometry/misc.html#squid.geometry.misc.get_center_of_mass" title="squid.geometry.misc.get_center_of_mass"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.misc.get_center_of_mass()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/geometry/misc.html#squid.geometry.misc.rotate_atoms" title="squid.geometry.misc.rotate_atoms"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.misc.rotate_atoms()</span></code></a></li>
 </ul>
 </div></blockquote>
 <p>Once again, all the above can be accessed directly from the geometry module, as shown in the following pseudo-code example here:</p>
@@ -98,7 +98,7 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="index_html.html">Table of Contents</a></h3>
+<h3><a href="index.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="squid.html">Squid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
@@ -138,7 +138,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index_html.html">Squid 2.0.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Squid 2.0.0 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
