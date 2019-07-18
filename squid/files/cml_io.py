@@ -220,6 +220,9 @@ def write_cml(atoms, name=None, bonds=None):
                 % (system.box_angles[2]))
         f.write(' </crystal>\n')
 
+    if bonds is None:
+        bonds = []
+
     # If writing molecule
     if child_flag:
         for mol in molecules:
@@ -229,9 +232,13 @@ def write_cml(atoms, name=None, bonds=None):
             offset_from_1 = 0
             if min([a.index for a in mol.atoms]) == 0:
                 offset_from_1 = 1
+
+            local_bonds = mol.bonds
+            if local_bonds is None:
+                local_bonds = []
             bond_indices = [(b.atoms[0].index + offset_from_1,
                              b.atoms[1].index + offset_from_1)
-                            for b in mol.bonds]
+                            for b in local_bonds]
             bond_indices.sort()
 
             for i, a in enumerate(mol.atoms):
