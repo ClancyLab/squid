@@ -1,6 +1,6 @@
 import copy
 from itertools import combinations_with_replacement
-from squid.forcefields.helper import check_restriction
+from squid.forcefields.helper import check_restriction, random_in_range
 
 
 BOUND_EPS = 1E-6
@@ -524,8 +524,6 @@ value when fixing rc in Morse (passed %s)." % str(value)
             morse_objs: *list,* :class:`squid.structures.Morse`
                 Returns a list of Morse objects.
         '''
-        from helper import random_in_range
-
         morse_objs = []
 
         for indices in combinations_with_replacement(atom_types, 2):

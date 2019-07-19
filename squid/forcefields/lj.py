@@ -1,5 +1,5 @@
 import copy
-from squid.forcefields.helper import check_restriction
+from squid.forcefields.helper import check_restriction, random_in_range
 
 # These are the identifiers in the parameter file that we seek out
 # NOTE! THEY ARE CASE SENSITIVE!
@@ -425,7 +425,6 @@ larger than 0! It is %f" % (self.index, self.epsilon)
             lj_objs: *list,* :class:`squid.structures.LJ`
                 Returns a list of LJ objects.
         '''
-        from helper import random_in_range
 
         LJ_objs = []
 

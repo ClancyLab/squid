@@ -34,7 +34,7 @@ smooth_index, atom_i, atom_j, r_in d_in r_out d_out  c_r   d_r   gcut  c_gcut   
 import copy
 from squid.utils.cast import is_numeric
 from itertools import combinations_with_replacement
-from squid.forcefields.helper import check_restriction
+from squid.forcefields.helper import check_restriction, random_in_range
 
 
 # The offset for the bounds based off of gcut
@@ -279,8 +279,6 @@ class SmoothSinLR(object):
             smooth_objs: *list, SmoothSin*
                 Returns a list of smooth objects.
         '''
-        from helper import random_in_range
-
         smooth_objs = []
 
         lr = lr.strip()[-1]

@@ -2,7 +2,7 @@ import copy
 import numpy as np
 
 from squid.utils.units import elem_i2s, elem_weight
-from squid.forcefields.helper import check_restriction
+from squid.forcefields.helper import check_restriction, random_in_range
 
 # These are the identifiers in the parameter file that we seek out
 # NOTE! THEY ARE CASE SENSITIVE!
@@ -386,8 +386,6 @@ Should be either 1 or 2!" % len(params)
             coul_objs: *list,* :class:`squid.structures.Coul`
                 Returns a list of Coul objects.
         '''
-        from helper import random_in_range
-
         coul_objs = []
 
         for atype, elem, sign in zip(atom_types, elems, signs):

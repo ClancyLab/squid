@@ -2,7 +2,7 @@ import copy
 from itertools import product
 from squid.utils.cast import is_numeric
 import squid.forcefields.smrff as smrff_utils
-from squid.forcefields.helper import check_restriction
+from squid.forcefields.helper import check_restriction, random_in_range
 
 BOUND_EPS = 1E-6
 # These are the identifiers in the parameter file that we seek out
@@ -924,8 +924,6 @@ parameters are defined."
             ters_objs: *list, Tersoff*
                 Returns a list of Tersoff objects.
         '''
-        from helper import random_in_range
-
         form = form.lower()
         assert form in ["original", "albe"],\
             "Error - form must be either original or albe."
