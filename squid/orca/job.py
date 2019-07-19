@@ -13,10 +13,10 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
              grad=False,
              queue=None, walltime="00:30:00", sandbox=False,
              procs=1, ntasks=1, nodes=1,
-             charge=None, multiplicity=None, charge_and_multiplicity='0 1',
+             charge=0, multiplicity=1,
              redundancy=False, unique_name=True,
              previous=None, mem=2000, priority=None, xhost=None,
-             orca4=True, jobarray_values=None,
+             jobarray_values=None,
              slurm_allocation=None):
     '''
     Wrapper to submitting various Orca simulations as a job array on a SLURM
@@ -93,8 +93,6 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
         xhost: *list, str or str, optional*
             Which processor to run the simulation on(queueing system
             dependent).
-        orca4: *bool, optional*
-            Whether to use orca 4 (True) or orca 3 (False).
         slurm_allocation: *str, optional*
             Whether to use a slurm allocation for this job or not.  If so,
             specify the name.
@@ -120,14 +118,12 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
         "nodes": nodes,
         "charge": charge,
         "multiplicity": multiplicity,
-        "charge_and_multiplicity": charge_and_multiplicity,
         "redundancy": redundancy,
         "unique_name": unique_name,
         "previous": previous,
         "mem": mem,
         "priority": priority,
         "xhost": xhost,
-        "orca4": orca4,
         "slurm_allocation": slurm_allocation
     }
 
@@ -283,8 +279,6 @@ def job(run_name, route=None, atoms=[], extra_section='', grad=False,
         xhost: *list, str or str, optional*
             Which processor to run the simulation on(queueing system
             dependent).
-        orca4: *bool, optional*
-            Whether to use orca 4 (True) or orca 3 (False).
         slurm_allocation: *str, optional*
             Whether to use a slurm allocation for this job or not.  If so,
             specify the name.
