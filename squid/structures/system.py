@@ -319,7 +319,7 @@ class System(object):
         '''
         misc.rotate_atoms(self.atoms, m, around=around)
 
-    def set_types(self, opls_file=OPLS_FILE, smrff_file=None):
+    def set_types(self, opls_file=OPLS_FILE, smrff_file=None, params=None):
         '''
         Given the atoms, bonds, angles, and dihedrals in a system object,
         generate a list of the unique atom, bond, angle, dihedral types
@@ -327,6 +327,8 @@ class System(object):
 
         **Parameters**
 
+            params: :class:`squid.forcefields.parameters.Parameters`, *optional*
+                A parameter object that already exists.
             opls_file: *str, optional*
                 A path to an opls file.  By default, this points to the stored
                 values in squid.  If None, then no OPLS file is read.
@@ -340,13 +342,17 @@ class System(object):
             a.label if a.label is not None else a.element
             for a in self.atoms]
         )))
-        # Next, we must get the parameters from files
-        self.parameters = Parameters(
-            self.atom_labels,
-            opls_file=opls_file,
-            smrff_file=smrff_file
-        )
-        self.parameters.set_all_masks(True)
+
+        if params is None:
+            # Next, we must get the parameters from files
+            self.parameters = Parameters(
+                self.atom_labels,
+                opls_file=opls_file,
+                smrff_file=smrff_file
+            )
+            self.parameters.set_all_masks(True)
+        else:
+            self.params = params
 
     def dump_pair_coeffs(self):
         '''
