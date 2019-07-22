@@ -42,11 +42,18 @@
 <code class="descclassname">squid.geometry.packmol.</code><code class="descname">get_packmol_obj</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/geometry/packmol.html#get_packmol_obj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.geometry.packmol.get_packmol_obj" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function will find the packmol executable and handle errors
 accordingly.</p>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>packmol_path: <em>str</em></dt>
+<dd>The path to packmol.</dd>
+</dl>
+</div></blockquote>
 </dd></dl>
 
 <dl class="function">
 <dt id="squid.geometry.packmol.packmol">
-<code class="descclassname">squid.geometry.packmol.</code><code class="descname">packmol</code><span class="sig-paren">(</span><em>system_obj</em>, <em>molecules</em>, <em>molecule_ratio=(1</em>, <em>)</em>, <em>density=1.0</em>, <em>seed=1</em>, <em>persist=True</em>, <em>number=None</em>, <em>additional=''</em>, <em>custom=None</em>, <em>extra_block_at_end=''</em>, <em>extra_block_at_beginning=''</em>, <em>tolerance=2.0</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/geometry/packmol.html#packmol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.geometry.packmol.packmol" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">squid.geometry.packmol.</code><code class="descname">packmol</code><span class="sig-paren">(</span><em>system_obj</em>, <em>molecules</em>, <em>molecule_ratio=(1</em>, <em>)</em>, <em>density=1.0</em>, <em>seed=1</em>, <em>persist=True</em>, <em>number=None</em>, <em>additional=''</em>, <em>custom=None</em>, <em>extra_block_at_beginning=''</em>, <em>extra_block_at_end=''</em>, <em>tolerance=2.0</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/geometry/packmol.html#packmol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.geometry.packmol.packmol" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a list of molecules, pack this system appropriately.  Note,
 we now will pack around what is already within the system!  This is
 done by first generating a packmol block for the system at hand,
@@ -76,13 +83,13 @@ not.</dd>
 <dd>Overide density and specify the exact number of molecules to
 pack. When using a list of molecules, you must specify each
 in order within a list.</dd>
+<dt>additional: <em>str, optional</em></dt>
+<dd>Whether to add additional constraints to the standard packmol
+setup.</dd>
 <dt>custom: <em>str, optional</em></dt>
 <dd>A custom packmol script to run for the given input molecules.
 Note, you should ensure all necessary files are within the
 sys_packmol folder if using this option.</dd>
-<dt>additional: <em>str, optional</em></dt>
-<dd>Whether to add additional constraints to the standard packmol
-setup.</dd>
 <dt>extra_block_at_beginning: <em>str, optional</em></dt>
 <dd>An additional block to put prior to the standard block.</dd>
 <dt>extra_block_at_end: <em>str, optional</em></dt>

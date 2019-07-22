@@ -60,6 +60,32 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="squid.forcefields.helper.map_to_lmp_index">
+<code class="descclassname">squid.forcefields.helper.</code><code class="descname">map_to_lmp_index</code><span class="sig-paren">(</span><em>p</em>, <em>restrict</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/forcefields/helper.html#map_to_lmp_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.forcefields.helper.map_to_lmp_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given some set of labels, return the corresponding lammps index.
+For example, we hold restrict as a list of atom types for LAMMPS.
+The corresponding index in restrict is one less than the lammps
+type we output (say, in the data file).  As such, this function
+tries to robustly convert p into its corresponding lammps index.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>p: <em>obj</em></dt>
+<dd>Some parameter object, such as Coulomb, Morse, etc.</dd>
+<dt>restrict: <em>list, int</em></dt>
+<dd>A list of indices that we want to use.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>mapped_indices: <em>…</em></dt>
+<dd>Usually a list of the mapped indices.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
 <dt id="squid.forcefields.helper.random_in_range">
 <code class="descclassname">squid.forcefields.helper.</code><code class="descname">random_in_range</code><span class="sig-paren">(</span><em>bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/forcefields/helper.html#random_in_range"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.forcefields.helper.random_in_range" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a random number in the given bounds: [lower, upper).</p>

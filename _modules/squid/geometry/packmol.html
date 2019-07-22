@@ -50,6 +50,11 @@
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This function will find the packmol executable and handle errors</span>
 <span class="sd">    accordingly.</span>
+
+<span class="sd">    **Returns**</span>
+
+<span class="sd">        packmol_path: *str*</span>
+<span class="sd">            The path to packmol.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">packmol_path</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="s2">&quot;packmol&quot;</span><span class="p">)</span>
 
@@ -62,8 +67,8 @@
 
 <div class="viewcode-block" id="packmol"><a class="viewcode-back" href="../../../codebase.html#squid.geometry.packmol.packmol">[docs]</a><span class="k">def</span> <span class="nf">packmol</span><span class="p">(</span><span class="n">system_obj</span><span class="p">,</span> <span class="n">molecules</span><span class="p">,</span> <span class="n">molecule_ratio</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span>
             <span class="n">density</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">persist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">additional</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">custom</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extra_block_at_end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
-            <span class="n">extra_block_at_beginning</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">2.0</span><span class="p">):</span>
+            <span class="n">additional</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">custom</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extra_block_at_beginning</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">extra_block_at_end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">2.0</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Given a list of molecules, pack this system appropriately.  Note,</span>
 <span class="sd">    we now will pack around what is already within the system!  This is</span>
@@ -95,13 +100,13 @@
 <span class="sd">            Overide density and specify the exact number of molecules to</span>
 <span class="sd">            pack. When using a list of molecules, you must specify each</span>
 <span class="sd">            in order within a list.</span>
+<span class="sd">        additional: *str, optional*</span>
+<span class="sd">            Whether to add additional constraints to the standard packmol</span>
+<span class="sd">            setup.</span>
 <span class="sd">        custom: *str, optional*</span>
 <span class="sd">            A custom packmol script to run for the given input molecules.</span>
 <span class="sd">            Note, you should ensure all necessary files are within the</span>
 <span class="sd">            sys_packmol folder if using this option.</span>
-<span class="sd">        additional: *str, optional*</span>
-<span class="sd">            Whether to add additional constraints to the standard packmol</span>
-<span class="sd">            setup.</span>
 <span class="sd">        extra_block_at_beginning: *str, optional*</span>
 <span class="sd">            An additional block to put prior to the standard block.</span>
 <span class="sd">        extra_block_at_end: *str, optional*</span>
@@ -204,7 +209,8 @@
     <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">offset</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">system_obj</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
     <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">):</span>
-        <span class="n">ints_in_element</span> <span class="o">=</span> <span class="p">[</span><span class="n">j</span> <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atoms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">element</span><span class="p">)</span> <span class="k">if</span> <span class="n">h</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()]</span>
+        <span class="n">ints_in_element</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">j</span> <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atoms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">element</span><span class="p">)</span> <span class="k">if</span> <span class="n">h</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ints_in_element</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c1"># This is the fixed molecule that already exists in the system</span>
             <span class="n">i</span> <span class="o">+=</span> <span class="n">offset</span>

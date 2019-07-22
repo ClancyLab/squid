@@ -70,10 +70,10 @@
 <span class="sd">            The &#39;extra section&#39; in the simulation.</span>
 <span class="sd">        charge_and_multiplicity: *str*</span>
 <span class="sd">            The charge and multiplicity, in that order, of the system.</span>
-<span class="sd">        frames: *list, list,* :class:`structures.Atom`</span>
+<span class="sd">        frames: *list, list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A list lists of atoms describing each iteration in the dft</span>
 <span class="sd">            simulation.</span>
-<span class="sd">        atoms: *list,* :class:`structures.Atom`</span>
+<span class="sd">        atoms: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            Atomic information of the last iteration in the dft simulation.</span>
 <span class="sd">        gradients: *list, list, float*</span>
 <span class="sd">            Gradient of the potential, stored for each atom in *atoms* and</span>
@@ -89,7 +89,7 @@
 <span class="sd">        charges: *list, float*</span>
 <span class="sd">            Charges for each atom in *atoms* and *frames[-1]*.  Typically a</span>
 <span class="sd">            copy of Mulliken charges.</span>
-<span class="sd">        MBO: *list, list,* :class:`structures.Atom` *, float*</span>
+<span class="sd">        MBO: *list, list,* :class:`squid.structures.atom.Atom` *, float*</span>
 <span class="sd">            A list of lists, each list holding (1) a list of atoms in the bond</span>
 <span class="sd">            and (2) the Mayer Bond Order (MBO) of said bond.</span>
 <span class="sd">        vibfreq: *list, float*</span>
@@ -158,9 +158,9 @@
 
 <span class="sd">    **Contains**</span>
 
-<span class="sd">        frames: *list, list,* :class:`structures.Atom`</span>
+<span class="sd">        frames: *list, list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A list lists of atoms describing each iteration in the simulation.</span>
-<span class="sd">        atoms: *list,* :class:`structures.Atom`</span>
+<span class="sd">        atoms: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            Atomic information of the last iteration in the simulation.</span>
 <span class="sd">        timesteps: *list, int*</span>
 <span class="sd">            Recorded timesteps within the output.</span>
@@ -170,9 +170,9 @@
 <span class="sd">            List of how many atoms for each timestep.</span>
 <span class="sd">        atom_count: *int*</span>
 <span class="sd">            List of how many atoms in the final timestep.</span>
-<span class="sd">        box_bounds_list: *list,* :class:`structures.Struct`</span>
+<span class="sd">        box_bounds_list: *list, dict*</span>
 <span class="sd">            List of box bounds for each timestep.</span>
-<span class="sd">        box_bounds: :class:`structures.Struct`</span>
+<span class="sd">        box_bounds: *dict*</span>
 <span class="sd">            List of box bounds for the final timestep.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 

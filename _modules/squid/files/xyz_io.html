@@ -65,7 +65,7 @@
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        yield: *list,* :class:`structures.Atom`</span>
+<span class="sd">        yield: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A frame from an xyz file.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.xyz&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;.&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
@@ -145,9 +145,10 @@
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        frames: *list, list,* :class:`structures.Atom`</span>
+<span class="sd">        frames: *list, list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A list of atoms read in from the xyz file.  If there is only one</span>
-<span class="sd">            frame, then only a *list* of :class:`structures.Atom` is returned.</span>
+<span class="sd">            frame, then only a *list* of :class:`squid.structures.atom.Atom`</span>
+<span class="sd">            is returned.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">frames</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">frame</span> <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">read_xyz_gen</span><span class="p">(</span>
@@ -165,7 +166,7 @@
 
 <span class="sd">    **Parameters**</span>
 
-<span class="sd">        frames_or_system: *list,* :class:`structures.Atom`</span>
+<span class="sd">        frames_or_system: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            Atoms to be written to an xyz file.</span>
 <span class="sd">        name: *str, optional*</span>
 <span class="sd">            A filename for the xyz file.</span>

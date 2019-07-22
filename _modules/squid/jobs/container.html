@@ -52,10 +52,13 @@
 <span class="sd">            Name of the simulation on the queue.</span>
 <span class="sd">        process_handle: *process_handle, optional*</span>
 <span class="sd">            The process handle, returned by subprocess.Popen.</span>
+<span class="sd">        job_id: *str, optional*</span>
+<span class="sd">            The job id.  Usually this should be unique.</span>
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        This :class:`Job` object.</span>
+<span class="sd">        job_obj: :class:`squid.jobs.container.JobObject`</span>
+<span class="sd">            A Job object.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">process_handle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">job_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -66,6 +69,12 @@
 <div class="viewcode-block" id="JobObject.wait"><a class="viewcode-back" href="../../../codebase.html#squid.jobs.container.JobObject.wait">[docs]</a>    <span class="k">def</span> <span class="nf">wait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tsleep</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Hang until simulation has finished.</span>
+
+<span class="sd">        tsleep: *int, optional*</span>
+<span class="sd">            How long to wait before checking if the job has finished in</span>
+<span class="sd">            the loop.  Default is 1 minute.</span>
+<span class="sd">        verbose: *bool, optional*</span>
+<span class="sd">            Whether to print repeatedly on each check or not.</span>
 
 <span class="sd">        **Returns**</span>
 
@@ -82,8 +91,22 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">break</span></div>
 
-    <span class="k">def</span> <span class="nf">get_all_jobs</span><span class="p">(</span><span class="n">detail</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[]</span>
+<div class="viewcode-block" id="JobObject.get_all_jobs"><a class="viewcode-back" href="../../../codebase.html#squid.jobs.container.JobObject.get_all_jobs">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_jobs</span><span class="p">(</span><span class="n">detail</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Get a list of all jobs that are running and/or pending.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            detail: *int, optional*</span>
+<span class="sd">                How much detail to get when finding jobs on the queue.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            jobs_on_queue: *list, ...*</span>
+<span class="sd">                A list of all jobs on the queue, and any other relevant</span>
+<span class="sd">                information requested.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="p">[]</span></div>
 
 <div class="viewcode-block" id="JobObject.is_finished"><a class="viewcode-back" href="../../../codebase.html#squid.jobs.container.JobObject.is_finished">[docs]</a>    <span class="k">def</span> <span class="nf">is_finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>

@@ -119,18 +119,19 @@
 
 <span class="sd">    **Parameters**</span>
 
-<span class="sd">        fptr: *list, tuple, str, str, optional*</span>
-<span class="sd">            A list of tuples, holding two strings: the force field type</span>
-<span class="sd">            (either OPLS or SMRFF right now), and the path to the</span>
-<span class="sd">            parameter file.  If no path is specified, the default OPLS</span>
-<span class="sd">            parameters stored in squid will be used.</span>
-<span class="sd">        restrict: *list, str, optional*</span>
+<span class="sd">        restrict: *list, str*</span>
 <span class="sd">            A list of strings specifying which types are to be used.</span>
 <span class="sd">            Note, you must have unique types, lest they be overwritten.</span>
+<span class="sd">            If None is passed, then everything available is read in.</span>
+<span class="sd">        opls_file: *str, optional*</span>
+<span class="sd">            The path to an OPLS parameter file.  Default is internally</span>
+<span class="sd">            stored parameters in squid.</span>
+<span class="sd">        smrff_file: *str, optional*</span>
+<span class="sd">            The path to a SMRFF parameter file.  Default is None.</span>
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        params: :class:`Parameters`</span>
+<span class="sd">        params: :class:`squid.forcefields.parameters.Parameters`</span>
 <span class="sd">            This object.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
@@ -771,6 +772,9 @@
 <span class="sd">                the rest overwrites the parameters) or not.</span>
 <span class="sd">            write_file: *bool, optional*</span>
 <span class="sd">                Whether to write any files (ex. tersoff files) or not.</span>
+<span class="sd">            in_input_file: *bool, optional*</span>
+<span class="sd">                Whether to dump the bonds in the input file style format</span>
+<span class="sd">                (True) or the data file style format (False)</span>
 
 <span class="sd">        **Returns**</span>
 <span class="sd">            lammps_command: *str*</span>
@@ -783,11 +787,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">write_tfile</span> <span class="o">=</span> <span class="n">write_file</span>
         <span class="n">local_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_smrff_style</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="n">style</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;lj/cut/coul/cut&quot;</span><span class="p">,</span> <span class="s1">&#39;all&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">lj_mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coul_mask</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="n">style</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;lj/cut/coul/cut&quot;</span><span class="p">,</span> <span class="s1">&#39;all&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">([</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">lj_mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coul_mask</span><span class="p">]):</span>
             <span class="k">if</span> <span class="s2">&quot;lj/cut/coul/cut&quot;</span> <span class="ow">in</span> <span class="n">local_style</span><span class="p">:</span>
                 <span class="n">script</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dump_lj_cut_coul_cut</span><span class="p">())</span>
                 <span class="n">script</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dump_set_charge</span><span class="p">())</span>
-        <span class="k">if</span> <span class="n">style</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;lj/cut/coul/long&quot;</span><span class="p">,</span> <span class="s1">&#39;all&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">lj_mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coul_mask</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="n">style</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;lj/cut/coul/long&quot;</span><span class="p">,</span> <span class="s1">&#39;all&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">([</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">lj_mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coul_mask</span><span class="p">]):</span>
             <span class="k">if</span> <span class="s2">&quot;lj/cut/coul/long&quot;</span> <span class="ow">in</span> <span class="n">local_style</span><span class="p">:</span>
                 <span class="n">script</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dump_lj_cut_coul_long</span><span class="p">())</span>
                 <span class="n">script</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dump_set_charge</span><span class="p">())</span>
@@ -810,9 +816,9 @@
 
 <div class="viewcode-block" id="Parameters.mapper"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.parameters.Parameters.mapper">[docs]</a>    <span class="k">def</span> <span class="nf">mapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        A generalized function to map indices of atom types to structure types.</span>
-<span class="sd">        Note, this is generalized and should allow for a wide range of x</span>
-<span class="sd">        objects.</span>
+<span class="sd">        A generalized function to map indices of atom types to the</span>
+<span class="sd">        corresponding lammps index.  Note, this is generalized and should</span>
+<span class="sd">        allow for a wide range of x objects.</span>
 
 <span class="sd">        **Parameters**</span>
 
@@ -823,7 +829,7 @@
 <span class="sd">        **Returns**</span>
 
 <span class="sd">            mapper_obj: *list, str or str*</span>
-<span class="sd">                The structure type, as either a list (if bond/angle/dihedral)</span>
+<span class="sd">                The lammps index, as either a list (if bond/angle/dihedral)</span>
 <span class="sd">                or a string (if charge/lj).</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="n">ffh</span><span class="o">.</span><span class="n">map_to_lmp_index</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">opls_structure_dict</span><span class="p">)</span></div>
@@ -969,12 +975,18 @@
                     <span class="k">continue</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">ffh</span><span class="o">.</span><span class="n">check_restriction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lj_params</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">restrict</span><span class="p">):</span>
                     <span class="k">continue</span>
-                <span class="n">sigma_ij</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lj_params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sigma</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">lj_params</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">sigma</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
-                <span class="n">epsilon_ij</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lj_params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">lj_params</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+                <span class="n">sigma_ij</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">lj_params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sigma</span> <span class="o">*</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">lj_params</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">sigma</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+                <span class="n">epsilon_ij</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">lj_params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">*</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">lj_params</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
                 <span class="n">type_i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">restrict</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lj_params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
                 <span class="n">type_j</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">restrict</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lj_params</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
                 <span class="n">type_i</span><span class="p">,</span> <span class="n">type_j</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">type_i</span><span class="p">,</span> <span class="n">type_j</span><span class="p">])</span>
-                <span class="n">lammps_command</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;pair_coeff </span><span class="si">%d</span><span class="s1"> </span><span class="si">%d</span><span class="s1"> lj/cut/coul/long </span><span class="si">%f</span><span class="s1"> </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">type_i</span><span class="p">,</span> <span class="n">type_j</span><span class="p">,</span> <span class="n">epsilon_ij</span><span class="p">,</span> <span class="n">sigma_ij</span><span class="p">))</span>
+                <span class="n">lammps_command</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="s1">&#39;pair_coeff </span><span class="si">%d</span><span class="s1"> </span><span class="si">%d</span><span class="s1"> lj/cut/coul/long </span><span class="si">%f</span><span class="s1"> </span><span class="si">%f</span><span class="s1">&#39;</span>
+                    <span class="o">%</span> <span class="p">(</span><span class="n">type_i</span><span class="p">,</span> <span class="n">type_j</span><span class="p">,</span> <span class="n">epsilon_ij</span><span class="p">,</span> <span class="n">sigma_ij</span><span class="p">))</span>
 
         <span class="n">lammps_command</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lammps_command</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">lammps_command</span></div>
@@ -1003,12 +1015,18 @@
                     <span class="k">continue</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">ffh</span><span class="o">.</span><span class="n">check_restriction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lj_params</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">restrict</span><span class="p">):</span>
                     <span class="k">continue</span>
-                <span class="n">sigma_ij</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lj_params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sigma</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">lj_params</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">sigma</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
-                <span class="n">epsilon_ij</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lj_params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">lj_params</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+                <span class="n">sigma_ij</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">lj_params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sigma</span> <span class="o">*</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">lj_params</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">sigma</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+                <span class="n">epsilon_ij</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">lj_params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">*</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">lj_params</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
                 <span class="n">type_i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">restrict</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lj_params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
                 <span class="n">type_j</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">restrict</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lj_params</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
                 <span class="n">type_i</span><span class="p">,</span> <span class="n">type_j</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">type_i</span><span class="p">,</span> <span class="n">type_j</span><span class="p">])</span>
-                <span class="n">lammps_command</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;pair_coeff </span><span class="si">%d</span><span class="s1"> </span><span class="si">%d</span><span class="s1"> lj/cut/coul/cut </span><span class="si">%f</span><span class="s1"> </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">type_i</span><span class="p">,</span> <span class="n">type_j</span><span class="p">,</span> <span class="n">epsilon_ij</span><span class="p">,</span> <span class="n">sigma_ij</span><span class="p">))</span>
+                <span class="n">lammps_command</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="s1">&#39;pair_coeff </span><span class="si">%d</span><span class="s1"> </span><span class="si">%d</span><span class="s1"> lj/cut/coul/cut </span><span class="si">%f</span><span class="s1"> </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span>
+                    <span class="p">(</span><span class="n">type_i</span><span class="p">,</span> <span class="n">type_j</span><span class="p">,</span> <span class="n">epsilon_ij</span><span class="p">,</span> <span class="n">sigma_ij</span><span class="p">))</span>
 
         <span class="n">lammps_command</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lammps_command</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">lammps_command</span></div>
@@ -1158,6 +1176,11 @@
 <div class="viewcode-block" id="Parameters.get_smrff_style"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.parameters.Parameters.get_smrff_style">[docs]</a>    <span class="k">def</span> <span class="nf">get_smrff_style</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This will return the smrff style.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            lammps_smrff_style: *str*</span>
+<span class="sd">                The input script line for LAMMPS for the smrff pair style.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="c1"># Expand ters to tersoff</span>
         <span class="n">get</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="s2">&quot;tersoff&quot;</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;ters&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
@@ -1173,6 +1196,26 @@
 <span class="sd">        This function will fix a specific style (coul, lj, morse, etc), label</span>
 <span class="sd">        (where label is the atom label/type you want to fix), and the component</span>
 <span class="sd">        (ex, sigma in LJ).</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            style: *str*</span>
+<span class="sd">                Which style to fix.  Options are coul, lj, morse, and ters.</span>
+<span class="sd">            label: *...*</span>
+<span class="sd">                Which atom type should be fixed.  If *, then everything.  Note</span>
+<span class="sd">                that for some situations this may be a list of values (as in</span>
+<span class="sd">                the case of tersoff).</span>
+<span class="sd">            params: *str, optional*</span>
+<span class="sd">                Whether to fix everything (all), or a specific value (style</span>
+<span class="sd">                dependant).</span>
+<span class="sd">            value: *list, float, or float, optional*</span>
+<span class="sd">                The value to fix the param to. If None, then it is fixed to</span>
+<span class="sd">                the current value.  If params is all, then value must be a</span>
+<span class="sd">                list of values.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            None</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">style</span> <span class="o">=</span> <span class="n">style</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
@@ -1220,6 +1263,11 @@
 <div class="viewcode-block" id="Parameters.num_free_parameters"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.parameters.Parameters.num_free_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">num_free_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This function will return the number of unfixed parameters.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            free_params: *int*</span>
+<span class="sd">                The number of free parameters.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">pkg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">with_indices</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">with_bounds</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">pkg</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">([</span>

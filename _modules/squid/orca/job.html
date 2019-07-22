@@ -54,11 +54,12 @@
              <span class="n">grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">queue</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">walltime</span><span class="o">=</span><span class="s2">&quot;00:30:00&quot;</span><span class="p">,</span> <span class="n">sandbox</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">procs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ntasks</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-             <span class="n">charge</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">multiplicity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">charge_and_multiplicity</span><span class="o">=</span><span class="s1">&#39;0 1&#39;</span><span class="p">,</span>
+             <span class="n">charge</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">multiplicity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
              <span class="n">redundancy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unique_name</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
              <span class="n">previous</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mem</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">priority</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xhost</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-             <span class="n">orca4</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">jobarray_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-             <span class="n">slurm_allocation</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+             <span class="n">jobarray_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">slurm_allocation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">batch_serial_jobs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Wrapper to submitting various Orca simulations as a job array on a SLURM</span>
 <span class="sd">    system.  This is used when there are many atomic systems, stored in a</span>
@@ -76,7 +77,7 @@
 <span class="sd">            The DFT route line, containing the function, basis set, etc.</span>
 <span class="sd">            Note, if route=None and previous != None, the route from</span>
 <span class="sd">            the previous simulation will be used instead.</span>
-<span class="sd">        frames: *list,* :class:`structures.Atom`</span>
+<span class="sd">        frames: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            Each atomic system that needs to be simulated.</span>
 <span class="sd">        n_frames: *int, optional*</span>
 <span class="sd">            The number of frames.</span>
@@ -87,6 +88,9 @@
 <span class="sd">            Whether to force RunTyp Gradient.</span>
 <span class="sd">        queue: *str, optional*</span>
 <span class="sd">            What queue to run the simulation on (queueing system dependent).</span>
+<span class="sd">        walltime: *str, optional*</span>
+<span class="sd">            The walltime the job is given when submitted to a queue.  Format</span>
+<span class="sd">            is in day-hr:min:sec.</span>
 <span class="sd">        sandbox: *bool, optional*</span>
 <span class="sd">            Whether to run the job in a sandbox or not.</span>
 <span class="sd">        procs: *int, optional*</span>
@@ -108,10 +112,6 @@
 <span class="sd">            Multiplicity of the system.  If this is used, then</span>
 <span class="sd">            charge_and_multiplicity is ignored. If charge is used, but</span>
 <span class="sd">            multiplicity is not, then default multiplicity of 1 is chosen.</span>
-<span class="sd">        charge_and_multiplicity: *str, optional*</span>
-<span class="sd">            Charge and multiplicity of the system.  If neither charge nor</span>
-<span class="sd">            multiplicity are specified, then both are grabbed from this</span>
-<span class="sd">            string.</span>
 <span class="sd">        redundancy: *bool, optional*</span>
 <span class="sd">            With redundancy on, if the job is submitted and unique_name is on,</span>
 <span class="sd">            then if another job of the same name is running, a pointer to that</span>
@@ -134,20 +134,21 @@
 <span class="sd">        xhost: *list, str or str, optional*</span>
 <span class="sd">            Which processor to run the simulation on(queueing system</span>
 <span class="sd">            dependent).</span>
-<span class="sd">        orca4: *bool, optional*</span>
-<span class="sd">            Whether to use orca 4 (True) or orca 3 (False).</span>
-<span class="sd">        slurm_allocation: *str, optional*</span>
-<span class="sd">            Whether to use a slurm allocation for this job or not.  If so,</span>
-<span class="sd">            specify the name.</span>
 <span class="sd">        jobarray_values: *str, optional*</span>
 <span class="sd">            If specified, instead of indicating a range for job arrays, we</span>
 <span class="sd">            will use these specific values.  For example,</span>
 <span class="sd">            jobarray_values=1,2,4,5 would submit jobs, but skip the 3rd</span>
 <span class="sd">            index by name.</span>
+<span class="sd">        slurm_allocation: *str, optional*</span>
+<span class="sd">            Whether to use a slurm allocation for this job or not.  If so,</span>
+<span class="sd">            specify the name.</span>
+<span class="sd">        batch_serial_jobs: *int, optional*</span>
+<span class="sd">            Whether to batch jobs at N at a time (locally on serial job</span>
+<span class="sd">            submission).</span>
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        job: :class:`jobs.Job`</span>
+<span class="sd">        job: :class:`squid.jobs.container.JobObject`</span>
 <span class="sd">            Teturn the job container.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
@@ -161,14 +162,12 @@
         <span class="s2">&quot;nodes&quot;</span><span class="p">:</span> <span class="n">nodes</span><span class="p">,</span>
         <span class="s2">&quot;charge&quot;</span><span class="p">:</span> <span class="n">charge</span><span class="p">,</span>
         <span class="s2">&quot;multiplicity&quot;</span><span class="p">:</span> <span class="n">multiplicity</span><span class="p">,</span>
-        <span class="s2">&quot;charge_and_multiplicity&quot;</span><span class="p">:</span> <span class="n">charge_and_multiplicity</span><span class="p">,</span>
         <span class="s2">&quot;redundancy&quot;</span><span class="p">:</span> <span class="n">redundancy</span><span class="p">,</span>
         <span class="s2">&quot;unique_name&quot;</span><span class="p">:</span> <span class="n">unique_name</span><span class="p">,</span>
         <span class="s2">&quot;previous&quot;</span><span class="p">:</span> <span class="n">previous</span><span class="p">,</span>
         <span class="s2">&quot;mem&quot;</span><span class="p">:</span> <span class="n">mem</span><span class="p">,</span>
         <span class="s2">&quot;priority&quot;</span><span class="p">:</span> <span class="n">priority</span><span class="p">,</span>
         <span class="s2">&quot;xhost&quot;</span><span class="p">:</span> <span class="n">xhost</span><span class="p">,</span>
-        <span class="s2">&quot;orca4&quot;</span><span class="p">:</span> <span class="n">orca4</span><span class="p">,</span>
         <span class="s2">&quot;slurm_allocation&quot;</span><span class="p">:</span> <span class="n">slurm_allocation</span>
     <span class="p">}</span>
 
@@ -213,14 +212,32 @@
 
         <span class="n">running_jobs</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">atoms</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">indexing</span><span class="p">,</span> <span class="n">frames</span><span class="p">):</span>
-            <span class="n">running_jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="n">job</span><span class="p">(</span>
-                    <span class="n">run_name</span><span class="o">=</span><span class="n">run_name</span> <span class="o">+</span> <span class="s2">&quot;.</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">,</span> <span class="n">route</span><span class="o">=</span><span class="n">route</span><span class="p">,</span> <span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">,</span>
-                    <span class="n">queue</span><span class="o">=</span><span class="n">queue</span><span class="p">,</span> <span class="o">**</span><span class="n">properties</span>
+        <span class="k">if</span> <span class="n">batch_serial_jobs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">atoms</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">indexing</span><span class="p">,</span> <span class="n">frames</span><span class="p">):</span>
+                <span class="n">running_jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">job</span><span class="p">(</span>
+                        <span class="n">run_name</span><span class="o">=</span><span class="n">run_name</span> <span class="o">+</span> <span class="s2">&quot;.</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">,</span>
+                        <span class="n">route</span><span class="o">=</span><span class="n">route</span><span class="p">,</span> <span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">,</span>
+                        <span class="n">queue</span><span class="o">=</span><span class="n">queue</span><span class="p">,</span> <span class="o">**</span><span class="n">properties</span>
+                    <span class="p">)</span>
                 <span class="p">)</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="n">running_jobs</span>
+            <span class="k">return</span> <span class="n">running_jobs</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">finished_jobs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">atoms</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">indexing</span><span class="p">,</span> <span class="n">frames</span><span class="p">):</span>
+                <span class="n">running_jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">job</span><span class="p">(</span>
+                        <span class="n">run_name</span><span class="o">=</span><span class="n">run_name</span> <span class="o">+</span> <span class="s2">&quot;.</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">,</span>
+                        <span class="n">route</span><span class="o">=</span><span class="n">route</span><span class="p">,</span> <span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">,</span>
+                        <span class="n">queue</span><span class="o">=</span><span class="n">queue</span><span class="p">,</span> <span class="o">**</span><span class="n">properties</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">running_jobs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">batch_serial_jobs</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">running_jobs</span><span class="p">:</span>
+                        <span class="n">j</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+                    <span class="n">finished_jobs</span> <span class="o">=</span> <span class="n">finished_jobs</span> <span class="o">+</span> <span class="n">running_jobs</span>
+                    <span class="n">running_jobs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">return</span> <span class="n">finished_jobs</span> <span class="o">+</span> <span class="n">running_jobs</span>
 
     <span class="c1"># Step 1 - we can run orca.job on each frame; HOWEVER, we do so by</span>
     <span class="c1"># requesting the debugger queue.  This way, we only generate the</span>
@@ -269,7 +286,7 @@
 <span class="sd">            The DFT route line, containing the function, basis set, etc.</span>
 <span class="sd">            Note, if route=None and previous != None, the route from</span>
 <span class="sd">            the previous simulation will be used instead.</span>
-<span class="sd">        atoms: *list,* :class:`structures.Atom` *,optional*</span>
+<span class="sd">        atoms: *list,* :class:`squid.structures.atom.Atom` *,optional*</span>
 <span class="sd">            A list of atoms for the simulation.  If this is an empty list, but</span>
 <span class="sd">            previous is used, then the last set of atomic coordinates from</span>
 <span class="sd">            the previous simulation will be used.</span>
@@ -280,11 +297,11 @@
 <span class="sd">            Whether to force RunTyp Gradient.</span>
 <span class="sd">        queue: *str, optional*</span>
 <span class="sd">            What queue to run the simulation on (queueing system dependent).</span>
+<span class="sd">        walltime: *str, optional*</span>
+<span class="sd">            The walltime the job is given when submitted to a queue.  Format</span>
+<span class="sd">            is in day-hr:min:sec.</span>
 <span class="sd">        sandbox: *bool, optional*</span>
 <span class="sd">            Whether to run the job in a sandbox or not.</span>
-<span class="sd">        use_NBS_sandbox: *bool, optional*</span>
-<span class="sd">            Whether to use the NBS sandboxing headers (True), or manually copy</span>
-<span class="sd">            files (False).</span>
 <span class="sd">        procs: *int, optional*</span>
 <span class="sd">            How many processors to run the simulation on.  Note, the actual</span>
 <span class="sd">            number requested by orca will be procs * ntasks.</span>
@@ -306,6 +323,9 @@
 <span class="sd">            With redundancy on, if the job is submitted and unique_name is on,</span>
 <span class="sd">            then if another job of the same name is running, a pointer to that</span>
 <span class="sd">            job will instead be returned.</span>
+<span class="sd">        use_NBS_sandbox: *bool, optional*</span>
+<span class="sd">            Whether to use the NBS sandboxing headers (True), or manually copy</span>
+<span class="sd">            files (False).</span>
 <span class="sd">        unique_name: *bool, optional*</span>
 <span class="sd">            Whether to force the requirement of a unique name or not.  NOTE! If</span>
 <span class="sd">            you submit simulations from the same folder, ensure that this is</span>
@@ -324,15 +344,13 @@
 <span class="sd">        xhost: *list, str or str, optional*</span>
 <span class="sd">            Which processor to run the simulation on(queueing system</span>
 <span class="sd">            dependent).</span>
-<span class="sd">        orca4: *bool, optional*</span>
-<span class="sd">            Whether to use orca 4 (True) or orca 3 (False).</span>
 <span class="sd">        slurm_allocation: *str, optional*</span>
 <span class="sd">            Whether to use a slurm allocation for this job or not.  If so,</span>
 <span class="sd">            specify the name.</span>
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        job: :class:`jobs.Job`</span>
+<span class="sd">        job: :class:`squid.jobs.container.JobObject`</span>
 <span class="sd">            Teturn the job container.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">assert</span> <span class="nb">any</span><span class="p">([</span><span class="n">route</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="n">previous</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]),</span>\

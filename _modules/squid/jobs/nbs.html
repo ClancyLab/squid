@@ -58,14 +58,45 @@
 <span class="sd">            Name of the simulation on the queue.</span>
 <span class="sd">        process_handle: *process_handle, optional*</span>
 <span class="sd">            The process handle, returned by subprocess.Popen.</span>
+<span class="sd">        job_id: *str, optional*</span>
+<span class="sd">            The job id.  Usually this should be unique.</span>
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        This :class:`Job` object.</span>
+<span class="sd">        job_obj: :class:`squid.jobs.nbs.Job`</span>
+<span class="sd">            A Job object.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="nf">get_all_jobs</span><span class="p">(</span><span class="n">detail</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<div class="viewcode-block" id="Job.get_all_jobs"><a class="viewcode-back" href="../../../codebase.html#squid.jobs.nbs.Job.get_all_jobs">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_jobs</span><span class="p">(</span><span class="n">detail</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Get a list of all jobs that are running and/or pending.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            detail: *int, optional*</span>
+<span class="sd">                How much detail to get when finding jobs on the queue.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            all_jobs: *list*</span>
+<span class="sd">                Depending on *detail*, you get the following:</span>
+
+<span class="sd">                    - *details* =0: *list, str*</span>
+<span class="sd">                        List of all jobs on the queue.</span>
+
+<span class="sd">                    - *details* =1: *list, tuple, str*</span>
+<span class="sd">                        List of all jobs on the queue as:</span>
+<span class="sd">                            (job name, time run, job status)</span>
+
+<span class="sd">                    - *details* =2: *list, tuple, str*</span>
+<span class="sd">                        List of all jobs on the queue as:</span>
+<span class="sd">                            (job name,</span>
+<span class="sd">                             time run,</span>
+<span class="sd">                             job status,</span>
+<span class="sd">                             queue,</span>
+<span class="sd">                             number of processors)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="n">get_job</span><span class="p">(</span><span class="s2">&quot;RUNNING&quot;</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="n">detail</span><span class="p">)</span> <span class="o">+</span>\
-            <span class="n">get_job</span><span class="p">(</span><span class="s2">&quot;PENDING&quot;</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="n">detail</span><span class="p">)</span></div>
+            <span class="n">get_job</span><span class="p">(</span><span class="s2">&quot;PENDING&quot;</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="n">detail</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="get_nbs_queues"><a class="viewcode-back" href="../../../codebase.html#squid.jobs.nbs.get_nbs_queues">[docs]</a><span class="k">def</span> <span class="nf">get_nbs_queues</span><span class="p">():</span>
@@ -89,16 +120,6 @@
         <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">all_queues</span>
         <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;queue&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
     <span class="p">]</span></div>
-
-
-<span class="k">def</span> <span class="nf">_test_jlist</span><span class="p">():</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s1">&#39;jlist&#39;</span><span class="p">],</span> <span class="n">shell</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                             <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
-        <span class="n">close_pipes</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">True</span>
-    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">False</span>
 
 
 <div class="viewcode-block" id="get_job"><a class="viewcode-back" href="../../../codebase.html#squid.jobs.nbs.get_job">[docs]</a><span class="k">def</span> <span class="nf">get_job</span><span class="p">(</span><span class="n">s_flag</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
@@ -221,12 +242,44 @@
 <span class="sd">            Name of the job to be submitted to the queue.</span>
 <span class="sd">        job_to_submit: *str*</span>
 <span class="sd">            String holding code you wish to submit.</span>
-<span class="sd">        kwargs: *...*</span>
-<span class="sd">            Additional keyword arguments to SLURM for job submission.</span>
+<span class="sd">        queue: *str, optional*</span>
+<span class="sd">            What queue to run the simulation on (queueing system dependent).</span>
+<span class="sd">        walltime: *str, optional*</span>
+<span class="sd">            How long to post the job on the queue for in d-h:m:s where d are</span>
+<span class="sd">            days, h are hours, m are minutes, and s are seconds.  Default is</span>
+<span class="sd">            for 30 minutes (00:30:00).</span>
+<span class="sd">        nprocs: *int, optional*</span>
+<span class="sd">            How many processors to run the simulation on.  Note, the actual</span>
+<span class="sd">            number of cores mpirun will use is procs * ntasks.</span>
+<span class="sd">        sub_flag: *str, optional*</span>
+<span class="sd">            Additional strings/flags/arguments to add at the end when we</span>
+<span class="sd">            submit a job using jsub.  That is: jsub demo.nbs sub_flag.</span>
+<span class="sd">        unique_name: *bool, optional*</span>
+<span class="sd">            Whether to force the requirement of a unique name or not.  NOTE! If</span>
+<span class="sd">            you submit simulations from the same folder, ensure that this is</span>
+<span class="sd">            True lest you have a redundancy problem! To overcome said issue,</span>
+<span class="sd">            you can set redundancy to True as well (but only if the simulation</span>
+<span class="sd">            is truly redundant).</span>
+<span class="sd">        outfile_name: *str, optional*</span>
+<span class="sd">            Whether to give a unique output file name, or one based on the sim</span>
+<span class="sd">            name.procs</span>
+<span class="sd">        xhosts: *str* or *list, str, optional*</span>
+<span class="sd">            Which cpu to submit the job to.</span>
+<span class="sd">        email: *str, optional*</span>
+<span class="sd">            An email address for sending job information to.</span>
+<span class="sd">        priority: *int, optional*</span>
+<span class="sd">            What priority to give the submitted job.</span>
+<span class="sd">        sandbox: *bool, optional*</span>
+<span class="sd">            Whether to sandbox the job or not.</span>
+<span class="sd">        redundancy: *bool, optional*</span>
+<span class="sd">            With redundancy on, if the job is submitted and unique_name is on,</span>
+<span class="sd">            then if another job of the same name is running, a pointer to that</span>
+<span class="sd">            job will instead be returned.</span>
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        None</span>
+<span class="sd">        job_obj: :class:`squid.jobs.nbs.Job`</span>
+<span class="sd">            A Job object.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="c1"># Store the defaults</span>
     <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
@@ -235,7 +288,6 @@
         <span class="s2">&quot;sub_flag&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="s2">&quot;unique_name&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
         <span class="s2">&quot;redundancy&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="s2">&quot;sandbox&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
         <span class="s2">&quot;outfile_name&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
         <span class="s2">&quot;xhosts&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
         <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>

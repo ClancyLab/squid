@@ -40,7 +40,7 @@
             
   <h1>Source code for squid.forcefields.lj</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">from</span> <span class="nn">squid.forcefields.helper</span> <span class="k">import</span> <span class="n">check_restriction</span>
+<span class="kn">from</span> <span class="nn">squid.forcefields.helper</span> <span class="k">import</span> <span class="n">check_restriction</span><span class="p">,</span> <span class="n">random_in_range</span>
 
 <span class="c1"># These are the identifiers in the parameter file that we seek out</span>
 <span class="c1"># NOTE! THEY ARE CASE SENSITIVE!</span>
@@ -83,7 +83,7 @@
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        lj: :class:`squid.structures.LJ`</span>
+<span class="sd">        lj: :class:`squid.forcefields.lj.LJ`</span>
 <span class="sd">            A LJ object.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
@@ -160,8 +160,17 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">pair_coeff_dump</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%.4f</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">)</span>
+<div class="viewcode-block" id="LJ.pair_coeff_dump"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.lj.LJ.pair_coeff_dump">[docs]</a>    <span class="k">def</span> <span class="nf">pair_coeff_dump</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Return a string representation of the pair coefficients.  In this</span>
+<span class="sd">        case, it simply is the epsilon and sigma values with a space.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            coeff_str: *str*</span>
+<span class="sd">                A string representation of the pair coefficients.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%.4f</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LJ.print_lower"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.lj.LJ.print_lower">[docs]</a>    <span class="k">def</span> <span class="nf">print_lower</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -397,7 +406,7 @@
 
 <span class="sd">        **Returns**</span>
 
-<span class="sd">            lj_objs: *list,* :class:`squid.structures.LJ`, or *None*</span>
+<span class="sd">            lj_objs: *list,* :class:`squid.forcefields.lj.LJ`, or *None*</span>
 <span class="sd">                Returns a list of LJ objects if possible, else None.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="kn">import</span> <span class="nn">squid.forcefields.smrff</span> <span class="k">as</span> <span class="nn">smrff_utils</span>
@@ -437,7 +446,7 @@
 
 <span class="sd">        **Returns**</span>
 
-<span class="sd">            lj_objs: *list,* :class:`squid.structures.LJ`, or *None*</span>
+<span class="sd">            lj_objs: *list,* :class:`squid.forcefields.lj.LJ`, or *None*</span>
 <span class="sd">                Returns a list of LJ objects if possible, else None.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="c1"># Ensure correct pfile format, and that we even need to parse it.</span>
@@ -463,16 +472,15 @@
 
 <span class="sd">        **Returns**</span>
 
-<span class="sd">            lj_objs: *list,* :class:`squid.structures.LJ`</span>
+<span class="sd">            lj_objs: *list,* :class:`squid.forcefields.lj.LJ`</span>
 <span class="sd">                Returns a list of LJ objects.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="kn">from</span> <span class="nn">helper</span> <span class="k">import</span> <span class="n">random_in_range</span>
 
         <span class="n">LJ_objs</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">atype</span> <span class="ow">in</span> <span class="n">atom_types</span><span class="p">:</span>
-            <span class="n">eps</span> <span class="o">=</span> <span class="n">random_in_range</span><span class="p">(</span><span class="n">SIGMA_BOUNDS</span><span class="p">)</span>
-            <span class="n">sig</span> <span class="o">=</span> <span class="n">random_in_range</span><span class="p">(</span><span class="n">EPSILON_BOUNDS</span><span class="p">)</span>
+            <span class="n">sig</span> <span class="o">=</span> <span class="n">random_in_range</span><span class="p">(</span><span class="n">SIGMA_BOUNDS</span><span class="p">)</span>
+            <span class="n">eps</span> <span class="o">=</span> <span class="n">random_in_range</span><span class="p">(</span><span class="n">EPSILON_BOUNDS</span><span class="p">)</span>
             <span class="n">LJ_objs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">cls</span><span class="p">(</span><span class="n">atype</span><span class="p">,</span> <span class="n">sig</span><span class="p">,</span> <span class="n">eps</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">LJ_objs</span></div></div>

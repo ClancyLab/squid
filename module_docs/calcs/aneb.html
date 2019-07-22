@@ -37,9 +37,22 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <span class="target" id="module-squid.calcs.aneb"></span><p>The Auto ANEB module simplifies the submission of Auto Nudged Elastic Band simulations.</p>
-<p>NOTE! This module is still in a very rough beta.  It has been hacked together from the
-NEB module and is being tested.  Do not use this expecting a miracle.</p>
+  <span class="target" id="module-squid.calcs.aneb"></span><p>The Auto ANEB module simplifies the submission of Auto Nudged Elastic Band
+simulations.</p>
+<p>NOTE! This module is still in a very rough beta.  It has been hacked together
+from the NEB module and is being tested.  Do not use this expecting a miracle.</p>
+<p>Squid Auto Nudged Elastic Band package
+Currently supports g09 and orca
+Cite ANEB:</p>
+<blockquote>
+<div><a class="reference external" href="http://aip.scitation.org/doi/full/10.1063/1.4961868">http://aip.scitation.org/doi/full/10.1063/1.4961868</a>
+<a class="reference external" href="http://scitation.aip.org/content/aip/journal/jcp/113/22/10.1063/1.1323224">http://scitation.aip.org/content/aip/journal/jcp/113/22/10.1063/1.1323224</a></div></blockquote>
+<dl class="docutils">
+<dt>BFGS is the best method, cite:</dt>
+<dd><a class="reference external" href="http://theory.cm.utexas.edu/henkelman/pubs/sheppard08_134106.pdf">http://theory.cm.utexas.edu/henkelman/pubs/sheppard08_134106.pdf</a></dd>
+</dl>
+<p>Nudged Elastic Band. k for VASP is 5 eV/Angstrom, ie 0.1837 Hartree/Angstrom.
+Gtol of 1E-5 from scipy.bfgs package</p>
 <p>The following code has been tested out to some moderate success for now:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_opt_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;step_size&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
                   <span class="s1">&#39;step_size_adjustment&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
@@ -75,11 +88,11 @@ NEB module and is being tested.  Do not use this expecting a miracle.</p>
 </pre></div>
 </div>
 <ul class="simple">
-<li><a class="reference internal" href="../../codebase.html#squid.calcs.aneb.g09_start_job" title="squid.calcs.aneb.g09_start_job"><code class="xref py py-func docutils literal notranslate"><span class="pre">g09_start_job()</span></code></a></li>
-<li><a class="reference internal" href="../../codebase.html#squid.calcs.aneb.g09_results" title="squid.calcs.aneb.g09_results"><code class="xref py py-func docutils literal notranslate"><span class="pre">g09_results()</span></code></a></li>
-<li><a class="reference internal" href="../../codebase.html#squid.calcs.aneb.orca_start_job" title="squid.calcs.aneb.orca_start_job"><code class="xref py py-func docutils literal notranslate"><span class="pre">orca_start_job()</span></code></a></li>
-<li><a class="reference internal" href="../../codebase.html#squid.calcs.aneb.orca_results" title="squid.calcs.aneb.orca_results"><code class="xref py py-func docutils literal notranslate"><span class="pre">orca_results()</span></code></a></li>
-<li><a class="reference internal" href="../../codebase.html#squid.calcs.aneb.ANEB" title="squid.calcs.aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a></li>
+<li><a class="reference internal" href="#squid.calcs.aneb.g09_start_job" title="squid.calcs.aneb.g09_start_job"><code class="xref py py-func docutils literal notranslate"><span class="pre">g09_start_job()</span></code></a></li>
+<li><a class="reference internal" href="#squid.calcs.aneb.g09_results" title="squid.calcs.aneb.g09_results"><code class="xref py py-func docutils literal notranslate"><span class="pre">g09_results()</span></code></a></li>
+<li><a class="reference internal" href="#squid.calcs.aneb.orca_start_job" title="squid.calcs.aneb.orca_start_job"><code class="xref py py-func docutils literal notranslate"><span class="pre">orca_start_job()</span></code></a></li>
+<li><a class="reference internal" href="#squid.calcs.aneb.orca_results" title="squid.calcs.aneb.orca_results"><code class="xref py py-func docutils literal notranslate"><span class="pre">orca_results()</span></code></a></li>
+<li><a class="reference internal" href="#squid.calcs.aneb.ANEB" title="squid.calcs.aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a></li>
 </ul>
 <hr class="docutils" />
 <dl class="class">
@@ -93,7 +106,7 @@ is potentially generalizable to other programs.</p>
 <div><dl class="docutils">
 <dt>name: <em>str</em></dt>
 <dd>The name of the ANEB simulation to be run.</dd>
-<dt>states: <em>list, list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dt>states: <em>list, list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of frames, each frame being a list of atom structures.
 These frames represent your reaction coordinate.</dd>
 <dt>theory: <em>str</em></dt>
@@ -164,7 +177,7 @@ number is chosen, the expansion happens around floor(ANEB_Nsim/2).</dd>
 </div></blockquote>
 <p><strong>Returns</strong></p>
 <blockquote>
-<div>This <a class="reference internal" href="../../codebase.html#squid.calcs.aneb.ANEB" title="squid.calcs.aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a> object.</div></blockquote>
+<div>This <a class="reference internal" href="#squid.calcs.aneb.ANEB" title="squid.calcs.aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a> object.</div></blockquote>
 <p><strong>References</strong></p>
 <blockquote>
 <div><ul class="simple">
@@ -180,7 +193,7 @@ Physics 2008, 128.</li>
 <li>Henkelman, G.; Uberuaga, B. P.; Jonsson, H. Journal of Chemical
 Physics 2000, 113.</li>
 <li>Atomic Simulation Environment - <a class="reference external" href="https://wiki.fysik.dtu.dk/ase/">https://wiki.fysik.dtu.dk/ase/</a></li>
-<li>Kolsbjerg, E. L.; Groves, M. N.; Hammer, B. The Journal of 
+<li>Kolsbjerg, E. L.; Groves, M. N.; Hammer, B. The Journal of
 Chemical Physics 2016, 145.</li>
 </ul>
 </div></blockquote>
@@ -233,14 +246,15 @@ in state and (b) return the energy and atoms.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>ANEB: <a class="reference internal" href="../../codebase.html#squid.calcs.aneb.ANEB" title="squid.calcs.aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a></dt>
+<dt>ANEB: <a class="reference internal" href="#squid.calcs.aneb.ANEB" title="squid.calcs.aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a></dt>
 <dd>An ANEB container holding the main ANEB simulation</dd>
 <dt>step_to_use: <em>int</em></dt>
-<dd>Which iteration in the ANEB sequence the output to be read in is on.</dd>
+<dd>Which iteration in the ANEB sequence the output to be read in
+is on.</dd>
 <dt>i: <em>int</em></dt>
 <dd>The index corresponding to which image on the frame is to be
 simulated.</dd>
-<dt>state: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dt>state: <em>list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms describing the image on the frame associated with
 index <em>i</em>.</dd>
 </dl>
@@ -250,7 +264,7 @@ index <em>i</em>.</dd>
 <div><dl class="docutils">
 <dt>new_energy: <em>float</em></dt>
 <dd>The energy of the system in Hartree (Ha).</dd>
-<dt>new_atoms: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dt>new_atoms: <em>list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms with the forces attached in units of Hartree per
 Angstrom (Ha/Ang).</dd>
 </dl>
@@ -265,12 +279,12 @@ ANEB calculations.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>ANEB: <a class="reference internal" href="../../codebase.html#squid.calcs.aneb.ANEB" title="squid.calcs.aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a></dt>
+<dt>ANEB: <a class="reference internal" href="#squid.calcs.aneb.ANEB" title="squid.calcs.aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a></dt>
 <dd>An ANEB container holding the main ANEB simulation</dd>
 <dt>i: <em>int</em></dt>
 <dd>The index corresponding to which image on the frame is to be
 simulated.</dd>
-<dt>state: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dt>state: <em>list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms describing the image on the frame associated
 with index <em>i</em>.</dd>
 <dt>charge: <em>int</em></dt>
@@ -288,14 +302,14 @@ hessian.</dd>
 <dt>mem: <em>int</em></dt>
 <dd>How many Mega Words (MW) you wish to have as dynamic memory.</dd>
 <dt>priority: <em>int</em></dt>
-<dd>Whether to submit the job with a given priority (NBS). Not setup for
-this function yet.</dd>
+<dd>Whether to submit the job with a given priority (NBS). Not setup
+for this function yet.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>g09_job: <code class="xref py py-class docutils literal notranslate"><span class="pre">jobs.Job</span></code></dt>
+<dt>g09_job: <a class="reference internal" href="../../codebase.html#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
 <dd>A job container holding the g09 simulation.</dd>
 </dl>
 </div></blockquote>
@@ -310,14 +324,15 @@ in state and (b) return the energy and atoms.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>ANEB: <a class="reference internal" href="../../codebase.html#squid.calcs.aneb.ANEB" title="squid.calcs.aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a></dt>
+<dt>ANEB: <a class="reference internal" href="#squid.calcs.aneb.ANEB" title="squid.calcs.aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a></dt>
 <dd>An ANEB container holding the main ANEB simulation</dd>
 <dt>step_to_use: <em>int</em></dt>
-<dd>Which iteration in the ANEB sequence the output to be read in is on.</dd>
+<dd>Which iteration in the ANEB sequence the output to be read in
+is on.</dd>
 <dt>i: <em>int</em></dt>
 <dd>The index corresponding to which image on the frame is to be
 simulated.</dd>
-<dt>state: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dt>state: <em>list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms describing the image on the frame associated with
 index <em>i</em>.</dd>
 </dl>
@@ -327,7 +342,7 @@ index <em>i</em>.</dd>
 <div><dl class="docutils">
 <dt>new_energy: <em>float</em></dt>
 <dd>The energy of the system in Hartree (Ha).</dd>
-<dt>new_atoms: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dt>new_atoms: <em>list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms with the forces attached in units of Hartree per
 Angstrom (Ha/Ang).</dd>
 </dl>
@@ -342,12 +357,12 @@ calculations.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>ANEB: <a class="reference internal" href="../../codebase.html#squid.calcs.aneb.ANEB" title="squid.calcs.aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a></dt>
+<dt>ANEB: <a class="reference internal" href="#squid.calcs.aneb.ANEB" title="squid.calcs.aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a></dt>
 <dd>An ANEB container holding the main ANEB simulation</dd>
 <dt>i: <em>int</em></dt>
 <dd>The index corresponding to which image on the frame is to be
 simulated.</dd>
-<dt>state: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dt>state: <em>list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms describing the image on the frame associated with
 index <em>i</em>.</dd>
 <dt>charge: <em>int</em></dt>
@@ -371,7 +386,7 @@ hessian.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>orca_job: <code class="xref py py-class docutils literal notranslate"><span class="pre">jobs.Job</span></code></dt>
+<dt>orca_job: <a class="reference internal" href="../../codebase.html#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
 <dd>A job container holding the orca simulation.</dd>
 </dl>
 </div></blockquote>

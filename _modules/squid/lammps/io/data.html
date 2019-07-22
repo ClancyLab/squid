@@ -68,7 +68,7 @@
 
 <span class="c1">#     **Returns**</span>
 
-<span class="c1">#         atoms: *list,* :class:`structures.Atom`</span>
+<span class="c1">#         atoms: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="c1">#             A list of atoms read in from the data file.</span>
 <span class="c1">#         bonds: *list,* :class:`structures.Bond`</span>
 <span class="c1">#             A list of bonds read in from the data file.</span>
@@ -206,43 +206,18 @@
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Writes a lammps data file from the given system.</span>
 
-<span class="sd">    Set pair_coeffs_included to True to write pair_coeffs in data file.</span>
-<span class="sd">    Set hybrid_angle to True to detect different treatment of angles among</span>
-<span class="sd">    different atom types.</span>
-<span class="sd">    Set hybrid_pair to True to detect different treatment of pairing</span>
-<span class="sd">    interactions</span>
-<span class="sd">    among different atom types.</span>
-
 <span class="sd">    **Parameters**</span>
 
-<span class="sd">        system: :class:`structures.System`</span>
+<span class="sd">        system: :class:`squid.structures.system.System`</span>
 <span class="sd">            Atomic system to be written to a lammps data file.</span>
-<span class="sd">        name: *str, optional*</span>
-<span class="sd">            What to reassign the system name to.</span>
-<span class="sd">        new_method: *bool, optional*</span>
-<span class="sd">            A boolean on whether to use the new method of parameter handling,</span>
-<span class="sd">            or the old one.  Note, the old one will be deprecated and no</span>
-<span class="sd">            longer maintained, and over time removed, so we recommend getting</span>
-<span class="sd">            used to this method instead.</span>
 <span class="sd">        pair_coeffs_included: *bool, optional*</span>
 <span class="sd">            Whether to write pair coefficients into the data file (True),</span>
 <span class="sd">            or not (False).</span>
-<span class="sd">        hybrid_angle: *bool, optional*</span>
-<span class="sd">            Whether to detect different treatments of angles amongst different</span>
-<span class="sd">            atom types (True), or not (False).</span>
-<span class="sd">        hybrid_pair: *bool, optional*</span>
-<span class="sd">            Whether to detect different treatments of pairing interactions</span>
-<span class="sd">            amongst different atom types(True), or not (False).</span>
 
 <span class="sd">    **Returns**</span>
 
 <span class="sd">        None</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="c1"># Set the types of the system before generating the data file</span>
-    <span class="n">system</span><span class="o">.</span><span class="n">set_types</span><span class="p">(</span><span class="o">**</span><span class="p">{</span>
-        <span class="n">k</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;opls_file&quot;</span><span class="p">,</span> <span class="s2">&quot;smrff_file&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kwargs</span>
-    <span class="p">})</span>
-
     <span class="n">pair_coeffs_included</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">if</span> <span class="s2">&quot;pair_coeffs_included&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">pair_coeffs_included</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;pair_coeffs_included&quot;</span><span class="p">]</span>

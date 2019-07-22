@@ -48,15 +48,15 @@
 <dt>input_file: <em>str</em></dt>
 <dd>Orca .orca.engrad file to be parsed.</dd>
 <dt>force: <em>str, optional</em></dt>
-<dd>Units you want force to be returned in.</dd>
+<dd>Units you want force to be returned in.  Default is Ha/Bohr.</dd>
 <dt>pos: <em>str, optional</em></dt>
-<dd>Units you want position to be returned in.</dd>
+<dd>Units you want position to be returned in. Default is Bohr.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>atoms: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dt>atoms: <em>list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of the final atomic state, with forces appended
 to each atom.</dd>
 <dt>energy: <em>float</em></dt>
@@ -80,7 +80,7 @@ It should be mentioned that atomic positions are 0 indexed.</p>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>data: <code class="xref py py-class docutils literal notranslate"><span class="pre">results.DFT_out</span></code></dt>
+<dt>data: <a class="reference internal" href="../../codebase.html#squid.structures.results.DFT_out" title="squid.structures.results.DFT_out"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.results.DFT_out</span></code></a></dt>
 <dd>Generic DFT output object containing all parsed results.</dd>
 </dl>
 </div></blockquote>

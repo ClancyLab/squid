@@ -48,11 +48,72 @@
 <dd>Name of the simulation on the queue.</dd>
 <dt>process_handle: <em>process_handle, optional</em></dt>
 <dd>The process handle, returned by subprocess.Popen.</dd>
+<dt>job_id: <em>str, optional</em></dt>
+<dd>The job id.  Usually this should be unique.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
 <blockquote>
-<div>This <a class="reference internal" href="../../codebase.html#squid.jobs.slurm.Job" title="squid.jobs.slurm.Job"><code class="xref py py-class docutils literal notranslate"><span class="pre">Job</span></code></a> object.</div></blockquote>
+<div><dl class="docutils">
+<dt>job_obj: <a class="reference internal" href="#squid.jobs.slurm.Job" title="squid.jobs.slurm.Job"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.slurm.Job</span></code></a></dt>
+<dd>A Job object.</dd>
+</dl>
+</div></blockquote>
+<dl class="method">
+<dt id="squid.jobs.slurm.Job.get_all_jobs">
+<code class="descname">get_all_jobs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/jobs/slurm.html#Job.get_all_jobs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.jobs.slurm.Job.get_all_jobs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all jobs that are running and/or pending.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>detail: <em>int, optional</em></dt>
+<dd>How much detail to get when finding jobs on the queue.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>all_jobs: <em>list</em></dt>
+<dd><p class="first">Depending on <em>detail</em>, you get the following:</p>
+<blockquote class="last">
+<div><ul class="simple">
+<li><dl class="first docutils">
+<dt><em>details</em> =0: <em>list, str</em></dt>
+<dd>List of all jobs on the queue.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>details</em> =1: <em>list, tuple, str</em></dt>
+<dd><dl class="first last docutils">
+<dt>List of all jobs on the queue as:</dt>
+<dd>(job name, time run, job status)</dd>
+</dl>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>details</em> =2: <em>list, tuple, str</em></dt>
+<dd><dl class="first last docutils">
+<dt>List of all jobs on the queue as:</dt>
+<dd><dl class="first last docutils">
+<dt>(job name,</dt>
+<dd>time run,
+job status,
+queue,
+number of processors)</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="function">
@@ -138,13 +199,54 @@ number of processors)</dd>
 <dd>Name of the job to be submitted to the queue.</dd>
 <dt>job_to_submit: <em>str</em></dt>
 <dd>String holding code you wish to submit.</dd>
-<dt>kwargs: <em>…</em></dt>
-<dd>Additional keyword arguments to SLURM for job submission.</dd>
+<dt>queue: <em>str, optional</em></dt>
+<dd>What queue to run the simulation on (queueing system dependent).</dd>
+<dt>walltime: <em>str, optional</em></dt>
+<dd>How long to post the job on the queue for in d-h:m:s where d are
+days, h are hours, m are minutes, and s are seconds.  Default is
+for 30 minutes (00:30:00).</dd>
+<dt>cpus_per_task: <em>int, optional</em></dt>
+<dd>How many processors to run the simulation on.  Note, the actual
+number of cores mpirun will use is nprocs * ntasks.</dd>
+<dt>ntasks: <em>int, optional</em></dt>
+<dd>How many processors to run the simulation on.  Note, the actual
+number of cores mpirun will use is nprocs * ntasks.</dd>
+<dt>nodes: <em>int, optional</em></dt>
+<dd>How many nodes to run the simulation on.</dd>
+<dt>sub_flag: <em>str, optional</em></dt>
+<dd>Additional strings/flags/arguments to add at the end when we
+submit a job using sbatch.  That is: sbatch demo.slurm sub_flag.</dd>
+<dt>unique_name: <em>bool, optional</em></dt>
+<dd>Whether to force the requirement of a unique name or not.  NOTE! If
+you submit simulations from the same folder, ensure that this is
+True lest you have a redundancy problem! To overcome said issue,
+you can set redundancy to True as well (but only if the simulation
+is truly redundant).</dd>
+<dt>outfile_name: <em>str, optional</em></dt>
+<dd>Whether to give a unique output file name, or one based on the sim
+name.procs</dd>
+<dt>allocation: <em>str, optional</em></dt>
+<dd>The SLURM allocation to submit the job to.</dd>
+<dt>jobarray: <em>str, optional</em></dt>
+<dd>If specified, instead of indicating a range for job arrays, we
+will use these specific values.  For example,
+jobarray=1,2,4,5 would submit jobs, but skip the 3rd
+index by name.</dd>
+<dt>gpu: <em>int, optional</em></dt>
+<dd>How many GPUs to use, if submitting to a GPU node.</dd>
+<dt>redundancy: <em>bool, optional</em></dt>
+<dd>With redundancy on, if the job is submitted and unique_name is on,
+then if another job of the same name is running, a pointer to that
+job will instead be returned.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
 <blockquote>
-<div>None</div></blockquote>
+<div><dl class="docutils">
+<dt>job_obj: <a class="reference internal" href="#squid.jobs.slurm.Job" title="squid.jobs.slurm.Job"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.slurm.Job</span></code></a></dt>
+<dd>A Job object.</dd>
+</dl>
+</div></blockquote>
 </dd></dl>
 
 

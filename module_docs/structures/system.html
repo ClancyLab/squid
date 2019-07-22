@@ -57,7 +57,7 @@
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>system: <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.system.System</span></code></dt>
+<dt>system: <a class="reference internal" href="#squid.structures.system.System" title="squid.structures.system.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.system.System</span></code></a></dt>
 <dd>The System class container.</dd>
 </dl>
 </div></blockquote>
@@ -71,7 +71,7 @@ default it is added via a deepcopy to prevent untracked errors.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>molecule: <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Molecule</span></code></dt>
+<dt>molecule: <a class="reference internal" href="molecule.html#squid.structures.molecule.Molecule" title="squid.structures.molecule.Molecule"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.molecule.Molecule</span></code></a></dt>
 <dd>A Molecule structure.</dd>
 <dt>mol_offset: <em>int, optional</em></dt>
 <dd>The offset to apply to molecule_index.</dd>
@@ -93,7 +93,7 @@ angles and dihedrals.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>molecule: <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Molecule</span></code></dt>
+<dt>molecule: <a class="reference internal" href="molecule.html#squid.structures.molecule.Molecule" title="squid.structures.molecule.Molecule"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.molecule.Molecule</span></code></a></dt>
 <dd>A molecule to be checked if it resides within this system.</dd>
 </dl>
 </div></blockquote>
@@ -324,13 +324,15 @@ geometry (cog), or neither (“None” or None).</dd>
 
 <dl class="method">
 <dt id="squid.structures.system.System.set_types">
-<code class="descname">set_types</code><span class="sig-paren">(</span><em>opls_file='/home/hherbol/programs/squid/squid/structures/../forcefields/potentials/oplsaa.prm'</em>, <em>smrff_file=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/structures/system.html#System.set_types"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.structures.system.System.set_types" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_types</code><span class="sig-paren">(</span><em>opls_file='/home/hherbol/programs/squid/squid/structures/../forcefields/potentials/oplsaa.prm'</em>, <em>smrff_file=None</em>, <em>params=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/structures/system.html#System.set_types"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.structures.system.System.set_types" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given the atoms, bonds, angles, and dihedrals in a system object,
 generate a list of the unique atom, bond, angle, dihedral types
 and assign that to the system object.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
+<dt>params: <a class="reference internal" href="../../codebase.html#squid.forcefields.parameters.Parameters" title="squid.forcefields.parameters.Parameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.parameters.Parameters</span></code></a>, <em>optional</em></dt>
+<dd>A parameter object that already exists.</dd>
 <dt>opls_file: <em>str, optional</em></dt>
 <dd>A path to an opls file.  By default, this points to the stored
 values in squid.  If None, then no OPLS file is read.

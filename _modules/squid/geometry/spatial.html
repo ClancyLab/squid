@@ -53,7 +53,7 @@
 
 <span class="sd">    **Parameters**</span>
 
-<span class="sd">        frames: *list, list,* :class:`structures.Atom`</span>
+<span class="sd">        frames: *list, list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            List of lists of atoms.</span>
 
 <span class="sd">    **Returns**</span>
@@ -203,10 +203,10 @@
 
 <span class="sd">    **Parameters**</span>
 
-<span class="sd">        A: *list,* :class:`structures.atom.Atom`</span>
+<span class="sd">        A: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A list of atoms for which R will minimize the frobenius</span>
 <span class="sd">            norm ||A*R - ref_matrix||^2.</span>
-<span class="sd">        ref_matrix: *list,* :class:`structures.atom.Atom`</span>
+<span class="sd">        ref_matrix: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A list of atoms for which *A* is being rotated towards.</span>
 <span class="sd">        reflection: *bool, optional*</span>
 <span class="sd">            Whether inversion is allowed (True) or not (False).</span>
@@ -315,7 +315,7 @@
 
 <span class="sd">    **Parameters**</span>
 
-<span class="sd">        points:  *list,* :class:`structures.Atom`</span>
+<span class="sd">        points:  *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A list of Atom objects.</span>
 <span class="sd">        tol: *float, optional*</span>
 <span class="sd">            Tolerance for ellipsoid generation.</span>

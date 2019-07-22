@@ -59,7 +59,7 @@
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        data: :class:`results.DFT_out`</span>
+<span class="sd">        data: :class:`squid.structures.results.DFT_out`</span>
 <span class="sd">            Generic DFT output object containing all parsed results.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="c1"># Check file exists, and open</span>
@@ -358,13 +358,13 @@
 <span class="sd">        input_file: *str*</span>
 <span class="sd">            Orca .orca.engrad file to be parsed.</span>
 <span class="sd">        force: *str, optional*</span>
-<span class="sd">            Units you want force to be returned in.</span>
+<span class="sd">            Units you want force to be returned in.  Default is Ha/Bohr.</span>
 <span class="sd">        pos: *str, optional*</span>
-<span class="sd">            Units you want position to be returned in.</span>
+<span class="sd">            Units you want position to be returned in. Default is Bohr.</span>
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        atoms: *list,* :class:`structures.Atom`</span>
+<span class="sd">        atoms: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A list of the final atomic state, with forces appended</span>
 <span class="sd">            to each atom.</span>
 <span class="sd">        energy: *float*</span>

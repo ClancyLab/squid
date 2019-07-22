@@ -39,7 +39,7 @@
             
   <span class="target" id="module-squid.orca.post_process"></span><dl class="function">
 <dt id="squid.orca.post_process.gbw_to_cube">
-<code class="descclassname">squid.orca.post_process.</code><code class="descname">gbw_to_cube</code><span class="sig-paren">(</span><em>name</em>, <em>mo</em>, <em>spin=0</em>, <em>grid=40</em>, <em>local=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/orca/post_process.html#gbw_to_cube"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.orca.post_process.gbw_to_cube" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">squid.orca.post_process.</code><code class="descname">gbw_to_cube</code><span class="sig-paren">(</span><em>name</em>, <em>mo</em>, <em>spin=0</em>, <em>grid=40</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/orca/post_process.html#gbw_to_cube"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.orca.post_process.gbw_to_cube" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pipe in flags to orca_plot to generate a cube file for the given
 molecular orbital.  Note, this is assumed to be running from the parent
 directory (ie, gbw is in the orca/BASENAME/BASENAME.orca.gbw).</p>
@@ -56,8 +56,6 @@ this is 0 indexed.</dd>
 <dd>Whether to plot the alpha or beta (0 or 1) operator.</dd>
 <dt>grid: <em>int, optional</em></dt>
 <dd>The grid resolution, default being 40.</dd>
-<dt>orca4: <em>bool, optional</em></dt>
-<dd>Whether the simulation was run in orca3 or orca4.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
@@ -102,8 +100,6 @@ opening.</dd>
 <dt>iso: <em>float, optional</em></dt>
 <dd>Isosurface magnitude.  Set to 0.04 by default, but 0.01 may be
 better.</dd>
-<dt>orca4: <em>bool, optional</em></dt>
-<dd>Whether the simulation was run in orca3 or orca4.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
@@ -127,8 +123,6 @@ are in the parent directory of the job to analyze.</dd>
 <dd>If you want to view wireframe instead of default surface.</dd>
 <dt>npoints: <em>int, optional</em></dt>
 <dd>The grid size for the potential surface.</dd>
-<dt>orca4: <em>bool, optional</em></dt>
-<dd>Whether to run this for orca4 outputs or not.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>

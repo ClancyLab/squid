@@ -41,33 +41,14 @@
 <dt id="squid.lammps.io.data.write_lammps_data">
 <code class="descclassname">squid.lammps.io.data.</code><code class="descname">write_lammps_data</code><span class="sig-paren">(</span><em>system</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/squid/lammps/io/data.html#write_lammps_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.lammps.io.data.write_lammps_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes a lammps data file from the given system.</p>
-<p>Set pair_coeffs_included to True to write pair_coeffs in data file.
-Set hybrid_angle to True to detect different treatment of angles among
-different atom types.
-Set hybrid_pair to True to detect different treatment of pairing
-interactions
-among different atom types.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>system: <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.System</span></code></dt>
+<dt>system: <a class="reference internal" href="../../../codebase.html#squid.structures.system.System" title="squid.structures.system.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.system.System</span></code></a></dt>
 <dd>Atomic system to be written to a lammps data file.</dd>
-<dt>name: <em>str, optional</em></dt>
-<dd>What to reassign the system name to.</dd>
-<dt>new_method: <em>bool, optional</em></dt>
-<dd>A boolean on whether to use the new method of parameter handling,
-or the old one.  Note, the old one will be deprecated and no
-longer maintained, and over time removed, so we recommend getting
-used to this method instead.</dd>
 <dt>pair_coeffs_included: <em>bool, optional</em></dt>
 <dd>Whether to write pair coefficients into the data file (True),
 or not (False).</dd>
-<dt>hybrid_angle: <em>bool, optional</em></dt>
-<dd>Whether to detect different treatments of angles amongst different
-atom types (True), or not (False).</dd>
-<dt>hybrid_pair: <em>bool, optional</em></dt>
-<dd>Whether to detect different treatments of pairing interactions
-amongst different atom types(True), or not (False).</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>

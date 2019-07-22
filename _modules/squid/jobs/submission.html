@@ -60,10 +60,12 @@
 <span class="sd">            String holding code you wish to submit.</span>
 <span class="sd">        kwargs: *...*</span>
 <span class="sd">            Additional keyword arguments to NBS/SLURM for job submission.</span>
+<span class="sd">            For more details, see the relevant section.</span>
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        None</span>
+<span class="sd">        job_obj: :class:`squid.jobs.container.JobObject`</span>
+<span class="sd">            A Job object.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">queueing_system</span> <span class="o">=</span> <span class="n">get_queue_manager</span><span class="p">()</span>
     <span class="n">queue</span> <span class="o">=</span> <span class="kc">None</span>
@@ -104,7 +106,7 @@
 
 <span class="sd">        name: *str*</span>
 <span class="sd">            Name of the python script (with or without the .py extension).</span>
-<span class="sd">        omp: *int, optional*</span>
+<span class="sd">        ompi_threads: *int, optional*</span>
 <span class="sd">            The number OMP_NUM_THREADS should be manually assigned to.</span>
 <span class="sd">        preface_mpi: *bool, optional*</span>
 <span class="sd">            Whether to run python via mpirun or not.</span>
@@ -123,7 +125,7 @@
 <span class="sd">            Requires an installed version of lmod.</span>
 <span class="sd">        kwargs: *...*</span>
 <span class="sd">            Any other keywords necessary for a given job submission script</span>
-<span class="sd">            (NBS/SLURM).</span>
+<span class="sd">            (NBS/SLURM).  See the other submission sections for more details.</span>
 
 <span class="sd">    **Returns**</span>
 
@@ -263,9 +265,9 @@
             <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;nprocs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;ntasks&quot;</span><span class="p">]</span>
         <span class="c1"># Strip from kwargs anything we don&#39;t need here</span>
         <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;ntasks&quot;</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">nbs</span><span class="o">.</span><span class="n">submit_job</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">nbs</span><span class="o">.</span><span class="n">submit_job</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">queueing_system</span> <span class="o">==</span> <span class="s2">&quot;slurm&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">slurm</span><span class="o">.</span><span class="n">submit_job</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">slurm</span><span class="o">.</span><span class="n">submit_job</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unknown queueing system (</span><span class="si">%s</span><span class="s2">) encountered.&quot;</span>
                         <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">queueing_system</span><span class="p">))</span></div>

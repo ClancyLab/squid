@@ -47,6 +47,17 @@
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This function will find the orca executable and the corresponding openmpi</span>
 <span class="sd">    executable.  It will handle errors accordingly.</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">        parallel: *bool, optional*</span>
+<span class="sd">            Whether we guarantee the relevant parallel openmpi is setup (True)</span>
+<span class="sd">            or not (False).</span>
+
+<span class="sd">    **Returns**</span>
+
+<span class="sd">        orca_path: *str*</span>
+<span class="sd">            The path to the orca executable.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="c1"># This is to ensure we read in ORCA correctly</span>
     <span class="n">orca_string_id</span> <span class="o">=</span> <span class="s2">&quot;An Ab Initio, DFT and Semiempirical electronic structure&quot;</span>

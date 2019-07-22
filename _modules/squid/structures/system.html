@@ -72,7 +72,7 @@
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        system: :class:`structures.system.System`</span>
+<span class="sd">        system: :class:`squid.structures.system.System`</span>
 <span class="sd">            The System class container.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
@@ -230,7 +230,7 @@
 
 <span class="sd">        **Parameters**</span>
 
-<span class="sd">            molecule: :class:`structures.Molecule`</span>
+<span class="sd">            molecule: :class:`squid.structures.molecule.Molecule`</span>
 <span class="sd">                A Molecule structure.</span>
 <span class="sd">            mol_offset: *int, optional*</span>
 <span class="sd">                The offset to apply to molecule_index.</span>
@@ -270,7 +270,7 @@
 
 <span class="sd">        **Parameters**</span>
 
-<span class="sd">            molecule: :class:`structures.Molecule`</span>
+<span class="sd">            molecule: :class:`squid.structures.molecule.Molecule`</span>
 <span class="sd">                A molecule to be checked if it resides within this system.</span>
 
 <span class="sd">        **Returns**</span>
@@ -360,7 +360,7 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">misc</span><span class="o">.</span><span class="n">rotate_atoms</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">around</span><span class="o">=</span><span class="n">around</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="System.set_types"><a class="viewcode-back" href="../../../codebase.html#squid.structures.system.System.set_types">[docs]</a>    <span class="k">def</span> <span class="nf">set_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">opls_file</span><span class="o">=</span><span class="n">OPLS_FILE</span><span class="p">,</span> <span class="n">smrff_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="System.set_types"><a class="viewcode-back" href="../../../codebase.html#squid.structures.system.System.set_types">[docs]</a>    <span class="k">def</span> <span class="nf">set_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">opls_file</span><span class="o">=</span><span class="n">OPLS_FILE</span><span class="p">,</span> <span class="n">smrff_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Given the atoms, bonds, angles, and dihedrals in a system object,</span>
 <span class="sd">        generate a list of the unique atom, bond, angle, dihedral types</span>
@@ -368,6 +368,8 @@
 
 <span class="sd">        **Parameters**</span>
 
+<span class="sd">            params: :class:`squid.forcefields.parameters.Parameters`, *optional*</span>
+<span class="sd">                A parameter object that already exists.</span>
 <span class="sd">            opls_file: *str, optional*</span>
 <span class="sd">                A path to an opls file.  By default, this points to the stored</span>
 <span class="sd">                values in squid.  If None, then no OPLS file is read.</span>
@@ -381,13 +383,17 @@
             <span class="n">a</span><span class="o">.</span><span class="n">label</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">a</span><span class="o">.</span><span class="n">element</span>
             <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">]</span>
         <span class="p">)))</span>
-        <span class="c1"># Next, we must get the parameters from files</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">Parameters</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">atom_labels</span><span class="p">,</span>
-            <span class="n">opls_file</span><span class="o">=</span><span class="n">opls_file</span><span class="p">,</span>
-            <span class="n">smrff_file</span><span class="o">=</span><span class="n">smrff_file</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">set_all_masks</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
+
+        <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Next, we must get the parameters from files</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">Parameters</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">atom_labels</span><span class="p">,</span>
+                <span class="n">opls_file</span><span class="o">=</span><span class="n">opls_file</span><span class="p">,</span>
+                <span class="n">smrff_file</span><span class="o">=</span><span class="n">smrff_file</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">set_all_masks</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">params</span></div>
 
 <div class="viewcode-block" id="System.dump_pair_coeffs"><a class="viewcode-back" href="../../../codebase.html#squid.structures.system.System.dump_pair_coeffs">[docs]</a>    <span class="k">def</span> <span class="nf">dump_pair_coeffs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>

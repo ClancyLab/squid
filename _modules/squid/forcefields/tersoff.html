@@ -43,7 +43,7 @@
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">product</span>
 <span class="kn">from</span> <span class="nn">squid.utils.cast</span> <span class="k">import</span> <span class="n">is_numeric</span>
 <span class="kn">import</span> <span class="nn">squid.forcefields.smrff</span> <span class="k">as</span> <span class="nn">smrff_utils</span>
-<span class="kn">from</span> <span class="nn">squid.forcefields.helper</span> <span class="k">import</span> <span class="n">check_restriction</span>
+<span class="kn">from</span> <span class="nn">squid.forcefields.helper</span> <span class="k">import</span> <span class="n">check_restriction</span><span class="p">,</span> <span class="n">random_in_range</span>
 
 <span class="n">BOUND_EPS</span> <span class="o">=</span> <span class="mf">1E-6</span>
 <span class="c1"># These are the identifiers in the parameter file that we seek out</span>
@@ -149,7 +149,7 @@
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        tersoff: :class:`Tersoff`</span>
+<span class="sd">        tersoff: :class:`squid.forcefields.tersoff.Tersoff`</span>
 <span class="sd">            A Tersoff object.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
@@ -358,6 +358,10 @@
 <span class="sd">        Assign default bounds.  Further, if this is the case of A-B-B vs A-B-C</span>
 <span class="sd">        we can simplify the bounds as only in the case of A-B-B are two body</span>
 <span class="sd">        parameters n, Beta, lambda2, lambda1, and A read in.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            None</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lambda3_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">c_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">150000.0</span><span class="p">)</span>
@@ -545,6 +549,10 @@
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This function will validate data integrity.  In this case, we simply</span>
 <span class="sd">        ensure data types are appropriate.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            None</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">)</span>
@@ -636,6 +644,10 @@
 <span class="sd">            3. Removing attractive potential (B is 0)</span>
 <span class="sd">            4. Setting beta to 0 (this removes the three-body interaction)</span>
 <span class="sd">            5. Setting all benign (unused) parameters to 1</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            None</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_turn_off</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
@@ -647,6 +659,10 @@
 
 <span class="sd">            1. Setting beta to 0 (this removes the three-body interaction)</span>
 <span class="sd">            2. Setting all benign (unused) parameters to 1</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            None</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_turn_off</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
@@ -722,6 +738,8 @@
 
 <span class="sd">            line: *str*</span>
 <span class="sd">                A string that holds a three-body tersoff parameter set.</span>
+<span class="sd">            validate: *bool, optional*</span>
+<span class="sd">                Whether to validate these parameters or not.</span>
 
 <span class="sd">        **Returns**</span>
 
@@ -737,6 +755,21 @@
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This will fix these parameters by assigning bounds to the</span>
 <span class="sd">        values themselves.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            params: *str, optional*</span>
+<span class="sd">                Whether to fix everything (all), or a specific value (m,</span>
+<span class="sd">                gamma, lambda3, c, d, costheta0, n, beta, lambda2, B, R,</span>
+<span class="sd">                D, lambda1, A).</span>
+<span class="sd">            value: *list, float, or float, optional*</span>
+<span class="sd">                The value to fix the param to. If None, then it is fixed to</span>
+<span class="sd">                the current value.  If params is all, then value must be a</span>
+<span class="sd">                list of values.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            None</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="n">params</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -907,10 +940,13 @@
 <span class="sd">                The name of a parameter file to be parsed.  If specified,</span>
 <span class="sd">                then parsed_file is ignored (you may simply pass None as</span>
 <span class="sd">                parsed_file).</span>
+<span class="sd">            restrict: *list, str, optional*</span>
+<span class="sd">                A list of atom labels to include when loading.  If not</span>
+<span class="sd">                specified, everything is loaded.</span>
 
 <span class="sd">        **Returns**</span>
 
-<span class="sd">            tersoff_objs: *list, Tersoff*, or *None*</span>
+<span class="sd">            tersoff_objs: *list,* :class:`squid.forcefields.tersoff` or *None*</span>
 <span class="sd">                Returns a list of Tersoff objects if possible, else None.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="c1"># Ensure correct pfile format, and that we even need to parse it.</span>
@@ -962,11 +998,9 @@
 
 <span class="sd">        **Returns**</span>
 
-<span class="sd">            ters_objs: *list, Tersoff*</span>
+<span class="sd">            ters_objs: *list,* :class:`squid.forcefields.tersoff.Tersoff`</span>
 <span class="sd">                Returns a list of Tersoff objects.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="kn">from</span> <span class="nn">helper</span> <span class="k">import</span> <span class="n">random_in_range</span>
-
         <span class="n">form</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="k">assert</span> <span class="n">form</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;original&quot;</span><span class="p">,</span> <span class="s2">&quot;albe&quot;</span><span class="p">],</span>\
             <span class="s2">&quot;Error - form must be either original or albe.&quot;</span>
@@ -1013,7 +1047,7 @@
 
 <span class="sd">        **Parameters**</span>
 
-<span class="sd">            other: *:class:`Tersoff`*</span>
+<span class="sd">            other: :class:`squid.forcefields.tersoff.Tersoff`</span>
 <span class="sd">                A Tersoff parameter object to get 2-body parameters from.</span>
 
 <span class="sd">        **Returns**</span>
@@ -1045,7 +1079,7 @@
 
 <span class="sd">    **Parameters**</span>
 
-<span class="sd">        tersoff_params: *list,* :class:`Tersoff`</span>
+<span class="sd">        tersoff_params: *list,* :class:`squid.forcefields.tersoff.Tersoff`</span>
 <span class="sd">            A list of Tersoff objects.</span>
 
 <span class="sd">    **Returns**</span>
@@ -1080,7 +1114,7 @@
 
 <span class="sd">    **Parameters**</span>
 
-<span class="sd">        tersoff_params: *list,* :class:`Tersoff`</span>
+<span class="sd">        tersoff_params: *list,* :class:`squid.forcefields.tersoff.Tersoff`</span>
 <span class="sd">            A list of Tersoff objects.</span>
 
 <span class="sd">    **Returns**</span>
@@ -1113,12 +1147,12 @@
 
 <span class="sd">    **Parameters**</span>
 
-<span class="sd">        tersoff_params: *list,* :class:`Tersoff`</span>
+<span class="sd">        tersoff_params: *list,* :class:`squid.forcefields.tersoff.Tersoff`</span>
 <span class="sd">            A list of Tersoff objects.</span>
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        corrected_tersoff_params: *list,* :class:`Tersoff`</span>
+<span class="sd">        corrected_tersoff_params: *list,* :class:`squid.forcefields.tersoff.Tersoff`</span>
 <span class="sd">            A list of Tersoff objects with the 2body symmetry</span>
 <span class="sd">            condition ensured.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
@@ -1140,12 +1174,12 @@
 
 <span class="sd">    **Parameters**</span>
 
-<span class="sd">        tersoff_params: *list,* :class:`Tersoff`</span>
+<span class="sd">        tersoff_params: *list,* :class:`squid.forcefields.tersoff.Tersoff`</span>
 <span class="sd">            A list of Tersoff objects.</span>
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        tagged_tersoff_params: *list,* :class:`Tersoff`</span>
+<span class="sd">        tagged_tersoff_params: *list,* :class:`squid.forcefields.tersoff.Tersoff`</span>
 <span class="sd">            A list of the unique Tersoff objects.</span>
 
 <span class="sd">    **Returns**</span>

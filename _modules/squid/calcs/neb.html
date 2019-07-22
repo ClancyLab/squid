@@ -88,7 +88,7 @@
                   <span class="n">state</span><span class="p">,</span>
                   <span class="n">charge</span><span class="p">,</span>
                   <span class="n">multiplicity</span><span class="p">,</span>
-                  <span class="n">procs</span><span class="p">,</span>
+                  <span class="n">nprocs</span><span class="p">,</span>
                   <span class="n">queue</span><span class="p">,</span>
                   <span class="n">initial_guess</span><span class="p">,</span>
                   <span class="n">extra_section</span><span class="p">,</span>
@@ -106,14 +106,14 @@
 <span class="sd">        i: *int*</span>
 <span class="sd">            The index corresponding to which image on the frame is to be</span>
 <span class="sd">            simulated.</span>
-<span class="sd">        state: *list,* :class:`structures.Atom`</span>
+<span class="sd">        state: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A list of atoms describing the image on the frame associated</span>
 <span class="sd">            with index *i*.</span>
 <span class="sd">        charge: *int*</span>
 <span class="sd">            Charge of the system.</span>
 <span class="sd">        multiplicity: *int*</span>
 <span class="sd">            Multiplicity of the system.</span>
-<span class="sd">        procs: *int*</span>
+<span class="sd">        nprocs: *int*</span>
 <span class="sd">            The number of processors to use during calculations.</span>
 <span class="sd">        queue: *str*</span>
 <span class="sd">            Which queue to submit the simulation to (this is queueing system</span>
@@ -126,14 +126,14 @@
 <span class="sd">        mem: *int*</span>
 <span class="sd">            How many Mega Words (MW) you wish to have as dynamic memory.</span>
 <span class="sd">        priority: *int*</span>
-<span class="sd">            Whether to submit the job with a given priority (NBS). Not setup for</span>
-<span class="sd">            this function yet.</span>
+<span class="sd">            Whether to submit the job with a given priority (NBS). Not setup</span>
+<span class="sd">            for this function.</span>
 <span class="sd">        extra_keywords: *dict, optional*</span>
 <span class="sd">            Specify extra keywords beyond the defaults.</span>
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        g09_job: :class:`jobs.Job`</span>
+<span class="sd">        g09_job: :class:`squid.jobs.container.JobObject`</span>
 <span class="sd">            A job container holding the g09 simulation.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">NEB</span><span class="o">.</span><span class="n">calls_to_force</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -156,7 +156,7 @@
                    <span class="n">state</span><span class="p">,</span>
                    <span class="n">charge</span><span class="o">=</span><span class="n">charge</span><span class="p">,</span>
                    <span class="n">multiplicity</span><span class="o">=</span><span class="n">multiplicity</span><span class="p">,</span>
-                   <span class="n">procs</span><span class="o">=</span><span class="n">procs</span><span class="p">,</span>
+                   <span class="n">nprocs</span><span class="o">=</span><span class="n">nprocs</span><span class="p">,</span>
                    <span class="n">queue</span><span class="o">=</span><span class="n">queue</span><span class="p">,</span>
                    <span class="n">previous</span><span class="o">=</span><span class="n">prev</span><span class="p">,</span>
                    <span class="n">extra_section</span><span class="o">=</span><span class="n">extra_section</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">,</span>
@@ -179,7 +179,7 @@
 <span class="sd">        i: *int*</span>
 <span class="sd">            The index corresponding to which image on the frame is to be</span>
 <span class="sd">            simulated.</span>
-<span class="sd">        state: *list,* :class:`structures.Atom`</span>
+<span class="sd">        state: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A list of atoms describing the image on the frame associated with</span>
 <span class="sd">            index *i*.</span>
 
@@ -187,7 +187,7 @@
 
 <span class="sd">        new_energy: *float*</span>
 <span class="sd">            The energy of the system in Hartree (Ha).</span>
-<span class="sd">        new_atoms: *list,* :class:`structures.Atom`</span>
+<span class="sd">        new_atoms: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A list of atoms with the forces attached in units of Hartree per</span>
 <span class="sd">            Angstrom (Ha/Ang).</span>
 <span class="sd">    &#39;&#39;&#39;</span>
@@ -227,7 +227,7 @@
                    <span class="n">state</span><span class="p">,</span>
                    <span class="n">charge</span><span class="p">,</span>
                    <span class="n">multiplicity</span><span class="p">,</span>
-                   <span class="n">procs</span><span class="p">,</span>
+                   <span class="n">nprocs</span><span class="p">,</span>
                    <span class="n">queue</span><span class="p">,</span>
                    <span class="n">initial_guess</span><span class="p">,</span>
                    <span class="n">extra_section</span><span class="p">,</span>
@@ -245,14 +245,14 @@
 <span class="sd">        i: *int*</span>
 <span class="sd">            The index corresponding to which image on the frame is to be</span>
 <span class="sd">            simulated.</span>
-<span class="sd">        state: *list,* :class:`structures.Atom`</span>
+<span class="sd">        state: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A list of atoms describing the image on the frame associated with</span>
 <span class="sd">            index *i*.</span>
 <span class="sd">        charge: *int*</span>
 <span class="sd">            Charge of the system.</span>
 <span class="sd">        multiplicity: *int*</span>
 <span class="sd">            Multiplicity of the system.</span>
-<span class="sd">        procs: *int*</span>
+<span class="sd">        nprocs: *int*</span>
 <span class="sd">            The number of processors to use during calculations.</span>
 <span class="sd">        queue: *str*</span>
 <span class="sd">            Which queue to submit the simulation to (this is queueing system</span>
@@ -271,7 +271,7 @@
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        orca_job: :class:`jobs.Job`</span>
+<span class="sd">        orca_job: :class:`squid.jobs.container.JobObject`</span>
 <span class="sd">            A job container holding the orca simulation.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">NEB</span><span class="o">.</span><span class="n">calls_to_force</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -292,7 +292,7 @@
                     <span class="n">multiplicity</span><span class="o">=</span><span class="n">multiplicity</span><span class="p">,</span>
                     <span class="n">extra_section</span><span class="o">=</span><span class="n">extra_section</span><span class="p">,</span>
                     <span class="n">grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="n">procs</span><span class="o">=</span><span class="n">procs</span><span class="p">,</span>
+                    <span class="n">nprocs</span><span class="o">=</span><span class="n">nprocs</span><span class="p">,</span>
                     <span class="n">queue</span><span class="o">=</span><span class="n">queue</span><span class="p">,</span>
                     <span class="n">previous</span><span class="o">=</span><span class="n">previous</span><span class="p">,</span>
                     <span class="n">mem</span><span class="o">=</span><span class="n">mem</span><span class="p">,</span>
@@ -314,7 +314,7 @@
 <span class="sd">        i: *int*</span>
 <span class="sd">            The index corresponding to which image on the frame is to be</span>
 <span class="sd">            simulated.</span>
-<span class="sd">        state: *list,* :class:`structures.Atom`</span>
+<span class="sd">        state: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A list of atoms describing the image on the frame associated with</span>
 <span class="sd">            index *i*.</span>
 
@@ -322,7 +322,7 @@
 
 <span class="sd">        new_energy: *float*</span>
 <span class="sd">            The energy of the system in Hartree (Ha).</span>
-<span class="sd">        new_atoms: *list,* :class:`structures.Atom`</span>
+<span class="sd">        new_atoms: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A list of atoms with the forces attached in units of Hartree per</span>
 <span class="sd">            Angstrom (Ha/Ang).</span>
 <span class="sd">    &#39;&#39;&#39;</span>
@@ -348,7 +348,7 @@
 
 <span class="sd">        name: *str*</span>
 <span class="sd">            The name of the NEB simulation to be run.</span>
-<span class="sd">        states: *list, list,* :class:`structures.Atom`</span>
+<span class="sd">        states: *list, list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A list of frames, each frame being a list of atom structures.</span>
 <span class="sd">            These frames represent your reaction coordinate.</span>
 <span class="sd">        theory: *str*</span>
@@ -361,7 +361,7 @@
 <span class="sd">        spring_atoms: *list, int, optional*</span>
 <span class="sd">            Specify which atoms will be represented by virutal springs in the</span>
 <span class="sd">            NEB calculations. Default includes all.</span>
-<span class="sd">        procs: *int, optional*</span>
+<span class="sd">        nprocs: *int, optional*</span>
 <span class="sd">            The number of processors for your simulation.</span>
 <span class="sd">        queue: *str, optional*</span>
 <span class="sd">            Which queue you wish your simulation to run on (queueing system</span>
@@ -399,7 +399,8 @@
 <span class="sd">            Further, the forces are contained within each atom object.  It also</span>
 <span class="sd">            requires that the forces on the state object be updated within said</span>
 <span class="sd">            function (for more info see example codes).  Finally, if using</span>
-<span class="sd">            no_energy=True, then return None (or an empty list) for the energies.</span>
+<span class="sd">            no_energy=True, then return None (or an empty list) for the</span>
+<span class="sd">            energies.</span>
 <span class="sd">        new_opt_params: *dict, optional*</span>
 <span class="sd">            Pass any additional parameters to the optimization algorithm.</span>
 <span class="sd">        callback: *func, optional*</span>
@@ -439,7 +440,7 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">name</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">theory</span><span class="p">,</span> <span class="n">extra_section</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
                  <span class="n">initial_guess</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">spring_atoms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">procs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">queue</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mem</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">priority</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">nprocs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">queue</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mem</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">priority</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">disp</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                  <span class="n">k</span><span class="o">=</span><span class="mf">0.00367453</span><span class="p">,</span>  <span class="c1"># 0.1 eV/A in Ha/A</span>
                  <span class="n">charge</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
@@ -459,7 +460,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span> <span class="o">=</span> <span class="n">initial_guess</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">spring_atoms</span> <span class="o">=</span> <span class="n">spring_atoms</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">procs</span> <span class="o">=</span> <span class="n">procs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nprocs</span> <span class="o">=</span> <span class="n">nprocs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">queue</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mem</span> <span class="o">=</span> <span class="n">mem</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">priority</span> <span class="o">=</span> <span class="n">priority</span>
@@ -565,7 +566,7 @@
                                    <span class="n">state</span><span class="p">,</span>
                                    <span class="bp">self</span><span class="o">.</span><span class="n">charge</span><span class="p">,</span>
                                    <span class="bp">self</span><span class="o">.</span><span class="n">multiplicity</span><span class="p">,</span>
-                                   <span class="bp">self</span><span class="o">.</span><span class="n">procs</span><span class="p">,</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">nprocs</span><span class="p">,</span>
                                    <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">,</span>
                                    <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="p">,</span>
                                    <span class="bp">self</span><span class="o">.</span><span class="n">extra_section</span><span class="p">,</span>

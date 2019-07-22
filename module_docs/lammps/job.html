@@ -62,7 +62,7 @@ executable.  It will handle errors accordingly.</p>
 
 <dl class="function">
 <dt id="squid.lammps.job.job">
-<code class="descclassname">squid.lammps.job.</code><code class="descname">job</code><span class="sig-paren">(</span><em>run_name</em>, <em>input_script</em>, <em>system=None</em>, <em>queue=None</em>, <em>walltime='00:30:00'</em>, <em>procs=1</em>, <em>ntasks=1</em>, <em>nodes=1</em>, <em>email=None</em>, <em>pair_coeffs_in_data_file=True</em>, <em>hybrid_pair=False</em>, <em>hybrid_angle=False</em>, <em>TIP4P=False</em>, <em>no_echo=False</em>, <em>redundancy=False</em>, <em>params=None</em>, <em>unique_name=True</em>, <em>slurm_allocation=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/lammps/job.html#job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.lammps.job.job" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">squid.lammps.job.</code><code class="descname">job</code><span class="sig-paren">(</span><em>run_name</em>, <em>input_script</em>, <em>system=None</em>, <em>queue=None</em>, <em>walltime='00:30:00'</em>, <em>nprocs=1</em>, <em>ntasks=1</em>, <em>nodes=1</em>, <em>email=None</em>, <em>pair_coeffs_in_data_file=True</em>, <em>no_echo=False</em>, <em>redundancy=False</em>, <em>unique_name=True</em>, <em>slurm_allocation=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/lammps/job.html#job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.lammps.job.job" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper to submitting a LAMMPs simulation.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
@@ -71,48 +71,42 @@ executable.  It will handle errors accordingly.</p>
 <dd>Name of the simulation to be run.</dd>
 <dt>input_script: <em>str</em></dt>
 <dd>Input script for LAMMPs simulation.</dd>
-<dt>system: <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.System</span></code></dt>
+<dt>system: <a class="reference internal" href="../../codebase.html#squid.structures.system.System" title="squid.structures.system.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.system.System</span></code></a></dt>
 <dd>System object for our simulation.</dd>
 <dt>queue: <em>str, optional</em></dt>
 <dd>What queue to run the simulation on (queueing system dependent).</dd>
-<dt>procs: <em>int, optional</em></dt>
-<dd>How many processors to run the simulation on.  Note, the actual
-number of cores mpirun will use is procs * ntasks.</dd>
-<dt>ntasks: <em>int, optional</em></dt>
-<dd>(For SLURM) The number of tasks this job will run, each task uses
-procs number of cores.  Note, the actual number of cores mpirun
-will use is procs * ntasks.</dd>
-<dt>nodes: <em>int, optional</em></dt>
-<dd>(For SLURM) The number of nodes this job requires.  If requesting
-ntasks * procs &lt; 24 * nodes, a warning is printed, as on MARCC
-each node has only 24 cores.</dd>
 <dt>walltime: <em>str, optional</em></dt>
 <dd>How long to post the job on the queue for in d-h:m:s where d are
 days, h are hours, m are minutes, and s are seconds.  Default is
 for 30 minutes (00:30:00).</dd>
-<dt>adjust_nodes: <em>bool, optional</em></dt>
-<dd>Whether to automatically calculate how many nodes is necessary
-when the user underspecifies nodes.</dd>
+<dt>nprocs: <em>int, optional</em></dt>
+<dd>How many processors to run the simulation on.  Note, the actual
+number of cores mpirun will use is nprocs * ntasks.</dd>
+<dt>ntasks: <em>int, optional</em></dt>
+<dd>(For SLURM) The number of tasks this job will run, each task uses
+nprocs number of cores.  Note, the actual number of cores mpirun
+will use is nprocs * ntasks.</dd>
+<dt>nodes: <em>int, optional</em></dt>
+<dd>(For SLURM) The number of nodes this job requires.  If requesting
+ntasks * nprocs &lt; 24 * nodes, a warning is printed, as on MARCC
+each node has only 24 cores.</dd>
 <dt>email: <em>str, optional</em></dt>
 <dd>An email address for sending job information to.</dd>
-<dt>pair_coeffs_included: <em>bool, optional</em></dt>
+<dt>pair_coeffs_in_data_file: <em>bool, optional</em></dt>
 <dd>Whether we have included the pair coefficients to be written
-to our lammps data file.</dd>
-<dt>hybrid_pair: <em>bool, optional</em></dt>
-<dd>Whether to detect different treatments of pairing interactions
-amongst different atom types(True), or not (False).</dd>
-<dt>hybrid_angle: <em>bool, optional</em></dt>
-<dd>Whether to detect different treatments of angles amongst different
-atom types (True), or not (False).</dd>
-<dt>TIP4P: <em>bool, optional</em></dt>
-<dd>Whether to identify TIP4P settings within the lammps data file and
-update the input file (True), or not (False).</dd>
+to our lammps data file (True) or not (False).</dd>
 <dt>no_echo: <em>bool, optional</em></dt>
 <dd>Whether to pipe the terminal output to a file instead of printing.</dd>
 <dt>redundancy: <em>bool, optional</em></dt>
 <dd>With redundancy on, if the job is submitted and unique_name is on,
 then if another job of the same name is running, a pointer to that
 job will instead be returned.</dd>
+<dt>unique_name: <em>bool, optional</em></dt>
+<dd>Whether to force the requirement of a unique name or not.  NOTE! If
+you submit simulations from the same folder, ensure that this is
+True lest you have a redundancy problem! To overcome said issue,
+you can set redundancy to True as well (but only if the simulation
+is truly redundant).</dd>
 <dt>slurm_allocation: <em>str, optional</em></dt>
 <dd>Whether to use a slurm allocation for this job or not.  If so,
 specify the name.</dd>
@@ -121,7 +115,7 @@ specify the name.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>job: <code class="xref py py-class docutils literal notranslate"><span class="pre">jobs.Job</span></code></dt>
+<dt>job: <a class="reference internal" href="../../codebase.html#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
 <dd>If running locally, return the process handle, else return the
 job container.</dd>
 </dl>

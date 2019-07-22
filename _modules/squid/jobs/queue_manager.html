@@ -52,9 +52,11 @@
 <span class="sd">    **Parameters**</span>
 
 <span class="sd">        name: *str*</span>
-<span class="sd">            Name of simulation</span>
-<span class="sd">        kwargs: *...*</span>
-<span class="sd">            Any additional keywords.</span>
+<span class="sd">            Name of the simulation on the queue.</span>
+<span class="sd">        process_handle: *process_handle, optional*</span>
+<span class="sd">            The process handle, returned by subprocess.Popen.</span>
+<span class="sd">        job_id: *str, optional*</span>
+<span class="sd">            The job id.  Usually this should be unique.</span>
 
 <span class="sd">    **Returns**</span>
 
@@ -133,8 +135,6 @@
 
 <span class="sd">    **Parameters**</span>
 
-<span class="sd">        queueing_system: *str, optional*</span>
-<span class="sd">            Which queueing system you are using (NBS or PBS).</span>
 <span class="sd">        detail: *int, optional*</span>
 <span class="sd">            The amount of information you want returned.</span>
 
@@ -169,8 +169,6 @@
 
 <span class="sd">    **Parameters**</span>
 
-<span class="sd">        queueing_system: *str, optional*</span>
-<span class="sd">            Which queueing system you are using (NBS or PBS).</span>
 <span class="sd">        detail: *int, optional*</span>
 <span class="sd">            The amount of information you want returned.</span>
 
@@ -219,8 +217,6 @@
 
 <span class="sd">    **Parameters**</span>
 
-<span class="sd">        queueing_system: *str, optional*</span>
-<span class="sd">            Which queueing system you are using (NBS or PBS).</span>
 <span class="sd">        detail: *int, optional*</span>
 <span class="sd">            The amount of information you want returned.</span>
 

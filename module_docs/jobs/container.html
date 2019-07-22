@@ -48,11 +48,38 @@
 <dd>Name of the simulation on the queue.</dd>
 <dt>process_handle: <em>process_handle, optional</em></dt>
 <dd>The process handle, returned by subprocess.Popen.</dd>
+<dt>job_id: <em>str, optional</em></dt>
+<dd>The job id.  Usually this should be unique.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
 <blockquote>
-<div>This <code class="xref py py-class docutils literal notranslate"><span class="pre">Job</span></code> object.</div></blockquote>
+<div><dl class="docutils">
+<dt>job_obj: <a class="reference internal" href="#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
+<dd>A Job object.</dd>
+</dl>
+</div></blockquote>
+<dl class="method">
+<dt id="squid.jobs.container.JobObject.get_all_jobs">
+<code class="descname">get_all_jobs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/jobs/container.html#JobObject.get_all_jobs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.jobs.container.JobObject.get_all_jobs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all jobs that are running and/or pending.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>detail: <em>int, optional</em></dt>
+<dd>How much detail to get when finding jobs on the queue.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>jobs_on_queue: <em>list, …</em></dt>
+<dd>A list of all jobs on the queue, and any other relevant
+information requested.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
 <dl class="method">
 <dt id="squid.jobs.container.JobObject.is_finished">
 <code class="descname">is_finished</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/jobs/container.html#JobObject.is_finished"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.jobs.container.JobObject.is_finished" title="Permalink to this definition">¶</a></dt>
@@ -70,6 +97,13 @@
 <dt id="squid.jobs.container.JobObject.wait">
 <code class="descname">wait</code><span class="sig-paren">(</span><em>tsleep=60</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/jobs/container.html#JobObject.wait"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.jobs.container.JobObject.wait" title="Permalink to this definition">¶</a></dt>
 <dd><p>Hang until simulation has finished.</p>
+<dl class="docutils">
+<dt>tsleep: <em>int, optional</em></dt>
+<dd>How long to wait before checking if the job has finished in
+the loop.  Default is 1 minute.</dd>
+<dt>verbose: <em>bool, optional</em></dt>
+<dd>Whether to print repeatedly on each check or not.</dd>
+</dl>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div>None</div></blockquote>

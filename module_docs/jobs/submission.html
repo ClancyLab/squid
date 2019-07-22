@@ -46,7 +46,7 @@
 <div><dl class="docutils">
 <dt>name: <em>str</em></dt>
 <dd>Name of the python script (with or without the .py extension).</dd>
-<dt>omp: <em>int, optional</em></dt>
+<dt>ompi_threads: <em>int, optional</em></dt>
 <dd>The number OMP_NUM_THREADS should be manually assigned to.</dd>
 <dt>preface_mpi: <em>bool, optional</em></dt>
 <dd>Whether to run python via mpirun or not.</dd>
@@ -65,7 +65,7 @@ only work on SLURM.</dd>
 Requires an installed version of lmod.</dd>
 <dt>kwargs: <em>…</em></dt>
 <dd>Any other keywords necessary for a given job submission script
-(NBS/SLURM).</dd>
+(NBS/SLURM).  See the other submission sections for more details.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
@@ -85,12 +85,17 @@ Requires an installed version of lmod.</dd>
 <dt>job_to_submit: <em>str</em></dt>
 <dd>String holding code you wish to submit.</dd>
 <dt>kwargs: <em>…</em></dt>
-<dd>Additional keyword arguments to NBS/SLURM for job submission.</dd>
+<dd>Additional keyword arguments to NBS/SLURM for job submission.
+For more details, see the relevant section.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
 <blockquote>
-<div>None</div></blockquote>
+<div><dl class="docutils">
+<dt>job_obj: <a class="reference internal" href="../../codebase.html#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
+<dd>A Job object.</dd>
+</dl>
+</div></blockquote>
 </dd></dl>
 
 

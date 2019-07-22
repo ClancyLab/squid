@@ -61,7 +61,7 @@
 
 <span class="sd">    **Parameters**</span>
 
-<span class="sd">        atoms: *list,* :class:`structures.atom.Atom`</span>
+<span class="sd">        atoms: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A list of Atom objects.</span>
 <span class="sd">        recenter: *bool, optional*</span>
 <span class="sd">            Whether to recenter the new coordinates around the origin or not.</span>
@@ -73,7 +73,7 @@
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        molec.atoms: *list,* :class:`structures.atom.Atom`</span>
+<span class="sd">        molec.atoms: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            Rotated atomic coordinates.</span>
 <span class="sd">        A: *list, list, float*</span>
 <span class="sd">            Rotated positive definite symmetric matrix of the ellipsoid&#39;s</span>
@@ -126,7 +126,7 @@
 
 <span class="sd">    **Parameters**</span>
 
-<span class="sd">        frames: *list, list,* :class:`structures.atom.Atom`</span>
+<span class="sd">        frames: *list, list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            List of lists of atoms.</span>
 <span class="sd">        count_atoms: *list, int, optional*</span>
 <span class="sd">            A list of indices for which translation and rotations will be</span>
@@ -147,7 +147,7 @@
 
 <span class="sd">    **See also**</span>
 
-<span class="sd">        For more information, see :func:`orthogonal_procrustes`.</span>
+<span class="sd">        For more information, see :func:`squid.geometry.spatial.orthogonal_procrustes`.</span>
 
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">count_atoms</span><span class="p">:</span>
@@ -194,9 +194,9 @@
 
 <span class="sd">    **Parameters**</span>
 
-<span class="sd">        frame_1: *list,* :class:`structures.atom.Atom`</span>
+<span class="sd">        frame_1: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            List of atoms.</span>
-<span class="sd">        frame_2: *list,* :class:`structures.atom.Atom`</span>
+<span class="sd">        frame_2: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            List of atoms.</span>
 <span class="sd">        N: *int*</span>
 <span class="sd">            Number of new frames you want to generate during interpolation.</span>
@@ -241,7 +241,7 @@
 
 <span class="sd">    **Parameters**</span>
 
-<span class="sd">        frames: *list, list,* :class:`structures.Atom`</span>
+<span class="sd">        frames: *list, list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A list of lists of atoms.</span>
 <span class="sd">        R_max: *float, optional*</span>
 <span class="sd">            The maximum motion allowed between consecutive frames.</span>
@@ -263,7 +263,7 @@
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        frames: *list, list,* :class:`structures.Atom`</span>
+<span class="sd">        frames: *list, list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            Returns a list of smoothed frames</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
@@ -353,7 +353,7 @@
 
 <span class="sd">    **Parameters**</span>
 
-<span class="sd">        atoms: *list,* :class:`structures.atom.Atom`</span>
+<span class="sd">        atoms: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A list of atomic coordinates to be perturbated</span>
 <span class="sd">        dx: *float, optional*</span>
 <span class="sd">            By how much you are willing to perturbate via translation.</span>
@@ -367,7 +367,7 @@
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        perturbated_atoms: *list,* :class:`structures.atom.Atom`</span>
+<span class="sd">        perturbated_atoms: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            The perturbated list of atomic coordinates.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">:</span>
@@ -449,8 +449,6 @@
         <span class="p">[</span><span class="o">-</span><span class="mf">2.16105492e-04</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.93356076e-03</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.54229102e-01</span><span class="p">]])</span>
     <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">A</span> <span class="o">-</span> <span class="n">A_held</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">EPS</span><span class="p">,</span>\
         <span class="s2">&quot;Error - align_centroid has changed!&quot;</span>
-
-    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unit Test smooth_xyz&quot;</span><span class="p">)</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;squid.geometry.smooth - All unit tests passed!&quot;</span><span class="p">)</span>
 

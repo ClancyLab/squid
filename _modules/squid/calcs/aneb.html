@@ -40,10 +40,21 @@
             
   <h1>Source code for squid.calcs.aneb</h1><div class="highlight"><pre>
 <span></span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">The Auto ANEB module simplifies the submission of Auto Nudged Elastic Band simulations.</span>
+<span class="sd">The Auto ANEB module simplifies the submission of Auto Nudged Elastic Band</span>
+<span class="sd">simulations.</span>
 
-<span class="sd">NOTE! This module is still in a very rough beta.  It has been hacked together from the</span>
-<span class="sd">NEB module and is being tested.  Do not use this expecting a miracle.</span>
+<span class="sd">NOTE! This module is still in a very rough beta.  It has been hacked together</span>
+<span class="sd">from the NEB module and is being tested.  Do not use this expecting a miracle.</span>
+
+<span class="sd">Squid Auto Nudged Elastic Band package</span>
+<span class="sd">Currently supports g09 and orca</span>
+<span class="sd">Cite ANEB:</span>
+<span class="sd">    http://aip.scitation.org/doi/full/10.1063/1.4961868</span>
+<span class="sd">    http://scitation.aip.org/content/aip/journal/jcp/113/22/10.1063/1.1323224</span>
+<span class="sd">BFGS is the best method, cite:</span>
+<span class="sd">    http://theory.cm.utexas.edu/henkelman/pubs/sheppard08_134106.pdf</span>
+<span class="sd">Nudged Elastic Band. k for VASP is 5 eV/Angstrom, ie 0.1837 Hartree/Angstrom.</span>
+<span class="sd">Gtol of 1E-5 from scipy.bfgs package</span>
 
 <span class="sd">The following code has been tested out to some moderate success for now:</span>
 
@@ -104,27 +115,11 @@
 <span class="kn">from</span> <span class="nn">squid.optimizers</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">squid.utils</span> <span class="k">import</span> <span class="n">print_helper</span>
 
-<span class="c1"># from quick_min import quick_min</span>
-<span class="c1"># from fire import fire</span>
-<span class="c1"># from conjugate_gradient import conjugate_gradient</span>
-
-<span class="c1"># from scipy.optimize import minimize</span>
-
 <span class="kn">from</span> <span class="nn">squid.constants</span> <span class="k">import</span> <span class="n">FAIL_CONVERGENCE</span>
 <span class="kn">from</span> <span class="nn">squid.constants</span> <span class="k">import</span> <span class="n">STEP_SIZE_TOO_SMALL</span>
 <span class="kn">from</span> <span class="nn">squid.constants</span> <span class="k">import</span> <span class="n">MAXITER_CONVERGENCE</span>
 <span class="kn">from</span> <span class="nn">squid.constants</span> <span class="k">import</span> <span class="n">G_MAX_CONVERGENCE</span>
 <span class="kn">from</span> <span class="nn">squid.constants</span> <span class="k">import</span> <span class="n">G_RMS_CONVERGENCE</span>
-
-<span class="c1"># Squid Auto Nudged Elastic Band package</span>
-<span class="c1"># Currently supports g09 and orca</span>
-<span class="c1"># Cite ANEB:</span>
-<span class="c1">#     http://aip.scitation.org/doi/full/10.1063/1.4961868</span>
-<span class="c1">#     http://scitation.aip.org/content/aip/journal/jcp/113/22/10.1063/1.1323224</span>
-<span class="c1"># BFGS is the best method, cite:</span>
-<span class="c1">#     http://theory.cm.utexas.edu/henkelman/pubs/sheppard08_134106.pdf</span>
-<span class="c1"># Nudged Elastic Band. k for VASP is 5 eV/Angstrom, ie 0.1837 Hartree/Angstrom.</span>
-<span class="c1"># Gtol of 1E-5 from scipy.bfgs package</span>
 
 
 <span class="k">def</span> <span class="nf">flattened</span><span class="p">(</span><span class="n">states</span><span class="p">):</span>
@@ -167,11 +162,12 @@
     <span class="k">def</span> <span class="nf">interp</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
-    <span class="n">k</span> <span class="o">=</span> <span class="n">ANEB</span><span class="o">.</span><span class="n">k_all</span><span class="p">[</span><span class="n">index</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">2.0</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">ANEB</span><span class="o">.</span><span class="n">k_all</span><span class="p">[</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">2.0</span>
     <span class="c1"># Deal with boundary conditions</span>
     <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">new_frame</span> <span class="o">=</span> <span class="n">interp</span><span class="p">(</span><span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span> <span class="o">=</span> <span class="p">[</span><span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="n">new_frame</span> <span class="o">+</span> <span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="n">new_frame</span> <span class="o">+</span> <span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
         <span class="c1"># Add in new spring constant</span>
         <span class="n">ANEB</span><span class="o">.</span><span class="n">k_all</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
         <span class="n">ANEB</span><span class="o">.</span><span class="n">k_all</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span>
@@ -179,18 +175,24 @@
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Interpolated frames </span><span class="si">%d</span><span class="s2"> and </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
     <span class="k">elif</span> <span class="n">index</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">deltas</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">new_frame</span> <span class="o">=</span> <span class="n">interp</span><span class="p">(</span><span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span> <span class="o">=</span> <span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">new_frame</span> <span class="o">+</span> <span class="p">[</span><span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span> <span class="o">=</span> <span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span>\
+            <span class="n">new_frame</span> <span class="o">+</span>\
+            <span class="p">[</span><span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
         <span class="c1"># Add in new spring constant</span>
         <span class="n">ANEB</span><span class="o">.</span><span class="n">k_all</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ANEB</span><span class="o">.</span><span class="n">k_all</span><span class="p">),</span> <span class="n">k</span><span class="p">)</span>
         <span class="n">ANEB</span><span class="o">.</span><span class="n">k_all</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span>
         <span class="k">if</span> <span class="n">ANEB</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Interpolated frames </span><span class="si">%d</span><span class="s2"> and </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;Interpolated frames </span><span class="si">%d</span><span class="s2"> and </span><span class="si">%d</span><span class="s2">&quot;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">new_frame</span> <span class="o">=</span> <span class="n">interp</span><span class="p">(</span><span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span><span class="p">[</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
-        <span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span> <span class="o">=</span> <span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span><span class="p">[:</span><span class="n">index</span><span class="p">]</span> <span class="o">+</span> <span class="n">new_frame</span> <span class="o">+</span> <span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span><span class="p">[</span><span class="n">index</span><span class="p">:]</span>
+        <span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span> <span class="o">=</span> <span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span><span class="p">[:</span><span class="n">index</span><span class="p">]</span> <span class="o">+</span>\
+            <span class="n">new_frame</span> <span class="o">+</span>\
+            <span class="n">ANEB</span><span class="o">.</span><span class="n">all_states</span><span class="p">[</span><span class="n">index</span><span class="p">:]</span>
         <span class="c1"># Add in new spring constant</span>
         <span class="n">ANEB</span><span class="o">.</span><span class="n">k_all</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
-        <span class="n">ANEB</span><span class="o">.</span><span class="n">k_all</span><span class="p">[</span><span class="n">index</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span>
+        <span class="n">ANEB</span><span class="o">.</span><span class="n">k_all</span><span class="p">[</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span>
         <span class="k">if</span> <span class="n">ANEB</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Interpolated frames </span><span class="si">%d</span><span class="s2"> and </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
 
@@ -229,7 +231,7 @@
 <span class="sd">        i: *int*</span>
 <span class="sd">            The index corresponding to which image on the frame is to be</span>
 <span class="sd">            simulated.</span>
-<span class="sd">        state: *list,* :class:`structures.Atom`</span>
+<span class="sd">        state: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A list of atoms describing the image on the frame associated</span>
 <span class="sd">            with index *i*.</span>
 <span class="sd">        charge: *int*</span>
@@ -247,12 +249,12 @@
 <span class="sd">        mem: *int*</span>
 <span class="sd">            How many Mega Words (MW) you wish to have as dynamic memory.</span>
 <span class="sd">        priority: *int*</span>
-<span class="sd">            Whether to submit the job with a given priority (NBS). Not setup for</span>
-<span class="sd">            this function yet.</span>
+<span class="sd">            Whether to submit the job with a given priority (NBS). Not setup</span>
+<span class="sd">            for this function yet.</span>
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        g09_job: :class:`jobs.Job`</span>
+<span class="sd">        g09_job: :class:`squid.jobs.container.JobObject`</span>
 <span class="sd">            A job container holding the g09 simulation.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">ANEB</span><span class="o">.</span><span class="n">calls_to_force</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -278,7 +280,10 @@
                    <span class="n">queue</span><span class="o">=</span><span class="n">queue</span><span class="p">,</span>
                    <span class="n">previous</span><span class="o">=</span><span class="n">prev</span><span class="p">,</span>
                    <span class="n">extra_section</span><span class="o">=</span><span class="n">extra_section</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">,</span>
-                   <span class="n">ANEB</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">-</span><span class="si">%%</span><span class="s1">d-</span><span class="si">%%</span><span class="s1">d&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ANEB</span><span class="o">.</span><span class="n">name</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">ANEB</span><span class="o">.</span><span class="n">states</span><span class="p">),</span> <span class="n">i</span><span class="p">],</span>
+                   <span class="n">ANEB</span><span class="o">=</span><span class="p">[</span>
+                       <span class="kc">True</span><span class="p">,</span>
+                       <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">-</span><span class="si">%%</span><span class="s1">d-</span><span class="si">%%</span><span class="s1">d&#39;</span>
+                       <span class="o">%</span> <span class="p">(</span><span class="n">ANEB</span><span class="o">.</span><span class="n">name</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">ANEB</span><span class="o">.</span><span class="n">states</span><span class="p">),</span> <span class="n">i</span><span class="p">],</span>
                    <span class="n">mem</span><span class="o">=</span><span class="n">mem</span><span class="p">)</span></div>
 
 
@@ -293,11 +298,12 @@
 <span class="sd">        ANEB: :class:`ANEB`</span>
 <span class="sd">            An ANEB container holding the main ANEB simulation</span>
 <span class="sd">        step_to_use: *int*</span>
-<span class="sd">            Which iteration in the ANEB sequence the output to be read in is on.</span>
+<span class="sd">            Which iteration in the ANEB sequence the output to be read in</span>
+<span class="sd">            is on.</span>
 <span class="sd">        i: *int*</span>
 <span class="sd">            The index corresponding to which image on the frame is to be</span>
 <span class="sd">            simulated.</span>
-<span class="sd">        state: *list,* :class:`structures.Atom`</span>
+<span class="sd">        state: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A list of atoms describing the image on the frame associated with</span>
 <span class="sd">            index *i*.</span>
 
@@ -305,7 +311,7 @@
 
 <span class="sd">        new_energy: *float*</span>
 <span class="sd">            The energy of the system in Hartree (Ha).</span>
-<span class="sd">        new_atoms: *list,* :class:`structures.Atom`</span>
+<span class="sd">        new_atoms: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A list of atoms with the forces attached in units of Hartree per</span>
 <span class="sd">            Angstrom (Ha/Ang).</span>
 <span class="sd">    &#39;&#39;&#39;</span>
@@ -361,7 +367,7 @@
 <span class="sd">        i: *int*</span>
 <span class="sd">            The index corresponding to which image on the frame is to be</span>
 <span class="sd">            simulated.</span>
-<span class="sd">        state: *list,* :class:`structures.Atom`</span>
+<span class="sd">        state: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A list of atoms describing the image on the frame associated with</span>
 <span class="sd">            index *i*.</span>
 <span class="sd">        charge: *int*</span>
@@ -383,7 +389,7 @@
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        orca_job: :class:`jobs.Job`</span>
+<span class="sd">        orca_job: :class:`squid.jobs.container.JobObject`</span>
 <span class="sd">            A job container holding the orca simulation.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">ANEB</span><span class="o">.</span><span class="n">calls_to_force</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -411,11 +417,12 @@
 <span class="sd">        ANEB: :class:`ANEB`</span>
 <span class="sd">            An ANEB container holding the main ANEB simulation</span>
 <span class="sd">        step_to_use: *int*</span>
-<span class="sd">            Which iteration in the ANEB sequence the output to be read in is on.</span>
+<span class="sd">            Which iteration in the ANEB sequence the output to be read in</span>
+<span class="sd">            is on.</span>
 <span class="sd">        i: *int*</span>
 <span class="sd">            The index corresponding to which image on the frame is to be</span>
 <span class="sd">            simulated.</span>
-<span class="sd">        state: *list,* :class:`structures.Atom`</span>
+<span class="sd">        state: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A list of atoms describing the image on the frame associated with</span>
 <span class="sd">            index *i*.</span>
 
@@ -423,7 +430,7 @@
 
 <span class="sd">        new_energy: *float*</span>
 <span class="sd">            The energy of the system in Hartree (Ha).</span>
-<span class="sd">        new_atoms: *list,* :class:`structures.Atom`</span>
+<span class="sd">        new_atoms: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A list of atoms with the forces attached in units of Hartree per</span>
 <span class="sd">            Angstrom (Ha/Ang).</span>
 <span class="sd">    &#39;&#39;&#39;</span>
@@ -449,7 +456,7 @@
 
 <span class="sd">        name: *str*</span>
 <span class="sd">            The name of the ANEB simulation to be run.</span>
-<span class="sd">        states: *list, list,* :class:`structures.Atom`</span>
+<span class="sd">        states: *list, list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A list of frames, each frame being a list of atom structures.</span>
 <span class="sd">            These frames represent your reaction coordinate.</span>
 <span class="sd">        theory: *str*</span>
@@ -536,7 +543,7 @@
 <span class="sd">        * Henkelman, G.; Uberuaga, B. P.; Jonsson, H. Journal of Chemical</span>
 <span class="sd">          Physics 2000, 113.</span>
 <span class="sd">        * Atomic Simulation Environment - https://wiki.fysik.dtu.dk/ase/</span>
-<span class="sd">        * Kolsbjerg, E. L.; Groves, M. N.; Hammer, B. The Journal of </span>
+<span class="sd">        * Kolsbjerg, E. L.; Groves, M. N.; Hammer, B. The Journal of</span>
 <span class="sd">          Chemical Physics 2016, 145.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">error</span><span class="p">,</span> <span class="n">gradient</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>

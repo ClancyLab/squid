@@ -58,14 +58,45 @@
 <span class="sd">            Name of the simulation on the queue.</span>
 <span class="sd">        process_handle: *process_handle, optional*</span>
 <span class="sd">            The process handle, returned by subprocess.Popen.</span>
+<span class="sd">        job_id: *str, optional*</span>
+<span class="sd">            The job id.  Usually this should be unique.</span>
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        This :class:`Job` object.</span>
+<span class="sd">        job_obj: :class:`squid.jobs.slurm.Job`</span>
+<span class="sd">            A Job object.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="nf">get_all_jobs</span><span class="p">(</span><span class="n">detail</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<div class="viewcode-block" id="Job.get_all_jobs"><a class="viewcode-back" href="../../../codebase.html#squid.jobs.slurm.Job.get_all_jobs">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_jobs</span><span class="p">(</span><span class="n">detail</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Get a list of all jobs that are running and/or pending.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">            detail: *int, optional*</span>
+<span class="sd">                How much detail to get when finding jobs on the queue.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">            all_jobs: *list*</span>
+<span class="sd">                Depending on *detail*, you get the following:</span>
+
+<span class="sd">                    - *details* =0: *list, str*</span>
+<span class="sd">                        List of all jobs on the queue.</span>
+
+<span class="sd">                    - *details* =1: *list, tuple, str*</span>
+<span class="sd">                        List of all jobs on the queue as:</span>
+<span class="sd">                            (job name, time run, job status)</span>
+
+<span class="sd">                    - *details* =2: *list, tuple, str*</span>
+<span class="sd">                        List of all jobs on the queue as:</span>
+<span class="sd">                            (job name,</span>
+<span class="sd">                             time run,</span>
+<span class="sd">                             job status,</span>
+<span class="sd">                             queue,</span>
+<span class="sd">                             number of processors)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="n">get_job</span><span class="p">(</span><span class="s2">&quot;RUNNING&quot;</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="n">detail</span><span class="p">)</span> <span class="o">+</span>\
-            <span class="n">get_job</span><span class="p">(</span><span class="s2">&quot;PENDING&quot;</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="n">detail</span><span class="p">)</span></div>
+            <span class="n">get_job</span><span class="p">(</span><span class="s2">&quot;PENDING&quot;</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="n">detail</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="get_slurm_queues"><a class="viewcode-back" href="../../../codebase.html#squid.jobs.slurm.get_slurm_queues">[docs]</a><span class="k">def</span> <span class="nf">get_slurm_queues</span><span class="p">():</span>
@@ -234,12 +265,50 @@
 <span class="sd">            Name of the job to be submitted to the queue.</span>
 <span class="sd">        job_to_submit: *str*</span>
 <span class="sd">            String holding code you wish to submit.</span>
-<span class="sd">        kwargs: *...*</span>
-<span class="sd">            Additional keyword arguments to SLURM for job submission.</span>
+<span class="sd">        queue: *str, optional*</span>
+<span class="sd">            What queue to run the simulation on (queueing system dependent).</span>
+<span class="sd">        walltime: *str, optional*</span>
+<span class="sd">            How long to post the job on the queue for in d-h:m:s where d are</span>
+<span class="sd">            days, h are hours, m are minutes, and s are seconds.  Default is</span>
+<span class="sd">            for 30 minutes (00:30:00).</span>
+<span class="sd">        cpus_per_task: *int, optional*</span>
+<span class="sd">            How many processors to run the simulation on.  Note, the actual</span>
+<span class="sd">            number of cores mpirun will use is nprocs * ntasks.</span>
+<span class="sd">        ntasks: *int, optional*</span>
+<span class="sd">            How many processors to run the simulation on.  Note, the actual</span>
+<span class="sd">            number of cores mpirun will use is nprocs * ntasks.</span>
+<span class="sd">        nodes: *int, optional*</span>
+<span class="sd">            How many nodes to run the simulation on.</span>
+<span class="sd">        sub_flag: *str, optional*</span>
+<span class="sd">            Additional strings/flags/arguments to add at the end when we</span>
+<span class="sd">            submit a job using sbatch.  That is: sbatch demo.slurm sub_flag.</span>
+<span class="sd">        unique_name: *bool, optional*</span>
+<span class="sd">            Whether to force the requirement of a unique name or not.  NOTE! If</span>
+<span class="sd">            you submit simulations from the same folder, ensure that this is</span>
+<span class="sd">            True lest you have a redundancy problem! To overcome said issue,</span>
+<span class="sd">            you can set redundancy to True as well (but only if the simulation</span>
+<span class="sd">            is truly redundant).</span>
+<span class="sd">        outfile_name: *str, optional*</span>
+<span class="sd">            Whether to give a unique output file name, or one based on the sim</span>
+<span class="sd">            name.procs</span>
+<span class="sd">        allocation: *str, optional*</span>
+<span class="sd">            The SLURM allocation to submit the job to.</span>
+<span class="sd">        jobarray: *str, optional*</span>
+<span class="sd">            If specified, instead of indicating a range for job arrays, we</span>
+<span class="sd">            will use these specific values.  For example,</span>
+<span class="sd">            jobarray=1,2,4,5 would submit jobs, but skip the 3rd</span>
+<span class="sd">            index by name.</span>
+<span class="sd">        gpu: *int, optional*</span>
+<span class="sd">            How many GPUs to use, if submitting to a GPU node.</span>
+<span class="sd">        redundancy: *bool, optional*</span>
+<span class="sd">            With redundancy on, if the job is submitted and unique_name is on,</span>
+<span class="sd">            then if another job of the same name is running, a pointer to that</span>
+<span class="sd">            job will instead be returned.</span>
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        None</span>
+<span class="sd">        job_obj: :class:`squid.jobs.slurm.Job`</span>
+<span class="sd">            A Job object.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="c1"># Store the defaults</span>
     <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
@@ -262,7 +331,7 @@
     <span class="c1"># Ensure we are passing only the above</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">assert</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">params</span><span class="p">,</span>\
-            <span class="s2">&quot;Error - Unknown variable (</span><span class="si">%s</span><span class="s2">) passed to nbs.submit_job.&quot;</span> <span class="o">%</span> <span class="n">key</span>
+            <span class="s2">&quot;Error - Unknown variable (</span><span class="si">%s</span><span class="s2">) passed to slurm.submit_job.&quot;</span> <span class="o">%</span> <span class="n">key</span>
     <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="c1"># Ensure variables of correct types</span>

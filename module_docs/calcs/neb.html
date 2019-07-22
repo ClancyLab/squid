@@ -39,16 +39,16 @@
             
   <span class="target" id="module-squid.calcs.neb"></span><p>The NEB module simplifies the submission of Nudged Elastic Band simulations.</p>
 <ul class="simple">
-<li><a class="reference internal" href="../../codebase.html#squid.calcs.neb.g09_start_job" title="squid.calcs.neb.g09_start_job"><code class="xref py py-func docutils literal notranslate"><span class="pre">g09_start_job()</span></code></a></li>
-<li><a class="reference internal" href="../../codebase.html#squid.calcs.neb.g09_results" title="squid.calcs.neb.g09_results"><code class="xref py py-func docutils literal notranslate"><span class="pre">g09_results()</span></code></a></li>
-<li><a class="reference internal" href="../../codebase.html#squid.calcs.neb.orca_start_job" title="squid.calcs.neb.orca_start_job"><code class="xref py py-func docutils literal notranslate"><span class="pre">orca_start_job()</span></code></a></li>
-<li><a class="reference internal" href="../../codebase.html#squid.calcs.neb.orca_results" title="squid.calcs.neb.orca_results"><code class="xref py py-func docutils literal notranslate"><span class="pre">orca_results()</span></code></a></li>
-<li><a class="reference internal" href="../../codebase.html#squid.calcs.neb.NEB" title="squid.calcs.neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a></li>
+<li><a class="reference internal" href="#squid.calcs.neb.g09_start_job" title="squid.calcs.neb.g09_start_job"><code class="xref py py-func docutils literal notranslate"><span class="pre">g09_start_job()</span></code></a></li>
+<li><a class="reference internal" href="#squid.calcs.neb.g09_results" title="squid.calcs.neb.g09_results"><code class="xref py py-func docutils literal notranslate"><span class="pre">g09_results()</span></code></a></li>
+<li><a class="reference internal" href="#squid.calcs.neb.orca_start_job" title="squid.calcs.neb.orca_start_job"><code class="xref py py-func docutils literal notranslate"><span class="pre">orca_start_job()</span></code></a></li>
+<li><a class="reference internal" href="#squid.calcs.neb.orca_results" title="squid.calcs.neb.orca_results"><code class="xref py py-func docutils literal notranslate"><span class="pre">orca_results()</span></code></a></li>
+<li><a class="reference internal" href="#squid.calcs.neb.NEB" title="squid.calcs.neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a></li>
 </ul>
 <hr class="docutils" />
 <dl class="class">
 <dt id="squid.calcs.neb.NEB">
-<em class="property">class </em><code class="descclassname">squid.calcs.neb.</code><code class="descname">NEB</code><span class="sig-paren">(</span><em>name</em>, <em>states</em>, <em>theory</em>, <em>extra_section=''</em>, <em>initial_guess=None</em>, <em>spring_atoms=None</em>, <em>procs=1</em>, <em>queue=None</em>, <em>mem=2000</em>, <em>priority=None</em>, <em>disp=0</em>, <em>k=0.00367453</em>, <em>charge=0</em>, <em>multiplicity=1</em>, <em>fit_rigid=True</em>, <em>DFT='orca'</em>, <em>opt='LBFGS'</em>, <em>start_job=None</em>, <em>get_results=None</em>, <em>new_opt_params={}</em>, <em>callback=None</em>, <em>ci_neb=False</em>, <em>ci_N=5</em>, <em>no_energy=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/calcs/neb.html#NEB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.calcs.neb.NEB" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">squid.calcs.neb.</code><code class="descname">NEB</code><span class="sig-paren">(</span><em>name</em>, <em>states</em>, <em>theory</em>, <em>extra_section=''</em>, <em>initial_guess=None</em>, <em>spring_atoms=None</em>, <em>nprocs=1</em>, <em>queue=None</em>, <em>mem=2000</em>, <em>priority=None</em>, <em>disp=0</em>, <em>k=0.00367453</em>, <em>charge=0</em>, <em>multiplicity=1</em>, <em>fit_rigid=True</em>, <em>DFT='orca'</em>, <em>opt='LBFGS'</em>, <em>start_job=None</em>, <em>get_results=None</em>, <em>new_opt_params={}</em>, <em>callback=None</em>, <em>ci_neb=False</em>, <em>ci_N=5</em>, <em>no_energy=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/calcs/neb.html#NEB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.calcs.neb.NEB" title="Permalink to this definition">¶</a></dt>
 <dd><p>A method for determining the minimum energy pathway of a reaction using
 DFT. Note, this method was written for atomic orbital DFT codes; however,
 is potentially generalizable to other programs.</p>
@@ -57,7 +57,7 @@ is potentially generalizable to other programs.</p>
 <div><dl class="docutils">
 <dt>name: <em>str</em></dt>
 <dd>The name of the NEB simulation to be run.</dd>
-<dt>states: <em>list, list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dt>states: <em>list, list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of frames, each frame being a list of atom structures.
 These frames represent your reaction coordinate.</dd>
 <dt>theory: <em>str</em></dt>
@@ -70,7 +70,7 @@ allowing restart capabilities.</dd>
 <dt>spring_atoms: <em>list, int, optional</em></dt>
 <dd>Specify which atoms will be represented by virutal springs in the
 NEB calculations. Default includes all.</dd>
-<dt>procs: <em>int, optional</em></dt>
+<dt>nprocs: <em>int, optional</em></dt>
 <dd>The number of processors for your simulation.</dd>
 <dt>queue: <em>str, optional</em></dt>
 <dd>Which queue you wish your simulation to run on (queueing system
@@ -108,7 +108,8 @@ function returns two things: list of energies, list of atoms.
 Further, the forces are contained within each atom object.  It also
 requires that the forces on the state object be updated within said
 function (for more info see example codes).  Finally, if using
-no_energy=True, then return None (or an empty list) for the energies.</dd>
+no_energy=True, then return None (or an empty list) for the
+energies.</dd>
 <dt>new_opt_params: <em>dict, optional</em></dt>
 <dd>Pass any additional parameters to the optimization algorithm.</dd>
 <dt>callback: <em>func, optional</em></dt>
@@ -127,7 +128,7 @@ two things, so just have it return (None, atoms + forces).</dd>
 </div></blockquote>
 <p><strong>Returns</strong></p>
 <blockquote>
-<div>This <a class="reference internal" href="../../codebase.html#squid.calcs.neb.NEB" title="squid.calcs.neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a> object.</div></blockquote>
+<div>This <a class="reference internal" href="#squid.calcs.neb.NEB" title="squid.calcs.neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a> object.</div></blockquote>
 <p><strong>References</strong></p>
 <blockquote>
 <div><ul class="simple">
@@ -194,14 +195,14 @@ in state and (b) return the energy and atoms.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>NEB: <a class="reference internal" href="../../codebase.html#squid.calcs.neb.NEB" title="squid.calcs.neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a></dt>
+<dt>NEB: <a class="reference internal" href="#squid.calcs.neb.NEB" title="squid.calcs.neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a></dt>
 <dd>An NEB container holding the main NEB simulation</dd>
 <dt>step_to_use: <em>int</em></dt>
 <dd>Which iteration in the NEB sequence the output to be read in is on.</dd>
 <dt>i: <em>int</em></dt>
 <dd>The index corresponding to which image on the frame is to be
 simulated.</dd>
-<dt>state: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dt>state: <em>list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms describing the image on the frame associated with
 index <em>i</em>.</dd>
 </dl>
@@ -211,7 +212,7 @@ index <em>i</em>.</dd>
 <div><dl class="docutils">
 <dt>new_energy: <em>float</em></dt>
 <dd>The energy of the system in Hartree (Ha).</dd>
-<dt>new_atoms: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dt>new_atoms: <em>list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms with the forces attached in units of Hartree per
 Angstrom (Ha/Ang).</dd>
 </dl>
@@ -220,25 +221,25 @@ Angstrom (Ha/Ang).</dd>
 
 <dl class="function">
 <dt id="squid.calcs.neb.g09_start_job">
-<code class="descclassname">squid.calcs.neb.</code><code class="descname">g09_start_job</code><span class="sig-paren">(</span><em>NEB</em>, <em>i</em>, <em>state</em>, <em>charge</em>, <em>multiplicity</em>, <em>procs</em>, <em>queue</em>, <em>initial_guess</em>, <em>extra_section</em>, <em>mem</em>, <em>priority</em>, <em>extra_keywords={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/calcs/neb.html#g09_start_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.calcs.neb.g09_start_job" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">squid.calcs.neb.</code><code class="descname">g09_start_job</code><span class="sig-paren">(</span><em>NEB</em>, <em>i</em>, <em>state</em>, <em>charge</em>, <em>multiplicity</em>, <em>nprocs</em>, <em>queue</em>, <em>initial_guess</em>, <em>extra_section</em>, <em>mem</em>, <em>priority</em>, <em>extra_keywords={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/calcs/neb.html#g09_start_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.calcs.neb.g09_start_job" title="Permalink to this definition">¶</a></dt>
 <dd><p>A method for submitting a single point calculation using Gaussian09 for
 NEB calculations.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>NEB: <a class="reference internal" href="../../codebase.html#squid.calcs.neb.NEB" title="squid.calcs.neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a></dt>
+<dt>NEB: <a class="reference internal" href="#squid.calcs.neb.NEB" title="squid.calcs.neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a></dt>
 <dd>An NEB container holding the main NEB simulation</dd>
 <dt>i: <em>int</em></dt>
 <dd>The index corresponding to which image on the frame is to be
 simulated.</dd>
-<dt>state: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dt>state: <em>list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms describing the image on the frame associated
 with index <em>i</em>.</dd>
 <dt>charge: <em>int</em></dt>
 <dd>Charge of the system.</dd>
 <dt>multiplicity: <em>int</em></dt>
 <dd>Multiplicity of the system.</dd>
-<dt>procs: <em>int</em></dt>
+<dt>nprocs: <em>int</em></dt>
 <dd>The number of processors to use during calculations.</dd>
 <dt>queue: <em>str</em></dt>
 <dd>Which queue to submit the simulation to (this is queueing system
@@ -251,8 +252,8 @@ hessian.</dd>
 <dt>mem: <em>int</em></dt>
 <dd>How many Mega Words (MW) you wish to have as dynamic memory.</dd>
 <dt>priority: <em>int</em></dt>
-<dd>Whether to submit the job with a given priority (NBS). Not setup for
-this function yet.</dd>
+<dd>Whether to submit the job with a given priority (NBS). Not setup
+for this function.</dd>
 <dt>extra_keywords: <em>dict, optional</em></dt>
 <dd>Specify extra keywords beyond the defaults.</dd>
 </dl>
@@ -260,7 +261,7 @@ this function yet.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>g09_job: <code class="xref py py-class docutils literal notranslate"><span class="pre">jobs.Job</span></code></dt>
+<dt>g09_job: <a class="reference internal" href="../../codebase.html#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
 <dd>A job container holding the g09 simulation.</dd>
 </dl>
 </div></blockquote>
@@ -275,14 +276,14 @@ in state and (b) return the energy and atoms.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>NEB: <a class="reference internal" href="../../codebase.html#squid.calcs.neb.NEB" title="squid.calcs.neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a></dt>
+<dt>NEB: <a class="reference internal" href="#squid.calcs.neb.NEB" title="squid.calcs.neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a></dt>
 <dd>An NEB container holding the main NEB simulation</dd>
 <dt>step_to_use: <em>int</em></dt>
 <dd>Which iteration in the NEB sequence the output to be read in is on.</dd>
 <dt>i: <em>int</em></dt>
 <dd>The index corresponding to which image on the frame is to be
 simulated.</dd>
-<dt>state: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dt>state: <em>list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms describing the image on the frame associated with
 index <em>i</em>.</dd>
 </dl>
@@ -292,7 +293,7 @@ index <em>i</em>.</dd>
 <div><dl class="docutils">
 <dt>new_energy: <em>float</em></dt>
 <dd>The energy of the system in Hartree (Ha).</dd>
-<dt>new_atoms: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dt>new_atoms: <em>list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms with the forces attached in units of Hartree per
 Angstrom (Ha/Ang).</dd>
 </dl>
@@ -301,25 +302,25 @@ Angstrom (Ha/Ang).</dd>
 
 <dl class="function">
 <dt id="squid.calcs.neb.orca_start_job">
-<code class="descclassname">squid.calcs.neb.</code><code class="descname">orca_start_job</code><span class="sig-paren">(</span><em>NEB</em>, <em>i</em>, <em>state</em>, <em>charge</em>, <em>multiplicity</em>, <em>procs</em>, <em>queue</em>, <em>initial_guess</em>, <em>extra_section</em>, <em>mem</em>, <em>priority</em>, <em>extra_keywords={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/calcs/neb.html#orca_start_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.calcs.neb.orca_start_job" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">squid.calcs.neb.</code><code class="descname">orca_start_job</code><span class="sig-paren">(</span><em>NEB</em>, <em>i</em>, <em>state</em>, <em>charge</em>, <em>multiplicity</em>, <em>nprocs</em>, <em>queue</em>, <em>initial_guess</em>, <em>extra_section</em>, <em>mem</em>, <em>priority</em>, <em>extra_keywords={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/calcs/neb.html#orca_start_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.calcs.neb.orca_start_job" title="Permalink to this definition">¶</a></dt>
 <dd><p>A method for submitting a single point calculation using Orca for NEB
 calculations.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>NEB: <a class="reference internal" href="../../codebase.html#squid.calcs.neb.NEB" title="squid.calcs.neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a></dt>
+<dt>NEB: <a class="reference internal" href="#squid.calcs.neb.NEB" title="squid.calcs.neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a></dt>
 <dd>An NEB container holding the main NEB simulation</dd>
 <dt>i: <em>int</em></dt>
 <dd>The index corresponding to which image on the frame is to be
 simulated.</dd>
-<dt>state: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.Atom</span></code></dt>
+<dt>state: <em>list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms describing the image on the frame associated with
 index <em>i</em>.</dd>
 <dt>charge: <em>int</em></dt>
 <dd>Charge of the system.</dd>
 <dt>multiplicity: <em>int</em></dt>
 <dd>Multiplicity of the system.</dd>
-<dt>procs: <em>int</em></dt>
+<dt>nprocs: <em>int</em></dt>
 <dd>The number of processors to use during calculations.</dd>
 <dt>queue: <em>str</em></dt>
 <dd>Which queue to submit the simulation to (this is queueing system
@@ -340,7 +341,7 @@ hessian.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>orca_job: <code class="xref py py-class docutils literal notranslate"><span class="pre">jobs.Job</span></code></dt>
+<dt>orca_job: <a class="reference internal" href="../../codebase.html#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
 <dd>A job container holding the orca simulation.</dd>
 </dl>
 </div></blockquote>

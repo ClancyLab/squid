@@ -46,18 +46,18 @@
 <span class="kn">from</span> <span class="nn">squid.structures.atom</span> <span class="k">import</span> <span class="n">Atom</span>
 
 
-<div class="viewcode-block" id="get_angle"><a class="viewcode-back" href="../../../codebase.html#squid.structures.topology.get_angle">[docs]</a><span class="k">def</span> <span class="nf">get_angle</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="get_angle"><a class="viewcode-back" href="../../../module_docs/structures/topology.html#squid.structures.topology.get_angle">[docs]</a><span class="k">def</span> <span class="nf">get_angle</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Determine the angle between three atoms.  In this case, determine the angle</span>
 <span class="sd">    a-center-b.</span>
 
 <span class="sd">    **Parameters**</span>
 
-<span class="sd">        a: :class:`structures.Atom`</span>
+<span class="sd">        a: :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            First atom in the angle.</span>
-<span class="sd">        center: :class:`structures.Atom`</span>
+<span class="sd">        center: :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            Center atom of the angle.</span>
-<span class="sd">        b: :class:`structures.Atom`</span>
+<span class="sd">        b: :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            Last atom in the angle.</span>
 <span class="sd">        deg: *bool, optional*</span>
 <span class="sd">            Whether to return the angle in degrees (True) or radians (False).</span>
@@ -102,20 +102,20 @@
     <span class="k">return</span> <span class="n">angle</span></div>
 
 
-<div class="viewcode-block" id="get_dihedral_angle"><a class="viewcode-back" href="../../../codebase.html#squid.structures.topology.get_dihedral_angle">[docs]</a><span class="k">def</span> <span class="nf">get_dihedral_angle</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="get_dihedral_angle"><a class="viewcode-back" href="../../../module_docs/structures/topology.html#squid.structures.topology.get_dihedral_angle">[docs]</a><span class="k">def</span> <span class="nf">get_dihedral_angle</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Use the Praxeolitic formula to determine the dihedral angle between</span>
 <span class="sd">    4 atoms.</span>
 
 <span class="sd">    **Parameters**</span>
 
-<span class="sd">        a: :class:`structures.atom.Atom`</span>
+<span class="sd">        a: :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            First atom in the dihedral, or a tuple of all 4.</span>
-<span class="sd">        b: :class:`structures.atom.Atom` *, optional*</span>
+<span class="sd">        b: :class:`squid.structures.atom.Atom` *, optional*</span>
 <span class="sd">            Second atom in the dihedral.</span>
-<span class="sd">        c: :class:`structures.atom.Atom` *, optional*</span>
+<span class="sd">        c: :class:`squid.structures.atom.Atom` *, optional*</span>
 <span class="sd">            Third atom in the dihedral.</span>
-<span class="sd">        d: :class:`structures.atom.Atom` *, optional*</span>
+<span class="sd">        d: :class:`squid.structures.atom.Atom` *, optional*</span>
 <span class="sd">            Fourth atom in the dihedral.</span>
 <span class="sd">        deg: *bool, optional*</span>
 <span class="sd">            Whether to return the angle in degrees (True) or radians (False).</span>
@@ -177,7 +177,7 @@
     <span class="k">return</span> <span class="n">phi</span></div>
 
 
-<div class="viewcode-block" id="Connector"><a class="viewcode-back" href="../../../codebase.html#squid.structures.topology.Connector">[docs]</a><span class="k">class</span> <span class="nc">Connector</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Connector"><a class="viewcode-back" href="../../../module_docs/structures/topology.html#squid.structures.topology.Connector">[docs]</a><span class="k">class</span> <span class="nc">Connector</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    The Connector class works to hold connection information between atoms.</span>
 <span class="sd">    This is used primarily for bonds, angles, and dihedrals.  A corresponding</span>
@@ -185,7 +185,7 @@
 
 <span class="sd">    **Parameters**</span>
 
-<span class="sd">        atoms: *list,* :class:`structures.atom.Atom`</span>
+<span class="sd">        atoms: *list,* :class:`squid.structures.atom.Atom`</span>
 <span class="sd">            A list of atoms to connect. If you connect atoms for an angle, the</span>
 <span class="sd">            second atom is the center atom.</span>
 <span class="sd">        length: *float, optional*</span>
@@ -195,7 +195,7 @@
 
 <span class="sd">    **Returns**</span>
 
-<span class="sd">        connection: :class:`structures.topology.Connector`</span>
+<span class="sd">        connection: :class:`squid.structures.topology.Connector`</span>
 <span class="sd">            This connector object.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
