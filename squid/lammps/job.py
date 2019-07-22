@@ -54,7 +54,7 @@ in your PATH environment variable!"
     if parallel:
         mpi_path = which("mpiexec")
         p = subprocess.Popen(
-            [mpi_path, "--V"], shell=False,
+            [mpi_path, "-h"], shell=False,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout = str(p.stdout.read().strip())
         close_pipes(p)
