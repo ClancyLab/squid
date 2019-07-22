@@ -17,7 +17,8 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
              redundancy=False, unique_name=True,
              previous=None, mem=2000, priority=None, xhost=None,
              jobarray_values=None,
-             slurm_allocation=None):
+             slurm_allocation=None,
+             batch_serial_jobs=None):
     '''
     Wrapper to submitting various Orca simulations as a job array on a SLURM
     system.  This is used when there are many atomic systems, stored in a
@@ -101,6 +102,9 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
             will use these specific values.  For example,
             jobarray_values=1,2,4,5 would submit jobs, but skip the 3rd
             index by name.
+        batch_serial_jobs: *int, optional*
+            Whether to batch jobs at N at a time (locally on serial job
+            submission).
 
     **Returns**
 
@@ -168,14 +172,32 @@ Serializing job submission instead." % queue_system)
 
         running_jobs = []
 
-        for i, atoms in zip(indexing, frames):
-            running_jobs.append(
-                job(
-                    run_name=run_name + ".%s" % i, route=route, atoms=atoms,
-                    queue=queue, **properties
+        if batch_serial_jobs is None:
+            for i, atoms in zip(indexing, frames):
+                running_jobs.append(
+                    job(
+                        run_name=run_name + ".%s" % i,
+                        route=route, atoms=atoms,
+                        queue=queue, **properties
+                    )
                 )
-            )
-        return running_jobs
+            return running_jobs
+        else:
+            finished_jobs = []
+            for i, atoms in zip(indexing, frames):
+                running_jobs.append(
+                    job(
+                        run_name=run_name + ".%s" % i,
+                        route=route, atoms=atoms,
+                        queue=queue, **properties
+                    )
+                )
+                if len(running_jobs) > batch_serial_jobs:
+                    for j in running_jobs:
+                        j.wait()
+                    finished_jobs = finished_jobs + running_jobs
+                    running_jobs = []
+            return finished_jobs + running_jobs
 
     # Step 1 - we can run orca.job on each frame; HOWEVER, we do so by
     # requesting the debugger queue.  This way, we only generate the
