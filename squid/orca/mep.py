@@ -35,8 +35,19 @@ from squid.files.xyz_io import read_xyz
 from squid.orca.utils import get_orca_obj
 
 
-def read_vpot(vpot):
+def _read_vpot(vpot):
     '''
+    Read file with electrostatic potential information.
+
+    **Parameters**
+
+        vpot: *str*
+            The file path to the potential file.
+
+    **Returns**
+
+        values: *np.array, float*
+            A list of potential values.
     '''
     v = []
     f = open(vpot, "r")
@@ -51,6 +62,19 @@ def read_vpot(vpot):
 
 def electrostatic_potential_cubegen(fname, npoints=80):
     '''
+    Given the name of a simulation, generate the cube file.
+
+    **Parameters**
+
+        fname: *str*
+            The orca simulation name.
+        npoints: *int, optional*
+            How fine the grid should be.  Larger, more fine, more
+            expensive to calculate.
+
+    **Returns**
+
+        None
     '''
     os.chdir("orca/%s" % fname)
     # First we ensure the density matrix file (scfp) was generated
@@ -107,7 +131,7 @@ def electrostatic_potential_cubegen(fname, npoints=80):
     os.system(cmd)
 
     # Read in the electrostatic potential
-    vpot = read_vpot("%s_pot.out" % fname)
+    vpot = _read_vpot("%s_pot.out" % fname)
 
     # Start generating the cube file
     cube = open("%s.orca.pot.cube" % fname, 'w')

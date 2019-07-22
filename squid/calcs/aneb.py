@@ -1,8 +1,19 @@
 '''
-The Auto ANEB module simplifies the submission of Auto Nudged Elastic Band simulations.
+The Auto ANEB module simplifies the submission of Auto Nudged Elastic Band
+simulations.
 
-NOTE! This module is still in a very rough beta.  It has been hacked together from the
-NEB module and is being tested.  Do not use this expecting a miracle.
+NOTE! This module is still in a very rough beta.  It has been hacked together
+from the NEB module and is being tested.  Do not use this expecting a miracle.
+
+Squid Auto Nudged Elastic Band package
+Currently supports g09 and orca
+Cite ANEB:
+    http://aip.scitation.org/doi/full/10.1063/1.4961868
+    http://scitation.aip.org/content/aip/journal/jcp/113/22/10.1063/1.1323224
+BFGS is the best method, cite:
+    http://theory.cm.utexas.edu/henkelman/pubs/sheppard08_134106.pdf
+Nudged Elastic Band. k for VASP is 5 eV/Angstrom, ie 0.1837 Hartree/Angstrom.
+Gtol of 1E-5 from scipy.bfgs package
 
 The following code has been tested out to some moderate success for now:
 
@@ -63,27 +74,11 @@ from squid.utils import units
 from squid.optimizers import *
 from squid.utils import print_helper
 
-# from quick_min import quick_min
-# from fire import fire
-# from conjugate_gradient import conjugate_gradient
-
-# from scipy.optimize import minimize
-
 from squid.constants import FAIL_CONVERGENCE
 from squid.constants import STEP_SIZE_TOO_SMALL
 from squid.constants import MAXITER_CONVERGENCE
 from squid.constants import G_MAX_CONVERGENCE
 from squid.constants import G_RMS_CONVERGENCE
-
-# Squid Auto Nudged Elastic Band package
-# Currently supports g09 and orca
-# Cite ANEB:
-#     http://aip.scitation.org/doi/full/10.1063/1.4961868
-#     http://scitation.aip.org/content/aip/journal/jcp/113/22/10.1063/1.1323224
-# BFGS is the best method, cite:
-#     http://theory.cm.utexas.edu/henkelman/pubs/sheppard08_134106.pdf
-# Nudged Elastic Band. k for VASP is 5 eV/Angstrom, ie 0.1837 Hartree/Angstrom.
-# Gtol of 1E-5 from scipy.bfgs package
 
 
 def flattened(states):
@@ -126,11 +121,12 @@ def add_frame(ANEB, skip_spring_update=False):
     def interp(a, b):
         return geometry.interpolate(a, b, 1)
 
-    k = ANEB.k_all[index-1] * 2.0
+    k = ANEB.k_all[index - 1] * 2.0
     # Deal with boundary conditions
     if index == 1:
         new_frame = interp(ANEB.all_states[0], ANEB.all_states[1])
-        ANEB.all_states = [ANEB.all_states[0]] + new_frame + ANEB.all_states[1:]
+        ANEB.all_states = [
+            ANEB.all_states[0]] + new_frame + ANEB.all_states[1:]
         # Add in new spring constant
         ANEB.k_all.insert(0, k)
         ANEB.k_all[1] = k
@@ -138,18 +134,24 @@ def add_frame(ANEB, skip_spring_update=False):
             print("Interpolated frames %d and %d" % (0, 1))
     elif index == len(deltas) - 1:
         new_frame = interp(ANEB.all_states[-2], ANEB.all_states[-1])
-        ANEB.all_states = ANEB.all_states[:-1] + new_frame + [ANEB.all_states[-1]]
+        ANEB.all_states = ANEB.all_states[:-1] +\
+            new_frame +\
+            [ANEB.all_states[-1]]
         # Add in new spring constant
         ANEB.k_all.insert(len(ANEB.k_all), k)
         ANEB.k_all[-2] = k
         if ANEB.debug:
-            print("Interpolated frames %d and %d" % (len(ANEB.all_states) - 2, len(ANEB.all_states) - 1))
+            print(
+                "Interpolated frames %d and %d"
+                % (len(ANEB.all_states) - 2, len(ANEB.all_states) - 1))
     else:
         new_frame = interp(ANEB.all_states[index], ANEB.all_states[index - 1])
-        ANEB.all_states = ANEB.all_states[:index] + new_frame + ANEB.all_states[index:]
+        ANEB.all_states = ANEB.all_states[:index] +\
+            new_frame +\
+            ANEB.all_states[index:]
         # Add in new spring constant
         ANEB.k_all.insert(index, k)
-        ANEB.k_all[index-1] = k
+        ANEB.k_all[index - 1] = k
         if ANEB.debug:
             print("Interpolated frames %d and %d" % (index, index - 1))
 
@@ -206,8 +208,8 @@ def g09_start_job(ANEB,
         mem: *int*
             How many Mega Words (MW) you wish to have as dynamic memory.
         priority: *int*
-            Whether to submit the job with a given priority (NBS). Not setup for
-            this function yet.
+            Whether to submit the job with a given priority (NBS). Not setup
+            for this function yet.
 
     **Returns**
 
@@ -237,7 +239,10 @@ def g09_start_job(ANEB,
                    queue=queue,
                    previous=prev,
                    extra_section=extra_section + '\n\n',
-                   ANEB=[True, '%s-%%d-%%d' % (ANEB.name), len(ANEB.states), i],
+                   ANEB=[
+                       True,
+                       '%s-%%d-%%d'
+                       % (ANEB.name), len(ANEB.states), i],
                    mem=mem)
 
 
@@ -252,7 +257,8 @@ def g09_results(ANEB, step_to_use, i, state):
         ANEB: :class:`ANEB`
             An ANEB container holding the main ANEB simulation
         step_to_use: *int*
-            Which iteration in the ANEB sequence the output to be read in is on.
+            Which iteration in the ANEB sequence the output to be read in
+            is on.
         i: *int*
             The index corresponding to which image on the frame is to be
             simulated.
@@ -370,7 +376,8 @@ def orca_results(ANEB, step_to_use, i, state):
         ANEB: :class:`ANEB`
             An ANEB container holding the main ANEB simulation
         step_to_use: *int*
-            Which iteration in the ANEB sequence the output to be read in is on.
+            Which iteration in the ANEB sequence the output to be read in
+            is on.
         i: *int*
             The index corresponding to which image on the frame is to be
             simulated.
@@ -495,7 +502,7 @@ class ANEB:
         * Henkelman, G.; Uberuaga, B. P.; Jonsson, H. Journal of Chemical
           Physics 2000, 113.
         * Atomic Simulation Environment - https://wiki.fysik.dtu.dk/ase/
-        * Kolsbjerg, E. L.; Groves, M. N.; Hammer, B. The Journal of 
+        * Kolsbjerg, E. L.; Groves, M. N.; Hammer, B. The Journal of
           Chemical Physics 2016, 145.
     '''
     error, gradient = None, None

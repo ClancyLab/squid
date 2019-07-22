@@ -17,12 +17,43 @@ class Job(JobObject):
             Name of the simulation on the queue.
         process_handle: *process_handle, optional*
             The process handle, returned by subprocess.Popen.
+        job_id: *str, optional*
+            The job id.  Usually this should be unique.
 
     **Returns**
 
-        This :class:`Job` object.
+        job_obj: :class:`squid.jobs.nbs.Job`
+            A Job object.
     '''
     def get_all_jobs(detail=3):
+        '''
+        Get a list of all jobs that are running and/or pending.
+
+        **Parameters**
+
+            detail: *int, optional*
+                How much detail to get when finding jobs on the queue.
+
+        **Returns**
+
+            all_jobs: *list*
+                Depending on *detail*, you get the following:
+
+                    - *details* =0: *list, str*
+                        List of all jobs on the queue.
+
+                    - *details* =1: *list, tuple, str*
+                        List of all jobs on the queue as:
+                            (job name, time run, job status)
+
+                    - *details* =2: *list, tuple, str*
+                        List of all jobs on the queue as:
+                            (job name,
+                             time run,
+                             job status,
+                             queue,
+                             number of processors)
+        '''
         return get_job("RUNNING", detail=detail) +\
             get_job("PENDING", detail=detail)
 
@@ -48,16 +79,6 @@ def get_nbs_queues():
         for a in all_queues
         if a.lower() not in ["queue", "name", ""]
     ]
-
-
-def _test_jlist():
-    try:
-        p = subprocess.Popen(['jlist'], shell=False,
-                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        close_pipes(p)
-        return True
-    except OSError:
-        return False
 
 
 def get_job(s_flag, detail=0):
@@ -180,12 +201,44 @@ def submit_job(name, job_to_submit, **kwargs):
             Name of the job to be submitted to the queue.
         job_to_submit: *str*
             String holding code you wish to submit.
-        kwargs: *...*
-            Additional keyword arguments to SLURM for job submission.
+        queue: *str, optional*
+            What queue to run the simulation on (queueing system dependent).
+        walltime: *str, optional*
+            How long to post the job on the queue for in d-h:m:s where d are
+            days, h are hours, m are minutes, and s are seconds.  Default is
+            for 30 minutes (00:30:00).
+        nprocs: *int, optional*
+            How many processors to run the simulation on.  Note, the actual
+            number of cores mpirun will use is procs * ntasks.
+        sub_flag: *str, optional*
+            Additional strings/flags/arguments to add at the end when we
+            submit a job using jsub.  That is: jsub demo.nbs sub_flag.
+        unique_name: *bool, optional*
+            Whether to force the requirement of a unique name or not.  NOTE! If
+            you submit simulations from the same folder, ensure that this is
+            True lest you have a redundancy problem! To overcome said issue,
+            you can set redundancy to True as well (but only if the simulation
+            is truly redundant).
+        outfile_name: *str, optional*
+            Whether to give a unique output file name, or one based on the sim
+            name.procs
+        xhosts: *str* or *list, str, optional*
+            Which cpu to submit the job to.
+        email: *str, optional*
+            An email address for sending job information to.
+        priority: *int, optional*
+            What priority to give the submitted job.
+        sandbox: *bool, optional*
+            Whether to sandbox the job or not.
+        redundancy: *bool, optional*
+            With redundancy on, if the job is submitted and unique_name is on,
+            then if another job of the same name is running, a pointer to that
+            job will instead be returned.
 
     **Returns**
 
-        None
+        job_obj: :class:`squid.jobs.nbs.Job`
+            A Job object.
     '''
     # Store the defaults
     params = {
@@ -194,7 +247,6 @@ def submit_job(name, job_to_submit, **kwargs):
         "sub_flag": "",
         "unique_name": True,
         "redundancy": False,
-        "sandbox": None,
         "outfile_name": None,
         "xhosts": None,
         "email": None,

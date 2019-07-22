@@ -317,9 +317,9 @@ def engrad_read(input_file, force='Ha/Bohr', pos='Bohr'):
         input_file: *str*
             Orca .orca.engrad file to be parsed.
         force: *str, optional*
-            Units you want force to be returned in.
+            Units you want force to be returned in.  Default is Ha/Bohr.
         pos: *str, optional*
-            Units you want position to be returned in.
+            Units you want position to be returned in. Default is Bohr.
 
     **Returns**
 

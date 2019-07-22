@@ -165,46 +165,18 @@ def write_lammps_data(system, **kwargs):
     '''
     Writes a lammps data file from the given system.
 
-    Set pair_coeffs_included to True to write pair_coeffs in data file.
-    Set hybrid_angle to True to detect different treatment of angles among
-    different atom types.
-    Set hybrid_pair to True to detect different treatment of pairing
-    interactions
-    among different atom types.
-
     **Parameters**
 
         system: :class:`structures.System`
             Atomic system to be written to a lammps data file.
-        name: *str, optional*
-            What to reassign the system name to.
-        new_method: *bool, optional*
-            A boolean on whether to use the new method of parameter handling,
-            or the old one.  Note, the old one will be deprecated and no
-            longer maintained, and over time removed, so we recommend getting
-            used to this method instead.
         pair_coeffs_included: *bool, optional*
             Whether to write pair coefficients into the data file (True),
             or not (False).
-        hybrid_angle: *bool, optional*
-            Whether to detect different treatments of angles amongst different
-            atom types (True), or not (False).
-        hybrid_pair: *bool, optional*
-            Whether to detect different treatments of pairing interactions
-            amongst different atom types(True), or not (False).
 
     **Returns**
 
         None
     '''
-    # Set the types of the system before generating the data file
-    # ACTUALLY! We remove this for now. This is because we want the user to
-    # mindfully know where they are setting the types, and should do so
-    # prior to calling write_lammps_data
-    # system.set_types(**{
-    #     k: kwargs[k] for k in ["opls_file", "smrff_file"] if k in kwargs
-    # })
-
     pair_coeffs_included = True
     if "pair_coeffs_included" in kwargs:
         pair_coeffs_included = kwargs["pair_coeffs_included"]

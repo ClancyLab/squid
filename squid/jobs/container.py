@@ -11,10 +11,13 @@ class JobObject(object):
             Name of the simulation on the queue.
         process_handle: *process_handle, optional*
             The process handle, returned by subprocess.Popen.
+        job_id: *str, optional*
+            The job id.  Usually this should be unique.
 
     **Returns**
 
-        This :class:`Job` object.
+        job_obj: :class:`squid.jobs.container.Job`
+            A Job object.
     '''
 
     def __init__(self, name, process_handle=None, job_id=None):
@@ -25,6 +28,12 @@ class JobObject(object):
     def wait(self, tsleep=60, verbose=False):
         '''
         Hang until simulation has finished.
+
+        tsleep: *int, optional*
+            How long to wait before checking if the job has finished in
+            the loop.  Default is 1 minute.
+        verbose: *bool, optional*
+            Whether to print repeatedly on each check or not.
 
         **Returns**
 
@@ -42,6 +51,20 @@ class JobObject(object):
                     break
 
     def get_all_jobs(detail=3):
+        '''
+        Get a list of all jobs that are running and/or pending.
+
+        **Parameters**
+
+            detail: *int, optional*
+                How much detail to get when finding jobs on the queue.
+
+        **Returns**
+
+            jobs_on_queue: *list, ...*
+                A list of all jobs on the queue, and any other relevant
+                information requested.
+        '''
         return []
 
     def is_finished(self):

@@ -71,15 +71,11 @@ PATH environment variable!"
 # of lammps code (run_name and input_script)
 def job(run_name, input_script, system=None,
         queue=None, walltime="00:30:00",
-        procs=1, ntasks=1, nodes=1,
+        nprocs=1, ntasks=1, nodes=1,
         email=None,
         pair_coeffs_in_data_file=True,
-        hybrid_pair=False,
-        hybrid_angle=False,
-        TIP4P=False,
         no_echo=False,
         redundancy=False,
-        params=None,
         unique_name=True,
         slurm_allocation=None):
     '''
@@ -95,44 +91,38 @@ def job(run_name, input_script, system=None,
             System object for our simulation.
         queue: *str, optional*
             What queue to run the simulation on (queueing system dependent).
-        procs: *int, optional*
-            How many processors to run the simulation on.  Note, the actual
-            number of cores mpirun will use is procs * ntasks.
-        ntasks: *int, optional*
-            (For SLURM) The number of tasks this job will run, each task uses
-            procs number of cores.  Note, the actual number of cores mpirun
-            will use is procs * ntasks.
-        nodes: *int, optional*
-            (For SLURM) The number of nodes this job requires.  If requesting
-            ntasks * procs < 24 * nodes, a warning is printed, as on MARCC
-            each node has only 24 cores.
         walltime: *str, optional*
             How long to post the job on the queue for in d-h:m:s where d are
             days, h are hours, m are minutes, and s are seconds.  Default is
             for 30 minutes (00:30:00).
-        adjust_nodes: *bool, optional*
-            Whether to automatically calculate how many nodes is necessary
-            when the user underspecifies nodes.
+        nprocs: *int, optional*
+            How many processors to run the simulation on.  Note, the actual
+            number of cores mpirun will use is nprocs * ntasks.
+        ntasks: *int, optional*
+            (For SLURM) The number of tasks this job will run, each task uses
+            nprocs number of cores.  Note, the actual number of cores mpirun
+            will use is nprocs * ntasks.
+        nodes: *int, optional*
+            (For SLURM) The number of nodes this job requires.  If requesting
+            ntasks * nprocs < 24 * nodes, a warning is printed, as on MARCC
+            each node has only 24 cores.
         email: *str, optional*
             An email address for sending job information to.
-        pair_coeffs_included: *bool, optional*
+        pair_coeffs_in_data_file: *bool, optional*
             Whether we have included the pair coefficients to be written
-            to our lammps data file.
-        hybrid_pair: *bool, optional*
-            Whether to detect different treatments of pairing interactions
-            amongst different atom types(True), or not (False).
-        hybrid_angle: *bool, optional*
-            Whether to detect different treatments of angles amongst different
-            atom types (True), or not (False).
-        TIP4P: *bool, optional*
-            Whether to identify TIP4P settings within the lammps data file and
-            update the input file (True), or not (False).
+            to our lammps data file (True) or not (False).
         no_echo: *bool, optional*
             Whether to pipe the terminal output to a file instead of printing.
         redundancy: *bool, optional*
             With redundancy on, if the job is submitted and unique_name is on,
             then if another job of the same name is running, a pointer to that
             job will instead be returned.
+        unique_name: *bool, optional*
+            Whether to force the requirement of a unique name or not.  NOTE! If
+            you submit simulations from the same folder, ensure that this is
+            True lest you have a redundancy problem! To overcome said issue,
+            you can set redundancy to True as well (but only if the simulation
+            is truly redundant).
         slurm_allocation: *str, optional*
             Whether to use a slurm allocation for this job or not.  If so,
             specify the name.
@@ -153,7 +143,10 @@ length is 31." % len(run_name))
 
     # Generate the lammps data file
     if system is not None:
-        write_lammps_data(system)
+        write_lammps_data(
+            system,
+            pair_coeffs_included=pair_coeffs_in_data_file
+        )
 
     # Write the lammps input script. Expects lines of lammps code
     f = open(run_name + '.in', 'w')
@@ -161,8 +154,8 @@ length is 31." % len(run_name))
     f.close()
 
     # Setup variables for simulation
-    procs, ntasks, nodes = int(procs), int(ntasks), int(nodes)
-    cores_to_use = procs * ntasks
+    nprocs, ntasks, nodes = int(nprocs), int(ntasks), int(nodes)
+    cores_to_use = nprocs * ntasks
     lmp_path, mpi_path = get_lmp_obj(cores_to_use > 1)
 
     cmd_to_run = ""
@@ -181,7 +174,7 @@ length is 31." % len(run_name))
     else:
         job_handle = jobs.submit_job(
             run_name, cmd_to_run,
-            procs=procs, ntasks=ntasks, nodes=nodes,
+            nprocs=nprocs, ntasks=ntasks, nodes=nodes,
             queue=queue, walltime=walltime,
             email=email, redundancy=redundancy, unique_name=True,
             slurm_allocation=slurm_allocation)

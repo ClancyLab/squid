@@ -11,9 +11,11 @@ def Job(name, **kwargs):
     **Parameters**
 
         name: *str*
-            Name of simulation
-        kwargs: *...*
-            Any additional keywords.
+            Name of the simulation on the queue.
+        process_handle: *process_handle, optional*
+            The process handle, returned by subprocess.Popen.
+        job_id: *str, optional*
+            The job id.  Usually this should be unique.
 
     **Returns**
 
@@ -92,8 +94,6 @@ def get_all_jobs(detail=0):
 
     **Parameters**
 
-        queueing_system: *str, optional*
-            Which queueing system you are using (NBS or PBS).
         detail: *int, optional*
             The amount of information you want returned.
 
@@ -128,8 +128,6 @@ def get_running_jobs(detail=0):
 
     **Parameters**
 
-        queueing_system: *str, optional*
-            Which queueing system you are using (NBS or PBS).
         detail: *int, optional*
             The amount of information you want returned.
 
@@ -178,8 +176,6 @@ def get_pending_jobs(detail=0):
 
     **Parameters**
 
-        queueing_system: *str, optional*
-            Which queueing system you are using (NBS or PBS).
         detail: *int, optional*
             The amount of information you want returned.
 

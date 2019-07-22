@@ -17,12 +17,43 @@ class Job(JobObject):
             Name of the simulation on the queue.
         process_handle: *process_handle, optional*
             The process handle, returned by subprocess.Popen.
+        job_id: *str, optional*
+            The job id.  Usually this should be unique.
 
     **Returns**
 
-        This :class:`Job` object.
+        job_obj: :class:`squid.jobs.slurm.Job`
+            A Job object.
     '''
     def get_all_jobs(detail=3):
+        '''
+        Get a list of all jobs that are running and/or pending.
+
+        **Parameters**
+
+            detail: *int, optional*
+                How much detail to get when finding jobs on the queue.
+
+        **Returns**
+
+            all_jobs: *list*
+                Depending on *detail*, you get the following:
+
+                    - *details* =0: *list, str*
+                        List of all jobs on the queue.
+
+                    - *details* =1: *list, tuple, str*
+                        List of all jobs on the queue as:
+                            (job name, time run, job status)
+
+                    - *details* =2: *list, tuple, str*
+                        List of all jobs on the queue as:
+                            (job name,
+                             time run,
+                             job status,
+                             queue,
+                             number of processors)
+        '''
         return get_job("RUNNING", detail=detail) +\
             get_job("PENDING", detail=detail)
 
@@ -193,12 +224,50 @@ def submit_job(name, job_to_submit, **kwargs):
             Name of the job to be submitted to the queue.
         job_to_submit: *str*
             String holding code you wish to submit.
-        kwargs: *...*
-            Additional keyword arguments to SLURM for job submission.
+        queue: *str, optional*
+            What queue to run the simulation on (queueing system dependent).
+        walltime: *str, optional*
+            How long to post the job on the queue for in d-h:m:s where d are
+            days, h are hours, m are minutes, and s are seconds.  Default is
+            for 30 minutes (00:30:00).
+        cpus_per_task: *int, optional*
+            How many processors to run the simulation on.  Note, the actual
+            number of cores mpirun will use is nprocs * ntasks.
+        ntasks: *int, optional*
+            How many processors to run the simulation on.  Note, the actual
+            number of cores mpirun will use is nprocs * ntasks.
+        nodes: *int, optional*
+            How many nodes to run the simulation on.
+        sub_flag: *str, optional*
+            Additional strings/flags/arguments to add at the end when we
+            submit a job using sbatch.  That is: sbatch demo.slurm sub_flag.
+        unique_name: *bool, optional*
+            Whether to force the requirement of a unique name or not.  NOTE! If
+            you submit simulations from the same folder, ensure that this is
+            True lest you have a redundancy problem! To overcome said issue,
+            you can set redundancy to True as well (but only if the simulation
+            is truly redundant).
+        outfile_name: *str, optional*
+            Whether to give a unique output file name, or one based on the sim
+            name.procs
+        allocation: *str, optional*
+            The SLURM allocation to submit the job to.
+        jobarray: *str, optional*
+            If specified, instead of indicating a range for job arrays, we
+            will use these specific values.  For example,
+            jobarray=1,2,4,5 would submit jobs, but skip the 3rd
+            index by name.
+        gpu: *int, optional*
+            How many GPUs to use, if submitting to a GPU node.
+        redundancy: *bool, optional*
+            With redundancy on, if the job is submitted and unique_name is on,
+            then if another job of the same name is running, a pointer to that
+            job will instead be returned.
 
     **Returns**
 
-        None
+        job_obj: :class:`squid.jobs.slurm.Job`
+            A Job object.
     '''
     # Store the defaults
     params = {
@@ -221,7 +290,7 @@ def submit_job(name, job_to_submit, **kwargs):
     # Ensure we are passing only the above
     for key, value in kwargs.items():
         assert key in params,\
-            "Error - Unknown variable (%s) passed to nbs.submit_job." % key
+            "Error - Unknown variable (%s) passed to slurm.submit_job." % key
     params.update(kwargs)
 
     # Ensure variables of correct types

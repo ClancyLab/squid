@@ -47,6 +47,9 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
             Whether to force RunTyp Gradient.
         queue: *str, optional*
             What queue to run the simulation on (queueing system dependent).
+        walltime: *str, optional*
+            The walltime the job is given when submitted to a queue.  Format
+            is in day-hr:min:sec.
         sandbox: *bool, optional*
             Whether to run the job in a sandbox or not.
         procs: *int, optional*
@@ -68,10 +71,6 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
             Multiplicity of the system.  If this is used, then
             charge_and_multiplicity is ignored. If charge is used, but
             multiplicity is not, then default multiplicity of 1 is chosen.
-        charge_and_multiplicity: *str, optional*
-            Charge and multiplicity of the system.  If neither charge nor
-            multiplicity are specified, then both are grabbed from this
-            string.
         redundancy: *bool, optional*
             With redundancy on, if the job is submitted and unique_name is on,
             then if another job of the same name is running, a pointer to that
@@ -94,14 +93,14 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
         xhost: *list, str or str, optional*
             Which processor to run the simulation on(queueing system
             dependent).
-        slurm_allocation: *str, optional*
-            Whether to use a slurm allocation for this job or not.  If so,
-            specify the name.
         jobarray_values: *str, optional*
             If specified, instead of indicating a range for job arrays, we
             will use these specific values.  For example,
             jobarray_values=1,2,4,5 would submit jobs, but skip the 3rd
             index by name.
+        slurm_allocation: *str, optional*
+            Whether to use a slurm allocation for this job or not.  If so,
+            specify the name.
         batch_serial_jobs: *int, optional*
             Whether to batch jobs at N at a time (locally on serial job
             submission).
@@ -257,11 +256,11 @@ def job(run_name, route=None, atoms=[], extra_section='', grad=False,
             Whether to force RunTyp Gradient.
         queue: *str, optional*
             What queue to run the simulation on (queueing system dependent).
+        walltime: *str, optional*
+            The walltime the job is given when submitted to a queue.  Format
+            is in day-hr:min:sec.
         sandbox: *bool, optional*
             Whether to run the job in a sandbox or not.
-        use_NBS_sandbox: *bool, optional*
-            Whether to use the NBS sandboxing headers (True), or manually copy
-            files (False).
         procs: *int, optional*
             How many processors to run the simulation on.  Note, the actual
             number requested by orca will be procs * ntasks.
@@ -283,6 +282,9 @@ def job(run_name, route=None, atoms=[], extra_section='', grad=False,
             With redundancy on, if the job is submitted and unique_name is on,
             then if another job of the same name is running, a pointer to that
             job will instead be returned.
+        use_NBS_sandbox: *bool, optional*
+            Whether to use the NBS sandboxing headers (True), or manually copy
+            files (False).
         unique_name: *bool, optional*
             Whether to force the requirement of a unique name or not.  NOTE! If
             you submit simulations from the same folder, ensure that this is

@@ -19,10 +19,12 @@ def submit_job(name, job_to_submit, **kwargs):
             String holding code you wish to submit.
         kwargs: *...*
             Additional keyword arguments to NBS/SLURM for job submission.
+            For more details, see the relevant section.
 
     **Returns**
 
-        None
+        job_obj: :class:`squid.jobs.container.Job`
+            A Job object.
     '''
     queueing_system = get_queue_manager()
     queue = None
@@ -63,7 +65,7 @@ def pysub(name, **kwargs):
 
         name: *str*
             Name of the python script (with or without the .py extension).
-        omp: *int, optional*
+        ompi_threads: *int, optional*
             The number OMP_NUM_THREADS should be manually assigned to.
         preface_mpi: *bool, optional*
             Whether to run python via mpirun or not.
@@ -82,7 +84,7 @@ def pysub(name, **kwargs):
             Requires an installed version of lmod.
         kwargs: *...*
             Any other keywords necessary for a given job submission script
-            (NBS/SLURM).
+            (NBS/SLURM).  See the other submission sections for more details.
 
     **Returns**
 
@@ -222,9 +224,9 @@ export OMPI_NUM_THREADS=%d
             kwargs["nprocs"] = kwargs["ntasks"]
         # Strip from kwargs anything we don't need here
         del kwargs["ntasks"]
-        return nbs.submit_job(name, cmd, kwargs)
+        return nbs.submit_job(name, cmd, **kwargs)
     elif queueing_system == "slurm":
-        return slurm.submit_job(name, cmd, kwargs)
+        return slurm.submit_job(name, cmd, **kwargs)
     else:
         raise Exception("Unknown queueing system (%s) encountered."
                         % str(queueing_system))

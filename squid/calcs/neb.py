@@ -47,7 +47,7 @@ def g09_start_job(NEB,
                   state,
                   charge,
                   multiplicity,
-                  procs,
+                  nprocs,
                   queue,
                   initial_guess,
                   extra_section,
@@ -72,7 +72,7 @@ def g09_start_job(NEB,
             Charge of the system.
         multiplicity: *int*
             Multiplicity of the system.
-        procs: *int*
+        nprocs: *int*
             The number of processors to use during calculations.
         queue: *str*
             Which queue to submit the simulation to (this is queueing system
@@ -85,8 +85,8 @@ def g09_start_job(NEB,
         mem: *int*
             How many Mega Words (MW) you wish to have as dynamic memory.
         priority: *int*
-            Whether to submit the job with a given priority (NBS). Not setup for
-            this function yet.
+            Whether to submit the job with a given priority (NBS). Not setup
+            for this function.
         extra_keywords: *dict, optional*
             Specify extra keywords beyond the defaults.
 
@@ -115,7 +115,7 @@ def g09_start_job(NEB,
                    state,
                    charge=charge,
                    multiplicity=multiplicity,
-                   procs=procs,
+                   nprocs=nprocs,
                    queue=queue,
                    previous=prev,
                    extra_section=extra_section + '\n\n',
@@ -186,7 +186,7 @@ def orca_start_job(NEB,
                    state,
                    charge,
                    multiplicity,
-                   procs,
+                   nprocs,
                    queue,
                    initial_guess,
                    extra_section,
@@ -211,7 +211,7 @@ def orca_start_job(NEB,
             Charge of the system.
         multiplicity: *int*
             Multiplicity of the system.
-        procs: *int*
+        nprocs: *int*
             The number of processors to use during calculations.
         queue: *str*
             Which queue to submit the simulation to (this is queueing system
@@ -251,7 +251,7 @@ def orca_start_job(NEB,
                     multiplicity=multiplicity,
                     extra_section=extra_section,
                     grad=True,
-                    procs=procs,
+                    nprocs=nprocs,
                     queue=queue,
                     previous=previous,
                     mem=mem,
@@ -320,7 +320,7 @@ class NEB:
         spring_atoms: *list, int, optional*
             Specify which atoms will be represented by virutal springs in the
             NEB calculations. Default includes all.
-        procs: *int, optional*
+        nprocs: *int, optional*
             The number of processors for your simulation.
         queue: *str, optional*
             Which queue you wish your simulation to run on (queueing system
@@ -358,7 +358,8 @@ class NEB:
             Further, the forces are contained within each atom object.  It also
             requires that the forces on the state object be updated within said
             function (for more info see example codes).  Finally, if using
-            no_energy=True, then return None (or an empty list) for the energies.
+            no_energy=True, then return None (or an empty list) for the
+            energies.
         new_opt_params: *dict, optional*
             Pass any additional parameters to the optimization algorithm.
         callback: *func, optional*
@@ -398,7 +399,7 @@ class NEB:
     def __init__(self,
                  name, states, theory, extra_section='',
                  initial_guess=None, spring_atoms=None,
-                 procs=1, queue=None, mem=2000, priority=None,
+                 nprocs=1, queue=None, mem=2000, priority=None,
                  disp=0,
                  k=0.00367453,  # 0.1 eV/A in Ha/A
                  charge=0,
@@ -418,7 +419,7 @@ class NEB:
         self.initial_guess = initial_guess
         self.spring_atoms = spring_atoms
 
-        self.procs = procs
+        self.nprocs = nprocs
         self.queue = queue
         self.mem = mem
         self.priority = priority
@@ -524,7 +525,7 @@ g09.  If not, you need to manually specify start_job and get_results.")
                                    state,
                                    self.charge,
                                    self.multiplicity,
-                                   self.procs,
+                                   self.nprocs,
                                    self.queue,
                                    self.initial_guess,
                                    self.extra_section,

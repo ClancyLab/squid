@@ -6,6 +6,17 @@ def get_orca_obj(parallel=True):
     '''
     This function will find the orca executable and the corresponding openmpi
     executable.  It will handle errors accordingly.
+
+    **Parameters**
+
+        parallel: *bool, optional*
+            Whether we guarantee the relevant parallel openmpi is setup (True)
+            or not (False).
+
+    **Returns**
+
+        orca_path: *str*
+            The path to the orca executable.
     '''
     # This is to ensure we read in ORCA correctly
     orca_string_id = "An Ab Initio, DFT and Semiempirical electronic structure"

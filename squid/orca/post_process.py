@@ -5,7 +5,7 @@ from squid.orca.utils import get_orca_obj
 from squid.orca.mep import electrostatic_potential_cubegen
 
 
-def gbw_to_cube(name, mo, spin=0, grid=40, local=False):
+def gbw_to_cube(name, mo, spin=0, grid=40):
     '''
     Pipe in flags to orca_plot to generate a cube file for the given
     molecular orbital.  Note, this is assumed to be running from the parent
@@ -23,8 +23,6 @@ def gbw_to_cube(name, mo, spin=0, grid=40, local=False):
             Whether to plot the alpha or beta (0 or 1) operator.
         grid: *int, optional*
             The grid resolution, default being 40.
-        orca4: *bool, optional*
-            Whether the simulation was run in orca3 or orca4.
 
     **Returns**
 
@@ -100,8 +98,6 @@ def mo_analysis(name,
         iso: *float, optional*
             Isosurface magnitude.  Set to 0.04 by default, but 0.01 may be
             better.
-        orca4: *bool, optional*
-            Whether the simulation was run in orca3 or orca4.
 
     **Returns**
 
@@ -117,15 +113,15 @@ def mo_analysis(name,
     MOs = []
 
     if HOMO:
-        MOs.append(gbw_to_cube(name, N_HOMO, spin=0, grid=40, local=False))
+        MOs.append(gbw_to_cube(name, N_HOMO, spin=0, grid=40))
     if LUMO:
-        MOs.append(gbw_to_cube(name, N_LUMO, spin=0, grid=40, local=False))
+        MOs.append(gbw_to_cube(name, N_LUMO, spin=0, grid=40))
 
     if orbital is not None:
         if type(orbital) is int:
             orbital = [orbital]
         for mo in orbital:
-            MOs.append(gbw_to_cube(name, mo, spin=0, grid=40, local=False))
+            MOs.append(gbw_to_cube(name, mo, spin=0, grid=40))
 
     for i, mo in enumerate(MOs):
         MOs[i] = "orca/" + name + "/" + mo
@@ -148,8 +144,6 @@ def pot_analysis(name, wireframe=True, npoints=80):
             If you want to view wireframe instead of default surface.
         npoints: *int, optional*
             The grid size for the potential surface.
-        orca4: *bool, optional*
-            Whether to run this for orca4 outputs or not.
 
     **Returns**
 
