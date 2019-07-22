@@ -31,7 +31,7 @@ class System(object):
 
     **Returns**
 
-        system: :class:`structures.system.System`
+        system: :class:`squid.structures.system.System`
             The System class container.
     '''
 
@@ -189,7 +189,7 @@ class System(object):
 
         **Parameters**
 
-            molecule: :class:`structures.Molecule`
+            molecule: :class:`squid.structures.molecule.Molecule`
                 A Molecule structure.
             mol_offset: *int, optional*
                 The offset to apply to molecule_index.
@@ -229,7 +229,7 @@ class System(object):
 
         **Parameters**
 
-            molecule: :class:`structures.Molecule`
+            molecule: :class:`squid.structures.molecule.Molecule`
                 A molecule to be checked if it resides within this system.
 
         **Returns**

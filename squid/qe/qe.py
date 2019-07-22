@@ -65,7 +65,7 @@ def job(run_name, cards,
 
     **Returns**
 
-        job: :class:`jobs.Job`
+        job: :class:`squid.jobs.container.JobObject`
             Teturn the job container.
     '''
     raise Exception("THIS HAS NOT BEEN WRITTEN YET!")

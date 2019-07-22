@@ -27,7 +27,7 @@
 
 #     **Returns**
 
-#         atoms: *list,* :class:`structures.Atom`
+#         atoms: *list,* :class:`squid.structures.atom.Atom`
 #             A list of atoms read in from the data file.
 #         bonds: *list,* :class:`structures.Bond`
 #             A list of bonds read in from the data file.
@@ -167,7 +167,7 @@ def write_lammps_data(system, **kwargs):
 
     **Parameters**
 
-        system: :class:`structures.System`
+        system: :class:`squid.structures.system.System`
             Atomic system to be written to a lammps data file.
         pair_coeffs_included: *bool, optional*
             Whether to write pair coefficients into the data file (True),

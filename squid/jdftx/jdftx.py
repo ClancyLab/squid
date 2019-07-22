@@ -201,7 +201,7 @@ def job(run_name, atoms, ecut, ecutrho=None, atom_units="Ang", route=None,
 
         run_name: *str*
             Name of the simulation to be run.
-        atoms: *list,* :class:`structures.Atom` *, or str*
+        atoms: *list,* :class:`squid.structures.atom.Atom` *, or str*
             A list of atoms for the simulation.  If a string is passed, it is
             assumed to be an xyz file (relative or full path).  If None is
             passed, then it is assumed that previous was specified.
@@ -252,7 +252,7 @@ def job(run_name, atoms, ecut, ecutrho=None, atom_units="Ang", route=None,
 
     **Returns**
 
-        job: :class:`jobs.Job`
+        job: :class:`squid.jobs.container.JobObject`
             Teturn the job container.
     '''
     raise Exception("NEEDS TO BE DONE!")

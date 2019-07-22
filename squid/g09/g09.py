@@ -88,7 +88,7 @@ def job(run_name,
             Name of the simulation to be run.
         route: *route*
             The DFT route line, containing the function, basis set, etc.
-        atoms: *list,* :class:`structures.Atom` *,optional*
+        atoms: *list,* :class:`squid.structures.atom.Atom` *,optional*
             A list of atoms for the simulation.
         extra_section: *str, optional*
             Additional DFT simulation parameters.
@@ -120,7 +120,7 @@ def job(run_name,
 
     **Returns**
 
-        job: *subprocess.Popen or* :class:`jobs.Job`
+        job: *subprocess.Popen or* :class:`squid.jobs.container.JobObject`
             If running locally, return the process handle, else return
             the job container.
     '''

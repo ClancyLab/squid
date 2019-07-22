@@ -29,13 +29,13 @@ class Molecule(object):
 
     **Parameters**
 
-        atoms: *list,* :class:`structures.atom.Atom`
+        atoms: *list,* :class:`squid.structures.atom.Atom`
             A list of atoms.
-        bonds: *list,* :class:`structures.topology.Connector` *, optional*
+        bonds: *list,* :class:`squid.structures.topology.Connector` *, optional*
             A list of all bonds within the system.
-        angles: *list,* :class:`structures.topology.Connector` *, optional*
+        angles: *list,* :class:`squid.structures.topology.Connector` *, optional*
             A list of all angles within the system.
-        dihedrals: *list,* :class:`structures.topology.Connector` *, optional*
+        dihedrals: *list,* :class:`squid.structures.topology.Connector` *, optional*
             A list of all dihedrals within the system.
         molecule_index: *int, optional*
             The index to be assigned for this molecule.
@@ -48,7 +48,7 @@ class Molecule(object):
 
     **Returns**
 
-        molecule: :class:`structures.molecule.Molecule`
+        molecule: :class:`squid.structures.molecule.Molecule`
             The Molecule class container.
     '''
 

@@ -185,7 +185,7 @@ def ovito_xyz_to_gif(
 
     **Parameters**
 
-        frames: *str* or *list,* :class:`structures.Atom`
+        frames: *str* or *list,* :class:`squid.structures.atom.Atom`
             A list of frames you wish to generate an image for, or a path to
             an xyz file.
         scratch: *str*

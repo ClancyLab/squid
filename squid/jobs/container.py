@@ -16,7 +16,7 @@ class JobObject(object):
 
     **Returns**
 
-        job_obj: :class:`squid.jobs.container.Job`
+        job_obj: :class:`squid.jobs.container.JobObject`
             A Job object.
     '''
 

@@ -87,7 +87,7 @@ def job(run_name, input_script, system=None,
             Name of the simulation to be run.
         input_script: *str*
             Input script for LAMMPs simulation.
-        system: :class:`structures.System`
+        system: :class:`squid.structures.system.System`
             System object for our simulation.
         queue: *str, optional*
             What queue to run the simulation on (queueing system dependent).
@@ -129,7 +129,7 @@ def job(run_name, input_script, system=None,
 
     **Returns**
 
-        job: :class:`jobs.Job`
+        job: :class:`squid.jobs.container.JobObject`
             If running locally, return the process handle, else return the
             job container.
     '''

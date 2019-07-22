@@ -190,7 +190,7 @@ def g09_start_job(ANEB,
         i: *int*
             The index corresponding to which image on the frame is to be
             simulated.
-        state: *list,* :class:`structures.Atom`
+        state: *list,* :class:`squid.structures.atom.Atom`
             A list of atoms describing the image on the frame associated
             with index *i*.
         charge: *int*
@@ -213,7 +213,7 @@ def g09_start_job(ANEB,
 
     **Returns**
 
-        g09_job: :class:`jobs.Job`
+        g09_job: :class:`squid.jobs.container.JobObject`
             A job container holding the g09 simulation.
     '''
     ANEB.calls_to_force += 1
@@ -262,7 +262,7 @@ def g09_results(ANEB, step_to_use, i, state):
         i: *int*
             The index corresponding to which image on the frame is to be
             simulated.
-        state: *list,* :class:`structures.Atom`
+        state: *list,* :class:`squid.structures.atom.Atom`
             A list of atoms describing the image on the frame associated with
             index *i*.
 
@@ -270,7 +270,7 @@ def g09_results(ANEB, step_to_use, i, state):
 
         new_energy: *float*
             The energy of the system in Hartree (Ha).
-        new_atoms: *list,* :class:`structures.Atom`
+        new_atoms: *list,* :class:`squid.structures.atom.Atom`
             A list of atoms with the forces attached in units of Hartree per
             Angstrom (Ha/Ang).
     '''
@@ -326,7 +326,7 @@ def orca_start_job(ANEB,
         i: *int*
             The index corresponding to which image on the frame is to be
             simulated.
-        state: *list,* :class:`structures.Atom`
+        state: *list,* :class:`squid.structures.atom.Atom`
             A list of atoms describing the image on the frame associated with
             index *i*.
         charge: *int*
@@ -348,7 +348,7 @@ def orca_start_job(ANEB,
 
     **Returns**
 
-        orca_job: :class:`jobs.Job`
+        orca_job: :class:`squid.jobs.container.JobObject`
             A job container holding the orca simulation.
     '''
     ANEB.calls_to_force += 1
@@ -381,7 +381,7 @@ def orca_results(ANEB, step_to_use, i, state):
         i: *int*
             The index corresponding to which image on the frame is to be
             simulated.
-        state: *list,* :class:`structures.Atom`
+        state: *list,* :class:`squid.structures.atom.Atom`
             A list of atoms describing the image on the frame associated with
             index *i*.
 
@@ -389,7 +389,7 @@ def orca_results(ANEB, step_to_use, i, state):
 
         new_energy: *float*
             The energy of the system in Hartree (Ha).
-        new_atoms: *list,* :class:`structures.Atom`
+        new_atoms: *list,* :class:`squid.structures.atom.Atom`
             A list of atoms with the forces attached in units of Hartree per
             Angstrom (Ha/Ang).
     '''
@@ -415,7 +415,7 @@ class ANEB:
 
         name: *str*
             The name of the ANEB simulation to be run.
-        states: *list, list,* :class:`structures.Atom`
+        states: *list, list,* :class:`squid.structures.atom.Atom`
             A list of frames, each frame being a list of atom structures.
             These frames represent your reaction coordinate.
         theory: *str*

@@ -19,18 +19,18 @@ def parse_pfile(parameter_file=OPLS_FILE, pair_style='lj/cut'):
 
     **Returns**
 
-        atom_types: *list,* :class:`structures.Struct`
+        atom_types: *list, dict*
             A list of the forcefield types for atoms, stored as
-            :class:`structures.Struct`.
-        bond_types: *list,* :class:`structures.Struct`
+            a dictionary.
+        bond_types: *list, dict*
             A list of the forcefield types for bonds, stored as
-            :class:`structures.Struct`.
-        angle_types: *list,* :class:`structures.Struct`
+            a dictionary.
+        angle_types: *list, dict*
             A list of the forcefield types for angles, stored as
-            :class:`structures.Struct`.
-        dihedral_types: *list,* :class:`structures.Struct`
+            a dictionary.
+        dihedral_types: *list, dict*
             A list of the forcefield types for dihedrals, stored as
-            :class:`structures.Struct`.
+            a dictionary.
     '''
     (atom_types, bond_types,
         angle_types, dihedral_types) = [], [], [], []

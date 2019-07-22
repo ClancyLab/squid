@@ -156,9 +156,9 @@ def write_cml(atoms, name=None, bonds=None):
             You may further pass a System object that has further information.
         name: *str, optional*
             The name of the output file (either ending or not in .cml).
-        bonds: *list,* :class:`structures.topology.Connector` *, optional*
+        bonds: *list,* :class:`squid.structures.topology.Connector` *, optional*
             A list of bonds within the system.  This is useful when the input
-            is a list of :class:`structures.atom.Atom`.
+            is a list of :class:`squid.structures.atom.Atom`.
 
     **Returns**
 

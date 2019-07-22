@@ -23,7 +23,7 @@ def get_pdf(frames, start=0.0, stop=5.0, step=0.1, cutoff=10.0,
 
     **Parameters**
 
-        frames: *str or list,* :class:`structures.Atom`
+        frames: *str or list,* :class:`squid.structures.atom.Atom`
             An xyz file name (with or without the .xyz extension) or
             an input frame to calculate the pdf for.
         start: *float, optional*

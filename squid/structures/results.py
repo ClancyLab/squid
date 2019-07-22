@@ -29,10 +29,10 @@ class DFT_out(object):
             The 'extra section' in the simulation.
         charge_and_multiplicity: *str*
             The charge and multiplicity, in that order, of the system.
-        frames: *list, list,* :class:`structures.Atom`
+        frames: *list, list,* :class:`squid.structures.atom.Atom`
             A list lists of atoms describing each iteration in the dft
             simulation.
-        atoms: *list,* :class:`structures.Atom`
+        atoms: *list,* :class:`squid.structures.atom.Atom`
             Atomic information of the last iteration in the dft simulation.
         gradients: *list, list, float*
             Gradient of the potential, stored for each atom in *atoms* and
@@ -48,7 +48,7 @@ class DFT_out(object):
         charges: *list, float*
             Charges for each atom in *atoms* and *frames[-1]*.  Typically a
             copy of Mulliken charges.
-        MBO: *list, list,* :class:`structures.Atom` *, float*
+        MBO: *list, list,* :class:`squid.structures.atom.Atom` *, float*
             A list of lists, each list holding (1) a list of atoms in the bond
             and (2) the Mayer Bond Order (MBO) of said bond.
         vibfreq: *list, float*
@@ -117,9 +117,9 @@ class sim_out(object):
 
     **Contains**
 
-        frames: *list, list,* :class:`structures.Atom`
+        frames: *list, list,* :class:`squid.structures.atom.Atom`
             A list lists of atoms describing each iteration in the simulation.
-        atoms: *list,* :class:`structures.Atom`
+        atoms: *list,* :class:`squid.structures.atom.Atom`
             Atomic information of the last iteration in the simulation.
         timesteps: *list, int*
             Recorded timesteps within the output.
@@ -129,9 +129,9 @@ class sim_out(object):
             List of how many atoms for each timestep.
         atom_count: *int*
             List of how many atoms in the final timestep.
-        box_bounds_list: *list,* :class:`structures.Struct`
+        box_bounds_list: *list, dict*
             List of box bounds for each timestep.
-        box_bounds: :class:`structures.Struct`
+        box_bounds: *dict*
             List of box bounds for the final timestep.
     '''
 

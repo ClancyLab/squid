@@ -18,7 +18,7 @@ def read(input_file):
 
     **Returns**
 
-        data: :class:`results.DFT_out`
+        data: :class:`squid.structures.results.DFT_out`
             Generic DFT output object containing all parsed results.
     '''
     # Check file exists, and open
@@ -323,7 +323,7 @@ def engrad_read(input_file, force='Ha/Bohr', pos='Bohr'):
 
     **Returns**
 
-        atoms: *list,* :class:`structures.Atom`
+        atoms: *list,* :class:`squid.structures.atom.Atom`
             A list of the final atomic state, with forces appended
             to each atom.
         energy: *float*

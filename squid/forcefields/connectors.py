@@ -311,7 +311,7 @@ class Bond(HarmonicConnector):
 
         **Parameters**
 
-            bond_types: *list,* :class:`structures.Struct`
+            bond_types: *list, dict*
                 Bond types from a parsed opls parameter file.
             pfile_name: *str*
                 The name of a parameter file to be parsed.  If specified,
@@ -344,7 +344,7 @@ class Angle(HarmonicConnector):
 
         **Parameters**
 
-            angle_types: *list,* :class:`structures.Struct`
+            angle_types: *list, dict*
                 Angle types from a parsed opls parameter file.
             pfile_name: *str*
                 The name of a parameter file to be parsed.  If specified,
@@ -377,7 +377,7 @@ class Dihedral(HarmonicConnector):
 
         **Parameters**
 
-            dihedral_types: *list,* :class:`structures.Struct`
+            dihedral_types: *list, dict*
                 Dihedral types from a parsed opls parameter file.
             pfile_name: *str*
                 The name of a parameter file to be parsed.  If specified,

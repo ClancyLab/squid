@@ -31,7 +31,7 @@ def read_dump_gen(fptr, ext=".dump", coordinates=["x", "y", "z"], extras=[]):
 
     **Returns**
 
-        frames: *list, list* :class:`structures.Atom`
+        frames: *list, list* :class:`squid.structures.atom.Atom`
             A list of lists, each holding atom structures.
     '''
     # Check if file exists. If not, try subfolder
@@ -147,7 +147,7 @@ def read_dump(fptr, ext=".dump", coordinates=["x", "y", "z"], extras=[]):
 
     **Returns**
 
-        frames: *list, list* :class:`structures.Atom`
+        frames: *list, list* :class:`squid.structures.atom.Atom`
             A list of lists, each holding atom structures.
     '''
     frames = [

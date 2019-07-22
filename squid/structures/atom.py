@@ -40,7 +40,7 @@ class Atom(object):
 
     **Returns**
 
-        atom: :class:`structures.Atom`
+        atom: :class:`squid.structures.atom.Atom`
             The Atom class container.
     '''
 

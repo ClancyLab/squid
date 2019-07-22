@@ -12,11 +12,11 @@ def get_angle(a, center=None, b=None, deg=True):
 
     **Parameters**
 
-        a: :class:`structures.Atom`
+        a: :class:`squid.structures.atom.Atom`
             First atom in the angle.
-        center: :class:`structures.Atom`
+        center: :class:`squid.structures.atom.Atom`
             Center atom of the angle.
-        b: :class:`structures.Atom`
+        b: :class:`squid.structures.atom.Atom`
             Last atom in the angle.
         deg: *bool, optional*
             Whether to return the angle in degrees (True) or radians (False).
@@ -68,13 +68,13 @@ def get_dihedral_angle(a, b=None, c=None, d=None, deg=True):
 
     **Parameters**
 
-        a: :class:`structures.atom.Atom`
+        a: :class:`squid.structures.atom.Atom`
             First atom in the dihedral, or a tuple of all 4.
-        b: :class:`structures.atom.Atom` *, optional*
+        b: :class:`squid.structures.atom.Atom` *, optional*
             Second atom in the dihedral.
-        c: :class:`structures.atom.Atom` *, optional*
+        c: :class:`squid.structures.atom.Atom` *, optional*
             Third atom in the dihedral.
-        d: :class:`structures.atom.Atom` *, optional*
+        d: :class:`squid.structures.atom.Atom` *, optional*
             Fourth atom in the dihedral.
         deg: *bool, optional*
             Whether to return the angle in degrees (True) or radians (False).
@@ -144,7 +144,7 @@ class Connector(object):
 
     **Parameters**
 
-        atoms: *list,* :class:`structures.atom.Atom`
+        atoms: *list,* :class:`squid.structures.atom.Atom`
             A list of atoms to connect. If you connect atoms for an angle, the
             second atom is the center atom.
         length: *float, optional*
@@ -154,7 +154,7 @@ class Connector(object):
 
     **Returns**
 
-        connection: :class:`structures.topology.Connector`
+        connection: :class:`squid.structures.topology.Connector`
             This connector object.
     '''
 

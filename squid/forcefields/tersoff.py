@@ -905,7 +905,7 @@ passed instead." % str(value)
 
         **Returns**
 
-            tersoff_objs: *list, Tersoff*, or * :class:`squid.forcefields.tersoff.None`
+            tersoff_objs: *list,* :class:`squid.forcefields.tersoff` or *None*
                 Returns a list of Tersoff objects if possible, else None.
         '''
         # Ensure correct pfile format, and that we even need to parse it.
@@ -1006,7 +1006,7 @@ parameters are defined."
 
         **Parameters**
 
-            other: *:class:`squid.forcefields.tersoff.Tersoff`*
+            other: :class:`squid.forcefields.tersoff.Tersoff`
                 A Tersoff parameter object to get 2-body parameters from.
 
         **Returns**

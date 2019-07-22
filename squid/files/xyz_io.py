@@ -24,7 +24,7 @@ def read_xyz_gen(name, cols=["element", "x", "y", "z"],
 
     **Returns**
 
-        yield: *list,* :class:`structures.Atom`
+        yield: *list,* :class:`squid.structures.atom.Atom`
             A frame from an xyz file.
     '''
     if not name.endswith('.xyz') and '.' not in name:
@@ -104,9 +104,10 @@ def read_xyz(name, cols=["element", "x", "y", "z"],
 
     **Returns**
 
-        frames: *list, list,* :class:`structures.Atom`
+        frames: *list, list,* :class:`squid.structures.atom.Atom`
             A list of atoms read in from the xyz file.  If there is only one
-            frame, then only a *list* of :class:`structures.Atom` is returned.
+            frame, then only a *list* of :class:`squid.structures.atom.Atom`
+            is returned.
     '''
     frames = [
         frame for frame in read_xyz_gen(
@@ -124,7 +125,7 @@ def write_xyz(frames, name="out", ID='Atoms'):
 
     **Parameters**
 
-        frames_or_system: *list,* :class:`structures.Atom`
+        frames_or_system: *list,* :class:`squid.structures.atom.Atom`
             Atoms to be written to an xyz file.
         name: *str, optional*
             A filename for the xyz file.

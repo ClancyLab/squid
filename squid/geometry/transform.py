@@ -20,7 +20,7 @@ def align_centroid(atoms, recenter=True, skip_H=True):
 
     **Parameters**
 
-        atoms: *list,* :class:`structures.atom.Atom`
+        atoms: *list,* :class:`squid.structures.atom.Atom`
             A list of Atom objects.
         recenter: *bool, optional*
             Whether to recenter the new coordinates around the origin or not.
@@ -32,7 +32,7 @@ def align_centroid(atoms, recenter=True, skip_H=True):
 
     **Returns**
 
-        molec.atoms: *list,* :class:`structures.atom.Atom`
+        molec.atoms: *list,* :class:`squid.structures.atom.Atom`
             Rotated atomic coordinates.
         A: *list, list, float*
             Rotated positive definite symmetric matrix of the ellipsoid's
@@ -85,7 +85,7 @@ def procrustes(frames, count_atoms=None,
 
     **Parameters**
 
-        frames: *list, list,* :class:`structures.atom.Atom`
+        frames: *list, list,* :class:`squid.structures.atom.Atom`
             List of lists of atoms.
         count_atoms: *list, int, optional*
             A list of indices for which translation and rotations will be
@@ -106,7 +106,7 @@ def procrustes(frames, count_atoms=None,
 
     **See also**
 
-        For more information, see :func:`orthogonal_procrustes`.
+        For more information, see :func:`squid.geometry.spatial.orthogonal_procrustes`.
 
     '''
     if not count_atoms:
@@ -153,9 +153,9 @@ def interpolate(frame_1, frame_2, N):
 
     **Parameters**
 
-        frame_1: *list,* :class:`structures.atom.Atom`
+        frame_1: *list,* :class:`squid.structures.atom.Atom`
             List of atoms.
-        frame_2: *list,* :class:`structures.atom.Atom`
+        frame_2: *list,* :class:`squid.structures.atom.Atom`
             List of atoms.
         N: *int*
             Number of new frames you want to generate during interpolation.
@@ -200,7 +200,7 @@ def smooth_xyz(frames,
 
     **Parameters**
 
-        frames: *list, list,* :class:`structures.Atom`
+        frames: *list, list,* :class:`squid.structures.atom.Atom`
             A list of lists of atoms.
         R_max: *float, optional*
             The maximum motion allowed between consecutive frames.
@@ -222,7 +222,7 @@ def smooth_xyz(frames,
 
     **Returns**
 
-        frames: *list, list,* :class:`structures.Atom`
+        frames: *list, list,* :class:`squid.structures.atom.Atom`
             Returns a list of smoothed frames
     '''
 
@@ -312,7 +312,7 @@ def perturbate(atoms, dx=0.1, dr=5, around="com", rotate=True):
 
     **Parameters**
 
-        atoms: *list,* :class:`structures.atom.Atom`
+        atoms: *list,* :class:`squid.structures.atom.Atom`
             A list of atomic coordinates to be perturbated
         dx: *float, optional*
             By how much you are willing to perturbate via translation.
@@ -326,7 +326,7 @@ def perturbate(atoms, dx=0.1, dr=5, around="com", rotate=True):
 
     **Returns**
 
-        perturbated_atoms: *list,* :class:`structures.atom.Atom`
+        perturbated_atoms: *list,* :class:`squid.structures.atom.Atom`
             The perturbated list of atomic coordinates.
     '''
     for a in atoms:

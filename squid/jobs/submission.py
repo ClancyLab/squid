@@ -23,7 +23,7 @@ def submit_job(name, job_to_submit, **kwargs):
 
     **Returns**
 
-        job_obj: :class:`squid.jobs.container.Job`
+        job_obj: :class:`squid.jobs.container.JobObject`
             A Job object.
     '''
     queueing_system = get_queue_manager()

@@ -12,7 +12,7 @@ def motion_per_frame(frames):
 
     **Parameters**
 
-        frames: *list, list,* :class:`structures.Atom`
+        frames: *list, list,* :class:`squid.structures.atom.Atom`
             List of lists of atoms.
 
     **Returns**
@@ -162,10 +162,10 @@ def orthogonal_procrustes(A, ref_matrix, reflection=False):
 
     **Parameters**
 
-        A: *list,* :class:`structures.atom.Atom`
+        A: *list,* :class:`squid.structures.atom.Atom`
             A list of atoms for which R will minimize the frobenius
             norm ||A*R - ref_matrix||^2.
-        ref_matrix: *list,* :class:`structures.atom.Atom`
+        ref_matrix: *list,* :class:`squid.structures.atom.Atom`
             A list of atoms for which *A* is being rotated towards.
         reflection: *bool, optional*
             Whether inversion is allowed (True) or not (False).
@@ -274,7 +274,7 @@ def mvee(points, tol=0.001):
 
     **Parameters**
 
-        points:  *list,* :class:`structures.Atom`
+        points:  *list,* :class:`squid.structures.atom.Atom`
             A list of Atom objects.
         tol: *float, optional*
             Tolerance for ellipsoid generation.

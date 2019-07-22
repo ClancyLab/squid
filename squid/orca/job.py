@@ -36,7 +36,7 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
             The DFT route line, containing the function, basis set, etc.
             Note, if route=None and previous != None, the route from
             the previous simulation will be used instead.
-        frames: *list,* :class:`structures.Atom`
+        frames: *list,* :class:`squid.structures.atom.Atom`
             Each atomic system that needs to be simulated.
         n_frames: *int, optional*
             The number of frames.
@@ -107,7 +107,7 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
 
     **Returns**
 
-        job: :class:`jobs.Job`
+        job: :class:`squid.jobs.container.JobObject`
             Teturn the job container.
     '''
 
@@ -245,7 +245,7 @@ def job(run_name, route=None, atoms=[], extra_section='', grad=False,
             The DFT route line, containing the function, basis set, etc.
             Note, if route=None and previous != None, the route from
             the previous simulation will be used instead.
-        atoms: *list,* :class:`structures.Atom` *,optional*
+        atoms: *list,* :class:`squid.structures.atom.Atom` *,optional*
             A list of atoms for the simulation.  If this is an empty list, but
             previous is used, then the last set of atomic coordinates from
             the previous simulation will be used.
@@ -309,7 +309,7 @@ def job(run_name, route=None, atoms=[], extra_section='', grad=False,
 
     **Returns**
 
-        job: :class:`jobs.Job`
+        job: :class:`squid.jobs.container.JobObject`
             Teturn the job container.
     '''
     assert any([route is not None, previous is not None]),\

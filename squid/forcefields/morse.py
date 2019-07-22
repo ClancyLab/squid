@@ -435,6 +435,14 @@ value when fixing rc in Morse (passed %s)." % str(value)
                 % params)
 
     def pair_coeff_dump(self):
+        '''
+        Return a string representation of the pair coefficients.
+
+        **Returns**
+
+            coeff_str: *str*
+                A string representation of the pair coefficients.
+        '''
         if self.rc is None:
             return "%.4f %.4f %.4f" % (self.D0, self.alpha, self.r0)
         return "%.4f %.4f %.4f %.4f" % (self.D0, self.alpha, self.r0, self.rc)
