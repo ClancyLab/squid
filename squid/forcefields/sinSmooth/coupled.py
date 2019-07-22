@@ -336,10 +336,10 @@ class SmoothSinCoupled(object):
             R_BOUNDS, D_BOUNDS = [], []
             for r in [self.R_1_BOUNDS, self.R_2_BOUNDS, self.R_3_BOUNDS]:
                 if r is not None:
-                    R_BOUNDS = R_BOUNDS + r
+                    R_BOUNDS = R_BOUNDS + list(r)
             for r in [self.D_1_BOUNDS, self.D_2_BOUNDS, self.D_3_BOUNDS]:
                 if r is not None:
-                    D_BOUNDS = D_BOUNDS + r
+                    D_BOUNDS = D_BOUNDS + list(r)
             for bnd in zip(zip(R_BOUNDS, D_BOUNDS)):
                 pkg.append(*bnd)
             return pkg

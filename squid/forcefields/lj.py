@@ -429,8 +429,8 @@ larger than 0! It is %f" % (self.index, self.epsilon)
         LJ_objs = []
 
         for atype in atom_types:
-            eps = random_in_range(SIGMA_BOUNDS)
-            sig = random_in_range(EPSILON_BOUNDS)
+            sig = random_in_range(SIGMA_BOUNDS)
+            eps = random_in_range(EPSILON_BOUNDS)
             LJ_objs.append(cls(atype, sig, eps))
 
         return LJ_objs
