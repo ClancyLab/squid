@@ -54,6 +54,16 @@ def parse_smiles(smiles_string):
     for i in elements:
         if '[' in i or ']' in i:
             i = i[1:-1]
+        # elif i in halogens:
+            
+        # elif i in chalcogens:
+
+        # elif i in pnictogens_boron:
+
+        # elif i == carbon:
+
+        # else:
+        #     raise Exception()
         output.append(i)
     print(output)
     return output
@@ -70,8 +80,12 @@ def smiles_to_molecule(smiles_string):
     list_of_elements = parse_smiles(smiles_string)
     for index, element in enumerate(list_of_elements):
         vdwr = get_radius(element)
-        temp_atom = structures.Atom(
-            element=element, x=pos[0], y=pos[1], z=pos[2], index=index)
+        if index == 0:
+            temp_atom = structures.Atom(element=element, x=pos[0], y=pos[1],
+                                        z=pos[2], index=index)
+        else:
+            temp_atom = structures.Atom(element=element, x=pos[0] + vdwr, y=pos[1],
+                                        z=pos[2], index=index)
         pos[0] += vdwr
         list_of_atoms.append(temp_atom)
     # Create molecule object
@@ -81,7 +95,7 @@ def smiles_to_molecule(smiles_string):
 
 def main():
     # Return a squid Molecule object with atoms, bonds
-    mol = smiles_to_molecule("O")
+    mol = smiles_to_molecule("[Au][Ag]")
     output = structures.System()
     output.add(mol)
     files.write_xyz(mol, "test.xyz")
