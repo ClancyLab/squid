@@ -198,9 +198,12 @@ def write_lammps_data(system, **kwargs):
         None
     '''
     # Set the types of the system before generating the data file
-    system.set_types(**{
-        k: kwargs[k] for k in ["opls_file", "smrff_file"] if k in kwargs
-    })
+    # ACTUALLY! We remove this for now. This is because we want the user to
+    # mindfully know where they are setting the types, and should do so
+    # prior to calling write_lammps_data
+    # system.set_types(**{
+    #     k: kwargs[k] for k in ["opls_file", "smrff_file"] if k in kwargs
+    # })
 
     pair_coeffs_included = True
     if "pair_coeffs_included" in kwargs:

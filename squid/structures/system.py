@@ -352,7 +352,7 @@ class System(object):
             )
             self.parameters.set_all_masks(True)
         else:
-            self.params = params
+            self.parameters = params
 
     def dump_pair_coeffs(self):
         '''

@@ -32,4 +32,5 @@ if __name__ == "__main__":
     geometry.packmol(world, [solv], persist=False, density=1.0)
 
     # Step 5 - Run a simulation
+    world.set_types()
     lammps.write_lammps_data(world)
