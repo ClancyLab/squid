@@ -42,7 +42,7 @@ class LJ(object):
 
     **Returns**
 
-        lj: :class:`squid.structures.LJ`
+        lj: :class:`squid.forcefields.lj.LJ`
             A LJ object.
     '''
 
@@ -120,6 +120,15 @@ and epsilon OR line, but not all.")
             return "%s %.4f %.4f" % (self.index, self.sigma, self.epsilon)
 
     def pair_coeff_dump(self):
+        '''
+        Return a string representation of the pair coefficients.  In this
+        case, it simply is the epsilon and sigma values with a space.
+
+        **Returns**
+
+            coeff_str: *str*
+                A string representation of the pair coefficients.
+        '''
         return "%.4f %.4f" % (self.epsilon, self.sigma)
 
     def print_lower(self):
@@ -356,7 +365,7 @@ larger than 0! It is %f" % (self.index, self.epsilon)
 
         **Returns**
 
-            lj_objs: *list,* :class:`squid.structures.LJ`, or *None*
+            lj_objs: *list,* :class:`squid.forcefields.lj.LJ`, or *None*
                 Returns a list of LJ objects if possible, else None.
         '''
         import squid.forcefields.smrff as smrff_utils
@@ -396,7 +405,7 @@ larger than 0! It is %f" % (self.index, self.epsilon)
 
         **Returns**
 
-            lj_objs: *list,* :class:`squid.structures.LJ`, or *None*
+            lj_objs: *list,* :class:`squid.forcefields.lj.LJ`, or *None*
                 Returns a list of LJ objects if possible, else None.
         '''
         # Ensure correct pfile format, and that we even need to parse it.
@@ -422,7 +431,7 @@ larger than 0! It is %f" % (self.index, self.epsilon)
 
         **Returns**
 
-            lj_objs: *list,* :class:`squid.structures.LJ`
+            lj_objs: *list,* :class:`squid.forcefields.lj.LJ`
                 Returns a list of LJ objects.
         '''
 

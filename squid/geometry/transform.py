@@ -409,8 +409,6 @@ def run_unit_tests():
     assert np.linalg.norm(A - A_held) < EPS,\
         "Error - align_centroid has changed!"
 
-    raise Exception("Unit Test smooth_xyz")
-
     print("squid.geometry.smooth - All unit tests passed!")
 
 

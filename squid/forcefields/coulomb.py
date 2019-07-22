@@ -48,7 +48,7 @@ class Coul(object):
 
     **Returns**
 
-        coulomb: :class:`squid.structures.Coul`
+        coulomb: :class:`squid.forcefields.coulomb.Coul`
             A Coul object.
     '''
 
@@ -123,7 +123,7 @@ Either specify index and charge, or the line to be parsed, but not both.")
 
         **Returns**
 
-            Coul: *str*
+            coul_str: *str*
                 A string representation of Coul.  The index and the charge (to
                 2 decimal places), separated by a space.
         '''
@@ -138,9 +138,25 @@ Either specify index and charge, or the line to be parsed, but not both.")
                 self.element, self.mass)
 
     def print_lower(self):
+        '''
+        Print the lower bounds.
+
+        **Returns**
+
+            bounds: *str*
+                The lower bounds.
+        '''
         return self._printer(bounds=0)
 
     def print_upper(self):
+        '''
+        Print the upper bounds.
+
+        **Returns**
+
+            bounds: *str*
+                The upper bounds.
+        '''
         return self._printer(bounds=1)
 
     def unpack(self, with_indices=True, with_bounds=False):
@@ -203,6 +219,10 @@ Should be either 1 or 2!" % len(params)
         '''
         This function will validate data integrity.
         In this case, we simply ensure data types are appropriate.
+
+        **Returns**
+
+            None
         '''
         self.index, self.charge = str(self.index), float(self.charge)
         assert abs(self.charge) <= CHARGE_UPPER_LIMIT,\
@@ -311,7 +331,7 @@ Should be either 1 or 2!" % len(params)
 
         **Returns**
 
-            coul_objs: *list,* :class:`squid.structures.Coul`, or *None*
+            coul_objs: *list,* :class:`squid.forcefields.coulomb.Coul`, or *None*
                 Returns a list of Coul objects if possible, else None.
         '''
         import squid.forcefields.smrff as smrff_utils
@@ -351,7 +371,7 @@ Should be either 1 or 2!" % len(params)
 
         **Returns**
 
-            coul_objs: *list,* :class:`squid.structures.Coul`, or *None*
+            coul_objs: *list,* :class:`squid.forcefields.coulomb.Coul`, or *None*
                 Returns a list of Coul objects if possible, else None.
         '''
         import squid.forcefields.opls as opls_utils
@@ -383,7 +403,7 @@ Should be either 1 or 2!" % len(params)
 
         **Returns**
 
-            coul_objs: *list,* :class:`squid.structures.Coul`
+            coul_objs: *list,* :class:`squid.forcefields.coulomb.Coul`
                 Returns a list of Coul objects.
         '''
         coul_objs = []

@@ -31,7 +31,7 @@ class HarmonicConnector(object):
 
     **Returns**
 
-        HarmonicConnector: :class:`HarmonicConnector`
+        HarmonicConnector: :class:`squid.forcefields.connectors.HarmonicConnector`
             A HarmonicConnector object.
 
     '''
@@ -113,7 +113,7 @@ OR line, but not all.")
             lj: *str*
                 A string representation of LJ.  The indices, sigma, and epsilon
                 are printed, in that precise order.  Note, numbers are printed
-                to exactly 2 decimal places.
+                to exactly 3 decimal places.
         '''
         self.validate()
         indices = self.indices
@@ -174,6 +174,10 @@ OR line, but not all.")
         '''
         This function will validate data integrity.  In this case, we simply
         ensure data types are appropriate.
+
+        **Returns**
+
+            None
         '''
 
         if not isinstance(self.energies, list):

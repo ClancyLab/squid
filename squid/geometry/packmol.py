@@ -9,6 +9,11 @@ def get_packmol_obj():
     '''
     This function will find the packmol executable and handle errors
     accordingly.
+
+    **Returns**
+
+        packmol_path: *str*
+            The path to packmol.
     '''
     packmol_path = which("packmol")
 
@@ -21,8 +26,8 @@ environment variable!"
 
 def packmol(system_obj, molecules, molecule_ratio=(1,),
             density=1.0, seed=1, persist=True, number=None,
-            additional="", custom=None, extra_block_at_end='',
-            extra_block_at_beginning='', tolerance=2.0):
+            additional="", custom=None, extra_block_at_beginning='',
+            extra_block_at_end='', tolerance=2.0):
     '''
     Given a list of molecules, pack this system appropriately.  Note,
     we now will pack around what is already within the system!  This is
@@ -54,13 +59,13 @@ def packmol(system_obj, molecules, molecule_ratio=(1,),
             Overide density and specify the exact number of molecules to
             pack. When using a list of molecules, you must specify each
             in order within a list.
+        additional: *str, optional*
+            Whether to add additional constraints to the standard packmol
+            setup.
         custom: *str, optional*
             A custom packmol script to run for the given input molecules.
             Note, you should ensure all necessary files are within the
             sys_packmol folder if using this option.
-        additional: *str, optional*
-            Whether to add additional constraints to the standard packmol
-            setup.
         extra_block_at_beginning: *str, optional*
             An additional block to put prior to the standard block.
         extra_block_at_end: *str, optional*
@@ -163,7 +168,8 @@ end structure
     i = 0
     offset = len(system_obj.atoms)
     while i < len(atoms):
-        ints_in_element = [j for j, h in enumerate(atoms[i].element) if h.isdigit()]
+        ints_in_element = [
+            j for j, h in enumerate(atoms[i].element) if h.isdigit()]
         if len(ints_in_element) == 0:
             # This is the fixed molecule that already exists in the system
             i += offset

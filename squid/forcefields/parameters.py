@@ -90,7 +90,7 @@ class Parameters(object):
 
     **Returns**
 
-        params: :class:`Parameters`
+        params: :class:`squid.forcefields.parameters.Parameters`
             This object.
     '''
 
@@ -731,6 +731,9 @@ is not a pair potential."
                 the rest overwrites the parameters) or not.
             write_file: *bool, optional*
                 Whether to write any files (ex. tersoff files) or not.
+            in_input_file: *bool, optional*
+                Whether to dump the bonds in the input file style format
+                (True) or the data file style format (False)
 
         **Returns**
             lammps_command: *str*
@@ -743,11 +746,13 @@ is not a pair potential."
         self.write_tfile = write_file
         local_style = self.get_smrff_style()
 
-        if style in ["lj/cut/coul/cut", 'all'] and all([self.lj_mask, self.coul_mask]):
+        if style in ["lj/cut/coul/cut", 'all'] and all([
+                self.lj_mask, self.coul_mask]):
             if "lj/cut/coul/cut" in local_style:
                 script.append(self.dump_lj_cut_coul_cut())
                 script.append(self.dump_set_charge())
-        if style in ["lj/cut/coul/long", 'all'] and all([self.lj_mask, self.coul_mask]):
+        if style in ["lj/cut/coul/long", 'all'] and all([
+                self.lj_mask, self.coul_mask]):
             if "lj/cut/coul/long" in local_style:
                 script.append(self.dump_lj_cut_coul_long())
                 script.append(self.dump_set_charge())
@@ -770,9 +775,9 @@ is not a pair potential."
 
     def mapper(self, x):
         '''
-        A generalized function to map indices of atom types to structure types.
-        Note, this is generalized and should allow for a wide range of x
-        objects.
+        A generalized function to map indices of atom types to the
+        corresponding lammps index.  Note, this is generalized and should
+        allow for a wide range of x objects.
 
         **Parameters**
 
@@ -783,7 +788,7 @@ is not a pair potential."
         **Returns**
 
             mapper_obj: *list, str or str*
-                The structure type, as either a list (if bond/angle/dihedral)
+                The lammps index, as either a list (if bond/angle/dihedral)
                 or a string (if charge/lj).
         '''
         return ffh.map_to_lmp_index(x, self.opls_structure_dict)
@@ -929,12 +934,18 @@ is not a pair potential."
                     continue
                 if not ffh.check_restriction(self.lj_params[j], self.restrict):
                     continue
-                sigma_ij = (self.lj_params[i].sigma * self.lj_params[j].sigma) ** 0.5
-                epsilon_ij = (self.lj_params[i].epsilon * self.lj_params[j].epsilon) ** 0.5
+                sigma_ij = (
+                    self.lj_params[i].sigma *
+                    self.lj_params[j].sigma) ** 0.5
+                epsilon_ij = (
+                    self.lj_params[i].epsilon *
+                    self.lj_params[j].epsilon) ** 0.5
                 type_i = int(self.restrict.index(self.lj_params[i].index) + 1)
                 type_j = int(self.restrict.index(self.lj_params[j].index) + 1)
                 type_i, type_j = sorted([type_i, type_j])
-                lammps_command.append('pair_coeff %d %d lj/cut/coul/long %f %f' % (type_i, type_j, epsilon_ij, sigma_ij))
+                lammps_command.append(
+                    'pair_coeff %d %d lj/cut/coul/long %f %f'
+                    % (type_i, type_j, epsilon_ij, sigma_ij))
 
         lammps_command = "\n".join(lammps_command)
         return lammps_command
@@ -963,12 +974,18 @@ is not a pair potential."
                     continue
                 if not ffh.check_restriction(self.lj_params[j], self.restrict):
                     continue
-                sigma_ij = (self.lj_params[i].sigma * self.lj_params[j].sigma) ** 0.5
-                epsilon_ij = (self.lj_params[i].epsilon * self.lj_params[j].epsilon) ** 0.5
+                sigma_ij = (
+                    self.lj_params[i].sigma *
+                    self.lj_params[j].sigma) ** 0.5
+                epsilon_ij = (
+                    self.lj_params[i].epsilon *
+                    self.lj_params[j].epsilon) ** 0.5
                 type_i = int(self.restrict.index(self.lj_params[i].index) + 1)
                 type_j = int(self.restrict.index(self.lj_params[j].index) + 1)
                 type_i, type_j = sorted([type_i, type_j])
-                lammps_command.append('pair_coeff %d %d lj/cut/coul/cut %f %f' % (type_i, type_j, epsilon_ij, sigma_ij))
+                lammps_command.append(
+                    'pair_coeff %d %d lj/cut/coul/cut %f %f' %
+                    (type_i, type_j, epsilon_ij, sigma_ij))
 
         lammps_command = "\n".join(lammps_command)
         return lammps_command
@@ -1118,6 +1135,11 @@ is not a pair potential."
     def get_smrff_style(self):
         '''
         This will return the smrff style.
+
+        **Returns**
+
+            lammps_smrff_style: *str*
+                The input script line for LAMMPS for the smrff pair style.
         '''
         # Expand ters to tersoff
         get = lambda s: "tersoff" if str(s).startswith("ters") else str(s)
@@ -1133,6 +1155,26 @@ is not a pair potential."
         This function will fix a specific style (coul, lj, morse, etc), label
         (where label is the atom label/type you want to fix), and the component
         (ex, sigma in LJ).
+
+        **Parameters**
+
+            style: *str*
+                Which style to fix.  Options are coul, lj, morse, and ters.
+            label: *...*
+                Which atom type should be fixed.  If *, then everything.  Note
+                that for some situations this may be a list of values (as in
+                the case of tersoff).
+            params: *str, optional*
+                Whether to fix everything (all), or a specific value (style
+                dependant).
+            value: *list, float, or float, optional*
+                The value to fix the param to. If None, then it is fixed to
+                the current value.  If params is all, then value must be a
+                list of values.
+
+        **Returns**
+
+            None
         '''
         style = style.lower()
 
@@ -1180,6 +1222,11 @@ is not a pair potential."
     def num_free_parameters(self):
         '''
         This function will return the number of unfixed parameters.
+
+        **Returns**
+
+            free_params: *int*
+                The number of free parameters.
         '''
         pkg = self.unpack(with_indices=False, with_bounds=True)
         return len(pkg[0]) - sum([

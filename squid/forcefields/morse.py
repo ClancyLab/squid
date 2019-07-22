@@ -76,7 +76,7 @@ class Morse(object):
 
     **Returns**
 
-        Morse: :class:`squid.structures.Morse`
+        Morse: :class:`squid.forcefields.morse.Morse`
             A Morse object.
     '''
 
@@ -282,6 +282,10 @@ Should be either 3, 4, or 5!" % len(params)
         '''
         This function will validate data integrity.
         In this case, we simply ensure data types are appropriate.
+
+        **Returns**
+
+            None
         '''
         self.indices = [str(x) for x in self.indices]
         self.D0 = float(self.D0)
@@ -441,6 +445,10 @@ value when fixing rc in Morse (passed %s)." % str(value)
         morse "Bond".  This means that:
 
             0.5 < r < 4.0
+
+        **Returns**
+
+            None
         '''
         self.r0_bounds = (0.5, 4.0)
         if self.r0 > self.r0_bounds[-1] or self.r0 < self.r0_bounds[0]:
@@ -455,6 +463,10 @@ value when fixing rc in Morse (passed %s)." % str(value)
             4.0 < r < 10.0
             0.1 < D0 < 50.0
             0.1 < alpha < 5.0
+
+        **Returns**
+
+            None
         '''
         self.r0_bounds = (4.0, 10.0)
         if self.r0 > self.r0_bounds[-1] or self.r0 < self.r0_bounds[0]:
@@ -485,10 +497,13 @@ value when fixing rc in Morse (passed %s)." % str(value)
                 The name of a parameter file to be parsed.
                 If specified, then parsed_file is ignored.
                 (you may simply pass None as parsed_file)
+            restrict: *list, str, optional*
+                A list of atom labels to include when loading.  If not
+                specified, everything is loaded.
 
         **Returns**
 
-            Morse_objs: *list,* :class:`squid.structures.Morse`, or *None*
+            Morse_objs: *list,* :class:`squid.forcefields.morse.Morse`, or *None*
                 Returns a list of Morse objects if possible, else None.
         '''
         import squid.forcefields.smrff as smrff_utils
@@ -518,10 +533,12 @@ value when fixing rc in Morse (passed %s)." % str(value)
 
             atom_types: *list, str*
                 A list of all the atom types to have parameters generated for.
+            gen_rc: *bool, optional*
+                Whether to generate the cutoff radius, or not.
 
         **Returns**
 
-            morse_objs: *list,* :class:`squid.structures.Morse`
+            morse_objs: *list,* :class:`squid.forcefields.morse.Morse`
                 Returns a list of Morse objects.
         '''
         morse_objs = []

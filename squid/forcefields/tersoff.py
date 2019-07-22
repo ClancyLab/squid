@@ -108,7 +108,7 @@ class Tersoff(object):
 
     **Returns**
 
-        tersoff: :class:`Tersoff`
+        tersoff: :class:`squid.forcefields.tersoff.Tersoff`
             A Tersoff object.
     '''
 
@@ -317,6 +317,10 @@ line to be parsed, but not both.")
         Assign default bounds.  Further, if this is the case of A-B-B vs A-B-C
         we can simplify the bounds as only in the case of A-B-B are two body
         parameters n, Beta, lambda2, lambda1, and A read in.
+
+        **Returns**
+
+            None
         '''
         self.lambda3_bounds = (0.0, 2.0)
         self.c_bounds = (0.1, 150000.0)
@@ -504,6 +508,10 @@ Should be either 8, 9, 14, or 15!" % len(params)
         '''
         This function will validate data integrity.  In this case, we simply
         ensure data types are appropriate.
+
+        **Returns**
+
+            None
         '''
         self.indices = [str(x) for x in self.indices]
         self.m = int(self.m)
@@ -595,6 +603,10 @@ positive such that R >= D!" % (str(self.indices), self.R, self.D)
             3. Removing attractive potential (B is 0)
             4. Setting beta to 0 (this removes the three-body interaction)
             5. Setting all benign (unused) parameters to 1
+
+        **Returns**
+
+            None
         '''
 
         self._turn_off(False)
@@ -606,6 +618,10 @@ positive such that R >= D!" % (str(self.indices), self.R, self.D)
 
             1. Setting beta to 0 (this removes the three-body interaction)
             2. Setting all benign (unused) parameters to 1
+
+        **Returns**
+
+            None
         '''
 
         self._turn_off(True)
@@ -681,6 +697,8 @@ positive such that R >= D!" % (str(self.indices), self.R, self.D)
 
             line: *str*
                 A string that holds a three-body tersoff parameter set.
+            validate: *bool, optional*
+                Whether to validate these parameters or not.
 
         **Returns**
 
@@ -696,6 +714,21 @@ positive such that R >= D!" % (str(self.indices), self.R, self.D)
         '''
         This will fix these parameters by assigning bounds to the
         values themselves.
+
+        **Parameters**
+
+            params: *str, optional*
+                Whether to fix everything (all), or a specific value (m,
+                gamma, lambda3, c, d, costheta0, n, beta, lambda2, B, R,
+                D, lambda1, A).
+            value: *list, float, or float, optional*
+                The value to fix the param to. If None, then it is fixed to
+                the current value.  If params is all, then value must be a
+                list of values.
+
+        **Returns**
+
+            None
         '''
         if params == 'all':
             if value is not None:
@@ -866,10 +899,13 @@ passed instead." % str(value)
                 The name of a parameter file to be parsed.  If specified,
                 then parsed_file is ignored (you may simply pass None as
                 parsed_file).
+            restrict: *list, str, optional*
+                A list of atom labels to include when loading.  If not
+                specified, everything is loaded.
 
         **Returns**
 
-            tersoff_objs: *list, Tersoff*, or *None*
+            tersoff_objs: *list, Tersoff*, or * :class:`squid.forcefields.tersoff.None`
                 Returns a list of Tersoff objects if possible, else None.
         '''
         # Ensure correct pfile format, and that we even need to parse it.
@@ -921,7 +957,7 @@ parameters are defined."
 
         **Returns**
 
-            ters_objs: *list, Tersoff*
+            ters_objs: *list,* :class:`squid.forcefields.tersoff.Tersoff`
                 Returns a list of Tersoff objects.
         '''
         form = form.lower()
@@ -970,7 +1006,7 @@ parameters are defined."
 
         **Parameters**
 
-            other: *:class:`Tersoff`*
+            other: *:class:`squid.forcefields.tersoff.Tersoff`*
                 A Tersoff parameter object to get 2-body parameters from.
 
         **Returns**
@@ -1002,7 +1038,7 @@ def verify_tersoff_2body_symmetry(tersoff_params):
 
     **Parameters**
 
-        tersoff_params: *list,* :class:`Tersoff`
+        tersoff_params: *list,* :class:`squid.forcefields.tersoff.Tersoff`
             A list of Tersoff objects.
 
     **Returns**
@@ -1037,7 +1073,7 @@ def _unique_grab_2body(tersoff_params):
 
     **Parameters**
 
-        tersoff_params: *list,* :class:`Tersoff`
+        tersoff_params: *list,* :class:`squid.forcefields.tersoff.Tersoff`
             A list of Tersoff objects.
 
     **Returns**
@@ -1070,12 +1106,12 @@ def sorted_force_2body_symmetry(tersoff_params):
 
     **Parameters**
 
-        tersoff_params: *list,* :class:`Tersoff`
+        tersoff_params: *list,* :class:`squid.forcefields.tersoff.Tersoff`
             A list of Tersoff objects.
 
     **Returns**
 
-        corrected_tersoff_params: *list,* :class:`Tersoff`
+        corrected_tersoff_params: *list,* :class:`squid.forcefields.tersoff.Tersoff`
             A list of Tersoff objects with the 2body symmetry
             condition ensured.
     '''
@@ -1097,12 +1133,12 @@ def tag_tersoff_for_duplicate_2bodies(tersoff_params):
 
     **Parameters**
 
-        tersoff_params: *list,* :class:`Tersoff`
+        tersoff_params: *list,* :class:`squid.forcefields.tersoff.Tersoff`
             A list of Tersoff objects.
 
     **Returns**
 
-        tagged_tersoff_params: *list,* :class:`Tersoff`
+        tagged_tersoff_params: *list,* :class:`squid.forcefields.tersoff.Tersoff`
             A list of the unique Tersoff objects.
 
     **Returns**

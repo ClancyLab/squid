@@ -61,6 +61,26 @@ def check_restriction(p, restrict):
 
 
 def map_to_lmp_index(p, restrict):
+    '''
+    Given some set of labels, return the corresponding lammps index.
+    For example, we hold restrict as a list of atom types for LAMMPS.
+    The corresponding index in restrict is one less than the lammps
+    type we output (say, in the data file).  As such, this function
+    tries to robustly convert p into its corresponding lammps index.
+
+    **Parameters**
+
+        p: *obj*
+            Some parameter object, such as Coulomb, Morse, etc.
+        restrict: *list, int*
+            A list of indices that we want to use.
+
+    **Returns**
+
+        mapped_indices: *...*
+            Usually a list of the mapped indices.
+
+    '''
     assert restrict is not None,\
         "Error - Without restrict we cannot map to lmp index!"
 

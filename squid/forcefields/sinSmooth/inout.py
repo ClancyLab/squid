@@ -85,6 +85,11 @@ class SmoothSinInOut(object):
             if inout is used.
         c_s_index: *int*
             Which smooth function this applies to (0th, 1st, etc).
+
+    **Returns**
+
+        smooth_obj: :class:`squid.forcefields.sinSmooth.lr.SmoothSinInOut`
+            This SmoothSinInOut object.
     '''
 
     def __init__(self, smooth_index, atom_i, atom_j,
@@ -155,10 +160,25 @@ class SmoothSinInOut(object):
 
         return pkg
 
-    def dump_pair_coeffs(self, restricts, skip_restricts=False):
+    def dump_pair_coeffs(self, restricts, map_to_lmp_index=True):
         '''
         Get the smrff lammps input line for this smooth function.  Specifically
         the pair_coeff line.
+
+        **Parameters**
+
+            restricts: *list, str*
+                A list of the atom types and how they apply to LAMMPS.  For
+                example, assume restricts = ["xA", "xB"], then atoms of
+                index xA will be 1 in LAMMPS dumps and atoms of xB will be
+                2 in LAMMPS dumps.
+            map_to_lmp_index: *bool, optional*
+                Whether to map the pair coeffs to the lmp indices or not.
+
+        **Returns**
+
+            pair_str: *str*
+                The pair coefficients in LAMMPS input script line format.
         '''
 
         self.validate()
@@ -174,14 +194,14 @@ class SmoothSinInOut(object):
         if self.atom_i is None:
             ai = "*"
         else:
-            if not skip_restricts:
+            if map_to_lmp_index:
                 ai = restricts.index(self.atom_i) + 1
             else:
                 ai = self.atom_i
         if self.atom_j is None:
             aj = "*"
         else:
-            if not skip_restricts:
+            if map_to_lmp_index:
                 aj = restricts.index(self.atom_j) + 1
             else:
                 aj = self.atom_j
@@ -201,12 +221,14 @@ class SmoothSinInOut(object):
         to be used during parameterization.
 
         **Parameters**
+
             with_indices: *bool, optional*
                 Whether to also include the indices in the list.
             with_bounds: *bool, optional*
                 Whether to also include the bounds.
 
         **Returns**
+
             Smooth: *list, str/float*
                 A list of parameters.  With inidices includes smooth_index,
                 atom_i, and atom_j, else it is only the distances.
@@ -238,9 +260,14 @@ class SmoothSinInOut(object):
         pack gcut nor lr.
 
         **Parameters**
+
             params: *list*
                 A list holding the indices and parameters.
+            with_indices: *bool, optional*
+                Whether the indices are included in the list.
+
         **Returns**
+
             None
         '''
         if not isinstance(params, list):
@@ -331,7 +358,9 @@ class SmoothSinInOut(object):
     def load_smrff(cls, parsed_file, pfile_name=None, restrict=None):
         '''
         Given a parameter file, inport the smooth parameters if possible.
+
         **Parameters**
+
             parsed_file: *str*
                 A parsed smrff parameter file input string (no comments or
                 trailing white spaces)
@@ -339,8 +368,13 @@ class SmoothSinInOut(object):
                 The name of a parameter file to be parsed.  If specified,
                 then parsed_file is ignored (you may simply pass None as
                 parsed_file).
+            restrict: *list, str, optional*
+                A list of atom labels to include when loading.  If not
+                specified, everything is loaded.
+
         **Returns**
-            smooth_objs: *list, smooth*, or *None*
+
+            smooth_objs: *list,* :class:`squid.forcefields.sinSmooth.lr.SmoothSinInOut`, or *None*
                 Returns a list of smooth objects if possible, else None.
         '''
         import squid.forcefields.smrff as smrff_utils

@@ -31,8 +31,10 @@ class SmoothSinCoupled(object):
 
     **Parameters**
 
-        smooth_index: *int*
-            Which smooth function this is applied to (0th, 1st, etc).
+        smooth_index_1: *int*
+            Which smooth function is included in the coupling.
+        smooth_index_2: *int*
+            Which other smooth function is included in the coupling.
         atom_i: *int*
             Which atom type this applies to.  Note, using None is
             the same as *.
@@ -67,6 +69,11 @@ class SmoothSinCoupled(object):
                 2 - Indicates that smooth_2_index is inout.
             If l, r, or b, then r_2, d_2, and gcut_2 must be specified.  If
             b is chosen, then we must also specify r_3, d_3, and gcut_3
+
+    **Returns**
+
+        smooth_obj: :class:`squid.forcefields.sinSmooth.coupled.SmoothSinCoupled`
+            This SmoothSinCoupled object.
     '''
 
     def __init__(self, smooth_1_index, smooth_2_index, atom_i, atom_j,
@@ -150,6 +157,14 @@ class SmoothSinCoupled(object):
         return self.print_coupled_line()
 
     def print_individual_smooths(self):
+        '''
+        Return this coupled smooth as the individual ones instead.
+
+        **Returns**
+
+            individual_smooths: *str*
+                The individual smooth strings.
+        '''
         self.regenerate()
         return "\n".join([
             str(self.smooth_1),
@@ -160,6 +175,11 @@ class SmoothSinCoupled(object):
         '''
         Unlike the normal string format, which puts the individual smooths
         down, this one will put a coupled smooth line down.
+
+        **Returns**
+
+            coupled_line: *str*
+                The coupled line smooth format.
         '''
         self.regenerate()
         r2r3 = [
@@ -176,6 +196,14 @@ class SmoothSinCoupled(object):
         ] + [str(r) for r in r2r3 if r is not None])
 
     def regenerate(self):
+        '''
+        Because we couple two smooth objects, this function will regenerate
+        the objects based on the shared values here.
+
+        **Returns**
+
+            None.
+        '''
         self.validate()
         self.smooth_1 = None
         self.smooth_2 = None
@@ -237,10 +265,14 @@ class SmoothSinCoupled(object):
     def parse_line(line):
         '''
         Parse line inputs and assign to this object.
+
         **Parameters**
+
             line: *str*
                 A string that holds a smooth parameter set.
+
         **Returns**
+
             None
         '''
 
@@ -273,7 +305,7 @@ class SmoothSinCoupled(object):
             i(inout_index)
         ]
 
-    def dump_pair_coeffs(self, restricts, skip_restricts=False):
+    def dump_pair_coeffs(self, restricts, map_to_lmp_index=True):
         '''
         Get the smrff lammps input line for this smooth function.  Specifically
         the pair_coeff line.
@@ -285,14 +317,21 @@ class SmoothSinCoupled(object):
                 example, assume restricts = ["xA", "xB"], then atoms of
                 index xA will be 1 in LAMMPS dumps and atoms of xB will be
                 2 in LAMMPS dumps.
+            map_to_lmp_index: *bool, optional*
+                Whether to map the pair coeffs to the lmp indices or not.
+
+        **Returns**
+
+            pair_str: *str*
+                The pair coefficients in LAMMPS input script line format.
         '''
         self.regenerate()
 
         return "\n".join([
             self.smooth_1.dump_pair_coeffs(restricts,
-                                           skip_restricts=skip_restricts),
+                                           map_to_lmp_index=map_to_lmp_index),
             self.smooth_2.dump_pair_coeffs(restricts,
-                                           skip_restricts=skip_restricts),
+                                           map_to_lmp_index=map_to_lmp_index),
         ])
 
     def unpack(self, with_indices=True, with_bounds=False):
@@ -302,12 +341,14 @@ class SmoothSinCoupled(object):
         to be used during parameterization.
 
         **Parameters**
+
             with_indices: *bool, optional*
                 Whether to also include the indices in the list.
             with_bounds: *bool, optional*
                 Whether to also include the bounds.
 
         **Returns**
+
             Smooth: *list, str/float*
                 A list of parameters.  With inidices includes smooth_index,
                 atom_i, and atom_j, else it is only the distances.
@@ -352,9 +393,14 @@ class SmoothSinCoupled(object):
         pack gcut nor lr.
 
         **Parameters**
+
             params: *list*
                 A list holding the indices and parameters.
+            with_indices: *bool, optional*
+                Whether the indices are included in the list.
+
         **Returns**
+
             None
         '''
         if not isinstance(params, list):
@@ -393,14 +439,30 @@ class SmoothSinCoupled(object):
 
             atom_types: *list, str*
                 A list of all the atom types to have parameters generated for.
-            gcut: *float*
+            smooth_index_1: *int*
+                Which smooth function is included in the coupling.
+            smooth_index_2: *int*
+                Which other smooth function is included in the coupling.
+            gcut_1: *float*
                 The global cutoff, to not be exceeded.
-            smooth_index: *int*
-                This smooth's index.
+            gcut_1: *float, optional*
+                The global cutoff, to not be exceeded.
+            gcut_1: *float, optional*
+                The global cutoff, to not be exceeded.
+            inout_index: *int, optional*
+                If r_out and d_out are specified, you MUST specify
+                this. It is one of the following:
+                    None - Neither smooth_1_index nor smooth_2_index is inout
+                    0 - Indicates that both smooth_1_index and smooth_2_index
+                        are inout.
+                    1 - Indicates that smooth_1_index is inout.
+                    2 - Indicates that smooth_2_index is inout.
+                If l, r, or b, then r_2, d_2, and gcut_2 must be specified.  If
+                b is chosen, then we must also specify r_3, d_3, and gcut_3
 
         **Returns**
 
-            smooth_objs: *list, SmoothSin*
+            smooth_objs: *list,* :class:`squid.forcefields.sinSmooth.coupled.SmoothSinCoupled`
                 Returns a list of smooth objects.
         '''
         smooth_objs = []
@@ -461,6 +523,13 @@ class SmoothSinCoupled(object):
         return smooth_objs
 
     def validate(self):
+        '''
+        Validate parameters.
+
+        **Returns**
+
+            None
+        '''
         # Error Handling
         for i, r, d, g in zip([1, 2, 3],
                               [self.r_1, self.r_2, self.r_3],
@@ -481,15 +550,22 @@ class SmoothSinCoupled(object):
     def load_smrff(cls, parsed_file, pfile_name=None, restrict=None):
         '''
         Given a parameter file, inport the smooth parameters if possible.
+
         **Parameters**
+
             pfile: *str*
                 A parsed smrff parameter file input string (no comments or
                 trailing white spaces)
             pfptr: *str*
                 The name of a parameter file to be parsed.  If specified,
                 then pfile is ignored (you may simply pass None as pfile).
+            restrict: *list, str, optional*
+                A list of atom labels to include when loading.  If not
+                specified, everything is loaded.
+
         **Returns**
-            smooth_objs: *list, smooth*, or *None*
+
+            smooth_objs: *list,* :class:`squid.forcefields.sinSmooth.coupled.SmoothSinCoupled`, or *None*
                 Returns a list of smooth objects if possible, else None.
         '''
         import squid.forcefields.smrff as smrff_utils
