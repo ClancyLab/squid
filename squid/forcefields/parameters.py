@@ -87,6 +87,9 @@ class Parameters(object):
             stored parameters in squid.
         smrff_file: *str, optional*
             The path to a SMRFF parameter file.  Default is None.
+        force_ters_2body_symmetry: *bool, optional*
+            Whether to force any read in tersoff parameters to have the
+            2-body symmetry we expect.
 
     **Returns**
 
@@ -94,7 +97,9 @@ class Parameters(object):
             This object.
     '''
 
-    def __init__(self, restrict, opls_file=OPLS_FILE, smrff_file=None):
+    def __init__(self,
+                 restrict, opls_file=OPLS_FILE, smrff_file=None,
+                 force_ters_2body_symmetry=False):
         #####################################
         # Initialize empty data lists
         self.lj_params = []
@@ -135,6 +140,8 @@ class Parameters(object):
         self.opls_structure_dict = {}
 
         self.write_tfile = True
+
+        self.force_ters_2body_symmetry = force_ters_2body_symmetry
 
         # Load in all the parameters
         if opls_file is not None:
@@ -591,6 +598,9 @@ is not a pair potential."
 
         self.tersoff_params += Tersoff.load_smrff(
             raw, pfile_name=None, restrict=self.restrict)
+
+        if self.force_ters_2body_symmetry:
+            sorted_force_2body_symmetry(self.tersoff_params)
         verify_tersoff_2body_symmetry(self.tersoff_params)
         self.morse_params += Morse.load_smrff(
             raw, pfile_name=None, restrict=self.restrict)
