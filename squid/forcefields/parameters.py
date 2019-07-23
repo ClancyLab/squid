@@ -1142,10 +1142,13 @@ is not a pair potential."
                 The input script line for LAMMPS for the smrff pair style.
         '''
         # Expand ters to tersoff
-        get = lambda s: "tersoff" if str(s).startswith("ters") else str(s)
+        get = lambda s1, s2:\
+            "tersoff"\
+            if str(s1).startswith("ters")\
+            else "%s %s" % (str(s1), str(s2))
 
         return "pair_style smrff " +\
-            " ".join([get(s1) + " " + str(s2)
+            " ".join([get(s1, s2)
                       for s1, s2, _ in self.smoothed_pair_potentials]) +\
             " smooth " +\
             " ".join([str(s) for _, _, s in self.smoothed_pair_potentials])
