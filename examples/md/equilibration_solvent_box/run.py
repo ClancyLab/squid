@@ -63,5 +63,5 @@ fix motion_nvt all nvt temp 300.0 300.0 300.0
 run 10000
 unfix motion_nvt
 """
-    job_handle = lammps.job("solv_box", input_script, system=world, procs=1)
+    job_handle = lammps.job("solv_box", input_script, system=world, nprocs=1)
     job_handle.wait()
