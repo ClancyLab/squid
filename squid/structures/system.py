@@ -406,16 +406,14 @@ class System(object):
         assert self.atom_labels is not None,\
             "Error - You must first run set_types before this works."
 
+        assert len(self.parameters.morse_params) == 0,\
+            "Error - If you are using morse parameters, you must put pair \
+coefficients in the input script, not the data file."
+
         return '\n'.join(sorted([
             '%d %d %s'
-            % (self.i2t(lj.index), self.i2t(lj.index), lj.pair_coeff_dump())
+            % (self.i2t(lj.index), lj.pair_coeff_dump())
             for lj in self.parameters.lj_params],
-            key=lambda s: int(s.split()[0])) + sorted([
-                '%d %d %s'
-                % (self.i2t(morse.indices[0]), self.i2t(morse.indices[1]),
-                   morse.pair_coeff_dump())
-                for morse in self.parameters.morse_params
-            ],
             key=lambda s: int(s.split()[0])))
 
     def get_elements(self):
