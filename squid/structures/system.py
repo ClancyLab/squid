@@ -411,7 +411,7 @@ class System(object):
 coefficients in the input script, not the data file."
 
         return '\n'.join(sorted([
-            '%d %d %s'
+            '%d %s'
             % (self.i2t(lj.index), lj.pair_coeff_dump())
             for lj in self.parameters.lj_params],
             key=lambda s: int(s.split()[0])))
