@@ -284,8 +284,8 @@ is not a pair potential."
                 # If we aren't smoothing here, then don't smooth
                 # But keep in mind, if we are coupling we may still be
                 # smoothing
-                if lhs_potential.lower() == "null" or\
-                    lhs_potential.startswith("ters") and\
+                if lhs_smooth.lower() == "null" or\
+                    lhs_smooth.startswith("ters") and\
                         not couple_smooths:
                     continue
 
