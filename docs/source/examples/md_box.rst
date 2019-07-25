@@ -70,7 +70,7 @@ In this example, we equilibrate an MD box of two benzene molecules (offset by 10
     run 10000
     unfix motion_nvt
     """
-        job_handle = lammps.job("solv_box", input_script, system=world, procs=1)
+        job_handle = lammps.job("solv_box", input_script, system=world, nprocs=1)
         job_handle.wait()
 
 
@@ -112,4 +112,5 @@ In this example, we want to write a lammps data file without knowing any paramet
         geometry.packmol(world, [solv], persist=False, density=1.0)
 
         # Step 5 - Run a simulation
+        world.set_types()
         lammps.write_lammps_data(world)
