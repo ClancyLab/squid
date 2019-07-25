@@ -146,6 +146,8 @@ lead to errors).
         ntasks=tasks, nprocs=nprocs, ompi_threads=omp,
         queue=queue, xhosts=xhost, args=args,
         path=getcwd(), priority=priority,
-        walltime=walltime, unique_name=unique, py3=py3, use_mpi=use_mpi,
+        walltime=walltime, unique_name=unique, py3=py3, preface_mpi=use_mpi,
         modules=use_these_mods, slurm_allocation=slurm_allocation,
-        jobarray=jobarray, gpu=gpu)
+        jobarray=jobarray, gpu=gpu
+    )
+
