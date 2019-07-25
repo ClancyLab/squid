@@ -96,7 +96,7 @@
     <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Step 5 - Run NEB...&quot;</span><span class="p">)</span>
     <span class="n">neb_handle</span> <span class="o">=</span> <span class="n">NEB</span><span class="p">(</span>
         <span class="s2">&quot;CNH&quot;</span><span class="p">,</span> <span class="n">CNH_frames</span><span class="p">,</span> <span class="s2">&quot;! HF-3c&quot;</span><span class="p">,</span>
-        <span class="n">procs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">queue</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ci_neb</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">nprocs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">queue</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ci_neb</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
     <span class="n">CNH_frames</span> <span class="o">=</span> <span class="n">neb_handle</span><span class="o">.</span><span class="n">optimize</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="c1"># Save final band</span>
     <span class="n">files</span><span class="o">.</span><span class="n">write_xyz</span><span class="p">(</span><span class="n">CNH_frames</span><span class="p">,</span> <span class="s2">&quot;final.xyz&quot;</span><span class="p">)</span>

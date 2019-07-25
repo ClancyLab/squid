@@ -94,11 +94,11 @@ Gtol of 1E-5 from scipy.bfgs package</p>
 </pre></div>
 </div>
 <ul class="simple">
-<li><a class="reference internal" href="#squid.calcs.aneb.g09_start_job" title="squid.calcs.aneb.g09_start_job"><code class="xref py py-func docutils literal notranslate"><span class="pre">g09_start_job()</span></code></a></li>
-<li><a class="reference internal" href="#squid.calcs.aneb.g09_results" title="squid.calcs.aneb.g09_results"><code class="xref py py-func docutils literal notranslate"><span class="pre">g09_results()</span></code></a></li>
-<li><a class="reference internal" href="#squid.calcs.aneb.orca_start_job" title="squid.calcs.aneb.orca_start_job"><code class="xref py py-func docutils literal notranslate"><span class="pre">orca_start_job()</span></code></a></li>
-<li><a class="reference internal" href="#squid.calcs.aneb.orca_results" title="squid.calcs.aneb.orca_results"><code class="xref py py-func docutils literal notranslate"><span class="pre">orca_results()</span></code></a></li>
-<li><a class="reference internal" href="#squid.calcs.aneb.ANEB" title="squid.calcs.aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a></li>
+<li><a class="reference internal" href="module_docs/calcs/aneb.html#squid.calcs.aneb.g09_start_job" title="squid.calcs.aneb.g09_start_job"><code class="xref py py-func docutils literal notranslate"><span class="pre">g09_start_job()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/calcs/aneb.html#squid.calcs.aneb.g09_results" title="squid.calcs.aneb.g09_results"><code class="xref py py-func docutils literal notranslate"><span class="pre">g09_results()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/calcs/aneb.html#squid.calcs.aneb.orca_start_job" title="squid.calcs.aneb.orca_start_job"><code class="xref py py-func docutils literal notranslate"><span class="pre">orca_start_job()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/calcs/aneb.html#squid.calcs.aneb.orca_results" title="squid.calcs.aneb.orca_results"><code class="xref py py-func docutils literal notranslate"><span class="pre">orca_results()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/calcs/aneb.html#squid.calcs.aneb.ANEB" title="squid.calcs.aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a></li>
 </ul>
 <hr class="docutils" />
 <dl class="class">
@@ -112,7 +112,7 @@ is potentially generalizable to other programs.</p>
 <div><dl class="docutils">
 <dt>name: <em>str</em></dt>
 <dd>The name of the ANEB simulation to be run.</dd>
-<dt>states: <em>list, list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>states: <em>list, list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of frames, each frame being a list of atom structures.
 These frames represent your reaction coordinate.</dd>
 <dt>theory: <em>str</em></dt>
@@ -183,7 +183,7 @@ number is chosen, the expansion happens around floor(ANEB_Nsim/2).</dd>
 </div></blockquote>
 <p><strong>Returns</strong></p>
 <blockquote>
-<div>This <a class="reference internal" href="#squid.calcs.aneb.ANEB" title="squid.calcs.aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a> object.</div></blockquote>
+<div>This <a class="reference internal" href="module_docs/calcs/aneb.html#squid.calcs.aneb.ANEB" title="squid.calcs.aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a> object.</div></blockquote>
 <p><strong>References</strong></p>
 <blockquote>
 <div><ul class="simple">
@@ -252,7 +252,7 @@ in state and (b) return the energy and atoms.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>ANEB: <a class="reference internal" href="#squid.calcs.aneb.ANEB" title="squid.calcs.aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a></dt>
+<dt>ANEB: <a class="reference internal" href="module_docs/calcs/aneb.html#squid.calcs.aneb.ANEB" title="squid.calcs.aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a></dt>
 <dd>An ANEB container holding the main ANEB simulation</dd>
 <dt>step_to_use: <em>int</em></dt>
 <dd>Which iteration in the ANEB sequence the output to be read in
@@ -260,7 +260,7 @@ is on.</dd>
 <dt>i: <em>int</em></dt>
 <dd>The index corresponding to which image on the frame is to be
 simulated.</dd>
-<dt>state: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>state: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms describing the image on the frame associated with
 index <em>i</em>.</dd>
 </dl>
@@ -270,7 +270,7 @@ index <em>i</em>.</dd>
 <div><dl class="docutils">
 <dt>new_energy: <em>float</em></dt>
 <dd>The energy of the system in Hartree (Ha).</dd>
-<dt>new_atoms: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>new_atoms: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms with the forces attached in units of Hartree per
 Angstrom (Ha/Ang).</dd>
 </dl>
@@ -285,12 +285,12 @@ ANEB calculations.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>ANEB: <a class="reference internal" href="#squid.calcs.aneb.ANEB" title="squid.calcs.aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a></dt>
+<dt>ANEB: <a class="reference internal" href="module_docs/calcs/aneb.html#squid.calcs.aneb.ANEB" title="squid.calcs.aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a></dt>
 <dd>An ANEB container holding the main ANEB simulation</dd>
 <dt>i: <em>int</em></dt>
 <dd>The index corresponding to which image on the frame is to be
 simulated.</dd>
-<dt>state: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>state: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms describing the image on the frame associated
 with index <em>i</em>.</dd>
 <dt>charge: <em>int</em></dt>
@@ -315,7 +315,7 @@ for this function yet.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>g09_job: <a class="reference internal" href="#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
+<dt>g09_job: <a class="reference internal" href="module_docs/jobs/container.html#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
 <dd>A job container holding the g09 simulation.</dd>
 </dl>
 </div></blockquote>
@@ -330,7 +330,7 @@ in state and (b) return the energy and atoms.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>ANEB: <a class="reference internal" href="#squid.calcs.aneb.ANEB" title="squid.calcs.aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a></dt>
+<dt>ANEB: <a class="reference internal" href="module_docs/calcs/aneb.html#squid.calcs.aneb.ANEB" title="squid.calcs.aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a></dt>
 <dd>An ANEB container holding the main ANEB simulation</dd>
 <dt>step_to_use: <em>int</em></dt>
 <dd>Which iteration in the ANEB sequence the output to be read in
@@ -338,7 +338,7 @@ is on.</dd>
 <dt>i: <em>int</em></dt>
 <dd>The index corresponding to which image on the frame is to be
 simulated.</dd>
-<dt>state: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>state: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms describing the image on the frame associated with
 index <em>i</em>.</dd>
 </dl>
@@ -348,7 +348,7 @@ index <em>i</em>.</dd>
 <div><dl class="docutils">
 <dt>new_energy: <em>float</em></dt>
 <dd>The energy of the system in Hartree (Ha).</dd>
-<dt>new_atoms: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>new_atoms: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms with the forces attached in units of Hartree per
 Angstrom (Ha/Ang).</dd>
 </dl>
@@ -363,12 +363,12 @@ calculations.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>ANEB: <a class="reference internal" href="#squid.calcs.aneb.ANEB" title="squid.calcs.aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a></dt>
+<dt>ANEB: <a class="reference internal" href="module_docs/calcs/aneb.html#squid.calcs.aneb.ANEB" title="squid.calcs.aneb.ANEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">ANEB</span></code></a></dt>
 <dd>An ANEB container holding the main ANEB simulation</dd>
 <dt>i: <em>int</em></dt>
 <dd>The index corresponding to which image on the frame is to be
 simulated.</dd>
-<dt>state: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>state: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms describing the image on the frame associated with
 index <em>i</em>.</dd>
 <dt>charge: <em>int</em></dt>
@@ -392,7 +392,7 @@ hessian.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>orca_job: <a class="reference internal" href="#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
+<dt>orca_job: <a class="reference internal" href="module_docs/jobs/container.html#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
 <dd>A job container holding the orca simulation.</dd>
 </dl>
 </div></blockquote>
@@ -403,11 +403,11 @@ hessian.</dd>
 <span id="neb"></span><h3>NEB<a class="headerlink" href="#module-squid.calcs.neb" title="Permalink to this headline">¶</a></h3>
 <p>The NEB module simplifies the submission of Nudged Elastic Band simulations.</p>
 <ul class="simple">
-<li><a class="reference internal" href="#squid.calcs.neb.g09_start_job" title="squid.calcs.neb.g09_start_job"><code class="xref py py-func docutils literal notranslate"><span class="pre">g09_start_job()</span></code></a></li>
-<li><a class="reference internal" href="#squid.calcs.neb.g09_results" title="squid.calcs.neb.g09_results"><code class="xref py py-func docutils literal notranslate"><span class="pre">g09_results()</span></code></a></li>
-<li><a class="reference internal" href="#squid.calcs.neb.orca_start_job" title="squid.calcs.neb.orca_start_job"><code class="xref py py-func docutils literal notranslate"><span class="pre">orca_start_job()</span></code></a></li>
-<li><a class="reference internal" href="#squid.calcs.neb.orca_results" title="squid.calcs.neb.orca_results"><code class="xref py py-func docutils literal notranslate"><span class="pre">orca_results()</span></code></a></li>
-<li><a class="reference internal" href="#squid.calcs.neb.NEB" title="squid.calcs.neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a></li>
+<li><a class="reference internal" href="module_docs/calcs/neb.html#squid.calcs.neb.g09_start_job" title="squid.calcs.neb.g09_start_job"><code class="xref py py-func docutils literal notranslate"><span class="pre">g09_start_job()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/calcs/neb.html#squid.calcs.neb.g09_results" title="squid.calcs.neb.g09_results"><code class="xref py py-func docutils literal notranslate"><span class="pre">g09_results()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/calcs/neb.html#squid.calcs.neb.orca_start_job" title="squid.calcs.neb.orca_start_job"><code class="xref py py-func docutils literal notranslate"><span class="pre">orca_start_job()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/calcs/neb.html#squid.calcs.neb.orca_results" title="squid.calcs.neb.orca_results"><code class="xref py py-func docutils literal notranslate"><span class="pre">orca_results()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/calcs/neb.html#squid.calcs.neb.NEB" title="squid.calcs.neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a></li>
 </ul>
 <hr class="docutils" />
 <dl class="class">
@@ -421,7 +421,7 @@ is potentially generalizable to other programs.</p>
 <div><dl class="docutils">
 <dt>name: <em>str</em></dt>
 <dd>The name of the NEB simulation to be run.</dd>
-<dt>states: <em>list, list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>states: <em>list, list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of frames, each frame being a list of atom structures.
 These frames represent your reaction coordinate.</dd>
 <dt>theory: <em>str</em></dt>
@@ -492,7 +492,7 @@ two things, so just have it return (None, atoms + forces).</dd>
 </div></blockquote>
 <p><strong>Returns</strong></p>
 <blockquote>
-<div>This <a class="reference internal" href="#squid.calcs.neb.NEB" title="squid.calcs.neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a> object.</div></blockquote>
+<div>This <a class="reference internal" href="module_docs/calcs/neb.html#squid.calcs.neb.NEB" title="squid.calcs.neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a> object.</div></blockquote>
 <p><strong>References</strong></p>
 <blockquote>
 <div><ul class="simple">
@@ -559,14 +559,14 @@ in state and (b) return the energy and atoms.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>NEB: <a class="reference internal" href="#squid.calcs.neb.NEB" title="squid.calcs.neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a></dt>
+<dt>NEB: <a class="reference internal" href="module_docs/calcs/neb.html#squid.calcs.neb.NEB" title="squid.calcs.neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a></dt>
 <dd>An NEB container holding the main NEB simulation</dd>
 <dt>step_to_use: <em>int</em></dt>
 <dd>Which iteration in the NEB sequence the output to be read in is on.</dd>
 <dt>i: <em>int</em></dt>
 <dd>The index corresponding to which image on the frame is to be
 simulated.</dd>
-<dt>state: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>state: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms describing the image on the frame associated with
 index <em>i</em>.</dd>
 </dl>
@@ -576,7 +576,7 @@ index <em>i</em>.</dd>
 <div><dl class="docutils">
 <dt>new_energy: <em>float</em></dt>
 <dd>The energy of the system in Hartree (Ha).</dd>
-<dt>new_atoms: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>new_atoms: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms with the forces attached in units of Hartree per
 Angstrom (Ha/Ang).</dd>
 </dl>
@@ -591,12 +591,12 @@ NEB calculations.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>NEB: <a class="reference internal" href="#squid.calcs.neb.NEB" title="squid.calcs.neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a></dt>
+<dt>NEB: <a class="reference internal" href="module_docs/calcs/neb.html#squid.calcs.neb.NEB" title="squid.calcs.neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a></dt>
 <dd>An NEB container holding the main NEB simulation</dd>
 <dt>i: <em>int</em></dt>
 <dd>The index corresponding to which image on the frame is to be
 simulated.</dd>
-<dt>state: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>state: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms describing the image on the frame associated
 with index <em>i</em>.</dd>
 <dt>charge: <em>int</em></dt>
@@ -625,7 +625,7 @@ for this function.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>g09_job: <a class="reference internal" href="#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
+<dt>g09_job: <a class="reference internal" href="module_docs/jobs/container.html#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
 <dd>A job container holding the g09 simulation.</dd>
 </dl>
 </div></blockquote>
@@ -640,14 +640,14 @@ in state and (b) return the energy and atoms.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>NEB: <a class="reference internal" href="#squid.calcs.neb.NEB" title="squid.calcs.neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a></dt>
+<dt>NEB: <a class="reference internal" href="module_docs/calcs/neb.html#squid.calcs.neb.NEB" title="squid.calcs.neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a></dt>
 <dd>An NEB container holding the main NEB simulation</dd>
 <dt>step_to_use: <em>int</em></dt>
 <dd>Which iteration in the NEB sequence the output to be read in is on.</dd>
 <dt>i: <em>int</em></dt>
 <dd>The index corresponding to which image on the frame is to be
 simulated.</dd>
-<dt>state: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>state: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms describing the image on the frame associated with
 index <em>i</em>.</dd>
 </dl>
@@ -657,7 +657,7 @@ index <em>i</em>.</dd>
 <div><dl class="docutils">
 <dt>new_energy: <em>float</em></dt>
 <dd>The energy of the system in Hartree (Ha).</dd>
-<dt>new_atoms: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>new_atoms: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms with the forces attached in units of Hartree per
 Angstrom (Ha/Ang).</dd>
 </dl>
@@ -672,12 +672,12 @@ calculations.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>NEB: <a class="reference internal" href="#squid.calcs.neb.NEB" title="squid.calcs.neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a></dt>
+<dt>NEB: <a class="reference internal" href="module_docs/calcs/neb.html#squid.calcs.neb.NEB" title="squid.calcs.neb.NEB"><code class="xref py py-class docutils literal notranslate"><span class="pre">NEB</span></code></a></dt>
 <dd>An NEB container holding the main NEB simulation</dd>
 <dt>i: <em>int</em></dt>
 <dd>The index corresponding to which image on the frame is to be
 simulated.</dd>
-<dt>state: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>state: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms describing the image on the frame associated with
 index <em>i</em>.</dd>
 <dt>charge: <em>int</em></dt>
@@ -705,7 +705,7 @@ hessian.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>orca_job: <a class="reference internal" href="#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
+<dt>orca_job: <a class="reference internal" href="module_docs/jobs/container.html#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
 <dd>A job container holding the orca simulation.</dd>
 </dl>
 </div></blockquote>
@@ -755,7 +755,7 @@ You may further pass a System object that has further information.</dd>
 <dd>The name of the output file (either ending or not in .cml).</dd>
 <dt>bonds: <em>list,</em> <a class="reference internal" href="module_docs/structures/topology.html#squid.structures.topology.Connector" title="squid.structures.topology.Connector"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.topology.Connector</span></code></a> <em>, optional</em></dt>
 <dd>A list of bonds within the system.  This is useful when the input
-is a list of <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a>.</dd>
+is a list of <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a>.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
@@ -873,9 +873,9 @@ cast_elem_to_sym=False.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>frames: <em>list, list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>frames: <em>list, list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms read in from the xyz file.  If there is only one
-frame, then only a <em>list</em> of <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a>
+frame, then only a <em>list</em> of <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a>
 is returned.</dd>
 </dl>
 </div></blockquote>
@@ -905,7 +905,7 @@ cast_elem_to_sym=False.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>yield: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>yield: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A frame from an xyz file.</dd>
 </dl>
 </div></blockquote>
@@ -919,7 +919,7 @@ format.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>frames_or_system: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>frames_or_system: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>Atoms to be written to an xyz file.</dd>
 <dt>name: <em>str, optional</em></dt>
 <dd>A filename for the xyz file.</dd>
@@ -1039,15 +1039,15 @@ and equilibs, or pass a line to be parsed.</p>
 <p>This object contains the following:</p>
 <blockquote>
 <div><ul class="simple">
-<li><a class="reference internal" href="#squid.forcefields.connectors.HarmonicConnector.assign_line" title="squid.forcefields.connectors.HarmonicConnector.assign_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">assign_line()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.connectors.HarmonicConnector.fix" title="squid.forcefields.connectors.HarmonicConnector.fix"><code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.connectors.HarmonicConnector.load_opls" title="squid.forcefields.connectors.HarmonicConnector.load_opls"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_opls()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.connectors.HarmonicConnector.load_smrff" title="squid.forcefields.connectors.HarmonicConnector.load_smrff"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_smrff()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.connectors.HarmonicConnector.pack" title="squid.forcefields.connectors.HarmonicConnector.pack"><code class="xref py py-func docutils literal notranslate"><span class="pre">pack()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.connectors.HarmonicConnector.parse_line" title="squid.forcefields.connectors.HarmonicConnector.parse_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse_line()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.connectors.HarmonicConnector.printer" title="squid.forcefields.connectors.HarmonicConnector.printer"><code class="xref py py-func docutils literal notranslate"><span class="pre">printer()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.connectors.HarmonicConnector.unpack" title="squid.forcefields.connectors.HarmonicConnector.unpack"><code class="xref py py-func docutils literal notranslate"><span class="pre">unpack()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.connectors.HarmonicConnector.validate" title="squid.forcefields.connectors.HarmonicConnector.validate"><code class="xref py py-func docutils literal notranslate"><span class="pre">validate()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/connectors.html#squid.forcefields.connectors.HarmonicConnector.assign_line" title="squid.forcefields.connectors.HarmonicConnector.assign_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">assign_line()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/connectors.html#squid.forcefields.connectors.HarmonicConnector.fix" title="squid.forcefields.connectors.HarmonicConnector.fix"><code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/connectors.html#squid.forcefields.connectors.HarmonicConnector.load_opls" title="squid.forcefields.connectors.HarmonicConnector.load_opls"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_opls()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/connectors.html#squid.forcefields.connectors.HarmonicConnector.load_smrff" title="squid.forcefields.connectors.HarmonicConnector.load_smrff"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_smrff()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/connectors.html#squid.forcefields.connectors.HarmonicConnector.pack" title="squid.forcefields.connectors.HarmonicConnector.pack"><code class="xref py py-func docutils literal notranslate"><span class="pre">pack()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/connectors.html#squid.forcefields.connectors.HarmonicConnector.parse_line" title="squid.forcefields.connectors.HarmonicConnector.parse_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse_line()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/connectors.html#squid.forcefields.connectors.HarmonicConnector.printer" title="squid.forcefields.connectors.HarmonicConnector.printer"><code class="xref py py-func docutils literal notranslate"><span class="pre">printer()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/connectors.html#squid.forcefields.connectors.HarmonicConnector.unpack" title="squid.forcefields.connectors.HarmonicConnector.unpack"><code class="xref py py-func docutils literal notranslate"><span class="pre">unpack()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/connectors.html#squid.forcefields.connectors.HarmonicConnector.validate" title="squid.forcefields.connectors.HarmonicConnector.validate"><code class="xref py py-func docutils literal notranslate"><span class="pre">validate()</span></code></a></li>
 </ul>
 </div></blockquote>
 <p><strong>Parameters</strong></p>
@@ -1066,7 +1066,7 @@ and equilibs, or pass a line to be parsed.</p>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>HarmonicConnector: <a class="reference internal" href="#squid.forcefields.connectors.HarmonicConnector" title="squid.forcefields.connectors.HarmonicConnector"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.connectors.HarmonicConnector</span></code></a></dt>
+<dt>HarmonicConnector: <a class="reference internal" href="module_docs/forcefields/connectors.html#squid.forcefields.connectors.HarmonicConnector" title="squid.forcefields.connectors.HarmonicConnector"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.connectors.HarmonicConnector</span></code></a></dt>
 <dd>A HarmonicConnector object.</dd>
 </dl>
 </div></blockquote>
@@ -1268,17 +1268,17 @@ information (index, charge, mass, element) or parsed from a string (line).</p>
 <p>This object contains the following:</p>
 <blockquote>
 <div><ul class="simple">
-<li><a class="reference internal" href="#squid.forcefields.coulomb.Coul.assign_line" title="squid.forcefields.coulomb.Coul.assign_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">assign_line()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.coulomb.Coul.fix" title="squid.forcefields.coulomb.Coul.fix"><code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.coulomb.Coul.generate" title="squid.forcefields.coulomb.Coul.generate"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.coulomb.Coul.load_opls" title="squid.forcefields.coulomb.Coul.load_opls"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_opls()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.coulomb.Coul.load_smrff" title="squid.forcefields.coulomb.Coul.load_smrff"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_smrff()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.coulomb.Coul.pack" title="squid.forcefields.coulomb.Coul.pack"><code class="xref py py-func docutils literal notranslate"><span class="pre">pack()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.coulomb.Coul.parse_line" title="squid.forcefields.coulomb.Coul.parse_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse_line()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.coulomb.Coul.print_lower" title="squid.forcefields.coulomb.Coul.print_lower"><code class="xref py py-func docutils literal notranslate"><span class="pre">print_lower()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.coulomb.Coul.print_upper" title="squid.forcefields.coulomb.Coul.print_upper"><code class="xref py py-func docutils literal notranslate"><span class="pre">print_upper()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.coulomb.Coul.unpack" title="squid.forcefields.coulomb.Coul.unpack"><code class="xref py py-func docutils literal notranslate"><span class="pre">unpack()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.coulomb.Coul.validate" title="squid.forcefields.coulomb.Coul.validate"><code class="xref py py-func docutils literal notranslate"><span class="pre">validate()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/coulomb.html#squid.forcefields.coulomb.Coul.assign_line" title="squid.forcefields.coulomb.Coul.assign_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">assign_line()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/coulomb.html#squid.forcefields.coulomb.Coul.fix" title="squid.forcefields.coulomb.Coul.fix"><code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/coulomb.html#squid.forcefields.coulomb.Coul.generate" title="squid.forcefields.coulomb.Coul.generate"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/coulomb.html#squid.forcefields.coulomb.Coul.load_opls" title="squid.forcefields.coulomb.Coul.load_opls"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_opls()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/coulomb.html#squid.forcefields.coulomb.Coul.load_smrff" title="squid.forcefields.coulomb.Coul.load_smrff"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_smrff()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/coulomb.html#squid.forcefields.coulomb.Coul.pack" title="squid.forcefields.coulomb.Coul.pack"><code class="xref py py-func docutils literal notranslate"><span class="pre">pack()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/coulomb.html#squid.forcefields.coulomb.Coul.parse_line" title="squid.forcefields.coulomb.Coul.parse_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse_line()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/coulomb.html#squid.forcefields.coulomb.Coul.print_lower" title="squid.forcefields.coulomb.Coul.print_lower"><code class="xref py py-func docutils literal notranslate"><span class="pre">print_lower()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/coulomb.html#squid.forcefields.coulomb.Coul.print_upper" title="squid.forcefields.coulomb.Coul.print_upper"><code class="xref py py-func docutils literal notranslate"><span class="pre">print_upper()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/coulomb.html#squid.forcefields.coulomb.Coul.unpack" title="squid.forcefields.coulomb.Coul.unpack"><code class="xref py py-func docutils literal notranslate"><span class="pre">unpack()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/coulomb.html#squid.forcefields.coulomb.Coul.validate" title="squid.forcefields.coulomb.Coul.validate"><code class="xref py py-func docutils literal notranslate"><span class="pre">validate()</span></code></a></li>
 </ul>
 </div></blockquote>
 <p><strong>Parameters</strong></p>
@@ -1299,7 +1299,7 @@ information (index, charge, mass, element) or parsed from a string (line).</p>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>coulomb: <a class="reference internal" href="#squid.forcefields.coulomb.Coul" title="squid.forcefields.coulomb.Coul"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.coulomb.Coul</span></code></a></dt>
+<dt>coulomb: <a class="reference internal" href="module_docs/forcefields/coulomb.html#squid.forcefields.coulomb.Coul" title="squid.forcefields.coulomb.Coul"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.coulomb.Coul</span></code></a></dt>
 <dd>A Coul object.</dd>
 </dl>
 </div></blockquote>
@@ -1359,7 +1359,7 @@ the atom_types).</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>coul_objs: <em>list,</em> <a class="reference internal" href="#squid.forcefields.coulomb.Coul" title="squid.forcefields.coulomb.Coul"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.coulomb.Coul</span></code></a></dt>
+<dt>coul_objs: <em>list,</em> <a class="reference internal" href="module_docs/forcefields/coulomb.html#squid.forcefields.coulomb.Coul" title="squid.forcefields.coulomb.Coul"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.coulomb.Coul</span></code></a></dt>
 <dd>Returns a list of Coul objects.</dd>
 </dl>
 </div></blockquote>
@@ -1385,7 +1385,7 @@ specified, everything is loaded.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>coul_objs: <em>list,</em> <a class="reference internal" href="#squid.forcefields.coulomb.Coul" title="squid.forcefields.coulomb.Coul"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.coulomb.Coul</span></code></a>, or <em>None</em></dt>
+<dt>coul_objs: <em>list,</em> <a class="reference internal" href="module_docs/forcefields/coulomb.html#squid.forcefields.coulomb.Coul" title="squid.forcefields.coulomb.Coul"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.coulomb.Coul</span></code></a>, or <em>None</em></dt>
 <dd>Returns a list of Coul objects if possible, else None.</dd>
 </dl>
 </div></blockquote>
@@ -1413,7 +1413,7 @@ specified, everything is loaded.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>coul_objs: <em>list,</em> <a class="reference internal" href="#squid.forcefields.coulomb.Coul" title="squid.forcefields.coulomb.Coul"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.coulomb.Coul</span></code></a>, or <em>None</em></dt>
+<dt>coul_objs: <em>list,</em> <a class="reference internal" href="module_docs/forcefields/coulomb.html#squid.forcefields.coulomb.Coul" title="squid.forcefields.coulomb.Coul"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.coulomb.Coul</span></code></a>, or <em>None</em></dt>
 <dd>Returns a list of Coul objects if possible, else None.</dd>
 </dl>
 </div></blockquote>
@@ -1605,18 +1605,18 @@ or pass line.  If all are passed, then an error will be thrown.</p>
 <p>This object contains the following:</p>
 <blockquote>
 <div><ul class="simple">
-<li><a class="reference internal" href="#squid.forcefields.lj.LJ.assign_line" title="squid.forcefields.lj.LJ.assign_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">assign_line()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.lj.LJ.fix" title="squid.forcefields.lj.LJ.fix"><code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.lj.LJ.generate" title="squid.forcefields.lj.LJ.generate"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.lj.LJ.load_opls" title="squid.forcefields.lj.LJ.load_opls"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_opls()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.lj.LJ.load_smrff" title="squid.forcefields.lj.LJ.load_smrff"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_smrff()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.lj.LJ.pack" title="squid.forcefields.lj.LJ.pack"><code class="xref py py-func docutils literal notranslate"><span class="pre">pack()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.lj.LJ.parse_line" title="squid.forcefields.lj.LJ.parse_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse_line()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.lj.LJ.pair_coeff_dump" title="squid.forcefields.lj.LJ.pair_coeff_dump"><code class="xref py py-func docutils literal notranslate"><span class="pre">pair_coeff_dump()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.lj.LJ.print_lower" title="squid.forcefields.lj.LJ.print_lower"><code class="xref py py-func docutils literal notranslate"><span class="pre">print_lower()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.lj.LJ.print_upper" title="squid.forcefields.lj.LJ.print_upper"><code class="xref py py-func docutils literal notranslate"><span class="pre">print_upper()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.lj.LJ.unpack" title="squid.forcefields.lj.LJ.unpack"><code class="xref py py-func docutils literal notranslate"><span class="pre">unpack()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.lj.LJ.validate" title="squid.forcefields.lj.LJ.validate"><code class="xref py py-func docutils literal notranslate"><span class="pre">validate()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/lj.html#squid.forcefields.lj.LJ.assign_line" title="squid.forcefields.lj.LJ.assign_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">assign_line()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/lj.html#squid.forcefields.lj.LJ.fix" title="squid.forcefields.lj.LJ.fix"><code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/lj.html#squid.forcefields.lj.LJ.generate" title="squid.forcefields.lj.LJ.generate"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/lj.html#squid.forcefields.lj.LJ.load_opls" title="squid.forcefields.lj.LJ.load_opls"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_opls()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/lj.html#squid.forcefields.lj.LJ.load_smrff" title="squid.forcefields.lj.LJ.load_smrff"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_smrff()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/lj.html#squid.forcefields.lj.LJ.pack" title="squid.forcefields.lj.LJ.pack"><code class="xref py py-func docutils literal notranslate"><span class="pre">pack()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/lj.html#squid.forcefields.lj.LJ.parse_line" title="squid.forcefields.lj.LJ.parse_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse_line()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/lj.html#squid.forcefields.lj.LJ.pair_coeff_dump" title="squid.forcefields.lj.LJ.pair_coeff_dump"><code class="xref py py-func docutils literal notranslate"><span class="pre">pair_coeff_dump()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/lj.html#squid.forcefields.lj.LJ.print_lower" title="squid.forcefields.lj.LJ.print_lower"><code class="xref py py-func docutils literal notranslate"><span class="pre">print_lower()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/lj.html#squid.forcefields.lj.LJ.print_upper" title="squid.forcefields.lj.LJ.print_upper"><code class="xref py py-func docutils literal notranslate"><span class="pre">print_upper()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/lj.html#squid.forcefields.lj.LJ.unpack" title="squid.forcefields.lj.LJ.unpack"><code class="xref py py-func docutils literal notranslate"><span class="pre">unpack()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/lj.html#squid.forcefields.lj.LJ.validate" title="squid.forcefields.lj.LJ.validate"><code class="xref py py-func docutils literal notranslate"><span class="pre">validate()</span></code></a></li>
 </ul>
 </div></blockquote>
 <p><strong>Parameters</strong></p>
@@ -1635,7 +1635,7 @@ or pass line.  If all are passed, then an error will be thrown.</p>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>lj: <a class="reference internal" href="#squid.forcefields.lj.LJ" title="squid.forcefields.lj.LJ"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.lj.LJ</span></code></a></dt>
+<dt>lj: <a class="reference internal" href="module_docs/forcefields/lj.html#squid.forcefields.lj.LJ" title="squid.forcefields.lj.LJ"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.lj.LJ</span></code></a></dt>
 <dd>A LJ object.</dd>
 </dl>
 </div></blockquote>
@@ -1691,7 +1691,7 @@ list of values.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>lj_objs: <em>list,</em> <a class="reference internal" href="#squid.forcefields.lj.LJ" title="squid.forcefields.lj.LJ"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.lj.LJ</span></code></a></dt>
+<dt>lj_objs: <em>list,</em> <a class="reference internal" href="module_docs/forcefields/lj.html#squid.forcefields.lj.LJ" title="squid.forcefields.lj.LJ"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.lj.LJ</span></code></a></dt>
 <dd>Returns a list of LJ objects.</dd>
 </dl>
 </div></blockquote>
@@ -1717,7 +1717,7 @@ specified, everything is loaded.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>lj_objs: <em>list,</em> <a class="reference internal" href="#squid.forcefields.lj.LJ" title="squid.forcefields.lj.LJ"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.lj.LJ</span></code></a>, or <em>None</em></dt>
+<dt>lj_objs: <em>list,</em> <a class="reference internal" href="module_docs/forcefields/lj.html#squid.forcefields.lj.LJ" title="squid.forcefields.lj.LJ"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.lj.LJ</span></code></a>, or <em>None</em></dt>
 <dd>Returns a list of LJ objects if possible, else None.</dd>
 </dl>
 </div></blockquote>
@@ -1745,7 +1745,7 @@ specified, everything is loaded.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>lj_objs: <em>list,</em> <a class="reference internal" href="#squid.forcefields.lj.LJ" title="squid.forcefields.lj.LJ"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.lj.LJ</span></code></a>, or <em>None</em></dt>
+<dt>lj_objs: <em>list,</em> <a class="reference internal" href="module_docs/forcefields/lj.html#squid.forcefields.lj.LJ" title="squid.forcefields.lj.LJ"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.lj.LJ</span></code></a>, or <em>None</em></dt>
 <dd>Returns a list of LJ objects if possible, else None.</dd>
 </dl>
 </div></blockquote>
@@ -1894,19 +1894,19 @@ both are specified, an error will be thrown.</p>
 <p>This object contains the following:</p>
 <blockquote>
 <div><ul class="simple">
-<li><a class="reference internal" href="#squid.forcefields.morse.Morse.assign_line" title="squid.forcefields.morse.Morse.assign_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">assign_line()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.morse.Morse.fix" title="squid.forcefields.morse.Morse.fix"><code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.morse.Morse.generate" title="squid.forcefields.morse.Morse.generate"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.morse.Morse.load_smrff" title="squid.forcefields.morse.Morse.load_smrff"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_smrff()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.morse.Morse.pack" title="squid.forcefields.morse.Morse.pack"><code class="xref py py-func docutils literal notranslate"><span class="pre">pack()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.morse.Morse.pair_coeff_dump" title="squid.forcefields.morse.Morse.pair_coeff_dump"><code class="xref py py-func docutils literal notranslate"><span class="pre">pair_coeff_dump()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.morse.Morse.parse_line" title="squid.forcefields.morse.Morse.parse_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse_line()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.morse.Morse.print_lower" title="squid.forcefields.morse.Morse.print_lower"><code class="xref py py-func docutils literal notranslate"><span class="pre">print_lower()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.morse.Morse.print_upper" title="squid.forcefields.morse.Morse.print_upper"><code class="xref py py-func docutils literal notranslate"><span class="pre">print_upper()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.morse.Morse.set_binder" title="squid.forcefields.morse.Morse.set_binder"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_binder()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.morse.Morse.set_nonbinder" title="squid.forcefields.morse.Morse.set_nonbinder"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_nonbinder()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.morse.Morse.unpack" title="squid.forcefields.morse.Morse.unpack"><code class="xref py py-func docutils literal notranslate"><span class="pre">unpack()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.morse.Morse.validate" title="squid.forcefields.morse.Morse.validate"><code class="xref py py-func docutils literal notranslate"><span class="pre">validate()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/morse.html#squid.forcefields.morse.Morse.assign_line" title="squid.forcefields.morse.Morse.assign_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">assign_line()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/morse.html#squid.forcefields.morse.Morse.fix" title="squid.forcefields.morse.Morse.fix"><code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/morse.html#squid.forcefields.morse.Morse.generate" title="squid.forcefields.morse.Morse.generate"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/morse.html#squid.forcefields.morse.Morse.load_smrff" title="squid.forcefields.morse.Morse.load_smrff"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_smrff()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/morse.html#squid.forcefields.morse.Morse.pack" title="squid.forcefields.morse.Morse.pack"><code class="xref py py-func docutils literal notranslate"><span class="pre">pack()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/morse.html#squid.forcefields.morse.Morse.pair_coeff_dump" title="squid.forcefields.morse.Morse.pair_coeff_dump"><code class="xref py py-func docutils literal notranslate"><span class="pre">pair_coeff_dump()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/morse.html#squid.forcefields.morse.Morse.parse_line" title="squid.forcefields.morse.Morse.parse_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse_line()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/morse.html#squid.forcefields.morse.Morse.print_lower" title="squid.forcefields.morse.Morse.print_lower"><code class="xref py py-func docutils literal notranslate"><span class="pre">print_lower()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/morse.html#squid.forcefields.morse.Morse.print_upper" title="squid.forcefields.morse.Morse.print_upper"><code class="xref py py-func docutils literal notranslate"><span class="pre">print_upper()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/morse.html#squid.forcefields.morse.Morse.set_binder" title="squid.forcefields.morse.Morse.set_binder"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_binder()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/morse.html#squid.forcefields.morse.Morse.set_nonbinder" title="squid.forcefields.morse.Morse.set_nonbinder"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_nonbinder()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/morse.html#squid.forcefields.morse.Morse.unpack" title="squid.forcefields.morse.Morse.unpack"><code class="xref py py-func docutils literal notranslate"><span class="pre">unpack()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/morse.html#squid.forcefields.morse.Morse.validate" title="squid.forcefields.morse.Morse.validate"><code class="xref py py-func docutils literal notranslate"><span class="pre">validate()</span></code></a></li>
 </ul>
 </div></blockquote>
 <p><strong>Parameters</strong></p>
@@ -1931,7 +1931,7 @@ both are specified, an error will be thrown.</p>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>Morse: <a class="reference internal" href="#squid.forcefields.morse.Morse" title="squid.forcefields.morse.Morse"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.morse.Morse</span></code></a></dt>
+<dt>Morse: <a class="reference internal" href="module_docs/forcefields/morse.html#squid.forcefields.morse.Morse" title="squid.forcefields.morse.Morse"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.morse.Morse</span></code></a></dt>
 <dd>A Morse object.</dd>
 </dl>
 </div></blockquote>
@@ -1989,7 +1989,7 @@ list of values.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>morse_objs: <em>list,</em> <a class="reference internal" href="#squid.forcefields.morse.Morse" title="squid.forcefields.morse.Morse"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.morse.Morse</span></code></a></dt>
+<dt>morse_objs: <em>list,</em> <a class="reference internal" href="module_docs/forcefields/morse.html#squid.forcefields.morse.Morse" title="squid.forcefields.morse.Morse"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.morse.Morse</span></code></a></dt>
 <dd>Returns a list of Morse objects.</dd>
 </dl>
 </div></blockquote>
@@ -2017,7 +2017,7 @@ specified, everything is loaded.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>Morse_objs: <em>list,</em> <a class="reference internal" href="#squid.forcefields.morse.Morse" title="squid.forcefields.morse.Morse"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.morse.Morse</span></code></a>, or <em>None</em></dt>
+<dt>Morse_objs: <em>list,</em> <a class="reference internal" href="module_docs/forcefields/morse.html#squid.forcefields.morse.Morse" title="squid.forcefields.morse.Morse"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.morse.Morse</span></code></a>, or <em>None</em></dt>
 <dd>Returns a list of Morse objects if possible, else None.</dd>
 </dl>
 </div></blockquote>
@@ -2213,37 +2213,37 @@ a dictionary.</dd>
 <span id="parameters"></span><h3>parameters<a class="headerlink" href="#module-squid.forcefields.parameters" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="squid.forcefields.parameters.Parameters">
-<em class="property">class </em><code class="descclassname">squid.forcefields.parameters.</code><code class="descname">Parameters</code><span class="sig-paren">(</span><em>restrict</em>, <em>opls_file='/home/hherbol/programs/squid/squid/forcefields/potentials/oplsaa.prm'</em>, <em>smrff_file=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/squid/forcefields/parameters.html#Parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.forcefields.parameters.Parameters" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">squid.forcefields.parameters.</code><code class="descname">Parameters</code><span class="sig-paren">(</span><em>restrict</em>, <em>opls_file='/home/hherbol/programs/squid/squid/forcefields/potentials/oplsaa.prm'</em>, <em>smrff_file=None</em>, <em>force_ters_2body_symmetry=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/squid/forcefields/parameters.html#Parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.forcefields.parameters.Parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>A Parameters object that holds force field parameters.  It requires the
 input of which atom types to get parameters for, so as to not read in an
 entire force field.</p>
 <p>This object contains the following:</p>
 <blockquote>
 <div><ul class="simple">
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.dump_angles" title="squid.forcefields.parameters.Parameters.dump_angles"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_angles()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.dump_bonds" title="squid.forcefields.parameters.Parameters.dump_bonds"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_bonds()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.dump_dihedrals" title="squid.forcefields.parameters.Parameters.dump_dihedrals"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_dihedrals()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.dump_lj_cut_coul_cut" title="squid.forcefields.parameters.Parameters.dump_lj_cut_coul_cut"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_lj_cut_coul_cut()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.dump_lj_cut_coul_long" title="squid.forcefields.parameters.Parameters.dump_lj_cut_coul_long"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_lj_cut_coul_long()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.dump_morse" title="squid.forcefields.parameters.Parameters.dump_morse"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_morse()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.dump_set_charge" title="squid.forcefields.parameters.Parameters.dump_set_charge"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_set_charge()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.dump_smooths" title="squid.forcefields.parameters.Parameters.dump_smooths"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_smooths()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.dump_style" title="squid.forcefields.parameters.Parameters.dump_style"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_style()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.dump_tersoff" title="squid.forcefields.parameters.Parameters.dump_tersoff"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_tersoff()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.fix" title="squid.forcefields.parameters.Parameters.fix"><code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.generate" title="squid.forcefields.parameters.Parameters.generate"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.get_smrff_style" title="squid.forcefields.parameters.Parameters.get_smrff_style"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_smrff_style()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.load_opls" title="squid.forcefields.parameters.Parameters.load_opls"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_opls()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.load_smrff" title="squid.forcefields.parameters.Parameters.load_smrff"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_smrff()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.mapper" title="squid.forcefields.parameters.Parameters.mapper"><code class="xref py py-func docutils literal notranslate"><span class="pre">mapper()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.num_free_parameters" title="squid.forcefields.parameters.Parameters.num_free_parameters"><code class="xref py py-func docutils literal notranslate"><span class="pre">num_free_parameters()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.pack" title="squid.forcefields.parameters.Parameters.pack"><code class="xref py py-func docutils literal notranslate"><span class="pre">pack()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.set_smoothed_pair_potentials" title="squid.forcefields.parameters.Parameters.set_smoothed_pair_potentials"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_smoothed_pair_potentials()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.set_all_masks" title="squid.forcefields.parameters.Parameters.set_all_masks"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_all_masks()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.set_mask" title="squid.forcefields.parameters.Parameters.set_mask"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_mask()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.set_opls_mask" title="squid.forcefields.parameters.Parameters.set_opls_mask"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_opls_mask()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.unpack" title="squid.forcefields.parameters.Parameters.unpack"><code class="xref py py-func docutils literal notranslate"><span class="pre">unpack()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.parameters.Parameters.write_smrff" title="squid.forcefields.parameters.Parameters.write_smrff"><code class="xref py py-func docutils literal notranslate"><span class="pre">write_smrff()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters.dump_angles" title="squid.forcefields.parameters.Parameters.dump_angles"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_angles()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters.dump_bonds" title="squid.forcefields.parameters.Parameters.dump_bonds"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_bonds()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters.dump_dihedrals" title="squid.forcefields.parameters.Parameters.dump_dihedrals"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_dihedrals()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters.dump_lj_cut_coul_cut" title="squid.forcefields.parameters.Parameters.dump_lj_cut_coul_cut"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_lj_cut_coul_cut()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters.dump_lj_cut_coul_long" title="squid.forcefields.parameters.Parameters.dump_lj_cut_coul_long"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_lj_cut_coul_long()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters.dump_morse" title="squid.forcefields.parameters.Parameters.dump_morse"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_morse()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters.dump_set_charge" title="squid.forcefields.parameters.Parameters.dump_set_charge"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_set_charge()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters.dump_smooths" title="squid.forcefields.parameters.Parameters.dump_smooths"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_smooths()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters.dump_style" title="squid.forcefields.parameters.Parameters.dump_style"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_style()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters.dump_tersoff" title="squid.forcefields.parameters.Parameters.dump_tersoff"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_tersoff()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters.fix" title="squid.forcefields.parameters.Parameters.fix"><code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters.generate" title="squid.forcefields.parameters.Parameters.generate"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters.get_smrff_style" title="squid.forcefields.parameters.Parameters.get_smrff_style"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_smrff_style()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters.load_opls" title="squid.forcefields.parameters.Parameters.load_opls"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_opls()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters.load_smrff" title="squid.forcefields.parameters.Parameters.load_smrff"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_smrff()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters.mapper" title="squid.forcefields.parameters.Parameters.mapper"><code class="xref py py-func docutils literal notranslate"><span class="pre">mapper()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters.num_free_parameters" title="squid.forcefields.parameters.Parameters.num_free_parameters"><code class="xref py py-func docutils literal notranslate"><span class="pre">num_free_parameters()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters.pack" title="squid.forcefields.parameters.Parameters.pack"><code class="xref py py-func docutils literal notranslate"><span class="pre">pack()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters.set_smoothed_pair_potentials" title="squid.forcefields.parameters.Parameters.set_smoothed_pair_potentials"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_smoothed_pair_potentials()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters.set_all_masks" title="squid.forcefields.parameters.Parameters.set_all_masks"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_all_masks()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters.set_mask" title="squid.forcefields.parameters.Parameters.set_mask"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_mask()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters.set_opls_mask" title="squid.forcefields.parameters.Parameters.set_opls_mask"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_opls_mask()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters.unpack" title="squid.forcefields.parameters.Parameters.unpack"><code class="xref py py-func docutils literal notranslate"><span class="pre">unpack()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters.write_smrff" title="squid.forcefields.parameters.Parameters.write_smrff"><code class="xref py py-func docutils literal notranslate"><span class="pre">write_smrff()</span></code></a></li>
 </ul>
 </div></blockquote>
 <p><strong>Parameters</strong></p>
@@ -2258,12 +2258,15 @@ If None is passed, then everything available is read in.</dd>
 stored parameters in squid.</dd>
 <dt>smrff_file: <em>str, optional</em></dt>
 <dd>The path to a SMRFF parameter file.  Default is None.</dd>
+<dt>force_ters_2body_symmetry: <em>bool, optional</em></dt>
+<dd>Whether to force any read in tersoff parameters to have the
+2-body symmetry we expect.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>params: <a class="reference internal" href="#squid.forcefields.parameters.Parameters" title="squid.forcefields.parameters.Parameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.parameters.Parameters</span></code></a></dt>
+<dt>params: <a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters" title="squid.forcefields.parameters.Parameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.parameters.Parameters</span></code></a></dt>
 <dd>This object.</dd>
 </dl>
 </div></blockquote>
@@ -2796,24 +2799,24 @@ both are specified, an error will be thrown.</p>
 <p>This object contains the following:</p>
 <blockquote>
 <div><ul class="simple">
-<li><a class="reference internal" href="#squid.forcefields.tersoff.Tersoff.assign_line" title="squid.forcefields.tersoff.Tersoff.assign_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">assign_line()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.tersoff.Tersoff.dump_line" title="squid.forcefields.tersoff.Tersoff.dump_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_line()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.tersoff.Tersoff.fix" title="squid.forcefields.tersoff.Tersoff.fix"><code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.tersoff.Tersoff.generate" title="squid.forcefields.tersoff.Tersoff.generate"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.tersoff.Tersoff.load_smrff" title="squid.forcefields.tersoff.Tersoff.load_smrff"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_smrff()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.tersoff.Tersoff.pack" title="squid.forcefields.tersoff.Tersoff.pack"><code class="xref py py-func docutils literal notranslate"><span class="pre">pack()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.tersoff.Tersoff.parse_line" title="squid.forcefields.tersoff.Tersoff.parse_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse_line()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.tersoff.Tersoff.print_lower" title="squid.forcefields.tersoff.Tersoff.print_lower"><code class="xref py py-func docutils literal notranslate"><span class="pre">print_lower()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.tersoff.Tersoff.print_upper" title="squid.forcefields.tersoff.Tersoff.print_upper"><code class="xref py py-func docutils literal notranslate"><span class="pre">print_upper()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.tersoff.Tersoff.set_default_bounds" title="squid.forcefields.tersoff.Tersoff.set_default_bounds"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_default_bounds()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.tersoff.sorted_force_2body_symmetry" title="squid.forcefields.tersoff.sorted_force_2body_symmetry"><code class="xref py py-func docutils literal notranslate"><span class="pre">sorted_force_2body_symmetry()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.tersoff.tag_tersoff_for_duplicate_2bodies" title="squid.forcefields.tersoff.tag_tersoff_for_duplicate_2bodies"><code class="xref py py-func docutils literal notranslate"><span class="pre">tag_tersoff_for_duplicate_2bodies()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.tersoff.Tersoff.turn_off" title="squid.forcefields.tersoff.Tersoff.turn_off"><code class="xref py py-func docutils literal notranslate"><span class="pre">turn_off()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.tersoff.Tersoff.turn_off_3body" title="squid.forcefields.tersoff.Tersoff.turn_off_3body"><code class="xref py py-func docutils literal notranslate"><span class="pre">turn_off_3body()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.tersoff.Tersoff.unpack" title="squid.forcefields.tersoff.Tersoff.unpack"><code class="xref py py-func docutils literal notranslate"><span class="pre">unpack()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.tersoff.Tersoff.update_2body" title="squid.forcefields.tersoff.Tersoff.update_2body"><code class="xref py py-func docutils literal notranslate"><span class="pre">update_2body()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.tersoff.Tersoff.validate" title="squid.forcefields.tersoff.Tersoff.validate"><code class="xref py py-func docutils literal notranslate"><span class="pre">validate()</span></code></a></li>
-<li><a class="reference internal" href="#squid.forcefields.tersoff.verify_tersoff_2body_symmetry" title="squid.forcefields.tersoff.verify_tersoff_2body_symmetry"><code class="xref py py-func docutils literal notranslate"><span class="pre">verify_tersoff_2body_symmetry()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.Tersoff.assign_line" title="squid.forcefields.tersoff.Tersoff.assign_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">assign_line()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.Tersoff.dump_line" title="squid.forcefields.tersoff.Tersoff.dump_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_line()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.Tersoff.fix" title="squid.forcefields.tersoff.Tersoff.fix"><code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.Tersoff.generate" title="squid.forcefields.tersoff.Tersoff.generate"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.Tersoff.load_smrff" title="squid.forcefields.tersoff.Tersoff.load_smrff"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_smrff()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.Tersoff.pack" title="squid.forcefields.tersoff.Tersoff.pack"><code class="xref py py-func docutils literal notranslate"><span class="pre">pack()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.Tersoff.parse_line" title="squid.forcefields.tersoff.Tersoff.parse_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse_line()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.Tersoff.print_lower" title="squid.forcefields.tersoff.Tersoff.print_lower"><code class="xref py py-func docutils literal notranslate"><span class="pre">print_lower()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.Tersoff.print_upper" title="squid.forcefields.tersoff.Tersoff.print_upper"><code class="xref py py-func docutils literal notranslate"><span class="pre">print_upper()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.Tersoff.set_default_bounds" title="squid.forcefields.tersoff.Tersoff.set_default_bounds"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_default_bounds()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.sorted_force_2body_symmetry" title="squid.forcefields.tersoff.sorted_force_2body_symmetry"><code class="xref py py-func docutils literal notranslate"><span class="pre">sorted_force_2body_symmetry()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.tag_tersoff_for_duplicate_2bodies" title="squid.forcefields.tersoff.tag_tersoff_for_duplicate_2bodies"><code class="xref py py-func docutils literal notranslate"><span class="pre">tag_tersoff_for_duplicate_2bodies()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.Tersoff.turn_off" title="squid.forcefields.tersoff.Tersoff.turn_off"><code class="xref py py-func docutils literal notranslate"><span class="pre">turn_off()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.Tersoff.turn_off_3body" title="squid.forcefields.tersoff.Tersoff.turn_off_3body"><code class="xref py py-func docutils literal notranslate"><span class="pre">turn_off_3body()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.Tersoff.unpack" title="squid.forcefields.tersoff.Tersoff.unpack"><code class="xref py py-func docutils literal notranslate"><span class="pre">unpack()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.Tersoff.update_2body" title="squid.forcefields.tersoff.Tersoff.update_2body"><code class="xref py py-func docutils literal notranslate"><span class="pre">update_2body()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.Tersoff.validate" title="squid.forcefields.tersoff.Tersoff.validate"><code class="xref py py-func docutils literal notranslate"><span class="pre">validate()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.verify_tersoff_2body_symmetry" title="squid.forcefields.tersoff.verify_tersoff_2body_symmetry"><code class="xref py py-func docutils literal notranslate"><span class="pre">verify_tersoff_2body_symmetry()</span></code></a></li>
 </ul>
 </div></blockquote>
 <p><strong>Parameters</strong></p>
@@ -2872,7 +2875,7 @@ Albe et al form (m=1, beta=1).  Must be original or albe.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>tersoff: <a class="reference internal" href="#squid.forcefields.tersoff.Tersoff" title="squid.forcefields.tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.tersoff.Tersoff</span></code></a></dt>
+<dt>tersoff: <a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.Tersoff" title="squid.forcefields.tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.tersoff.Tersoff</span></code></a></dt>
 <dd>A Tersoff object.</dd>
 </dl>
 </div></blockquote>
@@ -2948,7 +2951,7 @@ Albe et al form (m=1, beta=1).  Must be original or albe.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>ters_objs: <em>list,</em> <a class="reference internal" href="#squid.forcefields.tersoff.Tersoff" title="squid.forcefields.tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.tersoff.Tersoff</span></code></a></dt>
+<dt>ters_objs: <em>list,</em> <a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.Tersoff" title="squid.forcefields.tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.tersoff.Tersoff</span></code></a></dt>
 <dd>Returns a list of Tersoff objects.</dd>
 </dl>
 </div></blockquote>
@@ -2977,7 +2980,7 @@ specified, everything is loaded.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>tersoff_objs: <em>list,</em> <a class="reference internal" href="#module-squid.forcefields.tersoff" title="squid.forcefields.tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.tersoff</span></code></a> or <em>None</em></dt>
+<dt>tersoff_objs: <em>list,</em> <a class="reference internal" href="module_docs/forcefields/tersoff.html#module-squid.forcefields.tersoff" title="squid.forcefields.tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.tersoff</span></code></a> or <em>None</em></dt>
 <dd>Returns a list of Tersoff objects if possible, else None.</dd>
 </dl>
 </div></blockquote>
@@ -3176,7 +3179,7 @@ the 2-body parameters (n, beta, lambda1, lambda2, A, B).</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>other: <a class="reference internal" href="#squid.forcefields.tersoff.Tersoff" title="squid.forcefields.tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.tersoff.Tersoff</span></code></a></dt>
+<dt>other: <a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.Tersoff" title="squid.forcefields.tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.tersoff.Tersoff</span></code></a></dt>
 <dd>A Tersoff parameter object to get 2-body parameters from.</dd>
 </dl>
 </div></blockquote>
@@ -3205,14 +3208,14 @@ force the 2body symmetry condition.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>tersoff_params: <em>list,</em> <a class="reference internal" href="#squid.forcefields.tersoff.Tersoff" title="squid.forcefields.tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.tersoff.Tersoff</span></code></a></dt>
+<dt>tersoff_params: <em>list,</em> <a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.Tersoff" title="squid.forcefields.tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.tersoff.Tersoff</span></code></a></dt>
 <dd>A list of Tersoff objects.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>corrected_tersoff_params: <em>list,</em> <a class="reference internal" href="#squid.forcefields.tersoff.Tersoff" title="squid.forcefields.tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.tersoff.Tersoff</span></code></a></dt>
+<dt>corrected_tersoff_params: <em>list,</em> <a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.Tersoff" title="squid.forcefields.tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.tersoff.Tersoff</span></code></a></dt>
 <dd>A list of Tersoff objects with the 2body symmetry
 condition ensured.</dd>
 </dl>
@@ -3228,14 +3231,14 @@ sorted_force_2body_symmetry.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>tersoff_params: <em>list,</em> <a class="reference internal" href="#squid.forcefields.tersoff.Tersoff" title="squid.forcefields.tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.tersoff.Tersoff</span></code></a></dt>
+<dt>tersoff_params: <em>list,</em> <a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.Tersoff" title="squid.forcefields.tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.tersoff.Tersoff</span></code></a></dt>
 <dd>A list of Tersoff objects.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>tagged_tersoff_params: <em>list,</em> <a class="reference internal" href="#squid.forcefields.tersoff.Tersoff" title="squid.forcefields.tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.tersoff.Tersoff</span></code></a></dt>
+<dt>tagged_tersoff_params: <em>list,</em> <a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.Tersoff" title="squid.forcefields.tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.tersoff.Tersoff</span></code></a></dt>
 <dd>A list of the unique Tersoff objects.</dd>
 </dl>
 </div></blockquote>
@@ -3253,7 +3256,7 @@ interaction (A-B or B-A) and use the corresponding parameters.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>tersoff_params: <em>list,</em> <a class="reference internal" href="#squid.forcefields.tersoff.Tersoff" title="squid.forcefields.tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.tersoff.Tersoff</span></code></a></dt>
+<dt>tersoff_params: <em>list,</em> <a class="reference internal" href="module_docs/forcefields/tersoff.html#squid.forcefields.tersoff.Tersoff" title="squid.forcefields.tersoff.Tersoff"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.tersoff.Tersoff</span></code></a></dt>
 <dd>A list of Tersoff objects.</dd>
 </dl>
 </div></blockquote>
@@ -3436,7 +3439,7 @@ means that we return len(frames) - 1 values.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>frames: <em>list, list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>frames: <em>list, list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>List of lists of atoms.</dd>
 </dl>
 </div></blockquote>
@@ -3467,7 +3470,7 @@ the ellipsoid.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>points:  <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>points:  <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of Atom objects.</dd>
 <dt>tol: <em>float, optional</em></dt>
 <dd>Tolerance for ellipsoid generation.</dd>
@@ -3503,10 +3506,10 @@ used for right side multiplication!</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>A: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>A: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms for which R will minimize the frobenius
 norm ||A*R - ref_matrix||^2.</dd>
-<dt>ref_matrix: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>ref_matrix: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms for which <em>A</em> is being rotated towards.</dd>
 <dt>reflection: <em>bool, optional</em></dt>
 <dd>Whether inversion is allowed (True) or not (False).</dd>
@@ -3632,7 +3635,7 @@ species to align the atoms along the x-axis.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>atoms: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>atoms: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of Atom objects.</dd>
 <dt>recenter: <em>bool, optional</em></dt>
 <dd>Whether to recenter the new coordinates around the origin or not.
@@ -3646,7 +3649,7 @@ them into accound when calculating the center of geometry).</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>molec.atoms: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>molec.atoms: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>Rotated atomic coordinates.</dd>
 <dt>A: <em>list, list, float</em></dt>
 <dd>Rotated positive definite symmetric matrix of the ellipsoid’s
@@ -3663,9 +3666,9 @@ eccentricity.</dd>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>frame_1: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>frame_1: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>List of atoms.</dd>
-<dt>frame_2: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>frame_2: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>List of atoms.</dd>
 <dt>N: <em>int</em></dt>
 <dd>Number of new frames you want to generate during interpolation.</dd>
@@ -3688,7 +3691,7 @@ a slight rotation.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>atoms: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>atoms: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atomic coordinates to be perturbated</dd>
 <dt>dx: <em>float, optional</em></dt>
 <dd>By how much you are willing to perturbate via translation.</dd>
@@ -3704,7 +3707,7 @@ geometry (cog), or neither (“None” or None).</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>perturbated_atoms: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>perturbated_atoms: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>The perturbated list of atomic coordinates.</dd>
 </dl>
 </div></blockquote>
@@ -3720,7 +3723,7 @@ at frames[0].</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>frames: <em>list, list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>frames: <em>list, list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>List of lists of atoms.</dd>
 <dt>count_atoms: <em>list, int, optional</em></dt>
 <dd>A list of indices for which translation and rotations will be
@@ -3744,7 +3747,7 @@ applied via right side multiplication.</dd>
 </div></blockquote>
 <p><strong>See also</strong></p>
 <blockquote>
-<div>For more information, see <a class="reference internal" href="#squid.geometry.spatial.orthogonal_procrustes" title="squid.geometry.spatial.orthogonal_procrustes"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.spatial.orthogonal_procrustes()</span></code></a>.</div></blockquote>
+<div>For more information, see <a class="reference internal" href="module_docs/geometry/spatial.html#squid.geometry.spatial.orthogonal_procrustes" title="squid.geometry.spatial.orthogonal_procrustes"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.spatial.orthogonal_procrustes()</span></code></a>.</div></blockquote>
 </dd></dl>
 
 <dl class="function">
@@ -3756,7 +3759,7 @@ to best overlap adjacent frames.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>frames: <em>list, list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>frames: <em>list, list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of lists of atoms.</dd>
 <dt>R_max: <em>float, optional</em></dt>
 <dd>The maximum motion allowed between consecutive frames.</dd>
@@ -3780,7 +3783,7 @@ extension).  If None, then no file is made.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>frames: <em>list, list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>frames: <em>list, list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>Returns a list of smoothed frames</dd>
 </dl>
 </div></blockquote>
@@ -3814,7 +3817,7 @@ extension).  If None, then no file is made.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>job_obj: <a class="reference internal" href="#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
+<dt>job_obj: <a class="reference internal" href="module_docs/jobs/container.html#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
 <dd>A Job object.</dd>
 </dl>
 </div></blockquote>
@@ -3891,7 +3894,7 @@ the loop.  Default is 1 minute.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>job_obj: <a class="reference internal" href="#squid.jobs.nbs.Job" title="squid.jobs.nbs.Job"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.nbs.Job</span></code></a></dt>
+<dt>job_obj: <a class="reference internal" href="module_docs/jobs/nbs.html#squid.jobs.nbs.Job" title="squid.jobs.nbs.Job"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.nbs.Job</span></code></a></dt>
 <dd>A Job object.</dd>
 </dl>
 </div></blockquote>
@@ -4073,7 +4076,7 @@ job will instead be returned.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>job_obj: <a class="reference internal" href="#squid.jobs.nbs.Job" title="squid.jobs.nbs.Job"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.nbs.Job</span></code></a></dt>
+<dt>job_obj: <a class="reference internal" href="module_docs/jobs/nbs.html#squid.jobs.nbs.Job" title="squid.jobs.nbs.Job"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.nbs.Job</span></code></a></dt>
 <dd>A Job object.</dd>
 </dl>
 </div></blockquote>
@@ -4100,7 +4103,7 @@ job will instead be returned.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>jobContainer: <a class="reference internal" href="#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
+<dt>jobContainer: <a class="reference internal" href="module_docs/jobs/container.html#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
 <dd>A job object, or a class built off of it, to handle job
 submission to a given queue manager.</dd>
 </dl>
@@ -4324,7 +4327,7 @@ number of processors)</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>job_obj: <a class="reference internal" href="#squid.jobs.slurm.Job" title="squid.jobs.slurm.Job"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.slurm.Job</span></code></a></dt>
+<dt>job_obj: <a class="reference internal" href="module_docs/jobs/slurm.html#squid.jobs.slurm.Job" title="squid.jobs.slurm.Job"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.slurm.Job</span></code></a></dt>
 <dd>A Job object.</dd>
 </dl>
 </div></blockquote>
@@ -4512,7 +4515,7 @@ job will instead be returned.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>job_obj: <a class="reference internal" href="#squid.jobs.slurm.Job" title="squid.jobs.slurm.Job"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.slurm.Job</span></code></a></dt>
+<dt>job_obj: <a class="reference internal" href="module_docs/jobs/slurm.html#squid.jobs.slurm.Job" title="squid.jobs.slurm.Job"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.slurm.Job</span></code></a></dt>
 <dd>A Job object.</dd>
 </dl>
 </div></blockquote>
@@ -4576,7 +4579,7 @@ For more details, see the relevant section.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>job_obj: <a class="reference internal" href="#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
+<dt>job_obj: <a class="reference internal" href="module_docs/jobs/container.html#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
 <dd>A Job object.</dd>
 </dl>
 </div></blockquote>
@@ -4595,7 +4598,7 @@ For more details, see the relevant section.</dd>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>system: <a class="reference internal" href="#squid.structures.system.System" title="squid.structures.system.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.system.System</span></code></a></dt>
+<dt>system: <a class="reference internal" href="module_docs/structures/system.html#squid.structures.system.System" title="squid.structures.system.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.system.System</span></code></a></dt>
 <dd>Atomic system to be written to a lammps data file.</dd>
 <dt>pair_coeffs_included: <em>bool, optional</em></dt>
 <dd>Whether to write pair coefficients into the data file (True),
@@ -4640,7 +4643,7 @@ file.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>frames: <em>list, list</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>frames: <em>list, list</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of lists, each holding atom structures.</dd>
 </dl>
 </div></blockquote>
@@ -4676,7 +4679,7 @@ file.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>frames: <em>list, list</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>frames: <em>list, list</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of lists, each holding atom structures.</dd>
 </dl>
 </div></blockquote>
@@ -4722,7 +4725,7 @@ executable.  It will handle errors accordingly.</p>
 <dd>Name of the simulation to be run.</dd>
 <dt>input_script: <em>str</em></dt>
 <dd>Input script for LAMMPs simulation.</dd>
-<dt>system: <a class="reference internal" href="#squid.structures.system.System" title="squid.structures.system.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.system.System</span></code></a></dt>
+<dt>system: <a class="reference internal" href="module_docs/structures/system.html#squid.structures.system.System" title="squid.structures.system.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.system.System</span></code></a></dt>
 <dd>System object for our simulation.</dd>
 <dt>queue: <em>str, optional</em></dt>
 <dd>What queue to run the simulation on (queueing system dependent).</dd>
@@ -4766,7 +4769,7 @@ specify the name.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>job: <a class="reference internal" href="#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
+<dt>job: <a class="reference internal" href="module_docs/jobs/container.html#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
 <dd>If running locally, return the process handle, else return the
 job container.</dd>
 </dl>
@@ -5452,7 +5455,7 @@ identified in the constants file.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>atoms: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>atoms: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of the final atomic state, with forces appended
 to each atom.</dd>
 <dt>energy: <em>float</em></dt>
@@ -5476,7 +5479,7 @@ It should be mentioned that atomic positions are 0 indexed.</p>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>data: <a class="reference internal" href="#squid.structures.results.DFT_out" title="squid.structures.results.DFT_out"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.results.DFT_out</span></code></a></dt>
+<dt>data: <a class="reference internal" href="module_docs/structures/results.html#squid.structures.results.DFT_out" title="squid.structures.results.DFT_out"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.results.DFT_out</span></code></a></dt>
 <dd>Generic DFT output object containing all parsed results.</dd>
 </dl>
 </div></blockquote>
@@ -5487,7 +5490,7 @@ It should be mentioned that atomic positions are 0 indexed.</p>
 <h3>job<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <span class="target" id="module-squid.orca.job"></span><dl class="function">
 <dt id="squid.orca.job.job">
-<code class="descclassname">squid.orca.job.</code><code class="descname">job</code><span class="sig-paren">(</span><em>run_name</em>, <em>route=None</em>, <em>atoms=[]</em>, <em>extra_section=''</em>, <em>grad=False</em>, <em>queue=None</em>, <em>walltime='00:30:00'</em>, <em>sandbox=False</em>, <em>procs=1</em>, <em>ntasks=1</em>, <em>nodes=1</em>, <em>charge=0</em>, <em>multiplicity=1</em>, <em>redundancy=False</em>, <em>use_NBS_sandbox=False</em>, <em>unique_name=True</em>, <em>previous=None</em>, <em>mem=2000</em>, <em>priority=None</em>, <em>xhost=None</em>, <em>slurm_allocation=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/squid/orca/job.html#job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.orca.job.job" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">squid.orca.job.</code><code class="descname">job</code><span class="sig-paren">(</span><em>run_name</em>, <em>route=None</em>, <em>atoms=[]</em>, <em>extra_section=''</em>, <em>grad=False</em>, <em>queue=None</em>, <em>walltime='00:30:00'</em>, <em>sandbox=False</em>, <em>nprocs=1</em>, <em>ntasks=1</em>, <em>nodes=1</em>, <em>charge=0</em>, <em>multiplicity=1</em>, <em>redundancy=False</em>, <em>use_NBS_sandbox=False</em>, <em>unique_name=True</em>, <em>previous=None</em>, <em>mem=2000</em>, <em>priority=None</em>, <em>xhost=None</em>, <em>slurm_allocation=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/squid/orca/job.html#job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.orca.job.job" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper to submitting an Orca simulation.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
@@ -5498,7 +5501,7 @@ It should be mentioned that atomic positions are 0 indexed.</p>
 <dd>The DFT route line, containing the function, basis set, etc.
 Note, if route=None and previous != None, the route from
 the previous simulation will be used instead.</dd>
-<dt>atoms: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a> <em>,optional</em></dt>
+<dt>atoms: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a> <em>,optional</em></dt>
 <dd>A list of atoms for the simulation.  If this is an empty list, but
 previous is used, then the last set of atomic coordinates from
 the previous simulation will be used.</dd>
@@ -5514,16 +5517,16 @@ not None, then previous extra section is used.</dd>
 is in day-hr:min:sec.</dd>
 <dt>sandbox: <em>bool, optional</em></dt>
 <dd>Whether to run the job in a sandbox or not.</dd>
-<dt>procs: <em>int, optional</em></dt>
+<dt>nprocs: <em>int, optional</em></dt>
 <dd>How many processors to run the simulation on.  Note, the actual
-number requested by orca will be procs * ntasks.</dd>
+number requested by orca will be nprocs * ntasks.</dd>
 <dt>ntasks: <em>int, optional</em></dt>
 <dd>(For SLURM) The number of tasks this job will run, each task uses
-procs number of cores.  Note, the actual number requested by orca
-will be procs * ntasks.</dd>
+nprocs number of cores.  Note, the actual number requested by orca
+will be nprocs * ntasks.</dd>
 <dt>nodes: <em>int, optional</em></dt>
 <dd>(For SLURM) The number of nodes this job requires.  If requesting
-ntasks * procs &lt; 24 * nodes, a warning is printed, as on MARCC
+ntasks * nprocs &lt; 24 * nodes, a warning is printed, as on MARCC
 each node has only 24 cores.</dd>
 <dt>charge: <em>int, optional</em></dt>
 <dd>Charge of the system.  The default charge of 0 is used.</dd>
@@ -5564,7 +5567,7 @@ specify the name.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>job: <a class="reference internal" href="#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
+<dt>job: <a class="reference internal" href="module_docs/jobs/container.html#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
 <dd>Teturn the job container.</dd>
 </dl>
 </div></blockquote>
@@ -5572,11 +5575,11 @@ specify the name.</dd>
 
 <dl class="function">
 <dt id="squid.orca.job.jobarray">
-<code class="descclassname">squid.orca.job.</code><code class="descname">jobarray</code><span class="sig-paren">(</span><em>run_name</em>, <em>route</em>, <em>frames</em>, <em>n_frames=None</em>, <em>extra_section=''</em>, <em>grad=False</em>, <em>queue=None</em>, <em>walltime='00:30:00'</em>, <em>sandbox=False</em>, <em>procs=1</em>, <em>ntasks=1</em>, <em>nodes=1</em>, <em>charge=0</em>, <em>multiplicity=1</em>, <em>redundancy=False</em>, <em>unique_name=True</em>, <em>previous=None</em>, <em>mem=2000</em>, <em>priority=None</em>, <em>xhost=None</em>, <em>jobarray_values=None</em>, <em>slurm_allocation=None</em>, <em>batch_serial_jobs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/squid/orca/job.html#jobarray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.orca.job.jobarray" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">squid.orca.job.</code><code class="descname">jobarray</code><span class="sig-paren">(</span><em>run_name</em>, <em>route</em>, <em>frames</em>, <em>n_frames=None</em>, <em>extra_section=''</em>, <em>grad=False</em>, <em>queue=None</em>, <em>walltime='00:30:00'</em>, <em>sandbox=False</em>, <em>nprocs=1</em>, <em>ntasks=1</em>, <em>nodes=1</em>, <em>charge=0</em>, <em>multiplicity=1</em>, <em>redundancy=False</em>, <em>unique_name=True</em>, <em>previous=None</em>, <em>mem=2000</em>, <em>priority=None</em>, <em>xhost=None</em>, <em>jobarray_values=None</em>, <em>slurm_allocation=None</em>, <em>batch_serial_jobs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/squid/orca/job.html#jobarray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.orca.job.jobarray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper to submitting various Orca simulations as a job array on a SLURM
 system.  This is used when there are many atomic systems, stored in a
 list, that need to have the same DFT calculation performed on each.</p>
-<p>Note - When requesting procs/ntasks/nodes, these will be per-job.  As
+<p>Note - When requesting nprocs/ntasks/nodes, these will be per-job.  As
 such, do <strong>NOT</strong> multiply out.  For instance, if you request ntasks=4,
 and len(frames) = 10, you will be running 10 jobs, each with 4 tasks.</p>
 <p><strong>Parameters</strong></p>
@@ -5588,7 +5591,7 @@ and len(frames) = 10, you will be running 10 jobs, each with 4 tasks.</p>
 <dd>The DFT route line, containing the function, basis set, etc.
 Note, if route=None and previous != None, the route from
 the previous simulation will be used instead.</dd>
-<dt>frames: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>frames: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>Each atomic system that needs to be simulated.</dd>
 <dt>n_frames: <em>int, optional</em></dt>
 <dd>The number of frames.</dd>
@@ -5604,16 +5607,16 @@ not None, then previous extra section is used.</dd>
 is in day-hr:min:sec.</dd>
 <dt>sandbox: <em>bool, optional</em></dt>
 <dd>Whether to run the job in a sandbox or not.</dd>
-<dt>procs: <em>int, optional</em></dt>
+<dt>nprocs: <em>int, optional</em></dt>
 <dd>How many processors to run the simulation on.  Note, the actual
-number requested by orca will be procs * ntasks.</dd>
+number requested by orca will be nprocs * ntasks.</dd>
 <dt>ntasks: <em>int, optional</em></dt>
 <dd>(For SLURM) The number of tasks this job will run, each task uses
-procs number of cores.  Note, the actual number requested by orca
-will be procs * ntasks.</dd>
+nprocs number of cores.  Note, the actual number requested by orca
+will be nprocs * ntasks.</dd>
 <dt>nodes: <em>int, optional</em></dt>
 <dd>(For SLURM) The number of nodes this job requires.  If requesting
-ntasks * procs &lt; 24 * nodes, a warning is printed, as on MARCC
+ntasks * nprocs &lt; 24 * nodes, a warning is printed, as on MARCC
 each node has only 24 cores.</dd>
 <dt>charge: <em>float, optional</em></dt>
 <dd>Charge of the system.  If this is used, then
@@ -5661,7 +5664,7 @@ submission).</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>job: <a class="reference internal" href="#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
+<dt>job: <a class="reference internal" href="module_docs/jobs/container.html#squid.jobs.container.JobObject" title="squid.jobs.container.JobObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.jobs.container.JobObject</span></code></a></dt>
 <dd>Teturn the job container.</dd>
 </dl>
 </div></blockquote>
@@ -5847,7 +5850,7 @@ or not (False).</dd>
 <p>Python hooks for the debyer code.
 Link: <a class="reference external" href="https://debyer.readthedocs.io/en/latest/">https://debyer.readthedocs.io/en/latest/</a></p>
 <ul class="simple">
-<li><a class="reference internal" href="#squid.post_process.debyer.get_pdf" title="squid.post_process.debyer.get_pdf"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_pdf()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/post_process/debyer.html#squid.post_process.debyer.get_pdf" title="squid.post_process.debyer.get_pdf"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_pdf()</span></code></a></li>
 </ul>
 <hr class="docutils" />
 <dl class="function">
@@ -5858,7 +5861,7 @@ the Debyer code.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>frames: <em>str or list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>frames: <em>str or list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>An xyz file name (with or without the .xyz extension) or
 an input frame to calculate the pdf for.</dd>
 <dt>start: <em>float, optional</em></dt>
@@ -5911,8 +5914,8 @@ post processing data.</p>
 </pre></div>
 </div>
 <ul class="simple">
-<li><a class="reference internal" href="#squid.post_process.ovito.ovito_xyz_to_image" title="squid.post_process.ovito.ovito_xyz_to_image"><code class="xref py py-func docutils literal notranslate"><span class="pre">ovito_xyz_to_image()</span></code></a></li>
-<li><a class="reference internal" href="#squid.post_process.ovito.ovito_xyz_to_gif" title="squid.post_process.ovito.ovito_xyz_to_gif"><code class="xref py py-func docutils literal notranslate"><span class="pre">ovito_xyz_to_gif()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/post_process/ovito.html#squid.post_process.ovito.ovito_xyz_to_image" title="squid.post_process.ovito.ovito_xyz_to_image"><code class="xref py py-func docutils literal notranslate"><span class="pre">ovito_xyz_to_image()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/post_process/ovito.html#squid.post_process.ovito.ovito_xyz_to_gif" title="squid.post_process.ovito.ovito_xyz_to_gif"><code class="xref py py-func docutils literal notranslate"><span class="pre">ovito_xyz_to_gif()</span></code></a></li>
 </ul>
 <hr class="docutils" />
 <dl class="function">
@@ -5931,7 +5934,7 @@ more than one frame exists.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>frames: <em>str</em> or <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>frames: <em>str</em> or <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of frames you wish to generate an image for, or a path to
 an xyz file.</dd>
 <dt>scratch: <em>str</em></dt>
@@ -6064,7 +6067,7 @@ orbitals.</dd>
 <span id="atom"></span><h3>atom<a class="headerlink" href="#module-squid.structures.atom" title="Permalink to this headline">¶</a></h3>
 <p>The atom object holds atomic information in and transformations.</p>
 <ul class="simple">
-<li><a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">Atom</span></code></a></li>
+<li><a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">Atom</span></code></a></li>
 </ul>
 <hr class="docutils" />
 <dl class="class">
@@ -6095,7 +6098,7 @@ orbitals.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>atom: <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>atom: <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>The Atom class container.</dd>
 </dl>
 </div></blockquote>
@@ -6212,7 +6215,7 @@ interatomic connections.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>atoms: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>atoms: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms.</dd>
 <dt>bonds: <em>list,</em> <a class="reference internal" href="module_docs/structures/topology.html#squid.structures.topology.Connector" title="squid.structures.topology.Connector"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.topology.Connector</span></code></a> <em>, optional</em></dt>
 <dd>A list of all bonds within the system.</dd>
@@ -6443,8 +6446,8 @@ and z offsets to be applied.</dd>
 <span id="results"></span><h3>results<a class="headerlink" href="#module-squid.structures.results" title="Permalink to this headline">¶</a></h3>
 <p>The results module contains data structures to hold simulation output.</p>
 <ul class="simple">
-<li><a class="reference internal" href="#squid.structures.results.DFT_out" title="squid.structures.results.DFT_out"><code class="xref py py-class docutils literal notranslate"><span class="pre">DFT_out</span></code></a></li>
-<li><a class="reference internal" href="#squid.structures.results.sim_out" title="squid.structures.results.sim_out"><code class="xref py py-class docutils literal notranslate"><span class="pre">sim_out</span></code></a></li>
+<li><a class="reference internal" href="module_docs/structures/results.html#squid.structures.results.DFT_out" title="squid.structures.results.DFT_out"><code class="xref py py-class docutils literal notranslate"><span class="pre">DFT_out</span></code></a></li>
+<li><a class="reference internal" href="module_docs/structures/results.html#squid.structures.results.sim_out" title="squid.structures.results.sim_out"><code class="xref py py-class docutils literal notranslate"><span class="pre">sim_out</span></code></a></li>
 </ul>
 <hr class="docutils" />
 <dl class="class">
@@ -6470,10 +6473,10 @@ dft configurations.</dd>
 <dd>The ‘extra section’ in the simulation.</dd>
 <dt>charge_and_multiplicity: <em>str</em></dt>
 <dd>The charge and multiplicity, in that order, of the system.</dd>
-<dt>frames: <em>list, list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>frames: <em>list, list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list lists of atoms describing each iteration in the dft
 simulation.</dd>
-<dt>atoms: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>atoms: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>Atomic information of the last iteration in the dft simulation.</dd>
 <dt>gradients: <em>list, list, float</em></dt>
 <dd>Gradient of the potential, stored for each atom in <em>atoms</em> and
@@ -6489,7 +6492,7 @@ simulation.</dd>
 <dt>charges: <em>list, float</em></dt>
 <dd>Charges for each atom in <em>atoms</em> and <em>frames[-1]</em>.  Typically a
 copy of Mulliken charges.</dd>
-<dt>MBO: <em>list, list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a> <em>, float</em></dt>
+<dt>MBO: <em>list, list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a> <em>, float</em></dt>
 <dd>A list of lists, each list holding (1) a list of atoms in the bond
 and (2) the Mayer Bond Order (MBO) of said bond.</dd>
 <dt>vibfreq: <em>list, float</em></dt>
@@ -6534,9 +6537,9 @@ files.</p>
 <p><strong>Contains</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>frames: <em>list, list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>frames: <em>list, list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list lists of atoms describing each iteration in the simulation.</dd>
-<dt>atoms: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>atoms: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>Atomic information of the last iteration in the simulation.</dd>
 <dt>timesteps: <em>list, int</em></dt>
 <dd>Recorded timesteps within the output.</dd>
@@ -6577,7 +6580,7 @@ files.</p>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>system: <a class="reference internal" href="#squid.structures.system.System" title="squid.structures.system.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.system.System</span></code></a></dt>
+<dt>system: <a class="reference internal" href="module_docs/structures/system.html#squid.structures.system.System" title="squid.structures.system.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.system.System</span></code></a></dt>
 <dd>The System class container.</dd>
 </dl>
 </div></blockquote>
@@ -6851,7 +6854,7 @@ and assign that to the system object.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>params: <a class="reference internal" href="#squid.forcefields.parameters.Parameters" title="squid.forcefields.parameters.Parameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.parameters.Parameters</span></code></a>, <em>optional</em></dt>
+<dt>params: <a class="reference internal" href="module_docs/forcefields/parameters.html#squid.forcefields.parameters.Parameters" title="squid.forcefields.parameters.Parameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.forcefields.parameters.Parameters</span></code></a>, <em>optional</em></dt>
 <dd>A parameter object that already exists.</dd>
 <dt>opls_file: <em>str, optional</em></dt>
 <dd>A path to an opls file.  By default, this points to the stored
@@ -6884,7 +6887,7 @@ length and angle can also be held in the object (defaults to None).</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>atoms: <em>list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>atoms: <em>list,</em> <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atoms to connect. If you connect atoms for an angle, the
 second atom is the center atom.</dd>
 <dt>length: <em>float, optional</em></dt>
@@ -6910,11 +6913,11 @@ a-center-b.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>a: <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>a: <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>First atom in the angle.</dd>
-<dt>center: <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>center: <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>Center atom of the angle.</dd>
-<dt>b: <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>b: <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>Last atom in the angle.</dd>
 <dt>deg: <em>bool, optional</em></dt>
 <dd>Whether to return the angle in degrees (True) or radians (False).</dd>
@@ -6937,13 +6940,13 @@ a-center-b.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>a: <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>a: <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>First atom in the dihedral, or a tuple of all 4.</dd>
-<dt>b: <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a> <em>, optional</em></dt>
+<dt>b: <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a> <em>, optional</em></dt>
 <dd>Second atom in the dihedral.</dd>
-<dt>c: <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a> <em>, optional</em></dt>
+<dt>c: <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a> <em>, optional</em></dt>
 <dd>Third atom in the dihedral.</dd>
-<dt>d: <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a> <em>, optional</em></dt>
+<dt>d: <a class="reference internal" href="module_docs/structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a> <em>, optional</em></dt>
 <dd>Fourth atom in the dihedral.</dd>
 <dt>deg: <em>bool, optional</em></dt>
 <dd>Whether to return the angle in degrees (True) or radians (False).</dd>

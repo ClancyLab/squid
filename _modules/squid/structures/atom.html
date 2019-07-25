@@ -56,7 +56,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 
-<div class="viewcode-block" id="Atom"><a class="viewcode-back" href="../../../codebase.html#squid.structures.atom.Atom">[docs]</a><span class="k">class</span> <span class="nc">Atom</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Atom"><a class="viewcode-back" href="../../../module_docs/structures/atom.html#squid.structures.atom.Atom">[docs]</a><span class="k">class</span> <span class="nc">Atom</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    A structure to hold atom information.</span>
 
@@ -190,7 +190,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">charge</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">charge</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">charge</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Atom.translate"><a class="viewcode-back" href="../../../codebase.html#squid.structures.atom.Atom.translate">[docs]</a>    <span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+<div class="viewcode-block" id="Atom.translate"><a class="viewcode-back" href="../../../module_docs/structures/atom.html#squid.structures.atom.Atom.translate">[docs]</a>    <span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Translate the atom by a vector.</span>
 
@@ -209,7 +209,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">+=</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">+=</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="Atom.scale"><a class="viewcode-back" href="../../../codebase.html#squid.structures.atom.Atom.scale">[docs]</a>    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+<div class="viewcode-block" id="Atom.scale"><a class="viewcode-back" href="../../../module_docs/structures/atom.html#squid.structures.atom.Atom.scale">[docs]</a>    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Scale the atom by a vector.  This can be useful if we want to</span>
 <span class="sd">        change coordinate systems.</span>
@@ -229,7 +229,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">*=</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">*=</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="Atom.flatten"><a class="viewcode-back" href="../../../codebase.html#squid.structures.atom.Atom.flatten">[docs]</a>    <span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Atom.flatten"><a class="viewcode-back" href="../../../module_docs/structures/atom.html#squid.structures.atom.Atom.flatten">[docs]</a>    <span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Obtain simplified position output.</span>
 
@@ -240,7 +240,7 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="Atom.unravel"><a class="viewcode-back" href="../../../codebase.html#squid.structures.atom.Atom.unravel">[docs]</a>    <span class="k">def</span> <span class="nf">unravel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Atom.unravel"><a class="viewcode-back" href="../../../module_docs/structures/atom.html#squid.structures.atom.Atom.unravel">[docs]</a>    <span class="k">def</span> <span class="nf">unravel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Like flatten; however, this method will unravel all properties of</span>
 <span class="sd">        the atom into a tuple.</span>
@@ -258,7 +258,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">molecule_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">charge</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Atom.set_position"><a class="viewcode-back" href="../../../codebase.html#squid.structures.atom.Atom.set_position">[docs]</a>    <span class="k">def</span> <span class="nf">set_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+<div class="viewcode-block" id="Atom.set_position"><a class="viewcode-back" href="../../../module_docs/structures/atom.html#squid.structures.atom.Atom.set_position">[docs]</a>    <span class="k">def</span> <span class="nf">set_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Manually set the atomic positions by passing a tuple/list.</span>
 
@@ -279,7 +279,7 @@
     <span class="k">def</span> <span class="nf">replicate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Atom</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">unravel</span><span class="p">())</span>
 
-<div class="viewcode-block" id="Atom.get_id_tag"><a class="viewcode-back" href="../../../codebase.html#squid.structures.atom.Atom.get_id_tag">[docs]</a>    <span class="k">def</span> <span class="nf">get_id_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Atom.get_id_tag"><a class="viewcode-back" href="../../../module_docs/structures/atom.html#squid.structures.atom.Atom.get_id_tag">[docs]</a>    <span class="k">def</span> <span class="nf">get_id_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Return the id tag of this atom.  This is defined as:</span>
 

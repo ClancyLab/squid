@@ -105,7 +105,7 @@
 <span class="s2">run 10000</span>
 <span class="s2">unfix motion_nvt</span>
 <span class="s2">&quot;&quot;&quot;</span>
-    <span class="n">job_handle</span> <span class="o">=</span> <span class="n">lammps</span><span class="o">.</span><span class="n">job</span><span class="p">(</span><span class="s2">&quot;solv_box&quot;</span><span class="p">,</span> <span class="n">input_script</span><span class="p">,</span> <span class="n">system</span><span class="o">=</span><span class="n">world</span><span class="p">,</span> <span class="n">procs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">job_handle</span> <span class="o">=</span> <span class="n">lammps</span><span class="o">.</span><span class="n">job</span><span class="p">(</span><span class="s2">&quot;solv_box&quot;</span><span class="p">,</span> <span class="n">input_script</span><span class="p">,</span> <span class="n">system</span><span class="o">=</span><span class="n">world</span><span class="p">,</span> <span class="n">nprocs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">job_handle</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -144,6 +144,7 @@
     <span class="n">geometry</span><span class="o">.</span><span class="n">packmol</span><span class="p">(</span><span class="n">world</span><span class="p">,</span> <span class="p">[</span><span class="n">solv</span><span class="p">],</span> <span class="n">persist</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
 
     <span class="c1"># Step 5 - Run a simulation</span>
+    <span class="n">world</span><span class="o">.</span><span class="n">set_types</span><span class="p">()</span>
     <span class="n">lammps</span><span class="o">.</span><span class="n">write_lammps_data</span><span class="p">(</span><span class="n">world</span><span class="p">)</span>
 </pre></div>
 </div>

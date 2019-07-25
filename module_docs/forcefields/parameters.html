@@ -39,7 +39,7 @@
             
   <span class="target" id="module-squid.forcefields.parameters"></span><dl class="class">
 <dt id="squid.forcefields.parameters.Parameters">
-<em class="property">class </em><code class="descclassname">squid.forcefields.parameters.</code><code class="descname">Parameters</code><span class="sig-paren">(</span><em>restrict</em>, <em>opls_file='/home/hherbol/programs/squid/squid/forcefields/potentials/oplsaa.prm'</em>, <em>smrff_file=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/forcefields/parameters.html#Parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.forcefields.parameters.Parameters" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">squid.forcefields.parameters.</code><code class="descname">Parameters</code><span class="sig-paren">(</span><em>restrict</em>, <em>opls_file='/home/hherbol/programs/squid/squid/forcefields/potentials/oplsaa.prm'</em>, <em>smrff_file=None</em>, <em>force_ters_2body_symmetry=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/forcefields/parameters.html#Parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.forcefields.parameters.Parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>A Parameters object that holds force field parameters.  It requires the
 input of which atom types to get parameters for, so as to not read in an
 entire force field.</p>
@@ -84,6 +84,9 @@ If None is passed, then everything available is read in.</dd>
 stored parameters in squid.</dd>
 <dt>smrff_file: <em>str, optional</em></dt>
 <dd>The path to a SMRFF parameter file.  Default is None.</dd>
+<dt>force_ters_2body_symmetry: <em>bool, optional</em></dt>
+<dd>Whether to force any read in tersoff parameters to have the
+2-body symmetry we expect.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>

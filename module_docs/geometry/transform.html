@@ -45,7 +45,7 @@ species to align the atoms along the x-axis.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>atoms: <em>list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>atoms: <em>list,</em> <a class="reference internal" href="../structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of Atom objects.</dd>
 <dt>recenter: <em>bool, optional</em></dt>
 <dd>Whether to recenter the new coordinates around the origin or not.
@@ -59,7 +59,7 @@ them into accound when calculating the center of geometry).</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>molec.atoms: <em>list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>molec.atoms: <em>list,</em> <a class="reference internal" href="../structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>Rotated atomic coordinates.</dd>
 <dt>A: <em>list, list, float</em></dt>
 <dd>Rotated positive definite symmetric matrix of the ellipsoid’s
@@ -76,9 +76,9 @@ eccentricity.</dd>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>frame_1: <em>list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>frame_1: <em>list,</em> <a class="reference internal" href="../structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>List of atoms.</dd>
-<dt>frame_2: <em>list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>frame_2: <em>list,</em> <a class="reference internal" href="../structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>List of atoms.</dd>
 <dt>N: <em>int</em></dt>
 <dd>Number of new frames you want to generate during interpolation.</dd>
@@ -101,7 +101,7 @@ a slight rotation.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>atoms: <em>list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>atoms: <em>list,</em> <a class="reference internal" href="../structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of atomic coordinates to be perturbated</dd>
 <dt>dx: <em>float, optional</em></dt>
 <dd>By how much you are willing to perturbate via translation.</dd>
@@ -117,7 +117,7 @@ geometry (cog), or neither (“None” or None).</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>perturbated_atoms: <em>list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>perturbated_atoms: <em>list,</em> <a class="reference internal" href="../structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>The perturbated list of atomic coordinates.</dd>
 </dl>
 </div></blockquote>
@@ -133,7 +133,7 @@ at frames[0].</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>frames: <em>list, list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>frames: <em>list, list,</em> <a class="reference internal" href="../structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>List of lists of atoms.</dd>
 <dt>count_atoms: <em>list, int, optional</em></dt>
 <dd>A list of indices for which translation and rotations will be
@@ -157,7 +157,7 @@ applied via right side multiplication.</dd>
 </div></blockquote>
 <p><strong>See also</strong></p>
 <blockquote>
-<div>For more information, see <a class="reference internal" href="../../codebase.html#squid.geometry.spatial.orthogonal_procrustes" title="squid.geometry.spatial.orthogonal_procrustes"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.spatial.orthogonal_procrustes()</span></code></a>.</div></blockquote>
+<div>For more information, see <a class="reference internal" href="spatial.html#squid.geometry.spatial.orthogonal_procrustes" title="squid.geometry.spatial.orthogonal_procrustes"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.spatial.orthogonal_procrustes()</span></code></a>.</div></blockquote>
 </dd></dl>
 
 <dl class="function">
@@ -169,7 +169,7 @@ to best overlap adjacent frames.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>frames: <em>list, list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>frames: <em>list, list,</em> <a class="reference internal" href="../structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list of lists of atoms.</dd>
 <dt>R_max: <em>float, optional</em></dt>
 <dd>The maximum motion allowed between consecutive frames.</dd>
@@ -193,7 +193,7 @@ extension).  If None, then no file is made.</dd>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>frames: <em>list, list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>frames: <em>list, list,</em> <a class="reference internal" href="../structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>Returns a list of smoothed frames</dd>
 </dl>
 </div></blockquote>

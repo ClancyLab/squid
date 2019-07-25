@@ -210,7 +210,7 @@
     <span class="n">ANEB</span><span class="o">.</span><span class="n">flattened_states</span> <span class="o">=</span> <span class="n">flattened</span><span class="p">(</span><span class="n">ANEB</span><span class="o">.</span><span class="n">states</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="g09_start_job"><a class="viewcode-back" href="../../../codebase.html#squid.calcs.aneb.g09_start_job">[docs]</a><span class="k">def</span> <span class="nf">g09_start_job</span><span class="p">(</span><span class="n">ANEB</span><span class="p">,</span>
+<div class="viewcode-block" id="g09_start_job"><a class="viewcode-back" href="../../../module_docs/calcs/aneb.html#squid.calcs.aneb.g09_start_job">[docs]</a><span class="k">def</span> <span class="nf">g09_start_job</span><span class="p">(</span><span class="n">ANEB</span><span class="p">,</span>
                   <span class="n">i</span><span class="p">,</span>
                   <span class="n">state</span><span class="p">,</span>
                   <span class="n">charge</span><span class="p">,</span>
@@ -287,7 +287,7 @@
                    <span class="n">mem</span><span class="o">=</span><span class="n">mem</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="g09_results"><a class="viewcode-back" href="../../../codebase.html#squid.calcs.aneb.g09_results">[docs]</a><span class="k">def</span> <span class="nf">g09_results</span><span class="p">(</span><span class="n">ANEB</span><span class="p">,</span> <span class="n">step_to_use</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+<div class="viewcode-block" id="g09_results"><a class="viewcode-back" href="../../../module_docs/calcs/aneb.html#squid.calcs.aneb.g09_results">[docs]</a><span class="k">def</span> <span class="nf">g09_results</span><span class="p">(</span><span class="n">ANEB</span><span class="p">,</span> <span class="n">step_to_use</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    A method for reading in the output of Gaussian09 single point calculations</span>
 <span class="sd">    for ANEB calculations. This will both (a) assign forces to the atoms stored</span>
@@ -346,7 +346,7 @@
     <span class="k">return</span> <span class="n">new_energy</span><span class="p">,</span> <span class="n">new_atoms</span></div>
 
 
-<div class="viewcode-block" id="orca_start_job"><a class="viewcode-back" href="../../../codebase.html#squid.calcs.aneb.orca_start_job">[docs]</a><span class="k">def</span> <span class="nf">orca_start_job</span><span class="p">(</span><span class="n">ANEB</span><span class="p">,</span>
+<div class="viewcode-block" id="orca_start_job"><a class="viewcode-back" href="../../../module_docs/calcs/aneb.html#squid.calcs.aneb.orca_start_job">[docs]</a><span class="k">def</span> <span class="nf">orca_start_job</span><span class="p">(</span><span class="n">ANEB</span><span class="p">,</span>
                    <span class="n">i</span><span class="p">,</span>
                    <span class="n">state</span><span class="p">,</span>
                    <span class="n">charge</span><span class="p">,</span>
@@ -406,7 +406,7 @@
                     <span class="n">priority</span><span class="o">=</span><span class="n">ANEB</span><span class="o">.</span><span class="n">priority</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="orca_results"><a class="viewcode-back" href="../../../codebase.html#squid.calcs.aneb.orca_results">[docs]</a><span class="k">def</span> <span class="nf">orca_results</span><span class="p">(</span><span class="n">ANEB</span><span class="p">,</span> <span class="n">step_to_use</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+<div class="viewcode-block" id="orca_results"><a class="viewcode-back" href="../../../module_docs/calcs/aneb.html#squid.calcs.aneb.orca_results">[docs]</a><span class="k">def</span> <span class="nf">orca_results</span><span class="p">(</span><span class="n">ANEB</span><span class="p">,</span> <span class="n">step_to_use</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    A method for reading in the output of Orca single point calculations for</span>
 <span class="sd">    ANEB calculations. This will both (a) assign forces to the atoms stored</span>
@@ -446,7 +446,7 @@
 
 
 <span class="c1"># Class to contain working variables</span>
-<div class="viewcode-block" id="ANEB"><a class="viewcode-back" href="../../../codebase.html#squid.calcs.aneb.ANEB">[docs]</a><span class="k">class</span> <span class="nc">ANEB</span><span class="p">:</span>
+<div class="viewcode-block" id="ANEB"><a class="viewcode-back" href="../../../module_docs/calcs/aneb.html#squid.calcs.aneb.ANEB">[docs]</a><span class="k">class</span> <span class="nc">ANEB</span><span class="p">:</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    A method for determining the minimum energy pathway of a reaction using</span>
 <span class="sd">    DFT. Note, this method was written for atomic orbital DFT codes; however,</span>
@@ -903,7 +903,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">gradient</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gradient</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ANEB.align_coordinates"><a class="viewcode-back" href="../../../codebase.html#squid.calcs.aneb.ANEB.align_coordinates">[docs]</a>    <span class="k">def</span> <span class="nf">align_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">H</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_matrix</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="ANEB.align_coordinates"><a class="viewcode-back" href="../../../module_docs/calcs/aneb.html#squid.calcs.aneb.ANEB.align_coordinates">[docs]</a>    <span class="k">def</span> <span class="nf">align_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">H</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_matrix</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Get a rotation matrix A that will remove rigid rotation from the</span>
 <span class="sd">        new coordinates r.  Further, if another vector needs rotating by the</span>
