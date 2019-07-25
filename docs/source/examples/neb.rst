@@ -61,7 +61,7 @@ The below code shows how one can generate a reaction pathway, and ultimately run
         print("Step 5 - Run NEB...")
         neb_handle = NEB(
             "CNH", CNH_frames, "! HF-3c",
-            procs=1, queue=None, ci_neb=True)
+            nprocs=1, queue=None, ci_neb=True)
         CNH_frames = neb_handle.optimize()[-1]
         # Save final band
         files.write_xyz(CNH_frames, "final.xyz")
