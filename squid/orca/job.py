@@ -12,7 +12,7 @@ from squid.orca.utils import get_orca_obj
 def jobarray(run_name, route, frames, n_frames=None, extra_section='',
              grad=False,
              queue=None, walltime="00:30:00", sandbox=False,
-             procs=1, ntasks=1, nodes=1,
+             nprocs=1, ntasks=1, nodes=1,
              charge=0, multiplicity=1,
              redundancy=False, unique_name=True,
              previous=None, mem=2000, priority=None, xhost=None,
@@ -24,7 +24,7 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
     system.  This is used when there are many atomic systems, stored in a
     list, that need to have the same DFT calculation performed on each.
 
-    Note - When requesting procs/ntasks/nodes, these will be per-job.  As
+    Note - When requesting nprocs/ntasks/nodes, these will be per-job.  As
     such, do **NOT** multiply out.  For instance, if you request ntasks=4,
     and len(frames) = 10, you will be running 10 jobs, each with 4 tasks.
 
@@ -52,16 +52,16 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
             is in day-hr:min:sec.
         sandbox: *bool, optional*
             Whether to run the job in a sandbox or not.
-        procs: *int, optional*
+        nprocs: *int, optional*
             How many processors to run the simulation on.  Note, the actual
-            number requested by orca will be procs * ntasks.
+            number requested by orca will be nprocs * ntasks.
         ntasks: *int, optional*
             (For SLURM) The number of tasks this job will run, each task uses
-            procs number of cores.  Note, the actual number requested by orca
-            will be procs * ntasks.
+            nprocs number of cores.  Note, the actual number requested by orca
+            will be nprocs * ntasks.
         nodes: *int, optional*
             (For SLURM) The number of nodes this job requires.  If requesting
-            ntasks * procs < 24 * nodes, a warning is printed, as on MARCC
+            ntasks * nprocs < 24 * nodes, a warning is printed, as on MARCC
             each node has only 24 cores.
         charge: *float, optional*
             Charge of the system.  If this is used, then
@@ -116,7 +116,7 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
         "grad": grad,
         "walltime": walltime,
         "sandbox": sandbox,
-        "procs": procs,
+        "nprocs": nprocs,
         "ntasks": ntasks,
         "nodes": nodes,
         "charge": charge,
@@ -143,7 +143,7 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
             frames, frames_held = itertools.tee(frames)
             n_frames = sum(1 for x in frames_held)
 
-    orca_path = get_orca_obj(procs * ntasks * nodes > 1)
+    orca_path = get_orca_obj(nprocs * ntasks * nodes > 1)
     queueing_system = jobs.get_queue_manager()
 
     # Determine indexing to use here as we generate the orca job files.  These
@@ -215,7 +215,7 @@ Serializing job submission instead." % queue_system)
 
     return jobs.submit_job(
         run_name, job_to_submit,
-        ntasks=ntasks, procs=procs, nodes=nodes,
+        ntasks=ntasks, nprocs=nprocs, nodes=nodes,
         queue=queue, mem=mem, priority=priority,
         walltime=walltime, xhosts=xhost,
         unique_name=unique_name, redundancy=redundancy,
@@ -229,7 +229,7 @@ Serializing job submission instead." % queue_system)
 # A function to run an Orca DFT Simulation
 def job(run_name, route=None, atoms=[], extra_section='', grad=False,
         queue=None, walltime="00:30:00", sandbox=False,
-        procs=1, ntasks=1, nodes=1,
+        nprocs=1, ntasks=1, nodes=1,
         charge=0, multiplicity=1,
         redundancy=False, use_NBS_sandbox=False, unique_name=True,
         previous=None, mem=2000, priority=None, xhost=None,
@@ -261,16 +261,16 @@ def job(run_name, route=None, atoms=[], extra_section='', grad=False,
             is in day-hr:min:sec.
         sandbox: *bool, optional*
             Whether to run the job in a sandbox or not.
-        procs: *int, optional*
+        nprocs: *int, optional*
             How many processors to run the simulation on.  Note, the actual
-            number requested by orca will be procs * ntasks.
+            number requested by orca will be nprocs * ntasks.
         ntasks: *int, optional*
             (For SLURM) The number of tasks this job will run, each task uses
-            procs number of cores.  Note, the actual number requested by orca
-            will be procs * ntasks.
+            nprocs number of cores.  Note, the actual number requested by orca
+            will be nprocs * ntasks.
         nodes: *int, optional*
             (For SLURM) The number of nodes this job requires.  If requesting
-            ntasks * procs < 24 * nodes, a warning is printed, as on MARCC
+            ntasks * nprocs < 24 * nodes, a warning is printed, as on MARCC
             each node has only 24 cores.
         charge: *int, optional*
             Charge of the system.  The default charge of 0 is used.
@@ -341,26 +341,26 @@ Switching to Single Point.")
             route = " ".join(r)
 
     # Get the orca path
-    orca_path = get_orca_obj(procs * ntasks * nodes > 1)
+    orca_path = get_orca_obj(nprocs * ntasks * nodes > 1)
     queueing_system = jobs.get_queue_manager()
 
-    procs, ntasks, nodes = int(procs), int(ntasks), int(nodes)
-    cores_to_use = procs * ntasks
+    nprocs, ntasks, nodes = int(nprocs), int(ntasks), int(nodes)
+    cores_to_use = nprocs * ntasks
 
-    # Handle issue with procs vs ntasks
+    # Handle issue with nprocs vs ntasks
     if queueing_system is not None and queueing_system == "slurm" and \
             cores_to_use > ntasks:
         # An issue due to "Slots" being allocated whenever ntasks is
-        # specified, but not when procs is specified.
+        # specified, but not when nprocs is specified.
         # Instead of throwing an error, we fix it manually here
-        if procs > ntasks:
-            ntasks, procs = procs, ntasks
+        if nprocs > ntasks:
+            ntasks, nprocs = nprocs, ntasks
 
         # If we find that we still have too many requested,
         # then throw the error
         if cores_to_use > ntasks:
             raise Exception("Error - When using slurm, you must specify \
-ntasks instead of procs for number of cores to use.")
+ntasks instead of nprocs for number of cores to use.")
 
     # Handle previous
     if route is None and previous is not None:
@@ -508,7 +508,7 @@ less than 2 atoms!")
             sandbox = None
         job_obj = jobs.submit_job(
             run_name, job_to_submit,
-            ntasks=ntasks, procs=procs, nodes=nodes,
+            ntasks=ntasks, nprocs=nprocs, nodes=nodes,
             queue=queue, mem=mem, priority=priority,
             walltime=walltime, xhosts=xhost,
             unique_name=unique_name, redundancy=redundancy,
