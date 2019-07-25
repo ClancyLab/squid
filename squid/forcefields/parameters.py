@@ -272,10 +272,14 @@ is not a pair potential."
         if couple_smooths:
             assert len(self.smoothed_pair_potentials) == 2,\
                 "Error - coupled smooth only works for exactly 2 potentials"
+        # Assess if we will couple or not
+        couple_smooths = couple_smooths and sum([
+            "sin" in s[-1] for s in self.smoothed_pair_potentials]) == 2
 
         # Generate our smooth functions
         if self.smooth_mask:
             self.smooth_params = []
+
             for i, left in enumerate(self.smoothed_pair_potentials):
                 if couple_smooths and i > 0:
                     continue
@@ -303,7 +307,7 @@ is not a pair potential."
 
                 # If we are smoothing, determine if it's coupled or not and
                 # handle accordingly
-                if all([
+                if lhs_smooth is not None and rhs_smooth is not None and all([
                     couple_smooths,
                     lhs_smooth.startswith("sin"),
                         rhs_smooth.startswith("sin")]):
@@ -1401,6 +1405,39 @@ END
     t2 = P.unpack()
     assert all([x == y for x, y in zip(values, t2)]),\
         "Error - pack/unpack failed."
+
+    # Test for NULL in long range, but smooths still happening for short
+    P = Parameters(["xPb", "xS"])
+    P.smrff_types = ["xPb", "xS"]
+    P.set_smoothed_pair_potentials([
+        ("morse", 4.5, "sin_r"),
+        ("lj/cut/coul/long", 12.0, "NULL")
+    ])
+    P.generate(
+        ["Pb", "S"],
+        signs=[1, -1],
+        couple_smooths=True,
+    )
+    P.pack([
+        0.89, -2.56, 2.20, 1.19, 4.25, 1.15, 799.84,
+        0.77, 5.06, 77.62, 1.53, 5.01, 207.04, 1.52,
+        5.84, 3.55, 0.36, 1.66, 0.41, 3.25, 0.32])
+    s_chk = P.dump_style("all").strip().split()
+    s_held = '''
+pair_coeff 1 1 lj/cut/coul/long 1.190000 2.200000
+pair_coeff 1 2 lj/cut/coul/long 1.169829 3.057777
+pair_coeff 2 2 lj/cut/coul/long 1.150000 4.250000
+set type 1 charge 0.890000
+set type 2 charge -2.560000
+pair_coeff 1 1 morse 799.840000 0.770000 5.060000
+pair_coeff 1 2 morse 77.620000 1.530000 5.010000
+pair_coeff 2 2 morse 207.040000 1.520000 5.840000
+pair_coeff 1 1 sin_r 0 3.55 0.36
+pair_coeff 1 2 sin_r 0 1.66 0.41
+pair_coeff 2 2 sin_r 0 3.25 0.32
+'''.strip().split()
+    assert all([s1 == s2 for s1, s2 in zip(s_chk, s_held)]),\
+        "Error - Failed pack/unpack or dump_style."
 
 
 if __name__ == "__main__":
