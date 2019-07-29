@@ -49,9 +49,9 @@ def submit_job(name, job_to_submit, **kwargs):
             kwargs["nprocs"] = kwargs["ntasks"]
         # Strip from kwargs anything we don't need here
         del kwargs["ntasks"]
-        return nbs.submit_job(name, job_to_submit, kwargs)
+        return nbs.submit_job(name, job_to_submit, **kwargs)
     elif queueing_system == "slurm":
-        return slurm.submit_job(name, job_to_submit, kwargs)
+        return slurm.submit_job(name, job_to_submit, **kwargs)
     else:
         raise Exception("Unknown queueing system (%s) encountered."
                         % str(queueing_system))
