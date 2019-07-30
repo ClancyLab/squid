@@ -110,8 +110,10 @@ procrustes demo.xyz -i -b 5 8 -n 6
         frames_hold = [copy.deepcopy(f) for f in frames]
         if b_start is not None:
             frames = frames[b_start:b_stop]
-        frames = geometry.smooth_xyz(frames, R_MAX=rmax, F_MAX=fmax,
-                                     PROCRUSTES=True, N_FRAMES=nframes)
+        frames = geometry.smooth_xyz(
+            frames,
+            R_max=rmax, F_max=fmax, N_frames=nframes,
+            use_procrustes=True)
         if b_start is not None:
             a = frames_hold[:b_start]
             b = frames
