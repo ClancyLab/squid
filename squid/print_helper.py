@@ -153,6 +153,10 @@ def printProgressBar(iteration, total, prefix='', suffix='', decimals=1, length=
             printProgressBar.buf -= 1
             return
 
+    # In the edge case that total <= 0, raise an exception
+    assert float(total) > 0,\
+        "Error - Total should be larger than 0."
+
     assert "stty" not in prefix and "stty" not in suffix, "Don't have 'stty' in prefix or suffix."
 
     percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
