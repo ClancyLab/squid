@@ -6,6 +6,7 @@ import sys
 from subprocess import Popen, PIPE
 # Squid imports
 from squid import constants
+from squid.utils.cast import is_numeric
 
 
 def color_set(s, c):
@@ -144,6 +145,17 @@ def printProgressBar(iteration, total, prefix='', suffix='', decimals=1,
 
     assert "stty" not in prefix and "stty" not in suffix,\
         "Don't have 'stty' in prefix or suffix."
+
+    assert is_numeric(total),\
+        "Error - total is not a numerical value."
+    assert float(total) > 0,\
+        "Error - total is not greater than 0."
+    assert is_numeric(iteration),\
+        "Error - iteration is not a numerical value."
+    assert float(iteration) >= 0,\
+        "Error - iteration is less than 0."
+    assert float(iteration) <= total,\
+        "Error - iteration is larger than total."
 
     percent = ("{0:." + str(decimals) + "f}").format(
         100 * (iteration / float(total)))
