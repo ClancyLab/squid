@@ -35,7 +35,7 @@ def get_lmp_obj(parallel=True):
             p = subprocess.Popen(
                 [which(name), "-h"], shell=False,
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            stdout = str(p.stdout.read().strip())
+            stdout = str(p.stdout.read().decode("utf-8").strip())
 
             if lmp_string_id not in stdout:
                 close_pipes(p)
@@ -56,7 +56,7 @@ in your PATH environment variable!"
         p = subprocess.Popen(
             [mpi_path, "-h"], shell=False,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout = str(p.stdout.read().strip())
+        stdout = str(p.stdout.read().decode("utf-8").strip())
         close_pipes(p)
 
         # Simple check for openmpi
@@ -77,7 +77,7 @@ def job(run_name, input_script, system=None,
         no_echo=False,
         redundancy=False,
         unique_name=True,
-        slurm_allocation=None):
+        allocation=None):
     '''
     Wrapper to submitting a LAMMPs simulation.
 
@@ -123,7 +123,7 @@ def job(run_name, input_script, system=None,
             True lest you have a redundancy problem! To overcome said issue,
             you can set redundancy to True as well (but only if the simulation
             is truly redundant).
-        slurm_allocation: *str, optional*
+        allocation: *str, optional*
             Whether to use a slurm allocation for this job or not.  If so,
             specify the name.
 
@@ -177,7 +177,7 @@ length is 31." % len(run_name))
             nprocs=nprocs, ntasks=ntasks, nodes=nodes,
             queue=queue, walltime=walltime,
             email=email, redundancy=redundancy, unique_name=True,
-            slurm_allocation=slurm_allocation)
+            allocation=allocation)
 
     # Copy run script
     fname = sys.argv[0]

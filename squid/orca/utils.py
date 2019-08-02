@@ -28,8 +28,8 @@ def get_orca_obj(parallel=True):
     orca_pipe = subprocess.Popen(
         [orca_path, "FAKE_FILE"], shell=False,
         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout = str(orca_pipe.stdout.read().strip())
-    # stderr = str(p.stderr.read().strip())
+    stdout = str(orca_pipe.stdout.read().decode("utf-8").strip())
+    # stderr = str(p.stderr.read().decode("utf-8").strip())
 
     assert orca_string_id in stdout,\
         "Error - Unable to access Orca.  Please ensure it is in your PATH \
@@ -54,8 +54,8 @@ required openmpi version for Orca %s" % orca_version
         ompi_pipe = subprocess.Popen(
             [ompi_path, "--V"], shell=False,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout = str(ompi_pipe.stdout.read().strip())
-        # stderr = str(p.stderr.read().strip())
+        stdout = str(ompi_pipe.stdout.read().decode("utf-8").strip())
+        # stderr = str(p.stderr.read().decode("utf-8").strip())
 
         # Simple check for openmpi
         assert "open" in stdout.lower(),\

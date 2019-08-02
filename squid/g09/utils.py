@@ -18,8 +18,8 @@ def get_g09_obj(file_name, parallel=True):
         p = subprocess.Popen(
             [ompi_path, "--V"], shell=False,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout = str(p.stdout.read().strip())
-        # stderr = str(p.stderr.read().strip())
+        stdout = str(p.stdout.read().decode("utf-8").strip())
+        # stderr = str(p.stderr.read().decode("utf-8").strip())
 
         # Simple check for openmpi
         assert "mpi" in stdout.lower(),\

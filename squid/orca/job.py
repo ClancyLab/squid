@@ -17,7 +17,7 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
              redundancy=False, unique_name=True,
              previous=None, mem=2000, priority=None, xhost=None,
              jobarray_values=None,
-             slurm_allocation=None,
+             allocation=None,
              batch_serial_jobs=None):
     '''
     Wrapper to submitting various Orca simulations as a job array on a SLURM
@@ -98,7 +98,7 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
             will use these specific values.  For example,
             jobarray_values=1,2,4,5 would submit jobs, but skip the 3rd
             index by name.
-        slurm_allocation: *str, optional*
+        allocation: *str, optional*
             Whether to use a slurm allocation for this job or not.  If so,
             specify the name.
         batch_serial_jobs: *int, optional*
@@ -127,7 +127,7 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
         "mem": mem,
         "priority": priority,
         "xhost": xhost,
-        "slurm_allocation": slurm_allocation
+        "allocation": allocation
     }
 
     # Robustly find the length of frames.  If it is a generator,
@@ -220,7 +220,7 @@ Serializing job submission instead." % queue_system)
         walltime=walltime, xhosts=xhost,
         unique_name=unique_name, redundancy=redundancy,
         sandbox=None, use_NBS_sandbox=False,
-        slurm_allocation=slurm_allocation,
+        allocation=allocation,
         jobarray=jobarray_values,
         outfile_name="orca/" + run_name + ".%a/" + run_name + ".%a.o%j"
     )
@@ -233,7 +233,7 @@ def job(run_name, route=None, atoms=[], extra_section='', grad=False,
         charge=0, multiplicity=1,
         redundancy=False, use_NBS_sandbox=False, unique_name=True,
         previous=None, mem=2000, priority=None, xhost=None,
-        slurm_allocation=None):
+        allocation=None):
     '''
     Wrapper to submitting an Orca simulation.
 
@@ -303,7 +303,7 @@ def job(run_name, route=None, atoms=[], extra_section='', grad=False,
         xhost: *list, str or str, optional*
             Which processor to run the simulation on(queueing system
             dependent).
-        slurm_allocation: *str, optional*
+        allocation: *str, optional*
             Whether to use a slurm allocation for this job or not.  If so,
             specify the name.
 
@@ -513,7 +513,7 @@ less than 2 atoms!")
             walltime=walltime, xhosts=xhost,
             unique_name=unique_name, redundancy=redundancy,
             sandbox=sandbox, use_NBS_sandbox=use_NBS_sandbox,
-            slurm_allocation=slurm_allocation
+            allocation=allocation
         )
         time.sleep(0.5)
 

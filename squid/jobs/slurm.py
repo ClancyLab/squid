@@ -73,7 +73,7 @@ def get_slurm_queues():
 
     p = subprocess.Popen([sinfo_path], shell=False,
                          stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    all_queues = p.stdout.read().strip()
+    all_queues = p.stdout.read().decode("utf-8").strip()
     if all_queues == '':
         close_pipes(p)
         return []
@@ -135,8 +135,8 @@ def get_job(s_flag, detail=0):
         p = subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output = p.stdout.read().strip()
-        output_error = p.stderr.read()
+        output = p.stdout.read().decode("utf-8").strip()
+        output_error = p.stderr.read().decode("utf-8")
         # If we successfully called sacct, break the for loop
         if output_error is None or output_error.strip() == "":
             read_successful = True
@@ -284,6 +284,7 @@ def submit_job(name, job_to_submit, **kwargs):
         "jobarray": None,
         "sandbox": None,
         "outfile_name": None,
+        "email": None,
     }
     AVAIL_GPU_PARTS = ["unlimited", "gpuk80", "gpup100", "debugger"]
 
@@ -338,9 +339,9 @@ equates to %d nodes on marcc; however, you only requested %d nodes."
         params["cpus_per_task"] = 6
 
     if params["allocation"] is None:
-        slurm_allocation = ""
+        allocation = ""
     else:
-        slurm_allocation = "#SBATCH --account=" + params["allocation"]
+        allocation = "#SBATCH --account=" + params["allocation"]
 
     # Generate your script
     jobarray_outfile_append = ""
@@ -358,12 +359,12 @@ equates to %d nodes on marcc; however, you only requested %d nodes."
     generic_script = '''#!/bin/sh
 #SBATCH --job-name="''' + name + '''"
 #SBATCH --output="''' + params["outfile_name"] + '''"
-#SBATCH --nodes=''' + params["nodes"] + '''
-#SBATCH --ntasks=''' + params["ntasks"] + ('''
+#SBATCH --nodes=''' + str(params["nodes"]) + '''
+#SBATCH --ntasks=''' + str(params["ntasks"]) + ('''
 #SBATCH --cpus-per-task=''' + str(params["cpus_per_task"]) if params["cpus_per_task"] > 1 else "") + '''
 #SBATCH --partition=''' + params["queue"] + '''
 #SBATCH --time=''' + params["walltime"] + '''
-''' + slurm_allocation + '''
+''' + allocation + '''
 ''' + gpu_flag_slurm + '''
 ''' + job_array_script + '''
 '''
@@ -406,11 +407,11 @@ equates to %d nodes on marcc; however, you only requested %d nodes."
         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     # Get the error message
-    job_err = job_pipe.stderr.read()
+    job_err = job_pipe.stderr.read().decode("utf-8")
 
     # If we figure out redundancy, add it here
     # CODE FORE REDUNDANCY IN SLURM
-    job_id = job_pipe.stdout.read()
+    job_id = job_pipe.stdout.read().decode("utf-8")
 
     if "Submitted batch job" not in job_id:
         print("\nFailed to submit the job!")

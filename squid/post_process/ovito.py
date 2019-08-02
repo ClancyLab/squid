@@ -34,7 +34,7 @@ def get_ovito_obj(version="2.9.0"):
     ovito_pipe = subprocess.Popen(
         [ovito_path, "-v"], shell=False,
         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout = str(ovito_pipe.stdout.read().strip())
+    stdout = str(ovito_pipe.stdout.read().decode("utf-8").strip())
 
     assert "Ovito" in stdout,\
         "Error - Unable to access Ovito.  Please ensure it is in your PATH \

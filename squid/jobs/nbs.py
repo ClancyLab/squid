@@ -70,7 +70,7 @@ def get_nbs_queues():
     qlist_path = which("qlist")
     p = subprocess.Popen([qlist_path], shell=False,
                          stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    all_queues = p.stdout.read().strip().split('\n')[:-1]
+    all_queues = p.stdout.read().decode("utf-8").strip().split('\n')[:-1]
     all_queues = [a.split() for a in all_queues]
     all_queues = [a[0] for a in all_queues if len(a) > 1]
     close_pipes(p)
@@ -135,7 +135,7 @@ def get_job(s_flag, detail=0):
     p = subprocess.Popen(
         [jlist_path], shell=False,
         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    output = p.stdout.read()
+    output = p.stdout.read().decode("utf-8")
 
     # Get data from string
     pattern = getpass.getuser() +\
@@ -164,7 +164,7 @@ def get_job(s_flag, detail=0):
     elif detail == 2:
         for i, a in enumerate(info):
             p = subprocess.Popen([jshow_path, a[0]], stdout=subprocess.PIPE)
-            s = p.stdout.read()
+            s = p.stdout.read().decode("utf-8")
             serv = s[s.find('Queue name:'):].split()[2].strip()
             threads = 1
             if "Slot Reservations" in s:
@@ -347,7 +347,7 @@ have the default time of the given queue.")
     job_pipe = subprocess.Popen(
         cmd.split(), shell=False,
         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    job_err = job_pipe.stderr.read()
+    job_err = job_pipe.stderr.read().decode("utf-8")
 
     if params["redundancy"] and "+notunique:" in job_err:
         try:
@@ -365,7 +365,7 @@ have the default time of the given queue.")
     elif "+notunique:" in job_err:
         raise Exception("Job with name %s already exists in the queue!" % name)
 
-    job_id_str = job_pipe.stdout.read()
+    job_id_str = job_pipe.stdout.read().decode("utf-8")
 
     if "submitted to queue" not in job_id_str:
         print("\nFailed to submit the job!")
