@@ -51,6 +51,21 @@ def submit_job(name, job_to_submit, **kwargs):
         del kwargs["ntasks"]
         return nbs.submit_job(name, job_to_submit, **kwargs)
     elif queueing_system == "slurm":
+        assert not all(["nprocs" in kwargs, "cpus_per_task" in kwargs]),\
+            "Error - specify either nprocs or cpus_per_task, not both"
+        if "nprocs" in kwargs:
+            kwargs["cpus_per_task"] = kwargs["nprocs"]
+            del kwargs["nprocs"]
+        if "ntasks" in kwargs:
+            # Because on slurm tasks allocate 'more', we sort so that
+            # We emphasize allocating tasks over cpus_per_task
+            kwargs["cpus_per_task"], kwargs["ntasks"] = sorted([
+                kwargs["ntasks"],
+                kwargs["cpus_per_task"]
+            ])
+        else:
+            kwargs["ntasks"] = kwargs["cpus_per_task"]
+            del kwargs["cpus_per_task"]
         return slurm.submit_job(name, job_to_submit, **kwargs)
     else:
         raise Exception("Unknown queueing system (%s) encountered."
