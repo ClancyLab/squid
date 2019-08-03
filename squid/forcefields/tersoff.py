@@ -810,7 +810,7 @@ class Tersoff(object):
             B = random_in_range(B_GEN_BOUNDS)
             R = random_in_range(R_GEN_BOUNDS)
             D = random_in_range(D_GEN_BOUNDS)
-            lambda1 = random_in_range(LAMBDA_1_BOUNDS)
+            lambda1 = random_in_range(LAMBDA1_BOUNDS)
             A = random_in_range(A_BOUNDS)
 
             Tersoff_Objs.append(
