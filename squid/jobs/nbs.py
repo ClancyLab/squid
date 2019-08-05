@@ -254,10 +254,10 @@ def submit_job(name, job_to_submit, **kwargs):
         "sandbox": True,
         "walltime": None,
     }
-    # Ensure we are passing only the above
-    for key, value in kwargs.items():
-        assert key in params,\
-            "Error - Unknown variable (%s) passed to nbs.submit_job." % key
+    ## Ensure we are passing only the above
+    #for key, value in kwargs.items():
+    #    assert key in params,\
+    #        "Error - Unknown variable (%s) passed to nbs.submit_job." % key
     params.update(kwargs)
 
     if params["walltime"] is not None:

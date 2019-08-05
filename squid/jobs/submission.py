@@ -53,15 +53,15 @@ def submit_job(name, job_to_submit, **kwargs):
     elif queueing_system == "slurm":
         assert not all(["nprocs" in kwargs, "cpus_per_task" in kwargs]),\
             "Error - specify either nprocs or cpus_per_task, not both"
-        if "nprocs" in kwargs:
+        if "nprocs" in kwargs.keys():
             kwargs["cpus_per_task"] = kwargs["nprocs"]
             del kwargs["nprocs"]
         if "ntasks" in kwargs:
             # Because on slurm tasks allocate 'more', we sort so that
             # We emphasize allocating tasks over cpus_per_task
             kwargs["cpus_per_task"], kwargs["ntasks"] = sorted([
-                kwargs["ntasks"],
-                kwargs["cpus_per_task"]
+                int(kwargs["ntasks"]),
+                int(kwargs["cpus_per_task"])
             ])
         else:
             kwargs["ntasks"] = kwargs["cpus_per_task"]
@@ -160,13 +160,13 @@ export OMPI_NUM_THREADS=%d
         mpirun_path = which("mpirun")
         assert mpirun_path is not None,\
             "Error - Unable to find mpirun path!"
-        cmd += "%s -np %d" % (mpirun_path, total_cores)
+        cmd += "%s -np %d " % (mpirun_path, total_cores)
 
     python_path = which("python")
     assert python_path is not None,\
         "Error - Somehow not able to find python."
 
-    cmd += " %s -u %s/%s.py" % (python_path, params["path"], name)
+    cmd += "%s -u %s/%s.py" % (python_path, params["path"], name)
 
     if params["args"] is not None:
         assert isinstance(params["args"], list),\
@@ -241,6 +241,21 @@ export OMPI_NUM_THREADS=%d
         del kwargs["ntasks"]
         return nbs.submit_job(name, cmd, **kwargs)
     elif queueing_system == "slurm":
+        assert not all(["nprocs" in kwargs, "cpus_per_task" in kwargs]),\
+            "Error - specify either nprocs or cpus_per_task, not both"
+        if "nprocs" in kwargs.keys():
+            kwargs["cpus_per_task"] = kwargs["nprocs"]
+            del kwargs["nprocs"]
+        if "ntasks" in kwargs:
+            # Because on slurm tasks allocate 'more', we sort so that
+            # We emphasize allocating tasks over cpus_per_task
+            kwargs["cpus_per_task"], kwargs["ntasks"] = sorted([
+                int(kwargs["ntasks"]),
+                int(kwargs["cpus_per_task"])
+            ])
+        else:
+            kwargs["ntasks"] = kwargs["cpus_per_task"]
+            del kwargs["cpus_per_task"]
         return slurm.submit_job(name, cmd, **kwargs)
     else:
         raise Exception("Unknown queueing system (%s) encountered."

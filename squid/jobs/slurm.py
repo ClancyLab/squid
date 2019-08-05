@@ -288,10 +288,13 @@ def submit_job(name, job_to_submit, **kwargs):
     }
     AVAIL_GPU_PARTS = ["unlimited", "gpuk80", "gpup100", "debugger"]
 
-    # Ensure we are passing only the above
-    for key, value in kwargs.items():
-        assert key in params,\
-            "Error - Unknown variable (%s) passed to slurm.submit_job." % key
+    ## We used to check to see if any pointless values were being passed, but
+    ## we found it was easier to simply just ignore those and not crash.
+
+    ## Ensure we are passing only the above
+    #for key, value in kwargs.items():
+    #    assert key in params,\
+    #        "Error - Unknown variable (%s) passed to slurm.submit_job." % key
     params.update(kwargs)
 
     # Ensure variables of correct types
