@@ -43,7 +43,7 @@ environment variable!"
     ompi_pipe = None
     if parallel:
         ompi_version_should_be = {
-            "4.1.2": "3.1.3"
+            "4.1.2": "3.1"
         }
         assert orca_version in ompi_version_should_be,\
             "Error - Please contact squid dev. We do not have stored the \
@@ -62,10 +62,10 @@ required openmpi version for Orca %s" % orca_version
             "Error - Unable to access openmpi.  Please ensure it is in your \
 PATH environment variable!"
 
-        ompi_version = stdout.strip().split("\\")[0].split()[-1]
+        ompi_version = stdout.strip().split("\n")[0].split()[-1]
         ompi_version_held = ompi_version_should_be[orca_version]
 
-        assert ompi_version_held == ompi_version,\
+        assert ompi_version.startswith(ompi_version_held),\
             "Error - Incorrect openmpi version for the loaded orca version. \
 Should be openmpi %s (found %s) for orca %s."\
         % (ompi_version_held, ompi_version, orca_version)
