@@ -25,30 +25,6 @@ def get_lmp_obj(parallel=True):
             Path to an mpi executable.
     '''
 
-    # First, look for lmp_X in order of common names
-    lmp_path = None
-    common_names = ["lmp_mpi", "lmp_serial", "lmp_smrff"]
-    lmp_string_id = "Large-scale Atomic/Molecular Massively Parallel Simulator"
-    for name in common_names:
-        if which(name) is not None:
-            # Check stuff
-            p = subprocess.Popen(
-                [which(name), "-h"], shell=False,
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            stdout = str(p.stdout.read().decode("utf-8").strip())
-
-            if lmp_string_id not in stdout:
-                close_pipes(p)
-                continue
-            else:
-                # If it works, then save it
-                close_pipes(p)
-                lmp_path = which(name)
-                break
-    assert lmp_path is not None,\
-        "Error - Please unable to find lmp executable.  Please ensure it is \
-in your PATH environment variable!"
-
     # If running in parallel, ensure we have mpi
     mpi_path = None
     if parallel:
@@ -63,6 +39,34 @@ in your PATH environment variable!"
         assert "mpi" in stdout.lower(),\
             "Error - Unable to access mpiexec.  Please ensure it is in your \
 PATH environment variable!"
+
+    # First, look for lmp_X in order of common names
+    lmp_path = None
+    common_names = ["lmp_mpi", "lmp_serial", "lmp_smrff"]
+    lmp_string_id = "Large-scale Atomic/Molecular Massively Parallel Simulator"
+    for name in common_names:
+        if which(name) is not None:
+            # Check stuff
+            if mpi_path is not None:
+                cmd = [mpi_path, "-n", "1", which(name), "-h"]
+            else:
+                cmd = [which(name), "-h"]
+            p = subprocess.Popen(
+                cmd, shell=False,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            stdout = str(p.stdout.read().decode("utf-8").strip())
+
+            if lmp_string_id not in stdout:
+                close_pipes(p)
+                continue
+            else:
+                # If it works, then save it
+                close_pipes(p)
+                lmp_path = which(name)
+                break
+    assert lmp_path is not None,\
+        "Error - Please unable to find lmp executable.  Please ensure it is \
+in your PATH environment variable!"
 
     return lmp_path, mpi_path
 
@@ -170,7 +174,7 @@ length is 31." % len(run_name))
 
     if queue is None:
         process_handle = subprocess.Popen(cmd_to_run, shell=True)
-        job_handle = jobs.Job(run_name, process_handle)
+        job_handle = jobs.Job(run_name, process_handle=process_handle)
     else:
         job_handle = jobs.submit_job(
             run_name, cmd_to_run,
