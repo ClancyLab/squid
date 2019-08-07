@@ -155,14 +155,14 @@ def get_running_jobs(detail=0):
     if queueing_system is None:
         return []
     elif queueing_system == "nbs":
-        return nbs.get_job("RUNNING", queueing_system, detail)
+        return nbs.get_job("RUNNING", detail=detail)
     elif queueing_system == "pbs":
         # Do This
         raise Exception("THIS CODE NOT WRITTEN YET.")
     elif queueing_system == "slurm":
-        return slurm.get_job("RUNNING", queueing_system, detail)
+        return slurm.get_job("RUNNING", detail=detail)
     elif queueing_system == "slurm-xsede":
-        return slurm.get_job("Running", queueing_system, detail)
+        return slurm.get_job("Running", detail=detail)
     else:
         raise Exception("Unknown queueing system (%s) encountered."
                         % str(queueing_system))
@@ -203,14 +203,14 @@ def get_pending_jobs(detail=0):
     if queueing_system is None:
         return []
     elif queueing_system.strip().lower() == "nbs":
-        return nbs.get_job("pending", queueing_system, detail)
+        return nbs.get_job("pending", detail=detail)
     elif queueing_system.strip().lower() == "pbs":
         # Do This
         raise Exception("THIS CODE NOT WRITTEN YET.")
     elif queueing_system.strip().lower() == "slurm":
-        return slurm.get_job("PENDING", queueing_system, detail)
+        return slurm.get_job("PENDING", detail=detail)
     elif queueing_system.strip().lower() == "slurm-xsede":
-        return slurm.get_job("Waiting", queueing_system, detail)
+        return slurm.get_job("Waiting", detail=detail)
     else:
         raise Exception("Unknown queueing system (%s) encountered."
                         % str(queueing_system))
