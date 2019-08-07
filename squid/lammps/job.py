@@ -65,7 +65,7 @@ PATH environment variable!"
                 lmp_path = which(name)
                 break
     assert lmp_path is not None,\
-        "Error - Please unable to find lmp executable.  Please ensure it is \
+        "Error - Unable to find lmp executable.  Please ensure it is \
 in your PATH environment variable!"
 
     return lmp_path, mpi_path
