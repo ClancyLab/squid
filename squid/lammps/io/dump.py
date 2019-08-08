@@ -115,7 +115,8 @@ def read_dump_gen(fptr, ext=".dump", coordinates=["x", "y", "z"], extras=[]):
             a = Atom(elem, x, y, z, index=index, label=label)
             a.extras = copy.deepcopy(values_of_extras)
             frame.append(a)
-        frame = sorted(frame, key=lambda x: x.index)
+        if all([x.index is not None for x in frame]):
+            frame = sorted(frame, key=lambda x: x.index)
         yield frame
 
 
