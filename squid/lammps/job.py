@@ -81,7 +81,8 @@ def job(run_name, input_script, system=None,
         no_echo=False,
         redundancy=False,
         unique_name=True,
-        allocation=None):
+        allocation=None,
+        prebash=None, postbash=None):
     '''
     Wrapper to submitting a LAMMPs simulation.
 
@@ -130,6 +131,14 @@ def job(run_name, input_script, system=None,
         allocation: *str, optional*
             Whether to use a slurm allocation for this job or not.  If so,
             specify the name.
+        prebash: *str, optional*
+            Code to put prior to the job_to_submit in the submission script.
+            This should be bash code!  Note, if nothing is passed we check if
+            a default is specified in SQUID_LMP_PREBASH.
+        postbash: *str, optional*
+            Code to put after the job_to_submit in the submission script.
+            This should be bash code!  Note, if nothing is passed we check if
+            a default is specified in SQUID_LMP_POSTBASH.
 
     **Returns**
 
@@ -140,6 +149,24 @@ def job(run_name, input_script, system=None,
     if len(run_name) > 31 and queue is not None:
         raise Exception("Job name too long (%d) for NBS. Max character \
 length is 31." % len(run_name))
+
+    # Determine if we need to pre or post append anything to the
+    # job to be submitted.
+    if prebash is None:
+        prebash = ""
+        if "SQUID_LMP_PREBASH" in os.environ:
+            prebash = os.environ['SQUID_LMP_PREBASH']
+            while "\\n" in prebash:
+                prebash = prebash.replace("\\n", "\n")
+            prebash += "\n"
+
+    if postbash is None:
+        postbash = ""
+        if "SQUID_LMP_POSTBASH" in os.environ:
+            postbash = os.environ['SQUID_LMP_POSTBASH']
+            while "\\n" in postbash:
+                postbash = postbash.replace("\\n", "\n")
+            postbash = "\n" + postbash
 
     # Change to correct directory
     os.system('mkdir -p lammps/%s' % run_name)
@@ -162,7 +189,7 @@ length is 31." % len(run_name))
     cores_to_use = nprocs * ntasks
     lmp_path, mpi_path = get_lmp_obj(cores_to_use > 1)
 
-    cmd_to_run = ""
+    cmd_to_run = prebash
     if cores_to_use > 1:
         cmd_to_run = "%s -np %d " % (mpi_path, cores_to_use)
 
@@ -171,6 +198,8 @@ length is 31." % len(run_name))
            os.getcwd() + "/" + run_name)
     if no_echo:
         cmd_to_run += " > " + os.getcwd() + "/" + run_name + ".term.log"
+
+    cmd_to_run += postbash
 
     if queue is None:
         process_handle = subprocess.Popen(cmd_to_run, shell=True)

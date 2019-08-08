@@ -18,7 +18,8 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
              previous=None, mem=2000, priority=None, xhost=None,
              jobarray_values=None,
              allocation=None,
-             batch_serial_jobs=None):
+             batch_serial_jobs=None,
+             prebash=None, postbash=None):
     '''
     Wrapper to submitting various Orca simulations as a job array on a SLURM
     system.  This is used when there are many atomic systems, stored in a
@@ -104,6 +105,14 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
         batch_serial_jobs: *int, optional*
             Whether to batch jobs at N at a time (locally on serial job
             submission).
+        prebash: *str, optional*
+            Code to put prior to the job_to_submit in the submission script.
+            This should be bash code!  Note, if nothing is passed we check if
+            a default is specified in SQUID_ORCA_PREBASH.
+        postbash: *str, optional*
+            Code to put after the job_to_submit in the submission script.
+            This should be bash code!  Note, if nothing is passed we check if
+            a default is specified in SQUID_ORCA_POSTBASH.
 
     **Returns**
 
@@ -129,6 +138,24 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
         "xhost": xhost,
         "allocation": allocation
     }
+
+    # Determine if we need to pre or post append anything to the
+    # job to be submitted.
+    if prebash is None:
+        prebash = ""
+        if "SQUID_ORCA_PREBASH" in os.environ:
+            prebash = os.environ['SQUID_ORCA_PREBASH']
+            while "\\n" in prebash:
+                prebash = prebash.replace("\\n", "\n")
+            prebash += "\n"
+
+    if postbash is None:
+        postbash = ""
+        if "SQUID_ORCA_POSTBASH" in os.environ:
+            postbash = os.environ['SQUID_ORCA_POSTBASH']
+            while "\\n" in postbash:
+                postbash = postbash.replace("\\n", "\n")
+            postbash = "\n" + postbash
 
     # Robustly find the length of frames.  If it is a generator,
     # then split it and find that length.  NOTE! This will process
@@ -206,12 +233,14 @@ Serializing job submission instead." % queue_system)
             atoms=atoms, queue="debugger", **properties)
 
     # Step 2 - we generate the jobarray script to run the orca jobs on SLURM.
-    job_to_submit = orca_path + " " + os.getcwd() + '/orca/' + run_name +\
+    job_to_submit = prebash
+    job_to_submit += orca_path + " " + os.getcwd() + '/orca/' + run_name +\
         ".${SLURM_ARRAY_TASK_ID}/" + run_name +\
         ".${SLURM_ARRAY_TASK_ID}.orca > "
     job_to_submit += (os.getcwd() + '/orca/' + run_name +
                       ".${SLURM_ARRAY_TASK_ID}/" + run_name +
                       ".${SLURM_ARRAY_TASK_ID}") + ".out\n\n"
+    job_to_submit += postbash
 
     return jobs.submit_job(
         run_name, job_to_submit,
@@ -222,7 +251,8 @@ Serializing job submission instead." % queue_system)
         sandbox=None, use_NBS_sandbox=False,
         allocation=allocation,
         jobarray=jobarray_values,
-        outfile_name="orca/" + run_name + ".%a/" + run_name + ".%a.o%j"
+        outfile_name="orca/" + run_name + ".%a/" + run_name + ".%a.o%j",
+        prebash=prebash, postbash=postbash
     )
 
 
