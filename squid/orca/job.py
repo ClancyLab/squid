@@ -251,8 +251,7 @@ Serializing job submission instead." % queue_system)
         sandbox=None, use_NBS_sandbox=False,
         allocation=allocation,
         jobarray=jobarray_values,
-        outfile_name="orca/" + run_name + ".%a/" + run_name + ".%a.o%j",
-        prebash=prebash, postbash=postbash
+        outfile_name="orca/" + run_name + ".%a/" + run_name + ".%a.o%j"
     )
 
 
@@ -263,7 +262,7 @@ def job(run_name, route=None, atoms=[], extra_section='', grad=False,
         charge=0, multiplicity=1,
         redundancy=False, use_NBS_sandbox=False, unique_name=True,
         previous=None, mem=2000, priority=None, xhost=None,
-        allocation=None):
+        allocation=None, prebash=None, postbash=None):
     '''
     Wrapper to submitting an Orca simulation.
 
@@ -336,6 +335,14 @@ def job(run_name, route=None, atoms=[], extra_section='', grad=False,
         allocation: *str, optional*
             Whether to use a slurm allocation for this job or not.  If so,
             specify the name.
+        prebash: *str, optional*
+            Code to put prior to the job_to_submit in the submission script.
+            This should be bash code!  Note, if nothing is passed we check if
+            a default is specified in SQUID_ORCA_PREBASH.
+        postbash: *str, optional*
+            Code to put after the job_to_submit in the submission script.
+            This should be bash code!  Note, if nothing is passed we check if
+            a default is specified in SQUID_ORCA_POSTBASH.
 
     **Returns**
 
@@ -344,6 +351,24 @@ def job(run_name, route=None, atoms=[], extra_section='', grad=False,
     '''
     assert any([route is not None, previous is not None]),\
         "Error - You must specify ate least one: route, previous."
+
+    # Determine if we need to pre or post append anything to the
+    # job to be submitted.
+    if prebash is None:
+        prebash = ""
+        if "SQUID_ORCA_PREBASH" in os.environ:
+            prebash = os.environ['SQUID_ORCA_PREBASH']
+            while "\\n" in prebash:
+                prebash = prebash.replace("\\n", "\n")
+            prebash += "\n"
+
+    if postbash is None:
+        postbash = ""
+        if "SQUID_ORCA_POSTBASH" in os.environ:
+            postbash = os.environ['SQUID_ORCA_POSTBASH']
+            while "\\n" in postbash:
+                postbash = postbash.replace("\\n", "\n")
+            postbash = "\n" + postbash
 
     if len(run_name) > 31 and queue is not None:
         raise Exception("Job name \"%s\" too long (%d) for NBS. \
@@ -508,19 +533,19 @@ less than 2 atoms!")
         job_obj = jobs.Job(None)
     else:
         # Details copied from orca for sandbox
-        if not use_NBS_sandbox:
-            job_to_submit = "workdir=$(pwd -P)\n"
-            job_to_submit += "thisdir=" + os.getcwd() + "\n"
-        else:
-            job_to_submit = ""
+        job_to_submit = prebash.strip() + "\n"
+        #if not use_NBS_sandbox:
+        #    job_to_submit += "workdir=$(pwd -P)\n"
+        #    job_to_submit += "thisdir=" + os.getcwd() + "\n"
         job_to_submit += orca_path + " " + os.getcwd()
         job_to_submit += '/' + run_name + ".orca > "
         job_to_submit += (os.getcwd() + '/' + run_name) + ".out\n\n"
-        job_to_submit = job_to_submit + "touch " + run_name + ".orca.xyz\n"
-        job_to_submit = job_to_submit + "touch " + run_name + ".orca.gbw\n"
-        job_to_submit = job_to_submit + "touch " + run_name + ".orca.engrad\n"
-        job_to_submit = job_to_submit + "touch " + run_name + ".orca.prop\n"
-        job_to_submit = job_to_submit + "touch " + run_name + ".orca.opt\n"
+        #job_to_submit = job_to_submit + "touch " + run_name + ".orca.xyz\n"
+        #job_to_submit = job_to_submit + "touch " + run_name + ".orca.gbw\n"
+        #job_to_submit = job_to_submit + "touch " + run_name + ".orca.engrad\n"
+        #job_to_submit = job_to_submit + "touch " + run_name + ".orca.prop\n"
+        #job_to_submit = job_to_submit + "touch " + run_name + ".orca.opt\n"
+        job_to_submit = job_to_submit + postbash
 
         sandbox_in = ["*.orca*"]
         if os.path.exists("previous.gbw"):
