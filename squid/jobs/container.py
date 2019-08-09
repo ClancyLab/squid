@@ -50,7 +50,7 @@ class JobObject(object):
                 else:
                     break
 
-    def get_all_jobs(detail=3):
+    def get_all_jobs(self, detail=3):
         '''
         Get a list of all jobs that are running and/or pending.
 
