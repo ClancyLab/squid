@@ -5,7 +5,7 @@ long_description = open("README.rst", 'r').read().strip()
 
 setuptools.setup(
     name='clancyLab-squid',
-    version='2.0.21',
+    version='2.0.22',
     author="Clancy Group",
     author_email="ClancyLabJHU@gmail.com",
     description=description,
