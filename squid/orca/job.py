@@ -18,7 +18,7 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
              previous=None, mem=2000, priority=None, xhost=None,
              jobarray_values=None,
              allocation=None,
-             batch_serial_jobs=None,
+             batch_serial_jobs=None, skip_ompi=False,
              prebash=None, postbash=None):
     '''
     Wrapper to submitting various Orca simulations as a job array on a SLURM
@@ -105,6 +105,11 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
         batch_serial_jobs: *int, optional*
             Whether to batch jobs at N at a time (locally on serial job
             submission).
+        skip_ompi: *bool, optional*
+            At times you may wish to run orca without checking if ompi is
+            available.  This can arise when you are submitting the job to
+            a queueing system that will load ompi later, but right now you
+            only have orca in the path.  If so, set skip_ompi=True.
         prebash: *str, optional*
             Code to put prior to the job_to_submit in the submission script.
             This should be bash code!  Note, if nothing is passed we check if
@@ -170,7 +175,10 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
             frames, frames_held = itertools.tee(frames)
             n_frames = sum(1 for x in frames_held)
 
-    orca_path = get_orca_obj(nprocs * ntasks * nodes > 1)
+    if skip_ompi:
+        orca_path = get_orca_obj(parallel=False)
+    else:
+        orca_path = get_orca_obj(nprocs * ntasks * nodes > 1)
     queueing_system = jobs.get_queue_manager()
 
     # Determine indexing to use here as we generate the orca job files.  These
@@ -262,7 +270,7 @@ def job(run_name, route=None, atoms=[], extra_section='', grad=False,
         charge=0, multiplicity=1,
         redundancy=False, use_NBS_sandbox=False, unique_name=True,
         previous=None, mem=2000, priority=None, xhost=None,
-        allocation=None, prebash=None, postbash=None):
+        allocation=None, skip_ompi=False, prebash=None, postbash=None):
     '''
     Wrapper to submitting an Orca simulation.
 
@@ -335,6 +343,11 @@ def job(run_name, route=None, atoms=[], extra_section='', grad=False,
         allocation: *str, optional*
             Whether to use a slurm allocation for this job or not.  If so,
             specify the name.
+        skip_ompi: *bool, optional*
+            At times you may wish to run orca without checking if ompi is
+            available.  This can arise when you are submitting the job to
+            a queueing system that will load ompi later, but right now you
+            only have orca in the path.  If so, set skip_ompi=True.
         prebash: *str, optional*
             Code to put prior to the job_to_submit in the submission script.
             This should be bash code!  Note, if nothing is passed we check if
@@ -396,7 +409,10 @@ Switching to Single Point.")
             route = " ".join(r)
 
     # Get the orca path
-    orca_path = get_orca_obj(nprocs * ntasks * nodes > 1)
+    if skip_ompi:
+        orca_path = get_orca_obj(parallel=False)
+    else:
+        orca_path = get_orca_obj(nprocs * ntasks * nodes > 1)
     queueing_system = jobs.get_queue_manager()
 
     nprocs, ntasks, nodes = int(nprocs), int(ntasks), int(nodes)
