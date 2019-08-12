@@ -141,7 +141,10 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
         "mem": mem,
         "priority": priority,
         "xhost": xhost,
-        "allocation": allocation
+        "allocation": allocation,
+        "skip_ompi": skip_ompi,
+        "prebash": prebash,
+        "postbash": postbash
     }
 
     # Determine if we need to pre or post append anything to the
