@@ -116,7 +116,7 @@ class System(object):
         cast.assert_vec(other, length=3, numeric=True)
         new = copy.deepcopy(self)
         for i, mol in enumerate(new.molecules):
-            new.molecules[i] = mol + other
+            new.molecules[i].translate(other)
         return new
 
     def __sub__(self, other):
