@@ -50,7 +50,7 @@
 <span class="n">EPSILON_BOUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0001</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="LJ"><a class="viewcode-back" href="../../../module_docs/forcefields/lj.html#squid.forcefields.lj.LJ">[docs]</a><span class="k">class</span> <span class="nc">LJ</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="LJ"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.lj.LJ">[docs]</a><span class="k">class</span> <span class="nc">LJ</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Initialize the LJ object.  Either pass index + sigma + epsilon,</span>
 <span class="sd">    or pass line.  If all are passed, then an error will be thrown.</span>
@@ -160,7 +160,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span>
 
-<div class="viewcode-block" id="LJ.pair_coeff_dump"><a class="viewcode-back" href="../../../module_docs/forcefields/lj.html#squid.forcefields.lj.LJ.pair_coeff_dump">[docs]</a>    <span class="k">def</span> <span class="nf">pair_coeff_dump</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="LJ.pair_coeff_dump"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.lj.LJ.pair_coeff_dump">[docs]</a>    <span class="k">def</span> <span class="nf">pair_coeff_dump</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Return a string representation of the pair coefficients.  In this</span>
 <span class="sd">        case, it simply is the epsilon and sigma values with a space.</span>
@@ -172,7 +172,7 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%.4f</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LJ.print_lower"><a class="viewcode-back" href="../../../module_docs/forcefields/lj.html#squid.forcefields.lj.LJ.print_lower">[docs]</a>    <span class="k">def</span> <span class="nf">print_lower</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="LJ.print_lower"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.lj.LJ.print_lower">[docs]</a>    <span class="k">def</span> <span class="nf">print_lower</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This prints out a representation of this LJ object&#39;s lower bounds,</span>
 <span class="sd">        in the format that is output to the smrff parameter file.</span>
@@ -186,7 +186,7 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_printer</span><span class="p">(</span><span class="n">bounds</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LJ.print_upper"><a class="viewcode-back" href="../../../module_docs/forcefields/lj.html#squid.forcefields.lj.LJ.print_upper">[docs]</a>    <span class="k">def</span> <span class="nf">print_upper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="LJ.print_upper"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.lj.LJ.print_upper">[docs]</a>    <span class="k">def</span> <span class="nf">print_upper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This prints out a representation of this LJ object&#39;s upper bounds,</span>
 <span class="sd">        in the format that is output to the smrff parameter file.</span>
@@ -200,7 +200,7 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_printer</span><span class="p">(</span><span class="n">bounds</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LJ.unpack"><a class="viewcode-back" href="../../../module_docs/forcefields/lj.html#squid.forcefields.lj.LJ.unpack">[docs]</a>    <span class="k">def</span> <span class="nf">unpack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">with_bounds</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="LJ.unpack"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.lj.LJ.unpack">[docs]</a>    <span class="k">def</span> <span class="nf">unpack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">with_bounds</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This function unpacks the LJ object into a list.</span>
 
@@ -236,7 +236,7 @@
 
         <span class="k">return</span> <span class="n">pkg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="LJ.pack"><a class="viewcode-back" href="../../../module_docs/forcefields/lj.html#squid.forcefields.lj.LJ.pack">[docs]</a>    <span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="LJ.pack"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.lj.LJ.pack">[docs]</a>    <span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This function packs the LJ object from a list.</span>
 
@@ -257,7 +257,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">params</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="LJ.validate"><a class="viewcode-back" href="../../../module_docs/forcefields/lj.html#squid.forcefields.lj.LJ.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">warn</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="LJ.validate"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.lj.LJ.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">warn</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This function will validate data integrity.  In this case, we simply</span>
 <span class="sd">        ensure data types are appropriate.</span>
@@ -294,7 +294,7 @@
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;In LJ (index </span><span class="si">%s</span><span class="s2">), epsilon should be </span><span class="se">\</span>
 <span class="s2">larger than 0! It is </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LJ.parse_line"><a class="viewcode-back" href="../../../module_docs/forcefields/lj.html#squid.forcefields.lj.LJ.parse_line">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="LJ.parse_line"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.lj.LJ.parse_line">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">parse_line</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parse line inputs.</span>
@@ -319,7 +319,7 @@
         <span class="n">epsilon</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">index</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">epsilon</span></div>
 
-<div class="viewcode-block" id="LJ.assign_line"><a class="viewcode-back" href="../../../module_docs/forcefields/lj.html#squid.forcefields.lj.LJ.assign_line">[docs]</a>    <span class="k">def</span> <span class="nf">assign_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+<div class="viewcode-block" id="LJ.assign_line"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.lj.LJ.assign_line">[docs]</a>    <span class="k">def</span> <span class="nf">assign_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parse line inputs and assign to this object.</span>
 
@@ -335,7 +335,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="LJ.fix"><a class="viewcode-back" href="../../../module_docs/forcefields/lj.html#squid.forcefields.lj.LJ.fix">[docs]</a>    <span class="k">def</span> <span class="nf">fix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="LJ.fix"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.lj.LJ.fix">[docs]</a>    <span class="k">def</span> <span class="nf">fix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This will fix these parameters by assigning bounds to the</span>
 <span class="sd">        values themselves.</span>
@@ -386,7 +386,7 @@
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                 <span class="s2">&quot;In LJ, tried fixing </span><span class="si">%s</span><span class="s2"> parameter (does not exist)!&quot;</span> <span class="o">%</span> <span class="n">params</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LJ.load_smrff"><a class="viewcode-back" href="../../../module_docs/forcefields/lj.html#squid.forcefields.lj.LJ.load_smrff">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="LJ.load_smrff"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.lj.LJ.load_smrff">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">load_smrff</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">parsed_file</span><span class="p">,</span> <span class="n">pfile_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">restrict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Given a parameter file, inport the coulomb parameters if possible.</span>
@@ -428,7 +428,7 @@
             <span class="k">if</span> <span class="n">check_restriction</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">restrict</span><span class="p">)</span>
         <span class="p">]</span></div>
 
-<div class="viewcode-block" id="LJ.load_opls"><a class="viewcode-back" href="../../../module_docs/forcefields/lj.html#squid.forcefields.lj.LJ.load_opls">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="LJ.load_opls"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.lj.LJ.load_opls">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">load_opls</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">atom_types</span><span class="p">,</span> <span class="n">pfile_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">restrict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Given a parameter file, inport the LJ parameters if possible.</span>
@@ -460,7 +460,7 @@
             <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">atom_types</span> <span class="k">if</span> <span class="n">check_restriction</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">restrict</span><span class="p">)</span>
         <span class="p">]</span></div>
 
-<div class="viewcode-block" id="LJ.generate"><a class="viewcode-back" href="../../../module_docs/forcefields/lj.html#squid.forcefields.lj.LJ.generate">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="LJ.generate"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.lj.LJ.generate">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">atom_types</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Randomly generate parameters for lj sigma and epsilon.</span>

@@ -47,9 +47,10 @@
 <span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span>
 <span class="c1"># Squid imports</span>
 <span class="kn">from</span> <span class="nn">squid</span> <span class="k">import</span> <span class="n">constants</span>
+<span class="kn">from</span> <span class="nn">squid.utils.cast</span> <span class="k">import</span> <span class="n">is_numeric</span>
 
 
-<div class="viewcode-block" id="color_set"><a class="viewcode-back" href="../../../codebase.html#squid.utils.print_helper.color_set">[docs]</a><span class="k">def</span> <span class="nf">color_set</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+<div class="viewcode-block" id="color_set"><a class="viewcode-back" href="../../../module_docs/utils/print_helper.html#squid.utils.print_helper.color_set">[docs]</a><span class="k">def</span> <span class="nf">color_set</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Colourize a string for linux terminal output.</span>
 
@@ -71,7 +72,7 @@
 <span class="n">colour_set</span> <span class="o">=</span> <span class="n">color_set</span>
 
 
-<div class="viewcode-block" id="strip_color"><a class="viewcode-back" href="../../../codebase.html#squid.utils.print_helper.strip_color">[docs]</a><span class="k">def</span> <span class="nf">strip_color</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<div class="viewcode-block" id="strip_color"><a class="viewcode-back" href="../../../module_docs/utils/print_helper.html#squid.utils.print_helper.strip_color">[docs]</a><span class="k">def</span> <span class="nf">strip_color</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Remove colour and/or string formatting due to linux escape sequences.</span>
 
@@ -95,7 +96,7 @@
 <span class="n">strip_colour</span> <span class="o">=</span> <span class="n">strip_color</span>
 
 
-<div class="viewcode-block" id="spaced_print"><a class="viewcode-back" href="../../../codebase.html#squid.utils.print_helper.spaced_print">[docs]</a><span class="k">def</span> <span class="nf">spaced_print</span><span class="p">(</span><span class="n">sOut</span><span class="p">,</span> <span class="n">delim</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">],</span> <span class="n">buf</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+<div class="viewcode-block" id="spaced_print"><a class="viewcode-back" href="../../../module_docs/utils/print_helper.html#squid.utils.print_helper.spaced_print">[docs]</a><span class="k">def</span> <span class="nf">spaced_print</span><span class="p">(</span><span class="n">sOut</span><span class="p">,</span> <span class="n">delim</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">],</span> <span class="n">buf</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Given a list of strings, or a string with new lines, this will</span>
 <span class="sd">    reformat the string with spaces to split columns.  Note, this</span>
@@ -146,7 +147,7 @@
     <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sOut</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="printProgressBar"><a class="viewcode-back" href="../../../codebase.html#squid.utils.print_helper.printProgressBar">[docs]</a><span class="k">def</span> <span class="nf">printProgressBar</span><span class="p">(</span><span class="n">iteration</span><span class="p">,</span> <span class="n">total</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<div class="viewcode-block" id="printProgressBar"><a class="viewcode-back" href="../../../module_docs/utils/print_helper.html#squid.utils.print_helper.printProgressBar">[docs]</a><span class="k">def</span> <span class="nf">printProgressBar</span><span class="p">(</span><span class="n">iteration</span><span class="p">,</span> <span class="n">total</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                      <span class="n">length</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">buf</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    NOTE! THIS IS COPIED FROM STACK OVERFLOW (with minor changes),</span>
@@ -186,6 +187,17 @@
     <span class="k">assert</span> <span class="s2">&quot;stty&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prefix</span> <span class="ow">and</span> <span class="s2">&quot;stty&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">suffix</span><span class="p">,</span>\
         <span class="s2">&quot;Don&#39;t have &#39;stty&#39; in prefix or suffix.&quot;</span>
 
+    <span class="k">assert</span> <span class="n">is_numeric</span><span class="p">(</span><span class="n">total</span><span class="p">),</span>\
+        <span class="s2">&quot;Error - total is not a numerical value.&quot;</span>
+    <span class="k">assert</span> <span class="nb">float</span><span class="p">(</span><span class="n">total</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - total is not greater than 0.&quot;</span>
+    <span class="k">assert</span> <span class="n">is_numeric</span><span class="p">(</span><span class="n">iteration</span><span class="p">),</span>\
+        <span class="s2">&quot;Error - iteration is not a numerical value.&quot;</span>
+    <span class="k">assert</span> <span class="nb">float</span><span class="p">(</span><span class="n">iteration</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - iteration is less than 0.&quot;</span>
+    <span class="k">assert</span> <span class="nb">float</span><span class="p">(</span><span class="n">iteration</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">total</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - iteration is larger than total.&quot;</span>
+
     <span class="n">percent</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;{0:.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">decimals</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;f}&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
         <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">iteration</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">total</span><span class="p">)))</span>
     <span class="n">filledLength</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">length</span> <span class="o">*</span> <span class="n">iteration</span> <span class="o">//</span> <span class="n">total</span><span class="p">)</span>
@@ -213,7 +225,7 @@
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="bytes2human"><a class="viewcode-back" href="../../../codebase.html#squid.utils.print_helper.bytes2human">[docs]</a><span class="k">def</span> <span class="nf">bytes2human</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+<div class="viewcode-block" id="bytes2human"><a class="viewcode-back" href="../../../module_docs/utils/print_helper.html#squid.utils.print_helper.bytes2human">[docs]</a><span class="k">def</span> <span class="nf">bytes2human</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Convert n bytes (as integer) to a human readable string.  Code was found</span>
 <span class="sd">    online at activestate (see references).</span>

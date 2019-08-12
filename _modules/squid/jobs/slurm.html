@@ -66,7 +66,7 @@
 <span class="sd">        job_obj: :class:`squid.jobs.slurm.Job`</span>
 <span class="sd">            A Job object.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-<div class="viewcode-block" id="Job.get_all_jobs"><a class="viewcode-back" href="../../../module_docs/jobs/slurm.html#squid.jobs.slurm.Job.get_all_jobs">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_jobs</span><span class="p">(</span><span class="n">detail</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<div class="viewcode-block" id="Job.get_all_jobs"><a class="viewcode-back" href="../../../module_docs/jobs/slurm.html#squid.jobs.slurm.Job.get_all_jobs">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_jobs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Get a list of all jobs that are running and/or pending.</span>
 
@@ -114,7 +114,7 @@
 
     <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="n">sinfo_path</span><span class="p">],</span> <span class="n">shell</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                          <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
-    <span class="n">all_queues</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">all_queues</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">all_queues</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
         <span class="n">close_pipes</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">[]</span>
@@ -176,8 +176,8 @@
         <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
             <span class="n">cmd</span><span class="p">,</span>
             <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="n">output_error</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">output_error</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
         <span class="c1"># If we successfully called sacct, break the for loop</span>
         <span class="k">if</span> <span class="n">output_error</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">output_error</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
             <span class="n">read_successful</span> <span class="o">=</span> <span class="kc">True</span>
@@ -325,13 +325,17 @@
         <span class="s2">&quot;jobarray&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
         <span class="s2">&quot;sandbox&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
         <span class="s2">&quot;outfile_name&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="n">AVAIL_GPU_PARTS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;unlimited&quot;</span><span class="p">,</span> <span class="s2">&quot;gpuk80&quot;</span><span class="p">,</span> <span class="s2">&quot;gpup100&quot;</span><span class="p">,</span> <span class="s2">&quot;debugger&quot;</span><span class="p">]</span>
 
-    <span class="c1"># Ensure we are passing only the above</span>
-    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">assert</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">params</span><span class="p">,</span>\
-            <span class="s2">&quot;Error - Unknown variable (</span><span class="si">%s</span><span class="s2">) passed to slurm.submit_job.&quot;</span> <span class="o">%</span> <span class="n">key</span>
+    <span class="c1">## We used to check to see if any pointless values were being passed, but</span>
+    <span class="c1">## we found it was easier to simply just ignore those and not crash.</span>
+
+    <span class="c1">## Ensure we are passing only the above</span>
+    <span class="c1">#for key, value in kwargs.items():</span>
+    <span class="c1">#    assert key in params,\</span>
+    <span class="c1">#        &quot;Error - Unknown variable (%s) passed to slurm.submit_job.&quot; % key</span>
     <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="c1"># Ensure variables of correct types</span>
@@ -379,9 +383,9 @@
         <span class="n">params</span><span class="p">[</span><span class="s2">&quot;cpus_per_task&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
 
     <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;allocation&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">slurm_allocation</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">allocation</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">slurm_allocation</span> <span class="o">=</span> <span class="s2">&quot;#SBATCH --account=&quot;</span> <span class="o">+</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;allocation&quot;</span><span class="p">]</span>
+        <span class="n">allocation</span> <span class="o">=</span> <span class="s2">&quot;#SBATCH --account=&quot;</span> <span class="o">+</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;allocation&quot;</span><span class="p">]</span>
 
     <span class="c1"># Generate your script</span>
     <span class="n">jobarray_outfile_append</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -399,12 +403,12 @@
     <span class="n">generic_script</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;#!/bin/sh</span>
 <span class="s1">#SBATCH --job-name=&quot;&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;&quot;</span>
 <span class="s1">#SBATCH --output=&quot;&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;outfile_name&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;&quot;</span>
-<span class="s1">#SBATCH --nodes=&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;nodes&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span>
-<span class="s1">#SBATCH --ntasks=&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;ntasks&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">#SBATCH --nodes=&#39;&#39;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;nodes&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">#SBATCH --ntasks=&#39;&#39;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ntasks&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">#SBATCH --cpus-per-task=&#39;&#39;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;cpus_per_task&quot;</span><span class="p">])</span> <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;cpus_per_task&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">#SBATCH --partition=&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;queue&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">#SBATCH --time=&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;walltime&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span>
-<span class="s1">&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">slurm_allocation</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">allocation</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">gpu_flag_slurm</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">job_array_script</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">&#39;&#39;&#39;</span>
@@ -447,11 +451,11 @@
         <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
 
     <span class="c1"># Get the error message</span>
-    <span class="n">job_err</span> <span class="o">=</span> <span class="n">job_pipe</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">job_err</span> <span class="o">=</span> <span class="n">job_pipe</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
 
     <span class="c1"># If we figure out redundancy, add it here</span>
     <span class="c1"># CODE FORE REDUNDANCY IN SLURM</span>
-    <span class="n">job_id</span> <span class="o">=</span> <span class="n">job_pipe</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">job_id</span> <span class="o">=</span> <span class="n">job_pipe</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="s2">&quot;Submitted batch job&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">job_id</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Failed to submit the job!&quot;</span><span class="p">)</span>

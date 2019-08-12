@@ -66,6 +66,21 @@
 <span class="sd">            Path to an mpi executable.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
+    <span class="c1"># If running in parallel, ensure we have mpi</span>
+    <span class="n">mpi_path</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">parallel</span><span class="p">:</span>
+        <span class="n">mpi_path</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="s2">&quot;mpiexec&quot;</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">mpi_path</span><span class="p">,</span> <span class="s2">&quot;-h&quot;</span><span class="p">],</span> <span class="n">shell</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+        <span class="n">stdout</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+        <span class="n">close_pipes</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+        <span class="c1"># Simple check for openmpi</span>
+        <span class="k">assert</span> <span class="s2">&quot;mpi&quot;</span> <span class="ow">in</span> <span class="n">stdout</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>\
+            <span class="s2">&quot;Error - Unable to access mpiexec.  Please ensure it is in your </span><span class="se">\</span>
+<span class="s2">PATH environment variable!&quot;</span>
+
     <span class="c1"># First, look for lmp_X in order of common names</span>
     <span class="n">lmp_path</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">common_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;lmp_mpi&quot;</span><span class="p">,</span> <span class="s2">&quot;lmp_serial&quot;</span><span class="p">,</span> <span class="s2">&quot;lmp_smrff&quot;</span><span class="p">]</span>
@@ -73,10 +88,14 @@
     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">common_names</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">which</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Check stuff</span>
+            <span class="k">if</span> <span class="n">mpi_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="n">mpi_path</span><span class="p">,</span> <span class="s2">&quot;-n&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="n">which</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="s2">&quot;-h&quot;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="s2">&quot;-h&quot;</span><span class="p">]</span>
             <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
-                <span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="s2">&quot;-h&quot;</span><span class="p">],</span> <span class="n">shell</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                 <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
-            <span class="n">stdout</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+            <span class="n">stdout</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
 
             <span class="k">if</span> <span class="n">lmp_string_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stdout</span><span class="p">:</span>
                 <span class="n">close_pipes</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
@@ -87,23 +106,8 @@
                 <span class="n">lmp_path</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
                 <span class="k">break</span>
     <span class="k">assert</span> <span class="n">lmp_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span>\
-        <span class="s2">&quot;Error - Please unable to find lmp executable.  Please ensure it is </span><span class="se">\</span>
+        <span class="s2">&quot;Error - Unable to find lmp executable.  Please ensure it is </span><span class="se">\</span>
 <span class="s2">in your PATH environment variable!&quot;</span>
-
-    <span class="c1"># If running in parallel, ensure we have mpi</span>
-    <span class="n">mpi_path</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">if</span> <span class="n">parallel</span><span class="p">:</span>
-        <span class="n">mpi_path</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="s2">&quot;mpiexec&quot;</span><span class="p">)</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">mpi_path</span><span class="p">,</span> <span class="s2">&quot;-h&quot;</span><span class="p">],</span> <span class="n">shell</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
-        <span class="n">stdout</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
-        <span class="n">close_pipes</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-
-        <span class="c1"># Simple check for openmpi</span>
-        <span class="k">assert</span> <span class="s2">&quot;mpi&quot;</span> <span class="ow">in</span> <span class="n">stdout</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>\
-            <span class="s2">&quot;Error - Unable to access mpiexec.  Please ensure it is in your </span><span class="se">\</span>
-<span class="s2">PATH environment variable!&quot;</span>
 
     <span class="k">return</span> <span class="n">lmp_path</span><span class="p">,</span> <span class="n">mpi_path</span></div>
 
@@ -118,7 +122,8 @@
         <span class="n">no_echo</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">redundancy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">unique_name</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">slurm_allocation</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">allocation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">prebash</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">postbash</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Wrapper to submitting a LAMMPs simulation.</span>
 
@@ -164,9 +169,17 @@
 <span class="sd">            True lest you have a redundancy problem! To overcome said issue,</span>
 <span class="sd">            you can set redundancy to True as well (but only if the simulation</span>
 <span class="sd">            is truly redundant).</span>
-<span class="sd">        slurm_allocation: *str, optional*</span>
+<span class="sd">        allocation: *str, optional*</span>
 <span class="sd">            Whether to use a slurm allocation for this job or not.  If so,</span>
 <span class="sd">            specify the name.</span>
+<span class="sd">        prebash: *str, optional*</span>
+<span class="sd">            Code to put prior to the job_to_submit in the submission script.</span>
+<span class="sd">            This should be bash code!  Note, if nothing is passed we check if</span>
+<span class="sd">            a default is specified in SQUID_LMP_PREBASH.</span>
+<span class="sd">        postbash: *str, optional*</span>
+<span class="sd">            Code to put after the job_to_submit in the submission script.</span>
+<span class="sd">            This should be bash code!  Note, if nothing is passed we check if</span>
+<span class="sd">            a default is specified in SQUID_LMP_POSTBASH.</span>
 
 <span class="sd">    **Returns**</span>
 
@@ -177,6 +190,24 @@
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">run_name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">31</span> <span class="ow">and</span> <span class="n">queue</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Job name too long (</span><span class="si">%d</span><span class="s2">) for NBS. Max character </span><span class="se">\</span>
 <span class="s2">length is 31.&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">run_name</span><span class="p">))</span>
+
+    <span class="c1"># Determine if we need to pre or post append anything to the</span>
+    <span class="c1"># job to be submitted.</span>
+    <span class="k">if</span> <span class="n">prebash</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">prebash</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;SQUID_LMP_PREBASH&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+            <span class="n">prebash</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;SQUID_LMP_PREBASH&#39;</span><span class="p">]</span>
+            <span class="k">while</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">n&quot;</span> <span class="ow">in</span> <span class="n">prebash</span><span class="p">:</span>
+                <span class="n">prebash</span> <span class="o">=</span> <span class="n">prebash</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">n&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">prebash</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+    <span class="k">if</span> <span class="n">postbash</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">postbash</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;SQUID_LMP_POSTBASH&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+            <span class="n">postbash</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;SQUID_LMP_POSTBASH&#39;</span><span class="p">]</span>
+            <span class="k">while</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">n&quot;</span> <span class="ow">in</span> <span class="n">postbash</span><span class="p">:</span>
+                <span class="n">postbash</span> <span class="o">=</span> <span class="n">postbash</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">n&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">postbash</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">postbash</span>
 
     <span class="c1"># Change to correct directory</span>
     <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;mkdir -p lammps/</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">run_name</span><span class="p">)</span>
@@ -199,7 +230,7 @@
     <span class="n">cores_to_use</span> <span class="o">=</span> <span class="n">nprocs</span> <span class="o">*</span> <span class="n">ntasks</span>
     <span class="n">lmp_path</span><span class="p">,</span> <span class="n">mpi_path</span> <span class="o">=</span> <span class="n">get_lmp_obj</span><span class="p">(</span><span class="n">cores_to_use</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span>
 
-    <span class="n">cmd_to_run</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">cmd_to_run</span> <span class="o">=</span> <span class="n">prebash</span>
     <span class="k">if</span> <span class="n">cores_to_use</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">cmd_to_run</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> -np </span><span class="si">%d</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">mpi_path</span><span class="p">,</span> <span class="n">cores_to_use</span><span class="p">)</span>
 
@@ -209,16 +240,18 @@
     <span class="k">if</span> <span class="n">no_echo</span><span class="p">:</span>
         <span class="n">cmd_to_run</span> <span class="o">+=</span> <span class="s2">&quot; &gt; &quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">run_name</span> <span class="o">+</span> <span class="s2">&quot;.term.log&quot;</span>
 
+    <span class="n">cmd_to_run</span> <span class="o">+=</span> <span class="n">postbash</span>
+
     <span class="k">if</span> <span class="n">queue</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">process_handle</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd_to_run</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">job_handle</span> <span class="o">=</span> <span class="n">jobs</span><span class="o">.</span><span class="n">Job</span><span class="p">(</span><span class="n">run_name</span><span class="p">,</span> <span class="n">process_handle</span><span class="p">)</span>
+        <span class="n">job_handle</span> <span class="o">=</span> <span class="n">jobs</span><span class="o">.</span><span class="n">Job</span><span class="p">(</span><span class="n">run_name</span><span class="p">,</span> <span class="n">process_handle</span><span class="o">=</span><span class="n">process_handle</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">job_handle</span> <span class="o">=</span> <span class="n">jobs</span><span class="o">.</span><span class="n">submit_job</span><span class="p">(</span>
             <span class="n">run_name</span><span class="p">,</span> <span class="n">cmd_to_run</span><span class="p">,</span>
             <span class="n">nprocs</span><span class="o">=</span><span class="n">nprocs</span><span class="p">,</span> <span class="n">ntasks</span><span class="o">=</span><span class="n">ntasks</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span>
             <span class="n">queue</span><span class="o">=</span><span class="n">queue</span><span class="p">,</span> <span class="n">walltime</span><span class="o">=</span><span class="n">walltime</span><span class="p">,</span>
             <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span> <span class="n">redundancy</span><span class="o">=</span><span class="n">redundancy</span><span class="p">,</span> <span class="n">unique_name</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">slurm_allocation</span><span class="o">=</span><span class="n">slurm_allocation</span><span class="p">)</span>
+            <span class="n">allocation</span><span class="o">=</span><span class="n">allocation</span><span class="p">)</span>
 
     <span class="c1"># Copy run script</span>
     <span class="n">fname</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>

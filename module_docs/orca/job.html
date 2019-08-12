@@ -39,7 +39,7 @@
             
   <span class="target" id="module-squid.orca.job"></span><dl class="function">
 <dt id="squid.orca.job.job">
-<code class="descclassname">squid.orca.job.</code><code class="descname">job</code><span class="sig-paren">(</span><em>run_name</em>, <em>route=None</em>, <em>atoms=[]</em>, <em>extra_section=''</em>, <em>grad=False</em>, <em>queue=None</em>, <em>walltime='00:30:00'</em>, <em>sandbox=False</em>, <em>nprocs=1</em>, <em>ntasks=1</em>, <em>nodes=1</em>, <em>charge=0</em>, <em>multiplicity=1</em>, <em>redundancy=False</em>, <em>use_NBS_sandbox=False</em>, <em>unique_name=True</em>, <em>previous=None</em>, <em>mem=2000</em>, <em>priority=None</em>, <em>xhost=None</em>, <em>slurm_allocation=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/orca/job.html#job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.orca.job.job" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">squid.orca.job.</code><code class="descname">job</code><span class="sig-paren">(</span><em>run_name</em>, <em>route=None</em>, <em>atoms=[]</em>, <em>extra_section=''</em>, <em>grad=False</em>, <em>queue=None</em>, <em>walltime='00:30:00'</em>, <em>sandbox=False</em>, <em>nprocs=1</em>, <em>ntasks=1</em>, <em>nodes=1</em>, <em>charge=0</em>, <em>multiplicity=1</em>, <em>redundancy=False</em>, <em>use_NBS_sandbox=False</em>, <em>unique_name=True</em>, <em>previous=None</em>, <em>mem=2000</em>, <em>priority=None</em>, <em>xhost=None</em>, <em>allocation=None</em>, <em>skip_ompi=False</em>, <em>prebash=None</em>, <em>postbash=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/orca/job.html#job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.orca.job.job" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper to submitting an Orca simulation.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
@@ -50,7 +50,7 @@
 <dd>The DFT route line, containing the function, basis set, etc.
 Note, if route=None and previous != None, the route from
 the previous simulation will be used instead.</dd>
-<dt>atoms: <em>list,</em> <a class="reference internal" href="../structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a> <em>,optional</em></dt>
+<dt>atoms: <em>list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a> <em>,optional</em></dt>
 <dd>A list of atoms for the simulation.  If this is an empty list, but
 previous is used, then the last set of atomic coordinates from
 the previous simulation will be used.</dd>
@@ -108,9 +108,22 @@ high of 255 (start running ASAP).</dd>
 <dt>xhost: <em>list, str or str, optional</em></dt>
 <dd>Which processor to run the simulation on(queueing system
 dependent).</dd>
-<dt>slurm_allocation: <em>str, optional</em></dt>
+<dt>allocation: <em>str, optional</em></dt>
 <dd>Whether to use a slurm allocation for this job or not.  If so,
 specify the name.</dd>
+<dt>skip_ompi: <em>bool, optional</em></dt>
+<dd>At times you may wish to run orca without checking if ompi is
+available.  This can arise when you are submitting the job to
+a queueing system that will load ompi later, but right now you
+only have orca in the path.  If so, set skip_ompi=True.</dd>
+<dt>prebash: <em>str, optional</em></dt>
+<dd>Code to put prior to the job_to_submit in the submission script.
+This should be bash code!  Note, if nothing is passed we check if
+a default is specified in SQUID_ORCA_PREBASH.</dd>
+<dt>postbash: <em>str, optional</em></dt>
+<dd>Code to put after the job_to_submit in the submission script.
+This should be bash code!  Note, if nothing is passed we check if
+a default is specified in SQUID_ORCA_POSTBASH.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
@@ -124,7 +137,7 @@ specify the name.</dd>
 
 <dl class="function">
 <dt id="squid.orca.job.jobarray">
-<code class="descclassname">squid.orca.job.</code><code class="descname">jobarray</code><span class="sig-paren">(</span><em>run_name</em>, <em>route</em>, <em>frames</em>, <em>n_frames=None</em>, <em>extra_section=''</em>, <em>grad=False</em>, <em>queue=None</em>, <em>walltime='00:30:00'</em>, <em>sandbox=False</em>, <em>nprocs=1</em>, <em>ntasks=1</em>, <em>nodes=1</em>, <em>charge=0</em>, <em>multiplicity=1</em>, <em>redundancy=False</em>, <em>unique_name=True</em>, <em>previous=None</em>, <em>mem=2000</em>, <em>priority=None</em>, <em>xhost=None</em>, <em>jobarray_values=None</em>, <em>slurm_allocation=None</em>, <em>batch_serial_jobs=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/orca/job.html#jobarray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.orca.job.jobarray" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">squid.orca.job.</code><code class="descname">jobarray</code><span class="sig-paren">(</span><em>run_name</em>, <em>route</em>, <em>frames</em>, <em>n_frames=None</em>, <em>extra_section=''</em>, <em>grad=False</em>, <em>queue=None</em>, <em>walltime='00:30:00'</em>, <em>sandbox=False</em>, <em>nprocs=1</em>, <em>ntasks=1</em>, <em>nodes=1</em>, <em>charge=0</em>, <em>multiplicity=1</em>, <em>redundancy=False</em>, <em>unique_name=True</em>, <em>previous=None</em>, <em>mem=2000</em>, <em>priority=None</em>, <em>xhost=None</em>, <em>jobarray_values=None</em>, <em>allocation=None</em>, <em>batch_serial_jobs=None</em>, <em>skip_ompi=False</em>, <em>prebash=None</em>, <em>postbash=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/orca/job.html#jobarray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.orca.job.jobarray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper to submitting various Orca simulations as a job array on a SLURM
 system.  This is used when there are many atomic systems, stored in a
 list, that need to have the same DFT calculation performed on each.</p>
@@ -140,7 +153,7 @@ and len(frames) = 10, you will be running 10 jobs, each with 4 tasks.</p>
 <dd>The DFT route line, containing the function, basis set, etc.
 Note, if route=None and previous != None, the route from
 the previous simulation will be used instead.</dd>
-<dt>frames: <em>list,</em> <a class="reference internal" href="../structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>frames: <em>list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>Each atomic system that needs to be simulated.</dd>
 <dt>n_frames: <em>int, optional</em></dt>
 <dd>The number of frames.</dd>
@@ -202,12 +215,25 @@ dependent).</dd>
 will use these specific values.  For example,
 jobarray_values=1,2,4,5 would submit jobs, but skip the 3rd
 index by name.</dd>
-<dt>slurm_allocation: <em>str, optional</em></dt>
+<dt>allocation: <em>str, optional</em></dt>
 <dd>Whether to use a slurm allocation for this job or not.  If so,
 specify the name.</dd>
 <dt>batch_serial_jobs: <em>int, optional</em></dt>
 <dd>Whether to batch jobs at N at a time (locally on serial job
 submission).</dd>
+<dt>skip_ompi: <em>bool, optional</em></dt>
+<dd>At times you may wish to run orca without checking if ompi is
+available.  This can arise when you are submitting the job to
+a queueing system that will load ompi later, but right now you
+only have orca in the path.  If so, set skip_ompi=True.</dd>
+<dt>prebash: <em>str, optional</em></dt>
+<dd>Code to put prior to the job_to_submit in the submission script.
+This should be bash code!  Note, if nothing is passed we check if
+a default is specified in SQUID_ORCA_PREBASH.</dd>
+<dt>postbash: <em>str, optional</em></dt>
+<dd>Code to put after the job_to_submit in the submission script.
+This should be bash code!  Note, if nothing is passed we check if
+a default is specified in SQUID_ORCA_POSTBASH.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>

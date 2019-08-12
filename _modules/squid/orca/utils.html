@@ -69,8 +69,8 @@
     <span class="n">orca_pipe</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
         <span class="p">[</span><span class="n">orca_path</span><span class="p">,</span> <span class="s2">&quot;FAKE_FILE&quot;</span><span class="p">],</span> <span class="n">shell</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
-    <span class="n">stdout</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">orca_pipe</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
-    <span class="c1"># stderr = str(p.stderr.read().strip())</span>
+    <span class="n">stdout</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">orca_pipe</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+    <span class="c1"># stderr = str(p.stderr.read().decode(&quot;utf-8&quot;).strip())</span>
 
     <span class="k">assert</span> <span class="n">orca_string_id</span> <span class="ow">in</span> <span class="n">stdout</span><span class="p">,</span>\
         <span class="s2">&quot;Error - Unable to access Orca.  Please ensure it is in your PATH </span><span class="se">\</span>
@@ -84,7 +84,7 @@
     <span class="n">ompi_pipe</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="n">parallel</span><span class="p">:</span>
         <span class="n">ompi_version_should_be</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;4.1.2&quot;</span><span class="p">:</span> <span class="s2">&quot;3.1.3&quot;</span>
+            <span class="s2">&quot;4.1.2&quot;</span><span class="p">:</span> <span class="s2">&quot;3.1&quot;</span>
         <span class="p">}</span>
         <span class="k">assert</span> <span class="n">orca_version</span> <span class="ow">in</span> <span class="n">ompi_version_should_be</span><span class="p">,</span>\
             <span class="s2">&quot;Error - Please contact squid dev. We do not have stored the </span><span class="se">\</span>
@@ -95,18 +95,18 @@
         <span class="n">ompi_pipe</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
             <span class="p">[</span><span class="n">ompi_path</span><span class="p">,</span> <span class="s2">&quot;--V&quot;</span><span class="p">],</span> <span class="n">shell</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
-        <span class="n">stdout</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ompi_pipe</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
-        <span class="c1"># stderr = str(p.stderr.read().strip())</span>
+        <span class="n">stdout</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ompi_pipe</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+        <span class="c1"># stderr = str(p.stderr.read().decode(&quot;utf-8&quot;).strip())</span>
 
         <span class="c1"># Simple check for openmpi</span>
         <span class="k">assert</span> <span class="s2">&quot;open&quot;</span> <span class="ow">in</span> <span class="n">stdout</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>\
             <span class="s2">&quot;Error - Unable to access openmpi.  Please ensure it is in your </span><span class="se">\</span>
 <span class="s2">PATH environment variable!&quot;</span>
 
-        <span class="n">ompi_version</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">ompi_version</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">ompi_version_held</span> <span class="o">=</span> <span class="n">ompi_version_should_be</span><span class="p">[</span><span class="n">orca_version</span><span class="p">]</span>
 
-        <span class="k">assert</span> <span class="n">ompi_version_held</span> <span class="o">==</span> <span class="n">ompi_version</span><span class="p">,</span>\
+        <span class="k">assert</span> <span class="n">ompi_version</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">ompi_version_held</span><span class="p">),</span>\
             <span class="s2">&quot;Error - Incorrect openmpi version for the loaded orca version. </span><span class="se">\</span>
 <span class="s2">Should be openmpi </span><span class="si">%s</span><span class="s2"> (found </span><span class="si">%s</span><span class="s2">) for orca </span><span class="si">%s</span><span class="s2">.&quot;</span>\
         <span class="o">%</span> <span class="p">(</span><span class="n">ompi_version_held</span><span class="p">,</span> <span class="n">ompi_version</span><span class="p">,</span> <span class="n">orca_version</span><span class="p">)</span>

@@ -62,7 +62,7 @@ executable.  It will handle errors accordingly.</p>
 
 <dl class="function">
 <dt id="squid.lammps.job.job">
-<code class="descclassname">squid.lammps.job.</code><code class="descname">job</code><span class="sig-paren">(</span><em>run_name</em>, <em>input_script</em>, <em>system=None</em>, <em>queue=None</em>, <em>walltime='00:30:00'</em>, <em>nprocs=1</em>, <em>ntasks=1</em>, <em>nodes=1</em>, <em>email=None</em>, <em>pair_coeffs_in_data_file=True</em>, <em>no_echo=False</em>, <em>redundancy=False</em>, <em>unique_name=True</em>, <em>slurm_allocation=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/lammps/job.html#job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.lammps.job.job" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">squid.lammps.job.</code><code class="descname">job</code><span class="sig-paren">(</span><em>run_name</em>, <em>input_script</em>, <em>system=None</em>, <em>queue=None</em>, <em>walltime='00:30:00'</em>, <em>nprocs=1</em>, <em>ntasks=1</em>, <em>nodes=1</em>, <em>email=None</em>, <em>pair_coeffs_in_data_file=True</em>, <em>no_echo=False</em>, <em>redundancy=False</em>, <em>unique_name=True</em>, <em>allocation=None</em>, <em>prebash=None</em>, <em>postbash=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/lammps/job.html#job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.lammps.job.job" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper to submitting a LAMMPs simulation.</p>
 <p><strong>Parameters</strong></p>
 <blockquote>
@@ -107,9 +107,17 @@ you submit simulations from the same folder, ensure that this is
 True lest you have a redundancy problem! To overcome said issue,
 you can set redundancy to True as well (but only if the simulation
 is truly redundant).</dd>
-<dt>slurm_allocation: <em>str, optional</em></dt>
+<dt>allocation: <em>str, optional</em></dt>
 <dd>Whether to use a slurm allocation for this job or not.  If so,
 specify the name.</dd>
+<dt>prebash: <em>str, optional</em></dt>
+<dd>Code to put prior to the job_to_submit in the submission script.
+This should be bash code!  Note, if nothing is passed we check if
+a default is specified in SQUID_LMP_PREBASH.</dd>
+<dt>postbash: <em>str, optional</em></dt>
+<dd>Code to put after the job_to_submit in the submission script.
+This should be bash code!  Note, if nothing is passed we check if
+a default is specified in SQUID_LMP_POSTBASH.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
