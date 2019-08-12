@@ -193,7 +193,7 @@ def jobarray(run_name, route, frames, n_frames=None, extra_section='',
     if isinstance(jobarray_values, str):
         indexing = jobarray_values.split(",")
     else:
-        indexing = map(str, range(jobarray_values[0], jobarray_values[1] + 1))
+        indexing = list(map(str, range(jobarray_values[0], jobarray_values[1] + 1)))
     jobarray_values = ",".join(indexing)
 
     # In the case that we are not on SLURM, then submit each individual job.
