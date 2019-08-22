@@ -220,7 +220,6 @@ Serializing job submission instead." % queue_system)
                 )
             return running_jobs
         else:
-            finished_jobs = []
             for i, atoms in zip(indexing, frames):
                 running_jobs.append(
                     job(
@@ -229,12 +228,11 @@ Serializing job submission instead." % queue_system)
                         queue=queue, **properties
                     )
                 )
-                if len(running_jobs) > batch_serial_jobs:
-                    for j in running_jobs:
-                        j.wait()
-                    finished_jobs = finished_jobs + running_jobs
-                    running_jobs = []
-            return finished_jobs + running_jobs
+                while sum([
+                        int(not j.is_finished())
+                        for j in running_jobs]) >= batch_serial_jobs:
+                    time.sleep(1)
+            return running_jobs
 
     # Step 1 - we can run orca.job on each frame; HOWEVER, we do so by
     # requesting the debugger queue.  This way, we only generate the
