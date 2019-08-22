@@ -22,6 +22,7 @@ class Coul(object):
     This object contains the following:
 
         - :func:`assign_line`
+        - :func:`ff_energy`
         - :func:`fix`
         - :func:`generate`
         - :func:`load_opls`
@@ -419,6 +420,34 @@ Should be either 1 or 2!" % len(params)
             coul_objs[-1].charge_bounds = charge_bounds
 
         return coul_objs
+
+    def ff_energy(self, q1, q2, r):
+        '''
+        Given the current parameters, what is the energy for a given
+        interatomic distance.
+
+        **Parameters**
+
+            q1: *float*
+                The charge of one particle.
+
+            q2: *float*
+                The charge of the other particle.
+
+            r: *float*
+                The interatomic distance.
+
+        **Returns**
+
+            energy: *float*
+                The energy predicted by coul.
+
+        **References**
+
+            - https://lammps.sandia.gov/doc/pair_coul.html
+        '''
+        k_const = 332.0637
+        return k_const * q1 * q2 / r
 
 
 def run_unit_tests():

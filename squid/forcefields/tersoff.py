@@ -1,4 +1,5 @@
 import copy
+import numpy as np
 from itertools import product
 from squid.utils.cast import is_numeric
 import squid.forcefields.smrff as smrff_utils
@@ -22,6 +23,9 @@ class Tersoff(object):
 
         - :func:`assign_line`
         - :func:`dump_line`
+        - :func:`ff_bij`
+        - :func:`ff_energy_2body`
+        - :func:`ff_fc`
         - :func:`fix`
         - :func:`generate`
         - :func:`load_smrff`
@@ -1026,6 +1030,86 @@ parameters are defined."
         self.lambda2_bounds = other.lambda2_bounds
         self.A_bounds = other.A_bounds
         self.B_bounds = other.B_bounds
+
+    def ff_energy_2body(self, r):
+        '''
+        Given the current parameters, what is the 2body only energy for the
+        given interatomic distance.
+
+        **Parameters**
+
+            r: *float*
+                The interatomic distance.
+
+        **Returns**
+
+            E_2body: *float*
+                The 2body energy.
+
+        **References**
+
+            - https://lammps.sandia.gov/doc/pair_tersoff.html
+        '''
+        return self.ff_fc(r) * (
+            self.A * np.exp(-self.lambda1 * r) -
+            self.B * np.exp(-self.lambda2 * r)
+        )
+
+    def ff_bij(self, rij, rik, theta):
+        '''
+        Given the current parameters, what is the bij value for a given
+        theta, rij, and rik combination.  Note - this is an approximation
+        as in reality there exist many rij and rik.
+
+        **Parameters**
+
+            theta: *float*
+                The angle, in degrees.
+
+        **Returns**
+
+            bij_value: *float*
+                The prefactor to the attractive term.
+
+        **References**
+
+            - https://lammps.sandia.gov/doc/pair_tersoff.html
+        '''
+        costheta = np.cos(np.deg2rad(theta))
+        g_theta = self.gamma * (
+            1.0 +
+            (self.c / self.d)**2 -
+            self.c**2 / (self.d**2 + (self.costheta0 - costheta)**2)
+        )
+        zeta = self.ff_fc(rik) *\
+            g_theta *\
+            np.exp((self.lambda3 * (rij - rik))**self.m)
+        return (1.0 + (self.beta * zeta)**self.n)**(-1.0 / (2.0 * self.n))
+
+    def ff_fc(self, r):
+        '''
+        Given the current parameters, what is the cutoff scalar.
+
+        **Parameters**
+
+            r: *float*
+                The interatomic distance.
+
+        **Returns**
+
+            fc_value: *float*
+                The cutoff scalar.
+
+        **References**
+
+            - https://lammps.sandia.gov/doc/pair_tersoff.html
+        '''
+        if r <= self.R - self.D:
+            return 1.0
+        if r >= self.R + self.D:
+            return 0.0
+        else:
+            return 0.5 - 0.5 * np.sin(np.pi * (r - self.R) / (2.0 * self.D))
 
 
 def verify_tersoff_2body_symmetry(tersoff_params):

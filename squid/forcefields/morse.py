@@ -1,4 +1,5 @@
 import copy
+import numpy as np
 from itertools import combinations_with_replacement
 from squid.forcefields.helper import check_restriction, random_in_range
 
@@ -44,6 +45,7 @@ class Morse(object):
     This object contains the following:
 
         - :func:`assign_line`
+        - :func:`ff_energy`
         - :func:`fix`
         - :func:`generate`
         - :func:`load_smrff`
@@ -561,6 +563,32 @@ value when fixing rc in Morse (passed %s)." % str(value)
             morse_objs.append(cls(indices, D0, alpha, r0, rc))
 
         return morse_objs
+
+    def ff_energy(self, r):
+        '''
+        Given the current parameters, what is the energy for a given
+        interatomic distance.
+
+        **Parameters**
+
+            r: *float*
+                The interatomic distance.
+
+        **Returns**
+
+            energy: *float*
+                The energy predicted by morse.
+
+        **References**
+
+            - https://lammps.sandia.gov/doc/pair_morse.html
+        '''
+        if self.rc is not None and r > self.rc:
+            return 0.0
+        return self.D0 * (
+            np.exp(-2.0 * self.alpha * (r - self.r0)) -
+            2.0 * np.exp(-self.alpha * (r - self.r0))
+        )
 
 
 def run_unit_tests():

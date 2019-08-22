@@ -3,6 +3,7 @@ from squid.utils import units
 from squid.files.xyz_io import *
 from squid.files.misc import which
 from squid.utils.cast import is_array
+from squid.geometry.misc import get_center_of_mass
 
 
 def get_packmol_obj():
@@ -107,13 +108,15 @@ seed ''' + str(seed) + '''
         # If the system already has atoms, then set them
         if system_obj.atoms is not None and len(system_obj.atoms) > 0:
             write_xyz(system_obj.atoms, "%s_fixed.xyz" % system_obj.name)
+            center_of_mass = get_center_of_mass(system_obj.atoms)
+            com = " ".join([str(com) for com in center_of_mass])
             f.write('''
-structure %s_fixed.xyz
+structure ''' + system_obj.name + '''_fixed.xyz
 number 1
-fixed 0. 0. 0. 0. 0. 0.
+fixed ''' + com + ''' 0. 0. 0.
 centerofmass
 end structure
-''' % system_obj.name)
+''')
 
         # convert density to amu/angstrom^3. 1 g/mL = 0.6022 amu/angstrom^3
         density *= 0.6022

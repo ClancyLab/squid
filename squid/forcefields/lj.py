@@ -17,6 +17,7 @@ class LJ(object):
     This object contains the following:
 
         - :func:`assign_line`
+        - :func:`ff_energy`
         - :func:`fix`
         - :func:`generate`
         - :func:`load_opls`
@@ -443,6 +444,28 @@ larger than 0! It is %f" % (self.index, self.epsilon)
             LJ_objs.append(cls(atype, sig, eps))
 
         return LJ_objs
+
+    def ff_energy(self, r):
+        '''
+        Given the current parameters, what is the energy for a given
+        interatomic distance.
+
+        **Parameters**
+
+            r: *float*
+                The interatomic distance.
+
+        **Returns**
+
+            energy: *float*
+                The energy predicted by lj.
+
+        **References**
+
+            - https://lammps.sandia.gov/doc/pair_lj.html
+        '''
+        v = self.sigma / float(r)
+        return 4.0 * self.epsilon * (v**12 - v**6)
 
 
 def run_unit_tests():
