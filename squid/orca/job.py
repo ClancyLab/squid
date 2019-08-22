@@ -540,9 +540,13 @@ less than 2 atoms!")
 
     # Run the simulation
     if queue is None:
+        cwd = os.getcwd()
+        cmd = orca_path + ' %s/%s.orca & disown' % (cwd, run_name)
+        stdout = open("%s/%s.out" % (cwd, run_name), 'wb')
+        stderr = open("%s/%s.err" % (cwd, run_name), 'wb')
         process_handle = subprocess.Popen(
-            orca_path + ' %s.orca > %s.out'
-            % (run_name, run_name), shell=True
+            cmd.strip().split(), shell=False,
+            stdout=stdout, stderr=stderr
         )
         job_obj = jobs.Job(run_name, process_handle=process_handle)
     elif queue == 'debugger':
