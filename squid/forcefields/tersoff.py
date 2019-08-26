@@ -1023,6 +1023,8 @@ parameters are defined."
         self.lambda2 = other.lambda2
         self.A = other.A
         self.B = other.B
+        self.R = other.R
+        self.D = other.D
 
         self.n_bounds = other.n_bounds
         self.beta_bounds = other.beta_bounds
@@ -1030,6 +1032,8 @@ parameters are defined."
         self.lambda2_bounds = other.lambda2_bounds
         self.A_bounds = other.A_bounds
         self.B_bounds = other.B_bounds
+        self.R_bounds = other.R_bounds
+        self.D_bounds = other.D_bounds
 
     def ff_energy_2body(self, r):
         '''
