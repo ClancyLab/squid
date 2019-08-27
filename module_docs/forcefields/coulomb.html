@@ -46,6 +46,7 @@ information (index, charge, mass, element) or parsed from a string (line).</p>
 <blockquote>
 <div><ul class="simple">
 <li><a class="reference internal" href="#squid.forcefields.coulomb.Coul.assign_line" title="squid.forcefields.coulomb.Coul.assign_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">assign_line()</span></code></a></li>
+<li><a class="reference internal" href="#squid.forcefields.coulomb.Coul.ff_energy" title="squid.forcefields.coulomb.Coul.ff_energy"><code class="xref py py-func docutils literal notranslate"><span class="pre">ff_energy()</span></code></a></li>
 <li><a class="reference internal" href="#squid.forcefields.coulomb.Coul.fix" title="squid.forcefields.coulomb.Coul.fix"><code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code></a></li>
 <li><a class="reference internal" href="#squid.forcefields.coulomb.Coul.generate" title="squid.forcefields.coulomb.Coul.generate"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate()</span></code></a></li>
 <li><a class="reference internal" href="#squid.forcefields.coulomb.Coul.load_opls" title="squid.forcefields.coulomb.Coul.load_opls"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_opls()</span></code></a></li>
@@ -94,6 +95,37 @@ information (index, charge, mass, element) or parsed from a string (line).</p>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div>None</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="squid.forcefields.coulomb.Coul.ff_energy">
+<code class="descname">ff_energy</code><span class="sig-paren">(</span><em>q1</em>, <em>q2</em>, <em>r</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/forcefields/coulomb.html#Coul.ff_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.forcefields.coulomb.Coul.ff_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the current parameters, what is the energy for a given
+interatomic distance.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>q1: <em>float</em></dt>
+<dd>The charge of one particle.</dd>
+<dt>q2: <em>float</em></dt>
+<dd>The charge of the other particle.</dd>
+<dt>r: <em>float</em></dt>
+<dd>The interatomic distance.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>energy: <em>float</em></dt>
+<dd>The energy predicted by coul.</dd>
+</dl>
+</div></blockquote>
+<p><strong>References</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="https://lammps.sandia.gov/doc/pair_coul.html">https://lammps.sandia.gov/doc/pair_coul.html</a></li>
+</ul>
+</div></blockquote>
 </dd></dl>
 
 <dl class="method">

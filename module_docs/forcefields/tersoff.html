@@ -49,6 +49,9 @@ both are specified, an error will be thrown.</p>
 <div><ul class="simple">
 <li><a class="reference internal" href="#squid.forcefields.tersoff.Tersoff.assign_line" title="squid.forcefields.tersoff.Tersoff.assign_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">assign_line()</span></code></a></li>
 <li><a class="reference internal" href="#squid.forcefields.tersoff.Tersoff.dump_line" title="squid.forcefields.tersoff.Tersoff.dump_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_line()</span></code></a></li>
+<li><a class="reference internal" href="#squid.forcefields.tersoff.Tersoff.ff_bij" title="squid.forcefields.tersoff.Tersoff.ff_bij"><code class="xref py py-func docutils literal notranslate"><span class="pre">ff_bij()</span></code></a></li>
+<li><a class="reference internal" href="#squid.forcefields.tersoff.Tersoff.ff_energy_2body" title="squid.forcefields.tersoff.Tersoff.ff_energy_2body"><code class="xref py py-func docutils literal notranslate"><span class="pre">ff_energy_2body()</span></code></a></li>
+<li><a class="reference internal" href="#squid.forcefields.tersoff.Tersoff.ff_fc" title="squid.forcefields.tersoff.Tersoff.ff_fc"><code class="xref py py-func docutils literal notranslate"><span class="pre">ff_fc()</span></code></a></li>
 <li><a class="reference internal" href="#squid.forcefields.tersoff.Tersoff.fix" title="squid.forcefields.tersoff.Tersoff.fix"><code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code></a></li>
 <li><a class="reference internal" href="#squid.forcefields.tersoff.Tersoff.generate" title="squid.forcefields.tersoff.Tersoff.generate"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate()</span></code></a></li>
 <li><a class="reference internal" href="#squid.forcefields.tersoff.Tersoff.load_smrff" title="squid.forcefields.tersoff.Tersoff.load_smrff"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_smrff()</span></code></a></li>
@@ -156,6 +159,87 @@ Note - This line output only exists if SMRFF is installed.</p>
 <dt>line: <em>str</em></dt>
 <dd>A pair_coeff line output in tersoff.</dd>
 </dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="squid.forcefields.tersoff.Tersoff.ff_bij">
+<code class="descname">ff_bij</code><span class="sig-paren">(</span><em>rij</em>, <em>rik</em>, <em>theta</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/forcefields/tersoff.html#Tersoff.ff_bij"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.forcefields.tersoff.Tersoff.ff_bij" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the current parameters, what is the bij value for a given
+theta, rij, and rik combination.  Note - this is an approximation
+as in reality there exist many rij and rik.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>theta: <em>float</em></dt>
+<dd>The angle, in degrees.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>bij_value: <em>float</em></dt>
+<dd>The prefactor to the attractive term.</dd>
+</dl>
+</div></blockquote>
+<p><strong>References</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="https://lammps.sandia.gov/doc/pair_tersoff.html">https://lammps.sandia.gov/doc/pair_tersoff.html</a></li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="squid.forcefields.tersoff.Tersoff.ff_energy_2body">
+<code class="descname">ff_energy_2body</code><span class="sig-paren">(</span><em>r</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/forcefields/tersoff.html#Tersoff.ff_energy_2body"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.forcefields.tersoff.Tersoff.ff_energy_2body" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the current parameters, what is the 2body only energy for the
+given interatomic distance.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>r: <em>float</em></dt>
+<dd>The interatomic distance.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>E_2body: <em>float</em></dt>
+<dd>The 2body energy.</dd>
+</dl>
+</div></blockquote>
+<p><strong>References</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="https://lammps.sandia.gov/doc/pair_tersoff.html">https://lammps.sandia.gov/doc/pair_tersoff.html</a></li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="squid.forcefields.tersoff.Tersoff.ff_fc">
+<code class="descname">ff_fc</code><span class="sig-paren">(</span><em>r</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/forcefields/tersoff.html#Tersoff.ff_fc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.forcefields.tersoff.Tersoff.ff_fc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the current parameters, what is the cutoff scalar.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>r: <em>float</em></dt>
+<dd>The interatomic distance.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>fc_value: <em>float</em></dt>
+<dd>The cutoff scalar.</dd>
+</dl>
+</div></blockquote>
+<p><strong>References</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="https://lammps.sandia.gov/doc/pair_tersoff.html">https://lammps.sandia.gov/doc/pair_tersoff.html</a></li>
+</ul>
 </div></blockquote>
 </dd></dl>
 

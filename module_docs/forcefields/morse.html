@@ -48,6 +48,7 @@ both are specified, an error will be thrown.</p>
 <blockquote>
 <div><ul class="simple">
 <li><a class="reference internal" href="#squid.forcefields.morse.Morse.assign_line" title="squid.forcefields.morse.Morse.assign_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">assign_line()</span></code></a></li>
+<li><a class="reference internal" href="#squid.forcefields.morse.Morse.ff_energy" title="squid.forcefields.morse.Morse.ff_energy"><code class="xref py py-func docutils literal notranslate"><span class="pre">ff_energy()</span></code></a></li>
 <li><a class="reference internal" href="#squid.forcefields.morse.Morse.fix" title="squid.forcefields.morse.Morse.fix"><code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code></a></li>
 <li><a class="reference internal" href="#squid.forcefields.morse.Morse.generate" title="squid.forcefields.morse.Morse.generate"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate()</span></code></a></li>
 <li><a class="reference internal" href="#squid.forcefields.morse.Morse.load_smrff" title="squid.forcefields.morse.Morse.load_smrff"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_smrff()</span></code></a></li>
@@ -102,6 +103,33 @@ both are specified, an error will be thrown.</p>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div>None</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="squid.forcefields.morse.Morse.ff_energy">
+<code class="descname">ff_energy</code><span class="sig-paren">(</span><em>r</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/forcefields/morse.html#Morse.ff_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.forcefields.morse.Morse.ff_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the current parameters, what is the energy for a given
+interatomic distance.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>r: <em>float</em></dt>
+<dd>The interatomic distance.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>energy: <em>float</em></dt>
+<dd>The energy predicted by morse.</dd>
+</dl>
+</div></blockquote>
+<p><strong>References</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="https://lammps.sandia.gov/doc/pair_morse.html">https://lammps.sandia.gov/doc/pair_morse.html</a></li>
+</ul>
+</div></blockquote>
 </dd></dl>
 
 <dl class="method">

@@ -46,6 +46,7 @@ or pass line.  If all are passed, then an error will be thrown.</p>
 <blockquote>
 <div><ul class="simple">
 <li><a class="reference internal" href="#squid.forcefields.lj.LJ.assign_line" title="squid.forcefields.lj.LJ.assign_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">assign_line()</span></code></a></li>
+<li><a class="reference internal" href="#squid.forcefields.lj.LJ.ff_energy" title="squid.forcefields.lj.LJ.ff_energy"><code class="xref py py-func docutils literal notranslate"><span class="pre">ff_energy()</span></code></a></li>
 <li><a class="reference internal" href="#squid.forcefields.lj.LJ.fix" title="squid.forcefields.lj.LJ.fix"><code class="xref py py-func docutils literal notranslate"><span class="pre">fix()</span></code></a></li>
 <li><a class="reference internal" href="#squid.forcefields.lj.LJ.generate" title="squid.forcefields.lj.LJ.generate"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate()</span></code></a></li>
 <li><a class="reference internal" href="#squid.forcefields.lj.LJ.load_opls" title="squid.forcefields.lj.LJ.load_opls"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_opls()</span></code></a></li>
@@ -93,6 +94,33 @@ or pass line.  If all are passed, then an error will be thrown.</p>
 <p><strong>Returns</strong></p>
 <blockquote>
 <div>None</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="squid.forcefields.lj.LJ.ff_energy">
+<code class="descname">ff_energy</code><span class="sig-paren">(</span><em>r</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/forcefields/lj.html#LJ.ff_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.forcefields.lj.LJ.ff_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the current parameters, what is the energy for a given
+interatomic distance.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>r: <em>float</em></dt>
+<dd>The interatomic distance.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>energy: <em>float</em></dt>
+<dd>The energy predicted by lj.</dd>
+</dl>
+</div></blockquote>
+<p><strong>References</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="https://lammps.sandia.gov/doc/pair_lj.html">https://lammps.sandia.gov/doc/pair_lj.html</a></li>
+</ul>
+</div></blockquote>
 </dd></dl>
 
 <dl class="method">

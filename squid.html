@@ -58,6 +58,126 @@
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>user@local<span class="o">]</span>~% <span class="nb">cd</span> ~<span class="p">;</span> git clone https://github.com/ClancyLab/squid.git
 </pre></div>
 </div>
+<p>Note, you will need various additional software to fully take advantage of squid.  We include some helper scripts to aid you in setting up these files; however, these are not robust and we do encourage you to setup your own development environment.  Nevertheless, if you so choose, the following information may be of use:</p>
+<p><strong>Setup on Ubuntu</strong></p>
+<ol class="arabic simple">
+<li>Ensure that your system is up-to-date with relevant softare.  The following commands will help.</li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>user@local<span class="o">]</span>~% sudo apt-get update
+<span class="o">[</span>user@local<span class="o">]</span>~% sudo apt-get upgrade
+<span class="o">[</span>user@local<span class="o">]</span>~% sudo apt-get install build-essential make cmake g++ git swig mpich lmod
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li>As the above line installs lmod, we have found that there may be a bug in the default install.  If you find that when you open a terminal you are getting a weird error about posix not existing, this is a bug in lua install. Simply put, take the path it wants and make a simlink to point to posix_c.so.  An example of how to do this is as follows (note, your lua version and directories may or may not be the same).</li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>user@local<span class="o">]</span>~% sudo ln -s /usr/lib/x86_64-linux-gnu/lua/5.2/posix_c.so /usr/lib/x86_64-linux-gnu/lua/5.2/posix.so
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li>Setup your directories.  In this case, we want all programs installed to the <em>~/programs folder</em>, and all modules installed to <em>~/.modules</em>.</li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>user@local<span class="o">]</span>~% mkdir ~/programs<span class="p">;</span> mkdir ~/.modules
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li>Setup a default environment file for lmod.  In this case, we are making an empty one.</li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>user@local<span class="o">]</span>~% touch ~/.modules/StdEnv.lua
+</pre></div>
+</div>
+<ol class="arabic simple" start="5">
+<li>Ensure that lmod is setup.  This can be done by ensuring that the <em>~/.bashrc</em> is updated accordingly.  Note, do not blindly copy, but understand what the following lines of code do!</li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># LMOD Setup</span>
+<span class="k">if</span> <span class="o">[</span> -f /usr/share/lmod/6.6/init/bash <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+    . /usr/share/lmod/6.6/init/bash
+<span class="k">fi</span>
+module use /home/<span class="nv">$USER</span>/.modules
+<span class="k">if</span> <span class="o">[</span> -z <span class="s2">&quot;</span><span class="nv">$__Init_Default_Modules</span><span class="s2">&quot;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+  <span class="nb">export</span> <span class="nv">__Init_Default_Modules</span><span class="o">=</span><span class="m">1</span><span class="p">;</span>
+
+  <span class="nv">LMOD_SYSTEM_DEFAULT_MODULES</span><span class="o">=</span><span class="si">${</span><span class="nv">LMOD_SYSTEM_DEFAULT_MODULES</span><span class="k">:-</span><span class="s2">&quot;StdEnv&quot;</span><span class="si">}</span>
+  <span class="nb">export</span> LMOD_SYSTEM_DEFAULT_MODULES
+  module --initial_load --no_redirect restore
+<span class="k">else</span>
+  module refresh
+<span class="k">fi</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="6">
+<li>Install as much as possible from squid.  This can be done by running the following command:</li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">squid.installers</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1"># Get relevant path information</span>
+<span class="n">home_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">)</span>
+<span class="n">program_folder</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/programs&quot;</span> <span class="o">%</span> <span class="n">home_folder</span>
+<span class="n">module_folder</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/.modules&quot;</span> <span class="o">%</span> <span class="n">home_folder</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">program_folder</span><span class="p">):</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">program_folder</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">module_folder</span><span class="p">):</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">module_folder</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="c1"># As we plan to get orca/4.2.0, we need openmpi/3.1.4</span>
+<span class="n">openmpi_installer</span><span class="p">(</span><span class="n">program_folder</span><span class="p">,</span> <span class="s2">&quot;3.1.4&quot;</span><span class="p">,</span> <span class="n">module_folder</span><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="7">
+<li>Note, because you may want some programs for others, it is recommended that you first setup openmpi, as above, then return to install the others.  This requires that you also load the openmpi module before compiling the next programs.</li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">squid.installers</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1"># Get relevant path information</span>
+<span class="n">home_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">)</span>
+<span class="n">program_folder</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/programs&quot;</span> <span class="o">%</span> <span class="n">home_folder</span>
+<span class="n">module_folder</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/.modules&quot;</span> <span class="o">%</span> <span class="n">home_folder</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">program_folder</span><span class="p">):</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">program_folder</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">module_folder</span><span class="p">):</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">module_folder</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="c1"># LAMMPS has many install options.  Here we simplify things.</span>
+<span class="c1"># Note, we can only choose between mpi or serial.</span>
+<span class="c1"># Note, &quot;16Mar18_mpi&quot; is the name of the module in the lammps</span>
+<span class="c1"># submodule folder.  Be unique!</span>
+<span class="n">lammps_installer</span><span class="p">(</span>
+    <span class="n">program_folder</span><span class="p">,</span> <span class="s2">&quot;16Mar18&quot;</span><span class="p">,</span> <span class="s2">&quot;mpi&quot;</span><span class="p">,</span> <span class="s2">&quot;16Mar18_mpi&quot;</span><span class="p">,</span>
+    <span class="n">compiler</span><span class="o">=</span><span class="s2">&quot;mpicxx&quot;</span><span class="p">,</span>
+    <span class="n">extra_lammps_packages</span><span class="o">=</span><span class="p">[</span>
+        <span class="s2">&quot;RIGID&quot;</span><span class="p">,</span> <span class="s2">&quot;PYTHON&quot;</span><span class="p">,</span> <span class="s2">&quot;REPLICA&quot;</span><span class="p">,</span> <span class="s2">&quot;USER-MISC&quot;</span><span class="p">,</span> <span class="s2">&quot;USER-REAXC&quot;</span><span class="p">],</span>
+    <span class="n">smrff_path</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+    <span class="n">MODULEDIR</span><span class="o">=</span><span class="n">module_folder</span>
+<span class="p">)</span>
+
+<span class="c1"># Install packmol</span>
+<span class="n">packmol_installer</span><span class="p">(</span><span class="n">program_folder</span><span class="p">,</span> <span class="n">module_folder</span><span class="p">)</span>
+
+<span class="c1"># Install nlopt</span>
+<span class="n">nlopt_installer</span><span class="p">(</span><span class="n">program_folder</span><span class="p">,</span> <span class="s2">&quot;2.6.1&quot;</span><span class="p">,</span> <span class="n">module_folder</span><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="8">
+<li>Download Orca from <a class="reference external" href="https://orcaforum.kofo.mpg.de/app.php/dlext/">https://orcaforum.kofo.mpg.de/app.php/dlext/</a> (note, you’ll have to register), and make your own orca module.  An example is listed below (it would be saved in the modules folder as a .lua file.)</li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>help<span class="o">([[</span>
+For detailed instructions, go to:
+    https://orcaforum.cec.mpg.de/
+
+    <span class="o">]])</span>
+whatis<span class="o">(</span><span class="s2">&quot;Version: 4.2.0&quot;</span><span class="o">)</span>
+whatis<span class="o">(</span><span class="s2">&quot;Keywords: Orca 4&quot;</span><span class="o">)</span>
+whatis<span class="o">(</span><span class="s2">&quot;URL: https://orcaforum.cec.mpg.de/&quot;</span><span class="o">)</span>
+whatis<span class="o">(</span><span class="s2">&quot;Description: Orca 4&quot;</span><span class="o">)</span>
+
+load<span class="o">(</span><span class="s2">&quot;openmpi/3.1.4&quot;</span><span class="o">)</span>
+
+prepend_path<span class="o">(</span><span class="s2">&quot;PATH&quot;</span>,               <span class="s2">&quot;/home/username/programs/orca/4.2.0&quot;</span><span class="o">)</span>
+prepend_path<span class="o">(</span><span class="s2">&quot;LD_LIBRARY_PATH&quot;</span>,    <span class="s2">&quot;/home/username/programs/orca/4.2.0&quot;</span><span class="o">)</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="contributing">
 <h2>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h2>
