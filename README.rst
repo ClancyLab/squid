@@ -43,7 +43,33 @@ Note, you will need various additional software to fully take advantage of squid
 
     [user@local]~% mkdir ~/programs; mkdir ~/.modules
 
-4. Install as much as possible from squid.  This can be done by running the following command:
+
+4. Setup a default environment file for lmod.  In this case, we are making an empty one.
+
+..code-block:: bash
+
+    [user@local]~% touch ~/.modules/StdEnv.lua
+
+5. Ensure that lmod is setup.  This can be done by ensuring that the ``.bashrc`` is updated accordingly.  Note, do not blindly copy, but understand what the following lines of code do!
+
+..code-block:: bash
+
+    # LMOD Setup
+    if [ -f /usr/share/lmod/6.6/init/bash ]; then
+        . /usr/share/lmod/6.6/init/bash
+    fi
+    module use /home/$USER/.modules
+    if [ -z "$__Init_Default_Modules" ]; then
+      export __Init_Default_Modules=1;
+
+      LMOD_SYSTEM_DEFAULT_MODULES=${LMOD_SYSTEM_DEFAULT_MODULES:-"StdEnv"}
+      export LMOD_SYSTEM_DEFAULT_MODULES
+      module --initial_load --no_redirect restore
+    else
+      module refresh
+    fi
+
+6. Install as much as possible from squid.  This can be done by running the following command:
 
 ..code-block:: python
 
@@ -62,7 +88,9 @@ Note, you will need various additional software to fully take advantage of squid
     # As we plan to get orca/4.2.0, we need openmpi/3.1.4
     openmpi_installer(program_folder, "3.1.4", module_folder)
 
-5. Note, because you may want some programs for others, it is recommended that you first setup openmpi, as above, then return to install the others.  This requires that you also load the openmpi module before compiling the next programs.
+7. Note, because you may want some programs for others, it is recommended that you first setup openmpi, as above, then return to install the others.  This requires that you also load the openmpi module before compiling the next programs.
+
+..code-block:: python
 
     import os
     from squid.installers import *
@@ -95,7 +123,7 @@ Note, you will need various additional software to fully take advantage of squid
     # Install nlopt
     nlopt_installer(program_folder, "2.6.1", module_folder)
 
-6. Download Orca from https://orcaforum.kofo.mpg.de/app.php/dlext/ (note, you'll have to register), and make your own orca module.  An example is listed below (it would be saved in the modules folder as a .lua file.)
+8. Download Orca from https://orcaforum.kofo.mpg.de/app.php/dlext/ (note, you'll have to register), and make your own orca module.  An example is listed below (it would be saved in the modules folder as a .lua file.)
 
 ..code-block:: bash
 
@@ -113,31 +141,6 @@ Note, you will need various additional software to fully take advantage of squid
 
     prepend_path("PATH",               "/home/username/programs/orca/4.2.0")
     prepend_path("LD_LIBRARY_PATH",    "/home/username/programs/orca/4.2.0")
-
-7. Setup a default environment file for lmod.  In this case, we are making an empty one.
-
-..code-block:: bash
-
-    [user@local]~% touch ~/.modules/StdEnv.lua
-
-8. Finally, ensure that lmod is setup.  This can be done by ensuring that the ``.bashrc`` is updated accordingly.  Note, do not blindly copy, but understand what the following lines of code do!
-
-..code-block:: bash
-
-    # LMOD Setup
-    if [ -f /usr/share/lmod/6.6/init/bash ]; then
-        . /usr/share/lmod/6.6/init/bash
-    fi
-    module use /home/$USER/.modules
-    if [ -z "$__Init_Default_Modules" ]; then
-      export __Init_Default_Modules=1;
-
-      LMOD_SYSTEM_DEFAULT_MODULES=${LMOD_SYSTEM_DEFAULT_MODULES:-"StdEnv"}
-      export LMOD_SYSTEM_DEFAULT_MODULES
-      module --initial_load --no_redirect restore
-    else
-      module refresh
-    fi
 
 Contributing
 ------------------------------
