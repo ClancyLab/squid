@@ -403,7 +403,8 @@ line to be parsed, but not both.")
                     tag_for_2body, not self.skip_beta]) else None,
                 self.lambda2_bounds[bounds] if not tag_for_2body else None,
                 self.B_bounds[bounds] if not tag_for_2body else None,
-                self.R_bounds[bounds], self.D_bounds[bounds],
+                self.R_bounds[bounds] if not tag_for_2body else None,
+                self.D_bounds[bounds] if not tag_for_2body else None,
                 self.lambda1_bounds[bounds] if not tag_for_2body else None,
                 self.A_bounds[bounds] if not tag_for_2body else None])
             pkg[-1] = [p for p in pkg[-1] if p is not None]
@@ -419,7 +420,8 @@ line to be parsed, but not both.")
                     tag_for_2body, not self.skip_beta]) else None,
                 self.lambda2 if not tag_for_2body else None,
                 self.B if not tag_for_2body else None,
-                self.R, self.D,
+                self.R if not tag_for_2body else None,
+                self.D if not tag_for_2body else None,
                 self.lambda1 if not tag_for_2body else None,
                 self.A if not tag_for_2body else None])
             pkg[-1] = [p for p in pkg[-1] if p is not None]
@@ -438,7 +440,8 @@ line to be parsed, but not both.")
                     tag_for_2body, not self.skip_beta]) else None,
                 self.lambda2_bounds if not tag_for_2body else None,
                 self.B_bounds if not tag_for_2body else None,
-                self.R_bounds, self.D_bounds,
+                self.R_bounds if not tag_for_2body else None,
+                self.D_bounds if not tag_for_2body else None,
                 self.lambda1_bounds if not tag_for_2body else None,
                 self.A_bounds if not tag_for_2body else None
             ]
@@ -464,7 +467,7 @@ line to be parsed, but not both.")
 
             None
         '''
-        assert len(params) in [6, 8, 7, 9, 12, 14, 13, 15],\
+        assert len(params) in [4, 6, 8, 7, 9, 12, 14, 13, 15],\
             "In Tersoff, tried packing %d parameters. \
 Should be either 8, 9, 14, or 15!" % len(params)
 
@@ -499,8 +502,8 @@ Should be either 8, 9, 14, or 15!" % len(params)
             self.lambda2 = params[9 + offset]
             self.B = params[10 + offset]
 
-        self.R = params[11 + offset - int(self.sym_2body_tag) * 4]
-        self.D = params[12 + offset - int(self.sym_2body_tag) * 4]
+            self.R = params[11 + offset]  # - int(self.sym_2body_tag) * 4
+            self.D = params[12 + offset]  # - int(self.sym_2body_tag) * 4
 
         if not self.sym_2body_tag:
             self.lambda1 = params[13 + offset]
@@ -1023,6 +1026,8 @@ parameters are defined."
         self.lambda2 = other.lambda2
         self.A = other.A
         self.B = other.B
+        self.R = other.R
+        self.D = other.D
 
         self.n_bounds = other.n_bounds
         self.beta_bounds = other.beta_bounds
@@ -1030,6 +1035,8 @@ parameters are defined."
         self.lambda2_bounds = other.lambda2_bounds
         self.A_bounds = other.A_bounds
         self.B_bounds = other.B_bounds
+        self.R_bounds = other.R_bounds
+        self.D_bounds = other.D_bounds
 
     def ff_energy_2body(self, r):
         '''
@@ -1234,7 +1241,9 @@ def tag_tersoff_for_duplicate_2bodies(tersoff_params):
         index = tersoff_params.index((b, a, a))
         tersoff_params[index].sym_2body_tag = True
         # Essentially, we no longer recognize the other params here.
-        tersoff_params[index].N_params = 8
+        # tersoff_params[index].N_params = 8
+        # In this case, we also ignore R and D
+        tersoff_params[index].N_params = 6
         # Handle any other removals too
         tersoff_params[index].N_params -= int(tersoff_params[index].skip_m)
         tersoff_params[index].N_params -= int(tersoff_params[index].skip_gamma)
