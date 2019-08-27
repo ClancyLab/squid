@@ -285,10 +285,9 @@ $MODULE_LOADERS$
     if MODULEDIR is None:
         MODULEDIR = HOMEDIR + "/.modules"
 
-    if not os.path.exists(MODULEDIR):
-        os.mkdir(MODULEDIR)
     if not os.path.exists("%s/lammps" % MODULEDIR):
-        os.mkdir("%s/lammps" % MODULEDIR)
+        os.makedirs("%s/lammps" % MODULEDIR, exist_ok=True)
+
     save_module(mod_file, FOLDER, MODULEDIR)
 
     return cwd + "/" + FOLDER + "/src/lmp_" + SFFX

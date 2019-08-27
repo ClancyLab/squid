@@ -75,10 +75,11 @@ prepend_path("LD_LIBRARY_PATH",    "$CWD$/$FOLDER$/build/lib")
             mod_file = mod_file.replace(identifier, str(word))
 
     HOMEDIR = os.path.expanduser("~")
-    if not os.path.exists("%s/.modules" % HOMEDIR):
-        os.mkdir("%s/.modules" % HOMEDIR)
-    if not os.path.exists("%s/.modules/openmpi" % HOMEDIR):
-        os.mkdir("%s/.modules/openmpi" % HOMEDIR)
+    if MODULEDIR is None:
+        MODULEDIR = HOMEDIR + "/.modules"
+
+    if not os.path.exists("%s/openmpi" % MODULEDIR):
+        os.makedirs("%s/openmpi" % MODULEDIR, exist_ok=True)
     save_module(mod_file, FOLDER, MODULEDIR)
 
 

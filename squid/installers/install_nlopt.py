@@ -66,6 +66,10 @@ prepend_path("PYTHONPATH",         "$CWD$/$FOLDER$/build/lib/python3.7/site-pack
         while identifier in mod_file:
             mod_file = mod_file.replace(identifier, str(word))
 
+    HOMEDIR = os.path.expanduser("~")
+    if MODULEDIR is None:
+        MODULEDIR = HOMEDIR + "/.modules"
+
     if not os.path.exists("%s/nlopt" % MODULEDIR):
         os.makedirs("%s/nlopt" % MODULEDIR, exist_ok=True)
 

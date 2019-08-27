@@ -43,6 +43,7 @@ prepend_path("PATH",    "$CWD/packmol")
 '''
     while "$CWD" in packmol_mod_file:
         packmol_mod_file = packmol_mod_file.replace("$CWD", cwd)
+
     save_module(packmol_mod_file, "packmol", MODULEDIR)
 
     return cwd + "/packmol/packmol"
