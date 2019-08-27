@@ -1,6 +1,5 @@
 import os
-import sys
-from squid.installers.install_helper import save_module, download_file
+from squid.installers.install_helper import save_module
 
 
 def run_install(location, MODULEDIR):

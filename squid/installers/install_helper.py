@@ -19,7 +19,7 @@ def save_module(modfile, filename, MODULEDIR):
     if MODULEDIR is None:
         MODULEDIR = HOMEDIR + "/.modules"
     if not os.path.exists(MODULEDIR):
-        os.mkdir(MODULEDIR)
+        os.makedirs(MODULEDIR, exist_ok=True)
 
     # Step 2 - Check if filename exists
     if os.path.exists("%s/%s.lua" % (MODULEDIR, filename)):
@@ -37,17 +37,11 @@ def download_file(loc, link, md5sum):
     Checks if the file is already downloaded, with the correct md5sum.  If so,
     nothing happens, otherwise, it is downloaded.
     '''
-    USE_PYTHON_3 = sys.version_info > (3, 0)
-    if USE_PYTHON_3:
-        md5 = lambda s: hashlib.md5(bytes(s, "ascii"))
-    else:
-        md5 = lambda s: hashlib.md5(s)
-
     if loc.endswith("/"):
         loc = loc[:-1]
     fname = link.split("/")[-1]
     fpath = loc + "/" + fname
-    if os.path.exists(fpath) and md5(open(fpath, 'r').read()).hexdigest() == md5sum:
+    if os.path.exists(fpath) and hashlib.md5(open(fpath, 'rb').read()).hexdigest() == md5sum:
         print("%s already is downloaded and exists.  No need to re-download." % fname)
     else:
         os.system("wget --continue --tries=1000 -P %s/ %s" % (loc, link))

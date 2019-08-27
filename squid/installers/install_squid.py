@@ -106,56 +106,6 @@ def _squid_setup(anaconda_path,
         "lmp_env_vars", "mpi_preface", "python_path", "TEXT_EDITOR_PATH",
         "g09_formchk", "g09_cubegen", "mpirun_path", "default_queue"]
 
-    sysconst_file_string = """# System Constants. This includes paths to where things are installed
-orca_path = "$ORCA_PATH"
-orca4_path = "$ORCA4_PATH"
-use_orca4 = """ + str(use_orca4) + """
-sandbox_orca = """ + str(sandbox_orca) + """
-
-g09_formchk = "$G09_FORMCHK"
-g09_cubegen = "$G09_CUBEGEN"
-vmd_path = "$VMD_PATH"
-ovito_path = "$OVITO_PATH"
-opls_path = "$OPLS_PATH"
-packmol_path = "$PACKMOL_PATH"
-lmp_path = "$LMP_PATH"
-python_path = "$PYTHON_PATH"
-
-mpirun_path = "$MPIRUN_PATH"
-
-queueing_system = "$QUEUEING_SYSTEM" # nbs, pbs, slurm
-default_queue = "$DEFAULT_QUEUE"
-slurm_default_allocation = None
-nbs_ssh = None
-nbs_bin_path = ""
-
-# Default modules to load in pysub submission.
-default_pysub_modules = ["squid"]
-
-# Submission flags for queueing system
-orca_sub_flag = "$ORCA_SUB_FLAG"
-
-# A list of all paths/environment variables needed for queue submission
-env_vars = '''$ENV_VARS'''
-orca_env_vars = '''$ORCA_ENV_VARS'''
-orca4_env_vars = '''$ORCA4_ENV_VARS'''
-lmp_env_vars = '''$LMP_ENV_VARS'''
-
-# Mpi preface for job submission
-mpi_preface = "$MPI_PREFACE"
-"""
-
-    for s, v in zip(s_vars_to_include, vars_to_include):
-        ss = "$" + s.upper()
-        while ss in sysconst_file_string:
-            sysconst_file_string = sysconst_file_string.replace(
-                "$%s" % s.upper(), str(v)
-            )
-
-    fptr_sysconst = open("squid/sysconst.py", 'w')
-    fptr_sysconst.write(sysconst_file_string)
-    fptr_sysconst.close()
-
     exports_and_aliases = """
 --------------------------------------------------------------------------
 ---------           Squid Exports and Aliases v 0.0.1            ---------
@@ -172,21 +122,6 @@ whatis("URL: https://clancylab.github.io/squid/squid.html")
 whatis("Description: Clancy Lab Codebase")
 
 prepend_path( "PYTHONPATH",     "$CWD")
-
--- Aliases
-set_alias('chkDFT','python $CWD/console_scripts/chkDFT.py')
-set_alias('scanDFT','python $CWD/console_scripts/scanDFT.py')
-set_alias('chko','function _chko() { chkDFT $1 -dft orca $@ ; } ; _chko')
-set_alias('viewo','function _viewo() { chkDFT $1 -dft orca -v $@ ; } ; _viewo')
-set_alias('otail','function _otail() { tail orca/$1/$1.out $2 $3 ; } ; _otail')
-set_alias('tailo','otail')
-set_alias('otxt','function _otxt() {  orca/$1/$1.out & ; } ; _otxt')
-set_alias('txto','otxt')
-set_alias('get_ext_list','$PYTHON_PATH $CWD/console_scripts/get_ext_list.py')
-set_alias('pysub','$CWD/console_scripts/pysub.py $PWD/')
-set_alias('procrustes','$CWD/console_scripts/procrustes.py $PWD/')
-set_alias('view_lmp','function _view_lmp() { $PYTHON_PATH $CWD/console_scripts/view_lmp.py $1 $@ ; } ; _view_lmp')
-set_alias('vmd_lmp','function _vmd_lmp() { $PYTHON_PATH $CWD/console_scripts/vmd_lmp.py $1 $@ ; } ; _vmd_lmp')
 
 -- Load all dependencies
 """ + default_modules
@@ -265,17 +200,10 @@ FINAL NOTE! IF YOU ARE INSTALLING ON MARCC, THEN DO THE FOLLOWING PRIOR TO RUNNI
 
     unload("openmpi/3.1")
     load("intelmpi")
-    load("python/2.7-anaconda")
+    load("python/3.7-anaconda")
 ''')
 
     if not skip_prompt:
-        # Bind raw_input to input so we can have either python2 or python3 work
-        # on install
-        try:
-            input = raw_input
-        except NameError:
-            pass
-    
         ans = input("Use settings currently in the install file (y/N): ")
         ans = ans.strip().lower()
         if len(ans) > 1:
@@ -335,23 +263,23 @@ fi
 
     on_marcc = False
     if install_target == "marcc":
-        anaconda_path = "/software/apps/anaconda/5.2/python/2.7"
-        default_modules.append('load("python/2.7-anaconda")')
+        anaconda_path = "/software/apps/anaconda/5.2/python/3.7"
+        default_modules.append('load("python/3.7-anaconda")')
         on_marcc = True
     elif install_target in ["wsl", "linux"]:
         anaconda_path = run_install_anaconda(anaconda_install_dir, MODULEDIR)
-        default_modules.append('load("anaconda-2.7")')
+        default_modules.append('load("anaconda/3.7")')
     else:
         raise Exception("Invalid install target.")
     python_path = anaconda_path + "/bin/python"
     if install_nlopt:
         if find_executable("swig") is None:
             run_install_swig("./", MODULEDIR)
-            default_modules.append('load("swig-3.0.12")')
+            default_modules.append('load("swig/3.0.12")')
         else:
             print("Swig was already found installed on the system!")
         run_install_nlopt("./", python_path, MODULEDIR)
-        default_modules.append('load("nlopt-2.5.0")')
+        default_modules.append('load("nlopt/2.5.0")')
     # Install packmol if desired
     packmol_path = None
     if install_packmol:

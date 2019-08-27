@@ -3,9 +3,10 @@ import sys
 from squid.installers.install_helper import save_module, download_file
 
 
-def run_install(location, python_path, VERSION, SFFX,
+def run_install(location, VERSION, SFFX, name,
                 extra_lammps_packages=[],
-                smrff_path=None, on_marcc=False, MODULEDIR=None):
+                smrff_path=None, MODULEDIR=None,
+                compiler="mpicxx"):
 
     LAMMPS_MAKEFILE = '''
 # mpi = MPI with its default compiler
@@ -16,7 +17,7 @@ SHELL = /bin/sh
 # compiler/linker settings
 # specify flags and libraries needed for your compiler
 
-CC =        mpicxx
+CC =        $CC$
 # Wall and Wextra simply print additional warnings
 # m64 compiles for 64 bit memory
 # static-libgcc and static-libstdc++ are to make the final binary as
@@ -26,7 +27,7 @@ CCFLAGS =  -std=c++11 -g -O3 -m64 -static-libgcc -static-libstdc++ -Wall -Wextra
 SHFLAGS =   -fPIC
 DEPFLAGS =  -M
 
-LINK =      mpicxx
+LINK =      $CC$
 LINKFLAGS = -std=c++11 -g -O3 -m64 -static-libgcc -static-libstdc++ -Wall -Wextra
 LIB =
 SIZE =      size
@@ -54,9 +55,9 @@ LMP_INC =   -DLAMMPS_GZIP -DLAMMPS_MEMALIGN=64
 # PATH = path for MPI library
 # LIB = name of MPI library
 
-MPI_INC =       -DMPICH_SKIP_MPICXX -DOMPI_SKIP_MPICXX=1 -I$PYTHON_DIR$/include/python2.7
-MPI_PATH =      -L$PYTHON_DIR$/lib
-MPI_LIB =       -lpython2.7
+MPI_INC =       $MPIINC$ -I$PYTHON_DIR$/include/python3.7m
+MPI_PATH =      $MPIPATH$ -L$PYTHON_DIR$/lib
+MPI_LIB =       $MPILIB$ -lpython3.7m
 
 # FFT library
 # see discussion in Section 2.2 (step 6) of manual
@@ -129,18 +130,56 @@ fastdep.exe: ../DEPEND/fastdep.c
 sinclude .depend
 '''
 
+    mpi_inc = "-DMPICH_SKIP_MPICXX -DOMPI_SKIP_MPICXX=1"
+    mpi_path = ""
+    mpi_lib = ""
+    serial_inc = "-I../STUBS"
+    serial_path = "-L../STUBS"
+    serial_lib = "-lmpi_stubs"
+
+    python_path = sys.executable
+
     PYTHON_DIR = python_path.split("/bin")[0]
     while "$PYTHON_DIR$" in LAMMPS_MAKEFILE:
         LAMMPS_MAKEFILE = LAMMPS_MAKEFILE.replace(
             "$PYTHON_DIR$",
             PYTHON_DIR
         )
+    while "$CC$" in LAMMPS_MAKEFILE:
+        LAMMPS_MAKEFILE = LAMMPS_MAKEFILE.replace(
+            "$CC$",
+            compiler
+        )
+
+    assert SFFX in ["serial", "mpi"],\
+        "Error - SFFX should be either serial or mpi.  It was %s." % SFFX
+
+    if SFFX == "mpi":
+        LAMMPS_MAKEFILE = LAMMPS_MAKEFILE.replace(
+            "$MPIINC$", mpi_inc
+        )
+        LAMMPS_MAKEFILE = LAMMPS_MAKEFILE.replace(
+            "$MPIPATH$", mpi_path
+        )
+        LAMMPS_MAKEFILE = LAMMPS_MAKEFILE.replace(
+            "$MPILIB$", mpi_lib
+        )
+    elif SFFX == "serial":
+        LAMMPS_MAKEFILE = LAMMPS_MAKEFILE.replace(
+            "$MPIINC$", serial_inc
+        )
+        LAMMPS_MAKEFILE = LAMMPS_MAKEFILE.replace(
+            "$MPIPATH$", serial_path
+        )
+        LAMMPS_MAKEFILE = LAMMPS_MAKEFILE.replace(
+            "$MPILIB$", serial_lib
+        )
 
     # Error Handling
     VERSION = str(VERSION)
 
     NAME = "LAMMPs"
-    FOLDER = "lammps/" + str(VERSION)
+    FOLDER = "lammps/" + name
     TARFILE = "lammps-%s.tar.gz" % VERSION
     URL = "https://lammps.sandia.gov/tars/lammps-%s.tar.gz" % VERSION
     lammps_hashes = {
@@ -159,12 +198,6 @@ sinclude .depend
         cwd = cwd[:-1]
 
     MODULE_LOADERS = ""
-    if on_marcc:
-        MODULE_LOADERS = '''
-unload("openmpi/3.1")
-load("intelmpi")
-load("python/2.7-anaconda")
-'''
 
     if not os.path.exists(FOLDER):
         os.system("mkdir -p %s" % FOLDER)
@@ -191,6 +224,23 @@ load("python/2.7-anaconda")
 
         for pkg in extra_lammps_packages:
             os.system("make yes-%s" % pkg)
+
+        # Setup stubs if serial
+        if SFFX == "serial":
+            os.chdir("STUBS")
+            os.system("make")
+            os.chdir("../")
+
+        # Bug fix before compiling
+        fname = "python_impl.cpp"
+        possibly_buggy_file = open(fname, 'r').read().strip()
+        bad_line = " char *pystr = PY_STRING_AS_STRING(pValue);"
+        good_line = " const char *pystr = PY_STRING_AS_STRING(pValue);"
+        if bad_line in possibly_buggy_file:
+            fptr = open(fname, 'w')
+            fptr.write(possibly_buggy_file.replace(bad_line, good_line))
+            fptr.close()
+
         os.system("make %s -j 4" % SFFX)
         os.system("make %s -j 4 mode=shlib" % SFFX)
         ###############################
@@ -200,10 +250,14 @@ load("python/2.7-anaconda")
         print("%s folder already exists, so will not re-install." % NAME)
 
     mod_file = '''help([[
-    For detailed instructions, go to:
-        $HELPURL$
+For detailed instructions, go to:
+    $HELPURL$
 
-    ]])
+This version of LAMMPS was compiled with the following packages:
+
+    ''' + "\n    ".join(extra_lammps_packages) + '''
+''' + ("    SMRFF" if smrff_path is not None else "") + '''
+]])
 whatis("Version: $VERSION$")
 whatis("Keywords: $NAME$")
 whatis("URL: $HELPURL$")
