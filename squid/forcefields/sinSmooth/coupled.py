@@ -583,7 +583,7 @@ class SmoothSinCoupled(object):
             cls.parse_line(line)
             for line in parsed_file
             if not is_numeric(line.split()[0]) and
-            len(line.split()) in [11, 14]]
+            len(line.split()) in [8, 11, 14]]
 
         return [
             cls(*values) for
