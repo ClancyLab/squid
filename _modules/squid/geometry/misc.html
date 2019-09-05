@@ -41,9 +41,11 @@
   <h1>Source code for squid.geometry.misc</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">squid.utils</span> <span class="k">import</span> <span class="n">units</span>
+<span class="kn">from</span> <span class="nn">squid.utils.cast</span> <span class="k">import</span> <span class="n">is_array</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="k">import</span> <span class="n">distance_matrix</span>
 
 
-<div class="viewcode-block" id="get_center_of_geometry"><a class="viewcode-back" href="../../../codebase.html#squid.geometry.misc.get_center_of_geometry">[docs]</a><span class="k">def</span> <span class="nf">get_center_of_geometry</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">skip_H</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="get_center_of_geometry"><a class="viewcode-back" href="../../../module_docs/geometry/misc.html#squid.geometry.misc.get_center_of_geometry">[docs]</a><span class="k">def</span> <span class="nf">get_center_of_geometry</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">skip_H</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Calculate the center of geometry of the molecule.</span>
 
@@ -71,7 +73,7 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">local_atoms</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">local_atoms</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="get_center_of_mass"><a class="viewcode-back" href="../../../codebase.html#squid.geometry.misc.get_center_of_mass">[docs]</a><span class="k">def</span> <span class="nf">get_center_of_mass</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">skip_H</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="get_center_of_mass"><a class="viewcode-back" href="../../../module_docs/geometry/misc.html#squid.geometry.misc.get_center_of_mass">[docs]</a><span class="k">def</span> <span class="nf">get_center_of_mass</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">skip_H</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Calculate the center of mass of the molecule.</span>
 
@@ -106,7 +108,7 @@
     <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">local_atoms</span> <span class="o">*</span> <span class="n">masses</span><span class="p">)</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">masses</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="rotate_atoms"><a class="viewcode-back" href="../../../codebase.html#squid.geometry.misc.rotate_atoms">[docs]</a><span class="k">def</span> <span class="nf">rotate_atoms</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">around</span><span class="o">=</span><span class="s2">&quot;com&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="rotate_atoms"><a class="viewcode-back" href="../../../module_docs/geometry/misc.html#squid.geometry.misc.rotate_atoms">[docs]</a><span class="k">def</span> <span class="nf">rotate_atoms</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">around</span><span class="o">=</span><span class="s2">&quot;com&quot;</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Rotate atoms by the given matrix *m*.  Note, this happens in place.  That</span>
 <span class="sd">    means that the atoms in the input list will themselves be rotated.  This</span>
@@ -147,6 +149,41 @@
             <span class="n">a</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">center</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">atoms</span></div>
+
+
+<div class="viewcode-block" id="closest_atoms"><a class="viewcode-back" href="../../../module_docs/geometry/misc.html#squid.geometry.misc.closest_atoms">[docs]</a><span class="k">def</span> <span class="nf">closest_atoms</span><span class="p">(</span><span class="n">atoms</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Given a list of atomic coordinates, return the indices of the closest two</span>
+<span class="sd">    atoms and the total distance.  If multiple close atoms exist, it only</span>
+<span class="sd">    returns the first in the list.</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">        atoms: *list,* :class:`structures.atom.Atom`</span>
+<span class="sd">            A list of atoms to find the closest ones.</span>
+
+<span class="sd">    **Returns**</span>
+
+<span class="sd">        a1: int</span>
+<span class="sd">            The index of one of the two closest atoms.</span>
+<span class="sd">        a2: int</span>
+<span class="sd">            The index of the other atom.</span>
+<span class="sd">        dist: *float*</span>
+<span class="sd">            The interatomic distance that was deemed as close.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">assert</span> <span class="n">is_array</span><span class="p">(</span><span class="n">atoms</span><span class="p">),</span>\
+        <span class="s2">&quot;Error - atoms must be array like.&quot;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">,</span>\
+        <span class="s2">&quot;Error - atoms must contain more than 1 atom.&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="o">-</span> <span class="n">atoms</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+
+    <span class="n">local_atoms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">])</span>
+    <span class="n">dists</span> <span class="o">=</span> <span class="n">distance_matrix</span><span class="p">(</span><span class="n">local_atoms</span><span class="p">,</span> <span class="n">local_atoms</span><span class="p">)</span>
+    <span class="n">dists</span> <span class="o">=</span> <span class="n">dists</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">local_atoms</span><span class="p">))</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="mf">1E20</span><span class="p">)</span>
+    <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">dists</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">dists</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">atoms</span><span class="p">[</span><span class="n">a1</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="o">-</span> <span class="n">atoms</span><span class="p">[</span><span class="n">a2</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span></div>
 
 
 <span class="k">def</span> <span class="nf">run_unit_tests</span><span class="p">():</span>
@@ -198,6 +235,22 @@
     <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
         <span class="n">mol</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mf">0.000</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.000</span><span class="p">,</span> <span class="mf">0.000</span><span class="p">)))</span> <span class="o">&lt;</span> <span class="n">EPS</span><span class="p">,</span>\
         <span class="s2">&quot;Error - Failed rotation!&quot;</span>
+
+    <span class="c1"># Test where we have multiple closest atoms</span>
+    <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">closest_atoms</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="n">a1</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">a2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">d</span> <span class="o">-</span> <span class="mf">1.4142135623</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">EPS</span><span class="p">]),</span>\
+        <span class="s2">&quot;Error - Failed closest_atoms basic test!&quot;</span>
+
+    <span class="c1"># Test where we only have one close atom</span>
+    <span class="n">atoms</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">Atom</span><span class="p">(</span><span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
+        <span class="n">Atom</span><span class="p">(</span><span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">Atom</span><span class="p">(</span><span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">closest_atoms</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">atoms</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="o">-</span> <span class="n">atoms</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="n">a1</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="n">a2</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">d</span> <span class="o">-</span> <span class="n">dist</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">EPS</span><span class="p">]),</span>\
+        <span class="s2">&quot;Error - Failed closest_atoms second test.&quot;</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;squid.geometry.misc - All unit tests passed!&quot;</span><span class="p">)</span>
 

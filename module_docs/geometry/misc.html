@@ -38,6 +38,32 @@
           <div class="body" role="main">
             
   <span class="target" id="module-squid.geometry.misc"></span><dl class="function">
+<dt id="squid.geometry.misc.closest_atoms">
+<code class="descclassname">squid.geometry.misc.</code><code class="descname">closest_atoms</code><span class="sig-paren">(</span><em>atoms</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/geometry/misc.html#closest_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.geometry.misc.closest_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of atomic coordinates, return the indices of the closest two
+atoms and the total distance.  If multiple close atoms exist, it only
+returns the first in the list.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>atoms: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.atom.Atom</span></code></dt>
+<dd>A list of atoms to find the closest ones.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>a1: int</dt>
+<dd>The index of one of the two closest atoms.</dd>
+<dt>a2: int</dt>
+<dd>The index of the other atom.</dd>
+<dt>dist: <em>float</em></dt>
+<dd>The interatomic distance that was deemed as close.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
 <dt id="squid.geometry.misc.get_center_of_geometry">
 <code class="descclassname">squid.geometry.misc.</code><code class="descname">get_center_of_geometry</code><span class="sig-paren">(</span><em>atoms</em>, <em>skip_H=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/geometry/misc.html#get_center_of_geometry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.geometry.misc.get_center_of_geometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the center of geometry of the molecule.</p>
