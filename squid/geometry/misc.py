@@ -1,5 +1,7 @@
 import numpy as np
 from squid.utils import units
+from squid.utils.cast import is_array
+from scipy.spatial import distance_matrix
 
 
 def get_center_of_geometry(atoms, skip_H=False):
@@ -108,6 +110,41 @@ def rotate_atoms(atoms, m, around="com"):
     return atoms
 
 
+def closest_atoms(atoms):
+    '''
+    Given a list of atomic coordinates, return the indices of the closest two
+    atoms and the total distance.  If multiple close atoms exist, it only
+    returns the first in the list.
+
+    **Parameters**
+
+        atoms: *list,* :class:`structures.atom.Atom`
+            A list of atoms to find the closest ones.
+
+    **Returns**
+
+        a1: int
+            The index of one of the two closest atoms.
+        a2: int
+            The index of the other atom.
+        dist: *float*
+            The interatomic distance that was deemed as close.
+    '''
+    assert is_array(atoms),\
+        "Error - atoms must be array like."
+    assert len(atoms) > 1,\
+        "Error - atoms must contain more than 1 atom."
+    if len(atoms) == 2:
+        return 0, 1, np.linalg.norm(atoms[0].flatten() - atoms[1].flatten())
+
+    local_atoms = np.array([a.flatten() for a in atoms])
+    dists = distance_matrix(local_atoms, local_atoms)
+    dists = dists + np.eye(len(local_atoms)) * float(1E20)
+    a1, a2 = np.argwhere(dists == np.min(dists))[0]
+
+    return a1, a2, np.linalg.norm(atoms[a1].flatten() - atoms[a2].flatten())
+
+
 def run_unit_tests():
     from squid.unittests.examples import get_unit_test_structures
     m1a, m1b, m2, chex, copied_chex = get_unit_test_structures()
@@ -157,6 +194,22 @@ def run_unit_tests():
     assert np.linalg.norm(
         mol.atoms[2].flatten() - np.array((0.000, -1.000, 0.000))) < EPS,\
         "Error - Failed rotation!"
+
+    # Test where we have multiple closest atoms
+    a1, a2, d = closest_atoms(atoms)
+    assert all([a1 == 0, a2 == 1, abs(d - 1.4142135623) < EPS]),\
+        "Error - Failed closest_atoms basic test!"
+
+    # Test where we only have one close atom
+    atoms = [
+        Atom("H", np.random.random() * 100, np.random.random() * 100, 100),
+        Atom("H", 0, 0, 0),
+        Atom("H", np.random.random() * 2, np.random.random() * 2, 2),
+    ]
+    a1, a2, d = closest_atoms(atoms)
+    dist = np.linalg.norm(atoms[1].flatten() - atoms[2].flatten())
+    assert all([a1 == 1, a2 == 2, abs(d - dist) < EPS]),\
+        "Error - Failed closest_atoms second test."
 
     print("squid.geometry.misc - All unit tests passed!")
 
