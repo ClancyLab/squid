@@ -545,7 +545,8 @@ less than 2 atoms!")
         stdout = open("%s/%s.out" % (cwd, run_name), 'wb')
         stderr = open("%s/%s.err" % (cwd, run_name), 'wb')
         process_handle = subprocess.Popen(
-            cmd.strip().split(), shell=False,
+            cmd, shell=True,
+            # cmd.strip().split(), shell=False,
             stdout=stdout, stderr=stderr
         )
         job_obj = jobs.Job(run_name, process_handle=process_handle)
