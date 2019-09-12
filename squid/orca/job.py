@@ -541,7 +541,8 @@ less than 2 atoms!")
     # Run the simulation
     if queue is None:
         cwd = os.getcwd()
-        cmd = orca_path + ' %s/%s.orca & disown' % (cwd, run_name)
+        cmd = orca_path + ' %s/%s.orca' % (cwd, run_name)
+        # cmd = orca_path + ' %s/%s.orca & disown' % (cwd, run_name)
         stdout = open("%s/%s.out" % (cwd, run_name), 'wb')
         stderr = open("%s/%s.err" % (cwd, run_name), 'wb')
         process_handle = subprocess.Popen(
