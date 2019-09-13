@@ -43,7 +43,8 @@ environment variable!"
     ompi_pipe = None
     if parallel:
         ompi_version_should_be = {
-            "4.1.2": "3.1"
+            "4.1.2": "3.1",
+            "4.2.0": "3.1"
         }
         assert orca_version in ompi_version_should_be,\
             "Error - Please contact squid dev. We do not have stored the \
