@@ -1,4 +1,5 @@
 import time
+import psutil
 
 
 class JobObject(object):
@@ -77,7 +78,7 @@ class JobObject(object):
                 Whether the simulation is still running (True), or not (False).
         '''
         if self.process_handle is not None:
-            return self.process_handle.poll() == 0
+            return self.process_handle.poll() is not None
         if self.job_id is not None:
             running = any([
                 self.job_id in j for j in self.get_all_jobs(detail=3)])

@@ -228,6 +228,7 @@ Serializing job submission instead." % queue_system)
                         queue=queue, **properties
                     )
                 )
+                wait_counter = 0
                 while sum([
                         int(not j.is_finished())
                         for j in running_jobs]) >= batch_serial_jobs:
