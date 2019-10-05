@@ -118,6 +118,7 @@ def pysub(name, **kwargs):
         "queue": None,
         "args": None,
         "modules": None,
+        "use_hyperthreads": False,
     }
     params.update(kwargs)
 
@@ -129,6 +130,9 @@ def pysub(name, **kwargs):
         "preface_mpi": bool,
         "path": lambda s: s if not s.endswith("/") else s[:-1]
     }
+
+    # Hyperthread support flag
+    hyperthread_flag = "--use-hwthread-cpus"
 
     for k, f in param_types.items():
         params[k] = f(params[k])
@@ -161,6 +165,8 @@ export OMPI_NUM_THREADS=%d
         assert mpirun_path is not None,\
             "Error - Unable to find mpirun path!"
         cmd += "%s -np %d " % (mpirun_path, total_cores)
+        if params["use_hyperthreads"]:
+            cmd += "%s " % hyperthread_flag
 
     python_path = which("python")
     assert python_path is not None,\

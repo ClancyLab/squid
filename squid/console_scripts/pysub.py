@@ -39,6 +39,8 @@ pysub [script.py] [Options]
 -py3           :            :  Whether to use python 3, or 2 (2 is default).
 -alloc, -A     :   None     :  Whether to specify a SLURM Allocation.
 -gpu           :   None     :  The number of desired GPUs you want.
+-hts           :            :  If specified, we allow openMPI to use
+                               hyperthreads.
 
 Default behaviour is to generate a job with the same name
 as the python script and to generate a .log file with the
@@ -74,6 +76,7 @@ lead to errors).
     allocation = None
     jobarray = None
     gpu = None
+    hts = False
 
     use_these_mods = []
 
@@ -141,6 +144,9 @@ lead to errors).
         i = argv.index("-ja")
         jobarray = map(int, [argv[i + 1], argv[i + 2]])
 
+    if "-hts" in argv[2:]:
+        hts = True
+
     jobs.pysub(
         job_name,
         ntasks=tasks, nprocs=nprocs, ompi_threads=omp,
@@ -148,5 +154,5 @@ lead to errors).
         path=getcwd(), priority=priority,
         walltime=walltime, unique_name=unique, py3=py3, preface_mpi=use_mpi,
         modules=use_these_mods, allocation=allocation,
-        jobarray=jobarray, gpu=gpu
+        jobarray=jobarray, gpu=gpu, use_hyperthreads=hts
     )
