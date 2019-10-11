@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>squid.geometry.transform &#8212; Squid 2.0.0 documentation</title>
+    <title>squid.geometry.transform &#8212; Squid 2.0.35 documentation</title>
     <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">Squid 2.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Squid 2.0.35 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -54,7 +54,7 @@
 <span class="c1"># Given a list of atom objects, this will (1) use mvee to generate a minimum</span>
 <span class="c1"># centroid around the structure, and (2) rotate the ellipsoid and positions</span>
 <span class="c1"># to align along the x-axis</span>
-<div class="viewcode-block" id="align_centroid"><a class="viewcode-back" href="../../../codebase.html#squid.geometry.transform.align_centroid">[docs]</a><span class="k">def</span> <span class="nf">align_centroid</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">recenter</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">skip_H</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="align_centroid"><a class="viewcode-back" href="../../../module_docs/geometry/transform.html#squid.geometry.transform.align_centroid">[docs]</a><span class="k">def</span> <span class="nf">align_centroid</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">recenter</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">skip_H</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Generate a Minimum Volume Enclosing Ellipsoid (MVEE) around atomic</span>
 <span class="sd">    species to align the atoms along the x-axis.</span>
@@ -113,11 +113,74 @@
     <span class="k">return</span> <span class="n">new_atoms</span><span class="p">,</span> <span class="n">A</span></div>
 
 
+<div class="viewcode-block" id="center_frames"><a class="viewcode-back" href="../../../module_docs/geometry/transform.html#squid.geometry.transform.center_frames">[docs]</a><span class="k">def</span> <span class="nf">center_frames</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">method_to_remove_translations</span><span class="o">=</span><span class="s2">&quot;com&quot;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Center the frames by either the center of geometry (cog) or center</span>
+<span class="sd">    of mass (com).</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">        frames: *list, list,* :class:`squid.structures.atom.Atom`</span>
+<span class="sd">            List of lists of atoms.</span>
+<span class="sd">        method_to_remove_translations: *str, optional*</span>
+<span class="sd">            How to remove the translations.  Either com for center-of-mass, or</span>
+<span class="sd">            cog for center-of-geometry.  By default we do so using</span>
+<span class="sd">            center-of-mass.</span>
+
+<span class="sd">    **Returns**</span>
+
+<span class="sd">        frames: *list, list,* :class:`squid.structures.atom.Atom`</span>
+<span class="sd">            The centered frames.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="n">center_frame</span><span class="p">(</span>
+            <span class="n">frame</span><span class="p">,</span>
+            <span class="n">method_to_remove_translations</span><span class="o">=</span><span class="n">method_to_remove_translations</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">frames</span>
+    <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="center_frame"><a class="viewcode-back" href="../../../module_docs/geometry/transform.html#squid.geometry.transform.center_frame">[docs]</a><span class="k">def</span> <span class="nf">center_frame</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">method_to_remove_translations</span><span class="o">=</span><span class="s2">&quot;com&quot;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Center the atoms in a frame by either the center of geometry (cog) or</span>
+<span class="sd">    center of mass (com).</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">        frame: *list,* :class:`squid.structures.atom.Atom`</span>
+<span class="sd">            List of atoms.</span>
+<span class="sd">        method_to_remove_translations: *str, optional*</span>
+<span class="sd">            How to remove the translations.  Either com for center-of-mass, or</span>
+<span class="sd">            cog for center-of-geometry.  By default we do so using</span>
+<span class="sd">            center-of-mass.</span>
+
+<span class="sd">    **Returns**</span>
+
+<span class="sd">        frame: *list,* :class:`squid.structures.atom.Atom`</span>
+<span class="sd">            The centered frame.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">method_to_remove_translations</span> <span class="o">==</span> <span class="s2">&quot;cog&quot;</span><span class="p">:</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="n">get_center_of_geometry</span>
+    <span class="k">elif</span> <span class="n">method_to_remove_translations</span> <span class="o">==</span> <span class="s2">&quot;com&quot;</span><span class="p">:</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="n">get_center_of_mass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="s2">&quot;Error - method_to_remove_translations must be cog or com!&quot;</span><span class="p">)</span>
+
+    <span class="n">dr</span> <span class="o">=</span> <span class="n">offset</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+        <span class="n">a</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="o">-</span><span class="n">dr</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">frame</span></div>
+
+
 <span class="c1"># Procrustes works by geting an orthogonal frame to map frames[1:] to be as</span>
 <span class="c1"># similar to frames[0] as possible. This implements the orthagonal procrustes</span>
 <span class="c1"># with translation and no reflection (Partial Procrustes)</span>
-<div class="viewcode-block" id="procrustes"><a class="viewcode-back" href="../../../codebase.html#squid.geometry.transform.procrustes">[docs]</a><span class="k">def</span> <span class="nf">procrustes</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">count_atoms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-               <span class="n">append_in_loop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reflection</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="procrustes"><a class="viewcode-back" href="../../../module_docs/geometry/transform.html#squid.geometry.transform.procrustes">[docs]</a><span class="k">def</span> <span class="nf">procrustes</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">count_atoms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">append_in_loop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reflection</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+               <span class="n">method_to_remove_translations</span><span class="o">=</span><span class="s2">&quot;com&quot;</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Propogate rotation along a list of lists of atoms to smooth out</span>
 <span class="sd">    transitions between consecutive frames. This is done by rigid rotation</span>
@@ -138,6 +201,10 @@
 <span class="sd">            multiplicates will appear.</span>
 <span class="sd">        reflection: *bool, optional*</span>
 <span class="sd">            Whether inversion is allowed (True) or not (False).</span>
+<span class="sd">        method_to_remove_translations: *str, optional*</span>
+<span class="sd">            How to remove the translations.  Either com for center-of-mass, or</span>
+<span class="sd">            cog for center-of-geometry.  By default we do so using</span>
+<span class="sd">            center-of-mass.</span>
 
 <span class="sd">    **Returns**</span>
 
@@ -150,14 +217,20 @@
 <span class="sd">        For more information, see :func:`squid.geometry.spatial.orthogonal_procrustes`.</span>
 
 <span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method_to_remove_translations</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>\
+        <span class="s2">&quot;Error - method_to_remove_translations must be a string!&quot;</span>
+    <span class="n">method_to_remove_translations</span> <span class="o">=</span> <span class="n">method_to_remove_translations</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">method_to_remove_translations</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;com&quot;</span><span class="p">,</span> <span class="s2">&quot;cog&quot;</span><span class="p">],</span>\
+        <span class="s2">&quot;Error - method_to_remove_translations must be either com or cog!&quot;</span>
+
     <span class="k">if</span> <span class="ow">not</span> <span class="n">count_atoms</span><span class="p">:</span>
         <span class="n">count_atoms</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
 
     <span class="c1"># Offset center of geometries</span>
-    <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">:</span>
-        <span class="n">cog</span> <span class="o">=</span> <span class="n">get_center_of_geometry</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
-            <span class="n">a</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="o">-</span><span class="n">cog</span><span class="p">)</span>
+    <span class="n">frames</span> <span class="o">=</span> <span class="n">center_frames</span><span class="p">(</span>
+        <span class="n">frames</span><span class="p">,</span>
+        <span class="n">method_to_remove_translations</span><span class="o">=</span><span class="n">method_to_remove_translations</span>
+    <span class="p">)</span>
 
     <span class="c1"># rotate all frames to be as similar to their neighbors as possible</span>
     <span class="n">full_rotation</span> <span class="o">=</span> <span class="p">[]</span>
@@ -188,7 +261,7 @@
     <span class="k">return</span> <span class="n">full_rotation</span></div>
 
 
-<div class="viewcode-block" id="interpolate"><a class="viewcode-back" href="../../../codebase.html#squid.geometry.transform.interpolate">[docs]</a><span class="k">def</span> <span class="nf">interpolate</span><span class="p">(</span><span class="n">frame_1</span><span class="p">,</span> <span class="n">frame_2</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
+<div class="viewcode-block" id="interpolate"><a class="viewcode-back" href="../../../module_docs/geometry/transform.html#squid.geometry.transform.interpolate">[docs]</a><span class="k">def</span> <span class="nf">interpolate</span><span class="p">(</span><span class="n">frame_1</span><span class="p">,</span> <span class="n">frame_2</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Linearly interpolate N frames between two given frames.</span>
 
@@ -227,11 +300,12 @@
     <span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="smooth_xyz"><a class="viewcode-back" href="../../../codebase.html#squid.geometry.transform.smooth_xyz">[docs]</a><span class="k">def</span> <span class="nf">smooth_xyz</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span>
+<div class="viewcode-block" id="smooth_xyz"><a class="viewcode-back" href="../../../module_docs/geometry/transform.html#squid.geometry.transform.smooth_xyz">[docs]</a><span class="k">def</span> <span class="nf">smooth_xyz</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span>
                <span class="n">R_max</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
                <span class="n">F_max</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
                <span class="n">N_frames</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                <span class="n">use_procrustes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+               <span class="n">remove_translations</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                <span class="n">fname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
@@ -255,6 +329,11 @@
 <span class="sd">        use_procrustes: *bool, optional*</span>
 <span class="sd">            Whether procrustes is to be used during smoothing (True), or</span>
 <span class="sd">            not (False).</span>
+<span class="sd">        remove_translations: *bool, optional*</span>
+<span class="sd">            Whether to center the frames by center of mass or not.  Note, if</span>
+<span class="sd">            procrustes is run then this is already taken into account.  This</span>
+<span class="sd">            is for the edge-case of not wanting to use procrustes, but still</span>
+<span class="sd">            wanting to minimize translation.</span>
 <span class="sd">        fname: *str, optional*</span>
 <span class="sd">            An output file name for the smoothed frames (without the .xyz</span>
 <span class="sd">            extension).  If None, then no file is made.</span>
@@ -288,6 +367,8 @@
         <span class="c1"># Find largest motion_per_frame</span>
         <span class="k">if</span> <span class="n">use_procrustes</span><span class="p">:</span>
             <span class="n">procrustes</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">remove_translations</span><span class="p">:</span>
+            <span class="n">frames</span> <span class="o">=</span> <span class="n">center_frames</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
         <span class="n">mpf</span> <span class="o">=</span> <span class="n">motion_per_frame</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
 
         <span class="c1"># Check if we&#39;re done</span>
@@ -301,11 +382,11 @@
         <span class="n">f_mid</span> <span class="o">=</span> <span class="n">interpolate</span><span class="p">(</span><span class="n">frames</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">frames</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">f_high</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">frames</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:])</span>
 
-        <span class="n">frames</span> <span class="o">=</span> <span class="n">f_low</span> <span class="o">+</span> <span class="n">f_mid</span> <span class="o">+</span> <span class="n">f_high</span>
+        <span class="n">frames</span> <span class="o">=</span> <span class="n">f_low</span> <span class="o">+</span> <span class="n">f_mid</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">f_high</span>
 
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Interpolated </span><span class="si">%d</span><span class="s2">,</span><span class="si">%d</span><span class="s2"> ... </span><span class="si">%lg</span><span class="s2">&quot;</span>
-                  <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">motion_per_frame</span><span class="p">(</span><span class="n">frames</span><span class="p">))))</span>
+                  <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">motion_per_frame</span><span class="p">(</span><span class="n">frames</span><span class="p">))))</span>
 
         <span class="k">if</span> <span class="n">N_frames</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span> <span class="o">==</span> <span class="n">N_frames</span><span class="p">:</span>
@@ -321,12 +402,16 @@
         <span class="c1"># Get smallest motion and remove</span>
         <span class="k">if</span> <span class="n">use_procrustes</span><span class="p">:</span>
             <span class="n">procrustes</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">remove_translations</span><span class="p">:</span>
+            <span class="n">frames</span> <span class="o">=</span> <span class="n">center_frames</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
         <span class="n">mpf</span> <span class="o">=</span> <span class="n">motion_per_frame</span><span class="p">(</span><span class="n">frames</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
         <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanargmin</span><span class="p">(</span><span class="n">mpf</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
         <span class="k">del</span> <span class="n">frames</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">use_procrustes</span><span class="p">:</span>
         <span class="n">procrustes</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">remove_translations</span><span class="p">:</span>
+        <span class="n">frames</span> <span class="o">=</span> <span class="n">center_frames</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">There are now a total of </span><span class="si">%d</span><span class="s2"> frames&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">))</span>
 
@@ -341,12 +426,12 @@
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Currently Frames = </span><span class="si">%d</span><span class="se">\t</span><span class="s2">r2 = </span><span class="si">%lg</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">),</span> <span class="n">r2</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Currently Frames = </span><span class="si">%d</span><span class="se">\t</span><span class="s2">max_rms = </span><span class="si">%lg</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">),</span> <span class="n">max_rms</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">frames</span></div>
 
 
-<div class="viewcode-block" id="perturbate"><a class="viewcode-back" href="../../../codebase.html#squid.geometry.transform.perturbate">[docs]</a><span class="k">def</span> <span class="nf">perturbate</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">dr</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">around</span><span class="o">=</span><span class="s2">&quot;com&quot;</span><span class="p">,</span> <span class="n">rotate</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="perturbate"><a class="viewcode-back" href="../../../module_docs/geometry/transform.html#squid.geometry.transform.perturbate">[docs]</a><span class="k">def</span> <span class="nf">perturbate</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">dr</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">around</span><span class="o">=</span><span class="s2">&quot;com&quot;</span><span class="p">,</span> <span class="n">rotate</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Given a list of atomic coordinates, randomly perturbate them and apply</span>
 <span class="sd">    a slight rotation.</span>
@@ -495,7 +580,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">Squid 2.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Squid 2.0.35 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
