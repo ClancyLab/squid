@@ -333,7 +333,7 @@ def nearest_n_atoms_to_r(origin, atoms, N=None, indices=None):
 
         origin: *np.array, float*
             A 3D location.
-        atoms: *list, structures.Atom*
+        atoms: *list,* :class:`squid.structures.atom.Atom`
             A list of atom objects.
         N: *int*
             The closest N we should return.
@@ -372,7 +372,7 @@ def furthest_n_atoms_to_r(origin, atoms, N=None, indices=None):
 
         origin: *np.array, float*
             A 3D location.
-        atoms: *list, structures.Atom*
+        atoms: *list,* :class:`squid.structures.atom.Atom`
             A list of atom objects.
         N: *int*
             The closest N we should return.
@@ -400,7 +400,7 @@ def nearest_atoms(atoms, indices=None, invert=False):
 
     **Parameters**
 
-        atoms: *list, structures.Atom*
+        atoms: *list,* :class:`squid.structures.atom.Atom`
             A list of atom objects.
         indices: *list, int, optional*
             Whether to assign specific atomic indices to each atom, or assume
@@ -449,7 +449,7 @@ def furthest_atoms(atoms, indices=None):
 
     **Parameters**
 
-        atoms: *list, structures.Atom*
+        atoms: *list,* :class:`squid.structures.atom.Atom`
             A list of atom objects.
         indices: *list, int, optional*
             Whether to assign specific atomic indices to each atom, or assume
