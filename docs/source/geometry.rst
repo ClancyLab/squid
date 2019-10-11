@@ -3,6 +3,8 @@ The geometry module is broken down into different sections to handle atomic/mole
 The transform module holds functions that handle molecular transformations.
 
     - :func:`squid.geometry.transform.align_centroid` - Align list of atoms to an ellipse along the x-axis.
+    - :func:`squid.geometry.transform.center_frame` - Center a list of atomic coordinates.
+    - :func:`squid.geometry.transform.center_frames` - Center multiple frames of atomic coordinates.
     - :func:`squid.geometry.transform.interpolate` - Linearly interpolate N frames between a given two frames.
     - :func:`squid.geometry.transform.perturbate` - Perturbate atomic coordinates of a list of atoms.
     - :func:`squid.geometry.transform.procrustes` - Propogate rotations along a list of atoms to minimize rigid rotation, and return the rotation matrices used.
@@ -12,8 +14,12 @@ Note, when using :func:`squid.geometry.transform.procrustes` the input frames ar
 
 The spatial module holds functions that handle understanding the spatial relationship between atoms/molecules.
 
+    - :func:`squid.geometry.spatial.furthest_atoms` - Return the furthest atoms in a given list of atoms.
+    - :func:`squid.geometry.spatial.furthest_n_atoms_to_r` - Return the furthest n atoms to some coordinate.
     - :func:`squid.geometry.spatial.motion_per_frame` - Get the inter-frame RMS motion per frame.
     - :func:`squid.geometry.spatial.mvee` - Fit a volume to a list of atomic coordinates.
+    - :func:`squid.geometry.spatial.nearest_atoms` - Return the nearest atoms in a given list of atoms.
+    - :func:`squid.geometry.spatial.nearest_n_atoms_to_r` - Return the nearest n atoms to some coordinate.
     - :func:`squid.geometry.spatial.orthogonal_procrustes` - Find the rotation matrix that best fits one list of atomic coordinates onto another.
     - :func:`squid.geometry.spatial.random_rotation_matrix` - Generate a random rotation matrix.
     - :func:`squid.geometry.spatial.rotation_matrix` - Generate a rotation matrix based on angle and axis.

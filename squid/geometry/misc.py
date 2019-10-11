@@ -130,6 +130,9 @@ def closest_atoms(atoms):
         dist: *float*
             The interatomic distance that was deemed as close.
     '''
+    print("Warning - This is a deprecated function.  \
+Please use squid.geometry.spatial.nearest_atoms instead.")
+
     assert is_array(atoms),\
         "Error - atoms must be array like."
     assert len(atoms) > 1,\
@@ -194,22 +197,6 @@ def run_unit_tests():
     assert np.linalg.norm(
         mol.atoms[2].flatten() - np.array((0.000, -1.000, 0.000))) < EPS,\
         "Error - Failed rotation!"
-
-    # Test where we have multiple closest atoms
-    a1, a2, d = closest_atoms(atoms)
-    assert all([a1 == 0, a2 == 1, abs(d - 1.4142135623) < EPS]),\
-        "Error - Failed closest_atoms basic test!"
-
-    # Test where we only have one close atom
-    atoms = [
-        Atom("H", np.random.random() * 100, np.random.random() * 100, 100),
-        Atom("H", 0, 0, 0),
-        Atom("H", np.random.random() * 2, np.random.random() * 2, 2),
-    ]
-    a1, a2, d = closest_atoms(atoms)
-    dist = np.linalg.norm(atoms[1].flatten() - atoms[2].flatten())
-    assert all([a1 == 1, a2 == 2, abs(d - dist) < EPS]),\
-        "Error - Failed closest_atoms second test."
 
     print("squid.geometry.misc - All unit tests passed!")
 

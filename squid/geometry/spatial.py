@@ -2,6 +2,7 @@ import scipy
 import numpy as np
 from squid.utils import cast
 from scipy.linalg.decomp_svd import svd
+from scipy.spatial import distance_matrix
 
 
 def motion_per_frame(frames):
@@ -321,6 +322,149 @@ def mvee(points, tol=0.001):
     return points, centroid
 
 
+def nearest_n_atoms_to_r(origin, atoms, N=None, indices=None):
+    '''
+    Given a location and a list of atoms, we find the closest N atoms and
+    return their corresponding indices. Note, if you specify N, then there
+    is a chance that more atoms exist in the list that have the same
+    distance to origin, but are not being returned.
+
+    **Parameters**
+
+        origin: *np.array, float*
+            A 3D location.
+        atoms: *list, structures.Atom*
+            A list of atom objects.
+        N: *int*
+            The closest N we should return.
+        indices: *list, int, optional*
+            Whether to assign specific atomic indices to each atom, or assume
+            an enumeration.  If specifying specific atom indices, these are
+            done in order (ie. indices[0] holds the atom index of atoms[0].)
+
+    **Returns**
+
+        dist_index_pairs: *list, tuple, ...*
+            A list of tuples holding the distance the atom is from the
+            specified origin, and the index of said atom.
+    '''
+    if indices is None:
+        indices = list(range(len(atoms)))
+    if N is None:
+        N = len(atoms)
+    dists = sorted(list(zip(
+        distance_matrix([origin], [a.flatten() for a in atoms])[0],
+        [i for i in indices]
+    )))
+    if N is None:
+        return dists
+    return dists[:N]
+
+
+def furthest_n_atoms_to_r(origin, atoms, N=None, indices=None):
+    '''
+    Given a location and a list of atoms, we find the closest N atoms and
+    return their corresponding indices. Note, if you specify N, then there
+    is a chance that more atoms exist in the list that have the same
+    distance to origin, but are not being returned.
+
+    **Parameters**
+
+        origin: *np.array, float*
+            A 3D location.
+        atoms: *list, structures.Atom*
+            A list of atom objects.
+        N: *int*
+            The closest N we should return.
+        indices: *list, int, optional*
+            Whether to assign specific atomic indices to each atom, or assume
+            an enumeration.  If specifying specific atom indices, these are
+            done in order (ie. indices[0] holds the atom index of atoms[0].)
+
+    **Returns**
+
+        dist_index_pairs: *list, tuple, ...*
+            A list of tuples holding the distance the atom is from the
+            specified origin, and the index of said atom.
+    '''
+    dists = nearest_n_atoms_to_r(origin, atoms, None, indices=indices)
+    if N is None:
+        return dists
+    return dists[-N:]
+
+
+def nearest_atoms(atoms, indices=None, invert=False):
+    '''
+    Returns the two nearest atoms in a frame.  If multiple pairs end up being
+    the same distance, then all the nearest pairs are returned.
+
+    **Parameters**
+
+        atoms: *list, structures.Atom*
+            A list of atom objects.
+        indices: *list, int, optional*
+            Whether to assign specific atomic indices to each atom, or assume
+            an enumeration.  If specifying specific atom indices, these are
+            done in order (ie. indices[0] holds the atom index of atoms[0].)
+        invert: *bool, optional*
+            Whether to return the furthest atoms instead.
+
+    **Returns**
+
+        nearest: *list, tuple, ...*
+            A list of tuples.  Each tuple holds the distance the atoms are
+            apart, and the corresponding indices.
+    '''
+    if indices is None:
+        indices = list(range(len(atoms)))
+
+    flattened_atoms = [a.flatten() for a in atoms]
+    dists = distance_matrix(flattened_atoms, flattened_atoms)
+    if not invert:
+        dists = dists + np.eye(len(dists)) * np.max(dists)
+    else:
+        dists = dists - np.eye(len(dists))
+    # Way too convoluted, needs fixing later.  Essentially, find unique pairs.
+    # Otherwise we get things like [(0, 3), (3, 0)] in the case of one match
+    # and [(0, 3), (3, 0), (1, 2), (2, 1)] in the case of two matches.
+    if not invert:
+        nearest = list(set(tuple([
+            tuple(sorted(x)) for x in np.argwhere(dists == np.min(dists))
+        ])))
+    else:
+        nearest = list(set(tuple([
+            tuple(sorted(x)) for x in np.argwhere(dists == np.max(dists))
+        ])))
+
+    return [
+        (dists[i][j], (indices[i], indices[j]))
+        for i, j in nearest
+    ]
+
+
+def furthest_atoms(atoms, indices=None):
+    '''
+    Returns the two furthest atoms in a frame.  If multiple pairs end up being
+    the same distance, then all the furthest pairs are returned.
+
+    **Parameters**
+
+        atoms: *list, structures.Atom*
+            A list of atom objects.
+        indices: *list, int, optional*
+            Whether to assign specific atomic indices to each atom, or assume
+            an enumeration.  If specifying specific atom indices, these are
+            done in order (ie. indices[0] holds the atom index of atoms[0].)
+
+    **Returns**
+
+        furthest: *list, tuple, ...*
+            A list of tuples.  Each tuple holds the distance the atoms are
+            apart, and the corresponding indices.
+    '''
+    return nearest_atoms(atoms, indices=indices, invert=True)
+
+
 def run_unit_tests():
     from squid.unittests.examples import get_test_frames
     from squid.unittests.examples import get_unit_test_structures
@@ -384,6 +528,108 @@ def run_unit_tests():
         "Error - rotation_matrix failed."
     assert np.linalg.norm(m2 - m2_held) < EPS,\
         "Error - rotation_matrix defaults changed, or code failed."
+
+    held = [(1.0958613818818512, (0, 3))]
+    test = nearest_atoms(chex.atoms)
+    for p1, p2 in zip(held, test):
+        assert abs(p1[0] - p2[0]) < 1E-6,\
+            "Error - failed nearest_atoms check."
+        assert p1[1] == p2[1],\
+            "Error - failed nearest_atoms check."
+
+    held = [(4.968223225550559, (7, 15))]
+    test = furthest_atoms(chex.atoms)
+    for p1, p2 in zip(held, test):
+        assert abs(p1[0] - p2[0]) < 1E-6,\
+            "Error - failed furthest_atoms check."
+        assert p1[1] == p2[1],\
+            "Error - failed furthest_atoms check."
+
+    for a in chex.atoms:
+        a.set_position((0.0, 0.0, 0.0))
+    held = [
+        (0.0, (6, 9)), (0.0, (14, 17)), (0.0, (11, 11)),
+        (0.0, (10, 17)), (0.0, (7, 12)), (0.0, (12, 12)),
+        (0.0, (1, 17)), (0.0, (0, 7)), (0.0, (13, 17)),
+        (0.0, (1, 6)), (0.0, (0, 10)), (0.0, (3, 7)),
+        (0.0, (2, 5)), (0.0, (1, 11)), (0.0, (5, 8)),
+        (0.0, (6, 7)), (0.0, (5, 5)), (0.0, (6, 10)),
+        (0.0, (0, 17)), (0.0, (12, 17)), (0.0, (0, 4)),
+        (0.0, (1, 1)), (0.0, (8, 15)), (0.0, (4, 10)),
+        (0.0, (2, 6)), (0.0, (9, 14)), (0.0, (5, 11)),
+        (0.0, (4, 5)), (0.0, (10, 13)), (0.0, (4, 16)),
+        (0.0, (9, 16)), (0.0, (14, 15)), (0.0, (2, 17)),
+        (0.0, (0, 1)), (0.0, (3, 12)), (0.0, (1, 12)),
+        (0.0, (8, 12)), (0.0, (4, 15)), (0.0, (2, 11)),
+        (0.0, (9, 9)), (0.0, (5, 14)), (0.0, (10, 14)),
+        (0.0, (6, 13)), (0.0, (11, 15)), (0.0, (7, 8)),
+        (0.0, (6, 16)), (0.0, (15, 16)), (0.0, (11, 16)),
+        (0.0, (16, 16)), (0.0, (13, 13)), (0.0, (0, 14)),
+        (0.0, (3, 11)), (0.0, (1, 15)), (0.0, (8, 9)),
+        (0.0, (4, 12)), (0.0, (2, 12)), (0.0, (3, 17)),
+        (0.0, (6, 14)), (0.0, (7, 15)), (0.0, (12, 13)),
+        (0.0, (1, 16)), (0.0, (13, 16)), (0.0, (1, 5)),
+        (0.0, (0, 11)), (0.0, (3, 6)), (0.0, (2, 2)),
+        (0.0, (1, 10)), (0.0, (6, 11)), (0.0, (5, 17)),
+        (0.0, (0, 5)), (0.0, (0, 8)), (0.0, (4, 11)),
+        (0.0, (3, 5)), (0.0, (2, 7)), (0.0, (9, 13)),
+        (0.0, (5, 10)), (0.0, (4, 6)), (0.0, (10, 10)),
+        (0.0, (5, 7)), (0.0, (4, 17)), (0.0, (7, 17)),
+        (0.0, (0, 2)), (0.0, (17, 17)), (0.0, (3, 15)),
+        (0.0, (1, 3)), (0.0, (8, 13)), (0.0, (4, 8)),
+        (0.0, (2, 8)), (0.0, (5, 13)), (0.0, (10, 15)),
+        (0.0, (11, 14)), (0.0, (7, 11)), (0.0, (6, 17)),
+        (0.0, (16, 17)), (0.0, (0, 15)), (0.0, (3, 10)),
+        (0.0, (1, 14)), (0.0, (8, 10)), (0.0, (4, 13)),
+        (0.0, (2, 13)), (0.0, (9, 11)), (0.0, (3, 16)),
+        (0.0, (8, 16)), (0.0, (6, 15)), (0.0, (11, 13)),
+        (0.0, (7, 14)), (0.0, (12, 14)), (0.0, (13, 15)),
+        (0.0, (1, 4)), (0.0, (0, 12)), (0.0, (3, 9)),
+        (0.0, (2, 3)), (0.0, (1, 9)), (0.0, (2, 14)),
+        (0.0, (6, 8)), (0.0, (5, 16)), (0.0, (14, 16)),
+        (0.0, (10, 16)), (0.0, (7, 13)), (0.0, (0, 6)),
+        (0.0, (1, 7)), (0.0, (0, 9)), (0.0, (3, 4)),
+        (0.0, (2, 4)), (0.0, (9, 12)), (0.0, (5, 9)),
+        (0.0, (4, 7)), (0.0, (10, 11)), (0.0, (6, 6)),
+        (0.0, (5, 6)), (0.0, (7, 7)), (0.0, (0, 16)),
+        (0.0, (7, 16)), (0.0, (12, 16)), (0.0, (0, 3)),
+        (0.0, (3, 14)), (0.0, (1, 2)), (0.0, (8, 14)),
+        (0.0, (4, 9)), (0.0, (3, 3)), (0.0, (2, 9)),
+        (0.0, (9, 15)), (0.0, (5, 12)), (0.0, (4, 4)),
+        (0.0, (10, 12)), (0.0, (9, 17)), (0.0, (7, 10)),
+        (0.0, (14, 14)), (0.0, (15, 15)), (0.0, (2, 16)),
+        (0.0, (0, 0)), (0.0, (3, 13)), (0.0, (1, 13)),
+        (0.0, (8, 11)), (0.0, (4, 14)), (0.0, (2, 10)),
+        (0.0, (9, 10)), (0.0, (5, 15)), (0.0, (8, 17)),
+        (0.0, (6, 12)), (0.0, (11, 12)), (0.0, (7, 9)),
+        (0.0, (15, 17)), (0.0, (12, 15)), (0.0, (11, 17)),
+        (0.0, (13, 14)), (0.0, (0, 13)), (0.0, (3, 8)),
+        (0.0, (1, 8)), (0.0, (8, 8)), (0.0, (2, 15))
+    ]
+    test = nearest_atoms(chex.atoms)
+    assert all([t[0] == 0.0 for t in test]),\
+        "Error - failed multiple solution nearest_atoms check."
+    t_indices = [t[1] for t in test]
+    assert all([h in t_indices for h in [h[1] for h in held]]),\
+        "Error - failed multiple solution nearest_atoms check."
+
+    for a in chex.atoms:
+        a.set_position((0.0, 0.0, 0.0))
+    chex.atoms[3].set_position((0.0, 0.0, 1000000.0))
+    chex.atoms[4].set_position((0.0, 1000000.0, 0.0))
+    chex.atoms[5].set_position((1000000.0, 0.0, 0.0))
+    held = sorted([
+        (1414213.562373095, (4, 5)),
+        (1414213.562373095, (3, 4)),
+        (1414213.562373095, (3, 5))
+    ], key=lambda x: x[1][0])
+    test = furthest_atoms(chex.atoms)
+    test.sort(key=lambda x: x[1][0])
+    for p1, p2 in zip(held, test):
+        assert abs(p1[0] - p2[0]) < 1E-6,\
+            "Error - failed multiple solution furthest_atoms check."
+        assert p1[1] == p2[1],\
+            "Error - failed multiple solution furthest_atoms check."
 
     print("squid.geometry.spatial - All unit tests passed!")
 

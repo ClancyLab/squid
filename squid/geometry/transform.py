@@ -72,11 +72,74 @@ def align_centroid(atoms, recenter=True, skip_H=True):
     return new_atoms, A
 
 
+def center_frames(frames, method_to_remove_translations="com"):
+    '''
+    Center the frames by either the center of geometry (cog) or center
+    of mass (com).
+
+    **Parameters**
+
+        frames: *list, list,* :class:`squid.structures.atom.Atom`
+            List of lists of atoms.
+        method_to_remove_translations: *str, optional*
+            How to remove the translations.  Either com for center-of-mass, or
+            cog for center-of-geometry.  By default we do so using
+            center-of-mass.
+
+    **Returns**
+
+        frames: *list, list,* :class:`squid.structures.atom.Atom`
+            The centered frames.
+    '''
+    return [
+        center_frame(
+            frame,
+            method_to_remove_translations=method_to_remove_translations
+        )
+        for frame in frames
+    ]
+
+
+def center_frame(frame, method_to_remove_translations="com"):
+    '''
+    Center the atoms in a frame by either the center of geometry (cog) or
+    center of mass (com).
+
+    **Parameters**
+
+        frame: *list,* :class:`squid.structures.atom.Atom`
+            List of atoms.
+        method_to_remove_translations: *str, optional*
+            How to remove the translations.  Either com for center-of-mass, or
+            cog for center-of-geometry.  By default we do so using
+            center-of-mass.
+
+    **Returns**
+
+        frame: *list,* :class:`squid.structures.atom.Atom`
+            The centered frame.
+    '''
+    if method_to_remove_translations == "cog":
+        offset = get_center_of_geometry
+    elif method_to_remove_translations == "com":
+        offset = get_center_of_mass
+    else:
+        raise Exception(
+            "Error - method_to_remove_translations must be cog or com!")
+
+    dr = offset(frame)
+    for a in frame:
+        a.translate(-dr)
+
+    return frame
+
+
 # Procrustes works by geting an orthogonal frame to map frames[1:] to be as
 # similar to frames[0] as possible. This implements the orthagonal procrustes
 # with translation and no reflection (Partial Procrustes)
 def procrustes(frames, count_atoms=None,
-               append_in_loop=True, reflection=False):
+               append_in_loop=True, reflection=False,
+               method_to_remove_translations="com"):
     '''
     Propogate rotation along a list of lists of atoms to smooth out
     transitions between consecutive frames. This is done by rigid rotation
@@ -97,6 +160,10 @@ def procrustes(frames, count_atoms=None,
             multiplicates will appear.
         reflection: *bool, optional*
             Whether inversion is allowed (True) or not (False).
+        method_to_remove_translations: *str, optional*
+            How to remove the translations.  Either com for center-of-mass, or
+            cog for center-of-geometry.  By default we do so using
+            center-of-mass.
 
     **Returns**
 
@@ -109,14 +176,20 @@ def procrustes(frames, count_atoms=None,
         For more information, see :func:`squid.geometry.spatial.orthogonal_procrustes`.
 
     '''
+    assert isinstance(method_to_remove_translations, str),\
+        "Error - method_to_remove_translations must be a string!"
+    method_to_remove_translations = method_to_remove_translations.lower()
+    assert method_to_remove_translations in ["com", "cog"],\
+        "Error - method_to_remove_translations must be either com or cog!"
+
     if not count_atoms:
         count_atoms = range(len(frames[0]))
 
     # Offset center of geometries
-    for frame in frames:
-        cog = get_center_of_geometry(frame)
-        for a in frame:
-            a.translate(-cog)
+    frames = center_frames(
+        frames,
+        method_to_remove_translations=method_to_remove_translations
+    )
 
     # rotate all frames to be as similar to their neighbors as possible
     full_rotation = []
@@ -191,6 +264,7 @@ def smooth_xyz(frames,
                F_max=25,
                N_frames=None,
                use_procrustes=True,
+               remove_translations=True,
                fname=None,
                verbose=False):
     '''
@@ -214,6 +288,11 @@ def smooth_xyz(frames,
         use_procrustes: *bool, optional*
             Whether procrustes is to be used during smoothing (True), or
             not (False).
+        remove_translations: *bool, optional*
+            Whether to center the frames by center of mass or not.  Note, if
+            procrustes is run then this is already taken into account.  This
+            is for the edge-case of not wanting to use procrustes, but still
+            wanting to minimize translation.
         fname: *str, optional*
             An output file name for the smoothed frames (without the .xyz
             extension).  If None, then no file is made.
@@ -247,6 +326,8 @@ def smooth_xyz(frames,
         # Find largest motion_per_frame
         if use_procrustes:
             procrustes(frames)
+        elif remove_translations:
+            frames = center_frames(frames)
         mpf = motion_per_frame(frames)
 
         # Check if we're done
@@ -260,11 +341,11 @@ def smooth_xyz(frames,
         f_mid = interpolate(frames[i], frames[i + 1], 1)
         f_high = copy.deepcopy(frames[i + 1:])
 
-        frames = f_low + f_mid + f_high
+        frames = f_low + f_mid[:-1] + f_high
 
         if verbose:
             print("\tInterpolated %d,%d ... %lg"
-                  % (i - 1, i + 1, max(motion_per_frame(frames))))
+                  % (i, i + 1, max(motion_per_frame(frames))))
 
         if N_frames is not None:
             if len(frames) == N_frames:
@@ -280,12 +361,16 @@ def smooth_xyz(frames,
         # Get smallest motion and remove
         if use_procrustes:
             procrustes(frames)
+        elif remove_translations:
+            frames = center_frames(frames)
         mpf = motion_per_frame(frames[:-1])
         i = np.nanargmin(mpf[1:])
         del frames[i]
 
     if use_procrustes:
         procrustes(frames)
+    elif remove_translations:
+        frames = center_frames(frames)
     if verbose:
         print("\tThere are now a total of %d frames" % len(frames))
 
@@ -300,7 +385,7 @@ def smooth_xyz(frames,
         sys.exit()
     else:
         if verbose:
-            print("Currently Frames = %d\tr2 = %lg" % (len(frames), r2))
+            print("Currently Frames = %d\tmax_rms = %lg" % (len(frames), max_rms))
 
     return frames
 
