@@ -115,7 +115,7 @@
 
 
 <span class="c1"># Class definition</span>
-<div class="viewcode-block" id="LMP_Parser"><a class="viewcode-back" href="../../../module_docs/lammps/parser.html#squid.lammps.parser.LMP_Parser">[docs]</a><span class="k">class</span> <span class="nc">LMP_Parser</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="LMP_Parser"><a class="viewcode-back" href="../../../codebase.html#squid.lammps.parser.LMP_Parser">[docs]</a><span class="k">class</span> <span class="nc">LMP_Parser</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Class object to assist in parsing lammps outputs.</span>
 
@@ -210,7 +210,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">nlen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 
     <span class="c1"># --------------------------------------------------------------------</span>
-<div class="viewcode-block" id="LMP_Parser.next"><a class="viewcode-back" href="../../../module_docs/lammps/parser.html#squid.lammps.parser.LMP_Parser.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="LMP_Parser.next"><a class="viewcode-back" href="../../../codebase.html#squid.lammps.parser.LMP_Parser.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Read the next line of thermo information from the file.</span>
 <span class="sd">        Note, this is used when two arguments are passed during initialization.</span>
@@ -238,7 +238,7 @@
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span></div>
 
     <span class="c1"># --------------------------------------------------------------------</span>
-<div class="viewcode-block" id="LMP_Parser.get"><a class="viewcode-back" href="../../../module_docs/lammps/parser.html#squid.lammps.parser.LMP_Parser.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">keys</span><span class="p">):</span>
+<div class="viewcode-block" id="LMP_Parser.get"><a class="viewcode-back" href="../../../codebase.html#squid.lammps.parser.LMP_Parser.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">keys</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Read specific values from thermo output.</span>
 
@@ -283,7 +283,7 @@
             <span class="k">return</span> <span class="n">vecs</span></div>
 
     <span class="c1"># --------------------------------------------------------------------</span>
-<div class="viewcode-block" id="LMP_Parser.write"><a class="viewcode-back" href="../../../module_docs/lammps/parser.html#squid.lammps.parser.LMP_Parser.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">keys</span><span class="p">):</span>
+<div class="viewcode-block" id="LMP_Parser.write"><a class="viewcode-back" href="../../../codebase.html#squid.lammps.parser.LMP_Parser.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">keys</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Write parsed vectors to a file.</span>
 

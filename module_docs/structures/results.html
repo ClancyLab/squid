@@ -66,10 +66,12 @@ dft configurations.</dd>
 <dd>The ‘extra section’ in the simulation.</dd>
 <dt>charge_and_multiplicity: <em>str</em></dt>
 <dd>The charge and multiplicity, in that order, of the system.</dd>
-<dt>frames: <em>list, list,</em> <a class="reference internal" href="atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>dipole: <em>list, …</em></dt>
+<dd>The dipole of the system as a list of the magnitude and moment.</dd>
+<dt>frames: <em>list, list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list lists of atoms describing each iteration in the dft
 simulation.</dd>
-<dt>atoms: <em>list,</em> <a class="reference internal" href="atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>atoms: <em>list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>Atomic information of the last iteration in the dft simulation.</dd>
 <dt>gradients: <em>list, list, float</em></dt>
 <dd>Gradient of the potential, stored for each atom in <em>atoms</em> and
@@ -85,7 +87,7 @@ simulation.</dd>
 <dt>charges: <em>list, float</em></dt>
 <dd>Charges for each atom in <em>atoms</em> and <em>frames[-1]</em>.  Typically a
 copy of Mulliken charges.</dd>
-<dt>MBO: <em>list, list,</em> <a class="reference internal" href="atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a> <em>, float</em></dt>
+<dt>MBO: <em>list, list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a> <em>, float</em></dt>
 <dd>A list of lists, each list holding (1) a list of atoms in the bond
 and (2) the Mayer Bond Order (MBO) of said bond.</dd>
 <dt>vibfreq: <em>list, float</em></dt>
@@ -130,9 +132,9 @@ files.</p>
 <p><strong>Contains</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>frames: <em>list, list,</em> <a class="reference internal" href="atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>frames: <em>list, list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list lists of atoms describing each iteration in the simulation.</dd>
-<dt>atoms: <em>list,</em> <a class="reference internal" href="atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dt>atoms: <em>list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>Atomic information of the last iteration in the simulation.</dd>
 <dt>timesteps: <em>list, int</em></dt>
 <dd>Recorded timesteps within the output.</dd>

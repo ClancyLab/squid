@@ -48,7 +48,7 @@
 <span class="kn">from</span> <span class="nn">squid.lammps.io.data</span> <span class="k">import</span> <span class="n">write_lammps_data</span>
 
 
-<div class="viewcode-block" id="get_lmp_obj"><a class="viewcode-back" href="../../../module_docs/lammps/job.html#squid.lammps.job.get_lmp_obj">[docs]</a><span class="k">def</span> <span class="nf">get_lmp_obj</span><span class="p">(</span><span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="get_lmp_obj"><a class="viewcode-back" href="../../../codebase.html#squid.lammps.job.get_lmp_obj">[docs]</a><span class="k">def</span> <span class="nf">get_lmp_obj</span><span class="p">(</span><span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This function will find the lmp executable and a corresponding mpi</span>
 <span class="sd">    executable.  It will handle errors accordingly.</span>
@@ -114,7 +114,7 @@
 
 <span class="c1"># A function to run an LAMMPS Simulation. Requires a run name and a string</span>
 <span class="c1"># of lammps code (run_name and input_script)</span>
-<div class="viewcode-block" id="job"><a class="viewcode-back" href="../../../module_docs/lammps/job.html#squid.lammps.job.job">[docs]</a><span class="k">def</span> <span class="nf">job</span><span class="p">(</span><span class="n">run_name</span><span class="p">,</span> <span class="n">input_script</span><span class="p">,</span> <span class="n">system</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<div class="viewcode-block" id="job"><a class="viewcode-back" href="../../../codebase.html#squid.lammps.job.job">[docs]</a><span class="k">def</span> <span class="nf">job</span><span class="p">(</span><span class="n">run_name</span><span class="p">,</span> <span class="n">input_script</span><span class="p">,</span> <span class="n">system</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">queue</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">walltime</span><span class="o">=</span><span class="s2">&quot;00:30:00&quot;</span><span class="p">,</span>
         <span class="n">nprocs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ntasks</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">email</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
