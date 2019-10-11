@@ -251,6 +251,24 @@ Lowest energy orbital is empty.")
     else:
         convergence = None
 
+    hold, dipole = data, []
+    s = 'DIPOLE MOMENT'
+    if hold.rfind(s) != -1:
+        hold = hold[hold.rfind(s) + len(s):]
+        if hold.rfind('Total Dipole Moment') != -1:
+            dipole_moment = hold[hold.rfind('Total Dipole Moment'):].split('\n')[0]
+            dipole_moment = tuple([float(x) for x in dipole_moment.strip().split()[-3:]])
+        else:
+            dipole_moment = None
+        if hold.rfind('Magnitude (Debye)') != -1:
+            dipole_mag = hold[hold.rfind('Magnitude (Debye)'):].split('\n')[0]
+            dipole_mag = float(dipole_mag.strip().split()[-1])
+        else:
+            dipole_mag = None
+        dipole = [dipole_mag, dipole_moment]
+    else:
+        dipole = None
+
     hold, converged = data, False
     s1, s2 = 'SCF CONVERGED AFTER', 'OPTIMIZATION RUN DONE'
     if 'opt' in route.lower():
@@ -302,6 +320,7 @@ Lowest energy orbital is empty.")
     data.orbitals = orbitals
     data.finished = finished
     data.warnings = warnings
+    data.dipole = dipole
 
     return data
 

@@ -29,6 +29,8 @@ class DFT_out(object):
             The 'extra section' in the simulation.
         charge_and_multiplicity: *str*
             The charge and multiplicity, in that order, of the system.
+        dipole: *list, ...*
+            The dipole of the system as a list of the magnitude and moment.
         frames: *list, list,* :class:`squid.structures.atom.Atom`
             A list lists of atoms describing each iteration in the dft
             simulation.
@@ -101,6 +103,7 @@ class DFT_out(object):
         self.orbitals = None
         self.finished = None
         self.warnings = None
+        self.dipole = None
 
 
 class sim_out(object):
