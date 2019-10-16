@@ -66,7 +66,9 @@ def mo_analysis(name,
                 LUMO=True,
                 wireframe=True,
                 hide=True,
-                iso=0.04):
+                iso=0.04,
+                vmd_file_name="tmp",
+                run_vmd=True):
     '''
     Post process an orca job using orca_plot and vmd to display molecular
     orbitals and the potential surface.  NOTE! By default Orca does not take
@@ -98,6 +100,10 @@ def mo_analysis(name,
         iso: *float, optional*
             Isosurface magnitude.  Set to 0.04 by default, but 0.01 may be
             better.
+        vmd_file_name: *str, optional*
+            The basename of the .vmd file to generate.  By default this is tmp.
+        run_vmd: *bool, optional*
+            Whether to run vmd on the .vmd file (via vmd -e tmp.vmd) or not.
 
     **Returns**
 
@@ -126,7 +132,8 @@ def mo_analysis(name,
     for i, mo in enumerate(MOs):
         MOs[i] = "orca/" + name + "/" + mo
 
-    vmd.plot_MO_from_cube(MOs, wireframe=wireframe, hide=hide, iso=iso)
+    vmd.plot_MO_from_cube(MOs, wireframe=wireframe, hide=hide, iso=iso,
+                          vmd_file_name=vmd_file_name, run_vmd=run_vmd)
 
 
 def pot_analysis(name, wireframe=True, npoints=80):

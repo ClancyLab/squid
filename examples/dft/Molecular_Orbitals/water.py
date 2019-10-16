@@ -14,7 +14,8 @@ if __name__ == "__main__":
 
     # Next, post process it
     orca.mo_analysis(
-        "water", orbital=None,
+        "water", orbital=[6, 7, 8],
         HOMO=True, LUMO=True,
-        wireframe=False, hide=True, iso=0.04
+        wireframe=False, hide=True, iso=0.04,
+        vmd_file_name="water", run_vmd=False
     )

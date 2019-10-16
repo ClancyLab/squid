@@ -31,7 +31,8 @@ def _get_base_name(fptr):
     return basename
 
 
-def plot_MO_from_cube(fptrs, wireframe=True, hide=True, iso=0.04):
+def plot_MO_from_cube(fptrs, wireframe=True, hide=True, iso=0.04,
+                      vmd_file_name="tmp", run_vmd=True):
     '''
     A function to generate a VMD visualization of a molecular orbital from
     a cube file.
@@ -49,6 +50,10 @@ def plot_MO_from_cube(fptrs, wireframe=True, hide=True, iso=0.04):
         iso: *float, optional*
             Isosurface magnitude.  Set to 0.04 by default, but 0.01 may be
             better.
+        vmd_file_name: *str, optional*
+            The basename of the .vmd file to generate.  By default this is tmp.
+        run_vmd: *bool, optional*
+            Whether to run vmd on the .vmd file (via vmd -e tmp.vmd) or not.
 
     **Returns**
 
@@ -172,7 +177,7 @@ def plot_MO_from_cube(fptrs, wireframe=True, hide=True, iso=0.04):
         cube_id += 1
         rep_id += 2
 
-    f = open('tmp.vmd', 'w')
+    f = open('%s.vmd' % vmd_file_name, 'w')
     f.write(vmd_file)
     f.close()
 
@@ -196,7 +201,13 @@ def plot_MO_from_cube(fptrs, wireframe=True, hide=True, iso=0.04):
     disp = print_helper.color_set(disp, 'BLUE')
     disp = print_helper.color_set(disp, 'BOLD')
 
-    Popen('%s -e tmp.vmd' % vmd_path, shell=True)
+    print(disp)
+    fptr = open("%s.vmd.representations" % vmd_file_name, 'w')
+    fptr.write(disp)
+    fptr.close()
+
+    if run_vmd:
+        Popen('%s -e %s.vmd' % (vmd_path, vmd_file_name), shell=True)
 
 
 def plot_electrostatic_from_cube(fptr_rho, fptr_pot, wireframe=True):
