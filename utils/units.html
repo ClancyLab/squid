@@ -1,0 +1,319 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>units &#8212; Squid 2.0.35 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Console Scripts" href="../console_scripts.html" />
+    <link rel="prev" title="print_helper" href="print_helper.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../console_scripts.html" title="Console Scripts"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="print_helper.html" title="print_helper"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.35 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../overview/index.html" accesskey="U">Overview</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-squid.utils.units">
+<span id="units"></span><h1>units<a class="headerlink" href="#module-squid.utils.units" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="squid.utils.units.convert">
+<code class="descclassname">squid.utils.units.</code><code class="descname">convert</code><span class="sig-paren">(</span><em>old</em>, <em>new</em>, <em>val</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/squid/utils/units.html#convert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.utils.units.convert" title="Permalink to this definition">¶</a></dt>
+<dd><p>A generic converter of fractional units.  This works only for one unit in
+the numerator and denomenator (such as Ha/Ang to eV/Bohr).</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>old: <em>str</em></dt>
+<dd>Units for which val is in.</dd>
+<dt>new: <em>str</em></dt>
+<dd>Units to convert to.</dd>
+<dt>val: <em>float</em></dt>
+<dd>Value to convert.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>new_val: <em>float</em></dt>
+<dd>Converted value in units of new.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="squid.utils.units.convert_dist">
+<code class="descclassname">squid.utils.units.</code><code class="descname">convert_dist</code><span class="sig-paren">(</span><em>d0</em>, <em>d1</em>, <em>d_val</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/squid/utils/units.html#convert_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.utils.units.convert_dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert distance units.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>d0: <em>str</em></dt>
+<dd>Unit of distance that d_val is in.</dd>
+<dt>d1: <em>str</em></dt>
+<dd>Unit of distance that you wish to convert to.</dd>
+<dt>d_val: <em>float</em></dt>
+<dd>Value to be converted.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>distance: <em>float</em></dt>
+<dd>Converted d_val to units of d1.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="squid.utils.units.convert_energy">
+<code class="descclassname">squid.utils.units.</code><code class="descname">convert_energy</code><span class="sig-paren">(</span><em>e0</em>, <em>e1</em>, <em>e_val</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/squid/utils/units.html#convert_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.utils.units.convert_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert energy units.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>e0: <em>str</em></dt>
+<dd>Unit of energy that e_val is in.</dd>
+<dt>e1: <em>str</em></dt>
+<dd>Unit of energy that you wish to convert to.</dd>
+<dt>e_val: <em>float</em></dt>
+<dd>Value to be converted.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>energy: <em>float</em></dt>
+<dd>Converted e_val to units of e1.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="squid.utils.units.convert_pressure">
+<code class="descclassname">squid.utils.units.</code><code class="descname">convert_pressure</code><span class="sig-paren">(</span><em>p0</em>, <em>p1</em>, <em>p_val</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/squid/utils/units.html#convert_pressure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.utils.units.convert_pressure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert pressure units.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>p0: <em>str</em></dt>
+<dd>Unit of pressure that p_val is in.</dd>
+<dt>p1: <em>str</em></dt>
+<dd>Unit of pressure that you wish to convert to.</dd>
+<dt>p_val: <em>float</em></dt>
+<dd>Value to be converted.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>pressure: <em>float</em></dt>
+<dd>Converted p_val to units of p1.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="squid.utils.units.elem_i2s">
+<code class="descclassname">squid.utils.units.</code><code class="descname">elem_i2s</code><span class="sig-paren">(</span><em>elem_int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/squid/utils/units.html#elem_i2s"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.utils.units.elem_i2s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the elemental symbol, given its atomic number.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>elem_int: <em>int</em></dt>
+<dd>Atomic number of an element.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>elem_sym: <em>str</em></dt>
+<dd>Elemental symbol.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="squid.utils.units.elem_s2i">
+<code class="descclassname">squid.utils.units.</code><code class="descname">elem_s2i</code><span class="sig-paren">(</span><em>elem_sym</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/squid/utils/units.html#elem_s2i"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.utils.units.elem_s2i" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the atomic number, given its elemental symbol.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>elem_sym: <em>str</em></dt>
+<dd>Elemental symbol of an element.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>elem_int: <em>int</em></dt>
+<dd>Atomic number.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="squid.utils.units.elem_sym_from_weight">
+<code class="descclassname">squid.utils.units.</code><code class="descname">elem_sym_from_weight</code><span class="sig-paren">(</span><em>weight</em>, <em>delta=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/squid/utils/units.html#elem_sym_from_weight"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.utils.units.elem_sym_from_weight" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the element that best matches the given weight (in AMU).</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>weight: <em>float</em></dt>
+<dd>Weight of an element in AMU.</dd>
+<dt>delta: <em>float, optional</em></dt>
+<dd>How close you permit the matching to be in AMU.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>elem_sym: <em>str</em></dt>
+<dd>The elemental symbol.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="squid.utils.units.elem_weight">
+<code class="descclassname">squid.utils.units.</code><code class="descname">elem_weight</code><span class="sig-paren">(</span><em>elem</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/squid/utils/units.html#elem_weight"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.utils.units.elem_weight" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the weight of an element, given its symbol or atomic number.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>elem: <em>str or int</em></dt>
+<dd>Elemental symbol or atomic number.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>elem_weight: <em>float</em></dt>
+<dd>Weight of the element in AMU.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../squid.html">Squid</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../overview/index.html">Overview</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#calcs">calcs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#files">files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#forcefields">forcefields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#g09">g09</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#geometry">geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#jdftx">jdftx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#jobs">jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#lammps">lammps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#maths">maths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#optimizers">optimizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#orca">orca</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#structures">structures</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../overview/index.html#utils">utils</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cast.html">cast</a></li>
+<li class="toctree-l3"><a class="reference internal" href="print_helper.html">print_helper</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">units</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../console_scripts.html">Console Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="print_helper.html"
+                        title="previous chapter">print_helper</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../console_scripts.html"
+                        title="next chapter">Console Scripts</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/utils/units.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../console_scripts.html" title="Console Scripts"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="print_helper.html" title="print_helper"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.35 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../overview/index.html" >Overview</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Henry Herbol.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

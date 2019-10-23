@@ -42,7 +42,7 @@
 <span></span><span class="kn">import</span> <span class="nn">itertools</span>
 
 
-<div class="viewcode-block" id="is_numeric"><a class="viewcode-back" href="../../../codebase.html#squid.utils.cast.is_numeric">[docs]</a><span class="k">def</span> <span class="nf">is_numeric</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="is_numeric"><a class="viewcode-back" href="../../../utils/cast.html#squid.utils.cast.is_numeric">[docs]</a><span class="k">def</span> <span class="nf">is_numeric</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    A simple function to test if x can be cast to a float.</span>
 
@@ -63,7 +63,7 @@
         <span class="k">return</span> <span class="kc">False</span></div>
 
 
-<div class="viewcode-block" id="is_array"><a class="viewcode-back" href="../../../codebase.html#squid.utils.cast.is_array">[docs]</a><span class="k">def</span> <span class="nf">is_array</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+<div class="viewcode-block" id="is_array"><a class="viewcode-back" href="../../../utils/cast.html#squid.utils.cast.is_array">[docs]</a><span class="k">def</span> <span class="nf">is_array</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Simply check if v is array like</span>
 
@@ -80,7 +80,7 @@
     <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="s2">&quot;__len__&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="check_vec"><a class="viewcode-back" href="../../../codebase.html#squid.utils.cast.check_vec">[docs]</a><span class="k">def</span> <span class="nf">check_vec</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">numeric</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="check_vec"><a class="viewcode-back" href="../../../utils/cast.html#squid.utils.cast.check_vec">[docs]</a><span class="k">def</span> <span class="nf">check_vec</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">numeric</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Given what should be a vector of N values, we check that they</span>
 <span class="sd">    are indeed valid.</span>
@@ -108,7 +108,7 @@
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="assert_vec"><a class="viewcode-back" href="../../../codebase.html#squid.utils.cast.assert_vec">[docs]</a><span class="k">def</span> <span class="nf">assert_vec</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">numeric</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="assert_vec"><a class="viewcode-back" href="../../../utils/cast.html#squid.utils.cast.assert_vec">[docs]</a><span class="k">def</span> <span class="nf">assert_vec</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">numeric</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Given what should be a vector of N values, we assert that they</span>
 <span class="sd">    are indeed valid.</span>
@@ -183,7 +183,7 @@
             <span class="k">pass</span>
 
 
-<div class="viewcode-block" id="simplify_numerical_array"><a class="viewcode-back" href="../../../codebase.html#squid.utils.cast.simplify_numerical_array">[docs]</a><span class="k">def</span> <span class="nf">simplify_numerical_array</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+<div class="viewcode-block" id="simplify_numerical_array"><a class="viewcode-back" href="../../../utils/cast.html#squid.utils.cast.simplify_numerical_array">[docs]</a><span class="k">def</span> <span class="nf">simplify_numerical_array</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Given integer values, simplify to a numerical array.  Note, values may</span>
 <span class="sd">    also be given as a comma separated string.  This is used in jobarray.</span>
@@ -260,7 +260,7 @@
 <h3><a href="../../../index.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../squid.html">Squid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview/index.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../console_scripts.html">Console Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
 </ul>

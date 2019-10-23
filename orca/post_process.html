@@ -1,0 +1,242 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>post_process &#8212; Squid 2.0.35 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="utils" href="utils.html" />
+    <link rel="prev" title="mep" href="mep.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="utils.html" title="utils"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="mep.html" title="mep"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.35 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../overview/index.html" accesskey="U">Overview</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-squid.orca.post_process">
+<span id="post-process"></span><h1>post_process<a class="headerlink" href="#module-squid.orca.post_process" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="squid.orca.post_process.gbw_to_cube">
+<code class="descclassname">squid.orca.post_process.</code><code class="descname">gbw_to_cube</code><span class="sig-paren">(</span><em>name</em>, <em>mo</em>, <em>spin=0</em>, <em>grid=40</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/squid/orca/post_process.html#gbw_to_cube"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.orca.post_process.gbw_to_cube" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pipe in flags to orca_plot to generate a cube file for the given
+molecular orbital.  Note, this is assumed to be running from the parent
+directory (ie, gbw is in the orca/BASENAME/BASENAME.orca.gbw).</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>name: <em>str</em></dt>
+<dd>The base name of the gbw file.  Thus, ‘water’ instead of
+‘water.orca.gbw’.</dd>
+<dt>mo: <em>int</em></dt>
+<dd>Which molecular orbital to generate the cube file for. Note,
+this is 0 indexed.</dd>
+<dt>spin: <em>int, optional</em></dt>
+<dd>Whether to plot the alpha or beta (0 or 1) operator.</dd>
+<dt>grid: <em>int, optional</em></dt>
+<dd>The grid resolution, default being 40.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>mo_name: <em>str</em></dt>
+<dd>The name of the output MO file.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="squid.orca.post_process.mo_analysis">
+<code class="descclassname">squid.orca.post_process.</code><code class="descname">mo_analysis</code><span class="sig-paren">(</span><em>name</em>, <em>orbital=None</em>, <em>HOMO=True</em>, <em>LUMO=True</em>, <em>wireframe=True</em>, <em>hide=True</em>, <em>iso=0.04</em>, <em>vmd_file_name='tmp'</em>, <em>run_vmd=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/squid/orca/post_process.html#mo_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.orca.post_process.mo_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Post process an orca job using orca_plot and vmd to display molecular
+orbitals and the potential surface.  NOTE! By default Orca does not take
+into account degenerate energy states when populating.  To do so, ensure
+the following is in your extra_section:</p>
+<blockquote>
+<div>‘%scf FracOcc true end’.</div></blockquote>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>name: <em>str</em></dt>
+<dd>Orca file name.  Only use the name, such as ‘water’ instead
+of ‘water.gbw’.  Note, do not pass a path as it is assumed you
+are in the parent directory of the job to analyze.  If not, use
+the path variable.</dd>
+<dt>orbital: <em>list, int, optional</em> or <em>int, optional</em></dt>
+<dd>The orbital(s) to analyze (0, 1, 2, 3, …). By default HOMO and
+LUMO will be analyzed, thus this only is useful if you wish to
+see other orbitals.</dd>
+<dt>HOMO: <em>bool, optional</em></dt>
+<dd>If you want to see the HOMO level.</dd>
+<dt>LUMO: <em>bool, optional</em></dt>
+<dd>If you want to see the LUMO level.</dd>
+<dt>wireframe: <em>bool, optional</em></dt>
+<dd>If you want to view wireframe instead of default surface.</dd>
+<dt>hide: <em>bool, optional</em></dt>
+<dd>Whether to have the representations all off by or not when
+opening.</dd>
+<dt>iso: <em>float, optional</em></dt>
+<dd>Isosurface magnitude.  Set to 0.04 by default, but 0.01 may be
+better.</dd>
+<dt>vmd_file_name: <em>str, optional</em></dt>
+<dd>The basename of the .vmd file to generate.  By default this is tmp.</dd>
+<dt>run_vmd: <em>bool, optional</em></dt>
+<dd>Whether to run vmd on the .vmd file (via vmd -e tmp.vmd) or not.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="squid.orca.post_process.pot_analysis">
+<code class="descclassname">squid.orca.post_process.</code><code class="descname">pot_analysis</code><span class="sig-paren">(</span><em>name</em>, <em>wireframe=True</em>, <em>npoints=80</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/squid/orca/post_process.html#pot_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.orca.post_process.pot_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Post process an orca job using orca_plot and vmd to display the
+electrostatic potential mapped onto the electron density surface.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>name: <em>str</em></dt>
+<dd>Orca file name.  Only use the name, such as ‘water’ instead
+of ‘water.gbw’.  Note, do not pass a path as it is assumed you
+are in the parent directory of the job to analyze.</dd>
+<dt>wireframe: <em>bool, optional</em></dt>
+<dd>If you want to view wireframe instead of default surface.</dd>
+<dt>npoints: <em>int, optional</em></dt>
+<dd>The grid size for the potential surface.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../squid.html">Squid</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../overview/index.html">Overview</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#calcs">calcs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#files">files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#forcefields">forcefields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#g09">g09</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#geometry">geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#jdftx">jdftx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#jobs">jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#lammps">lammps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#maths">maths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#optimizers">optimizers</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../overview/index.html#orca">orca</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="io.html">io</a></li>
+<li class="toctree-l3"><a class="reference internal" href="job.html">job</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mep.html">mep</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">post_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="utils.html">utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../post_process/debyer.html">debyer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../post_process/ovito.html">ovito</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../post_process/vmd.html">vmd</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#structures">structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#utils">utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../console_scripts.html">Console Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="mep.html"
+                        title="previous chapter">mep</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="utils.html"
+                        title="next chapter">utils</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/orca/post_process.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="utils.html" title="utils"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="mep.html" title="mep"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.35 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../overview/index.html" >Overview</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Henry Herbol.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

@@ -12,7 +12,7 @@ Contents:
     :maxdepth: 3
 
     squid
-    overview
+    overview/index
     console_scripts
     examples
 

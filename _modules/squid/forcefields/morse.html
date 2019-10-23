@@ -76,7 +76,7 @@
 <span class="c1">##############################################################################</span>
 
 
-<div class="viewcode-block" id="Morse"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.morse.Morse">[docs]</a><span class="k">class</span> <span class="nc">Morse</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Morse"><a class="viewcode-back" href="../../../forcefields/morse.html#squid.forcefields.morse.Morse">[docs]</a><span class="k">class</span> <span class="nc">Morse</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Initialize the Morse object.  The potential form can be found on the</span>
 <span class="sd">    LAMMPs webpage (http://lammps.sandia.gov/doc/pair_Morse.html).  Either</span>
@@ -211,7 +211,7 @@
             <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;      </span><span class="si">%.7f</span><span class="s2">   </span><span class="si">%.7f</span><span class="s2">   </span><span class="si">%.7f</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">))</span> <span class="o">+</span> <span class="n">s</span> <span class="o">%</span> <span class="n">values</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Morse.print_lower"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.morse.Morse.print_lower">[docs]</a>    <span class="k">def</span> <span class="nf">print_lower</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Morse.print_lower"><a class="viewcode-back" href="../../../forcefields/morse.html#squid.forcefields.morse.Morse.print_lower">[docs]</a>    <span class="k">def</span> <span class="nf">print_lower</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This prints out a representation of this Morse object&#39;s lower bound,</span>
 <span class="sd">        in the format that is output to the smrff parameter file.</span>
@@ -224,7 +224,7 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_printer</span><span class="p">(</span><span class="n">with_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Morse.print_upper"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.morse.Morse.print_upper">[docs]</a>    <span class="k">def</span> <span class="nf">print_upper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Morse.print_upper"><a class="viewcode-back" href="../../../forcefields/morse.html#squid.forcefields.morse.Morse.print_upper">[docs]</a>    <span class="k">def</span> <span class="nf">print_upper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This prints out a representation of this Morse object&#39;s upper bound,</span>
 <span class="sd">        in the format that is output to the smrff parameter file.</span>
@@ -237,7 +237,7 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_printer</span><span class="p">(</span><span class="n">with_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Morse.unpack"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.morse.Morse.unpack">[docs]</a>    <span class="k">def</span> <span class="nf">unpack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">with_bounds</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Morse.unpack"><a class="viewcode-back" href="../../../forcefields/morse.html#squid.forcefields.morse.Morse.unpack">[docs]</a>    <span class="k">def</span> <span class="nf">unpack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">with_bounds</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This function unpacks the Morse object into a list.</span>
 
@@ -292,7 +292,7 @@
 
         <span class="k">return</span> <span class="n">pkg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Morse.pack"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.morse.Morse.pack">[docs]</a>    <span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="Morse.pack"><a class="viewcode-back" href="../../../forcefields/morse.html#squid.forcefields.morse.Morse.pack">[docs]</a>    <span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This function packs the Morse object from a list.</span>
 
@@ -321,7 +321,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Morse.validate"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.morse.Morse.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Morse.validate"><a class="viewcode-back" href="../../../forcefields/morse.html#squid.forcefields.morse.Morse.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This function will validate data integrity.</span>
 <span class="sd">        In this case, we simply ensure data types are appropriate.</span>
@@ -354,7 +354,7 @@
                 <span class="s2">&quot;In Morse </span><span class="si">%s</span><span class="s2">, parameter </span><span class="si">%s</span><span class="s2"> = </span><span class="si">%.2f</span><span class="s2"> is outside of it&#39;s range = </span><span class="se">\</span>
 <span class="s2">[</span><span class="si">%.2f</span><span class="s2">, </span><span class="si">%.2f</span><span class="s2">]!&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">),</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">bound</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">bound</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="Morse.parse_line"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.morse.Morse.parse_line">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Morse.parse_line"><a class="viewcode-back" href="../../../forcefields/morse.html#squid.forcefields.morse.Morse.parse_line">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">parse_line</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parse line inputs.</span>
@@ -391,7 +391,7 @@
 
         <span class="k">return</span> <span class="n">indices</span><span class="p">,</span> <span class="n">D0</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">rc</span></div>
 
-<div class="viewcode-block" id="Morse.assign_line"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.morse.Morse.assign_line">[docs]</a>    <span class="k">def</span> <span class="nf">assign_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+<div class="viewcode-block" id="Morse.assign_line"><a class="viewcode-back" href="../../../forcefields/morse.html#squid.forcefields.morse.Morse.assign_line">[docs]</a>    <span class="k">def</span> <span class="nf">assign_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parse line inputs and assign to this object.</span>
 
@@ -408,7 +408,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">parse_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Morse.fix"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.morse.Morse.fix">[docs]</a>    <span class="k">def</span> <span class="nf">fix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Morse.fix"><a class="viewcode-back" href="../../../forcefields/morse.html#squid.forcefields.morse.Morse.fix">[docs]</a>    <span class="k">def</span> <span class="nf">fix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This will fix these parameters by assigning bounds to the</span>
 <span class="sd">        values themselves.</span>
@@ -477,7 +477,7 @@
                 <span class="s2">&quot;In Morse, tried fixing </span><span class="si">%s</span><span class="s2"> parameter (does not exist)!&quot;</span>
                 <span class="o">%</span> <span class="n">params</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Morse.pair_coeff_dump"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.morse.Morse.pair_coeff_dump">[docs]</a>    <span class="k">def</span> <span class="nf">pair_coeff_dump</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Morse.pair_coeff_dump"><a class="viewcode-back" href="../../../forcefields/morse.html#squid.forcefields.morse.Morse.pair_coeff_dump">[docs]</a>    <span class="k">def</span> <span class="nf">pair_coeff_dump</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Return a string representation of the pair coefficients.</span>
 
@@ -490,7 +490,7 @@
             <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%.4f</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">D0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="p">)</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%.4f</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2"> </span><span class="si">%.4f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">D0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Morse.set_binder"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.morse.Morse.set_binder">[docs]</a>    <span class="k">def</span> <span class="nf">set_binder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Morse.set_binder"><a class="viewcode-back" href="../../../forcefields/morse.html#squid.forcefields.morse.Morse.set_binder">[docs]</a>    <span class="k">def</span> <span class="nf">set_binder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This will adjust bounds such that the parameters are in a range of a</span>
 <span class="sd">        morse &quot;Bond&quot;.  This means that:</span>
@@ -506,7 +506,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">r0</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">+</span>\
                 <span class="bp">self</span><span class="o">.</span><span class="n">r0_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Morse.set_nonbinder"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.morse.Morse.set_nonbinder">[docs]</a>    <span class="k">def</span> <span class="nf">set_nonbinder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Morse.set_nonbinder"><a class="viewcode-back" href="../../../forcefields/morse.html#squid.forcefields.morse.Morse.set_nonbinder">[docs]</a>    <span class="k">def</span> <span class="nf">set_nonbinder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This will adjust bounds such that the parameters are in a range of a</span>
 <span class="sd">        morse &quot;Non-Bond&quot;.  This means that:</span>
@@ -534,7 +534,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">alpha_bounds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">+</span>\
                 <span class="bp">self</span><span class="o">.</span><span class="n">alpha_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Morse.load_smrff"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.morse.Morse.load_smrff">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Morse.load_smrff"><a class="viewcode-back" href="../../../forcefields/morse.html#squid.forcefields.morse.Morse.load_smrff">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">load_smrff</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">parsed_file</span><span class="p">,</span> <span class="n">pfile_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">restrict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Given a parameter file, import the Morse parameters if possible.</span>
@@ -575,7 +575,7 @@
             <span class="k">if</span> <span class="n">check_restriction</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">restrict</span><span class="p">)</span>
         <span class="p">]</span></div>
 
-<div class="viewcode-block" id="Morse.generate"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.morse.Morse.generate">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Morse.generate"><a class="viewcode-back" href="../../../forcefields/morse.html#squid.forcefields.morse.Morse.generate">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">atom_types</span><span class="p">,</span> <span class="n">gen_rc</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Randomly generate parameters for morse.</span>
@@ -605,7 +605,7 @@
 
         <span class="k">return</span> <span class="n">morse_objs</span></div>
 
-<div class="viewcode-block" id="Morse.ff_energy"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.morse.Morse.ff_energy">[docs]</a>    <span class="k">def</span> <span class="nf">ff_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+<div class="viewcode-block" id="Morse.ff_energy"><a class="viewcode-back" href="../../../forcefields/morse.html#squid.forcefields.morse.Morse.ff_energy">[docs]</a>    <span class="k">def</span> <span class="nf">ff_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Given the current parameters, what is the energy for a given</span>
 <span class="sd">        interatomic distance.</span>
@@ -706,7 +706,7 @@
 <h3><a href="../../../index.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../squid.html">Squid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview/index.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../console_scripts.html">Console Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
 </ul>

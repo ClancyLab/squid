@@ -1,0 +1,128 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jobs &#8212; Squid 2.0.35 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.35 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="jobs">
+<h1>jobs<a class="headerlink" href="#jobs" title="Permalink to this headline">¶</a></h1>
+<p>The jobs module handles submitting simulations/calculations to either a queueing system (ex. SLURM/NBS), or locally on a machine.  This is done by storing a job into a job container, which will monitor it and allow the user to assess if simulations are still running or not.  The job object is mainly used within squid, and is not normally required for the user to generate on their own.</p>
+<p>The main interface with the job module is through the queue_manager module and the submission module; however, lower level access can be obtained through the container, nbs, slurm, and misc modules.</p>
+<p>The queue_manager module holds the following:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="queue_manager.html#squid.jobs.queue_manager.get_all_jobs" title="squid.jobs.queue_manager.get_all_jobs"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.jobs.queue_manager.get_all_jobs()</span></code></a> - Get a list of all jobs submitted that are currently running or pending.</li>
+<li><a class="reference internal" href="queue_manager.html#squid.jobs.queue_manager.get_available_queues" title="squid.jobs.queue_manager.get_available_queues"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.jobs.queue_manager.get_available_queues()</span></code></a> - Get a list of the avaiable queue/partition names.</li>
+<li><a class="reference internal" href="queue_manager.html#squid.jobs.queue_manager.get_pending_jobs" title="squid.jobs.queue_manager.get_pending_jobs"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.jobs.queue_manager.get_pending_jobs()</span></code></a> - Get a list of all jobs submitted that are currently pending.</li>
+<li><a class="reference internal" href="queue_manager.html#squid.jobs.queue_manager.get_queue_manager" title="squid.jobs.queue_manager.get_queue_manager"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.jobs.queue_manager.get_queue_manager()</span></code></a> - Get the queue manager available on the system.</li>
+<li><a class="reference internal" href="queue_manager.html#squid.jobs.queue_manager.get_running_jobs" title="squid.jobs.queue_manager.get_running_jobs"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.jobs.queue_manager.get_running_jobs()</span></code></a> - Get a list of all jobs submitted that are currently running.</li>
+<li><a class="reference internal" href="queue_manager.html#squid.jobs.queue_manager.Job" title="squid.jobs.queue_manager.Job"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.jobs.queue_manager.Job()</span></code></a> - Get a Job object container depending on the queueing system used.</li>
+</ul>
+</div></blockquote>
+<p>The submission module holds two function that handle submitting a job:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="submission.html#squid.jobs.submission.submit_job" title="squid.jobs.submission.submit_job"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.jobs.submission.submit_job()</span></code></a> - Submit a script as a job.</li>
+<li><a class="reference internal" href="submission.html#squid.jobs.submission.pysub" title="squid.jobs.submission.pysub"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.jobs.submission.pysub()</span></code></a> - Submit a python script as a job.</li>
+</ul>
+</div></blockquote>
+<hr class="docutils" />
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="container.html">container</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nbs.html">nbs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="queue_manager.html">queue_manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="slurm.html">slurm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="submission.html">submission</a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../squid.html">Squid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../console_scripts.html">Console Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/jobs/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.35 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Henry Herbol.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

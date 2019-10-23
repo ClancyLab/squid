@@ -55,7 +55,7 @@
 <span class="n">CHARGE_LOWER_LIMIT</span> <span class="o">=</span> <span class="mf">0.0</span>
 
 
-<div class="viewcode-block" id="Coul"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.coulomb.Coul">[docs]</a><span class="k">class</span> <span class="nc">Coul</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Coul"><a class="viewcode-back" href="../../../forcefields/coulomb.html#squid.forcefields.coulomb.Coul">[docs]</a><span class="k">class</span> <span class="nc">Coul</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Initialize the coulomb object.  This should be done with either individual</span>
 <span class="sd">    information (index, charge, mass, element) or parsed from a string (line).</span>
@@ -179,7 +179,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">charge</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">element</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Coul.print_lower"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.coulomb.Coul.print_lower">[docs]</a>    <span class="k">def</span> <span class="nf">print_lower</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Coul.print_lower"><a class="viewcode-back" href="../../../forcefields/coulomb.html#squid.forcefields.coulomb.Coul.print_lower">[docs]</a>    <span class="k">def</span> <span class="nf">print_lower</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Print the lower bounds.</span>
 
@@ -190,7 +190,7 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_printer</span><span class="p">(</span><span class="n">bounds</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Coul.print_upper"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.coulomb.Coul.print_upper">[docs]</a>    <span class="k">def</span> <span class="nf">print_upper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Coul.print_upper"><a class="viewcode-back" href="../../../forcefields/coulomb.html#squid.forcefields.coulomb.Coul.print_upper">[docs]</a>    <span class="k">def</span> <span class="nf">print_upper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Print the upper bounds.</span>
 
@@ -201,7 +201,7 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_printer</span><span class="p">(</span><span class="n">bounds</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Coul.unpack"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.coulomb.Coul.unpack">[docs]</a>    <span class="k">def</span> <span class="nf">unpack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">with_bounds</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Coul.unpack"><a class="viewcode-back" href="../../../forcefields/coulomb.html#squid.forcefields.coulomb.Coul.unpack">[docs]</a>    <span class="k">def</span> <span class="nf">unpack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">with_bounds</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This function unpacks the coulomb object into a list.</span>
 
@@ -234,7 +234,7 @@
 
         <span class="k">return</span> <span class="n">pkg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Coul.pack"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.coulomb.Coul.pack">[docs]</a>    <span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="Coul.pack"><a class="viewcode-back" href="../../../forcefields/coulomb.html#squid.forcefields.coulomb.Coul.pack">[docs]</a>    <span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This function packs the coulomb object from a list.</span>
 
@@ -257,7 +257,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">charge</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Coul.validate"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.coulomb.Coul.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Coul.validate"><a class="viewcode-back" href="../../../forcefields/coulomb.html#squid.forcefields.coulomb.Coul.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This function will validate data integrity.</span>
 <span class="sd">        In this case, we simply ensure data types are appropriate.</span>
@@ -274,7 +274,7 @@
             <span class="s2">&quot;In Coul, tried assigning an unreasonably small charge! </span><span class="se">\</span>
 <span class="s2">(Q = </span><span class="si">%.2f</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">charge</span></div>
 
-<div class="viewcode-block" id="Coul.parse_line"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.coulomb.Coul.parse_line">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Coul.parse_line"><a class="viewcode-back" href="../../../forcefields/coulomb.html#squid.forcefields.coulomb.Coul.parse_line">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">parse_line</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parse line inputs and assign to this object.</span>
@@ -304,7 +304,7 @@
         <span class="n">mass</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">index</span><span class="p">,</span> <span class="n">charge</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="n">mass</span></div>
 
-<div class="viewcode-block" id="Coul.assign_line"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.coulomb.Coul.assign_line">[docs]</a>    <span class="k">def</span> <span class="nf">assign_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+<div class="viewcode-block" id="Coul.assign_line"><a class="viewcode-back" href="../../../forcefields/coulomb.html#squid.forcefields.coulomb.Coul.assign_line">[docs]</a>    <span class="k">def</span> <span class="nf">assign_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parse line.</span>
 
@@ -321,7 +321,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">parse_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Coul.fix"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.coulomb.Coul.fix">[docs]</a>    <span class="k">def</span> <span class="nf">fix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Coul.fix"><a class="viewcode-back" href="../../../forcefields/coulomb.html#squid.forcefields.coulomb.Coul.fix">[docs]</a>    <span class="k">def</span> <span class="nf">fix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This will fix these parameters by assigning bounds to the</span>
 <span class="sd">        values themselves.</span>
@@ -353,7 +353,7 @@
                 <span class="s2">&quot;In Coulomb, tried fixing </span><span class="si">%s</span><span class="s2"> parameter (does not exist)!&quot;</span>
                 <span class="o">%</span> <span class="n">params</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Coul.load_smrff"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.coulomb.Coul.load_smrff">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Coul.load_smrff"><a class="viewcode-back" href="../../../forcefields/coulomb.html#squid.forcefields.coulomb.Coul.load_smrff">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">load_smrff</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">parsed_file</span><span class="p">,</span> <span class="n">pfile_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">restrict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Given a parameter file, inport the coulomb parameters if possible.</span>
@@ -395,7 +395,7 @@
             <span class="k">if</span> <span class="n">check_restriction</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">restrict</span><span class="p">)</span>
         <span class="p">]</span></div>
 
-<div class="viewcode-block" id="Coul.load_opls"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.coulomb.Coul.load_opls">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Coul.load_opls"><a class="viewcode-back" href="../../../forcefields/coulomb.html#squid.forcefields.coulomb.Coul.load_opls">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">load_opls</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">atom_types</span><span class="p">,</span> <span class="n">pfile_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">restrict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Given a parameter file, import the Coulomb parameters if possible.</span>
@@ -428,7 +428,7 @@
             <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">atom_types</span> <span class="k">if</span> <span class="n">check_restriction</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">restrict</span><span class="p">)</span>
         <span class="p">]</span></div>
 
-<div class="viewcode-block" id="Coul.generate"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.coulomb.Coul.generate">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Coul.generate"><a class="viewcode-back" href="../../../forcefields/coulomb.html#squid.forcefields.coulomb.Coul.generate">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">atom_types</span><span class="p">,</span> <span class="n">elems</span><span class="p">,</span> <span class="n">signs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Randomly generate parameters for coulomb.</span>
@@ -462,7 +462,7 @@
 
         <span class="k">return</span> <span class="n">coul_objs</span></div>
 
-<div class="viewcode-block" id="Coul.ff_energy"><a class="viewcode-back" href="../../../codebase.html#squid.forcefields.coulomb.Coul.ff_energy">[docs]</a>    <span class="k">def</span> <span class="nf">ff_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q1</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+<div class="viewcode-block" id="Coul.ff_energy"><a class="viewcode-back" href="../../../forcefields/coulomb.html#squid.forcefields.coulomb.Coul.ff_energy">[docs]</a>    <span class="k">def</span> <span class="nf">ff_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q1</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Given the current parameters, what is the energy for a given</span>
 <span class="sd">        interatomic distance.</span>
@@ -577,7 +577,7 @@
 <h3><a href="../../../index.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../squid.html">Squid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview/index.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../console_scripts.html">Console Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
 </ul>

@@ -1,0 +1,240 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ovito &#8212; Squid 2.0.35 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="vmd" href="vmd.html" />
+    <link rel="prev" title="debyer" href="debyer.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vmd.html" title="vmd"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="debyer.html" title="debyer"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.35 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../overview/index.html" accesskey="U">Overview</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-squid.post_process.ovito">
+<span id="ovito"></span><h1>ovito<a class="headerlink" href="#module-squid.post_process.ovito" title="Permalink to this headline">¶</a></h1>
+<p>The visualization module automates some visualization procedures for
+post processing data.</p>
+<p>An example of using this is as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">files</span>
+<span class="kn">import</span> <span class="nn">visualization</span> <span class="kn">as</span> <span class="nn">vis</span>
+
+<span class="n">vis</span><span class="o">.</span><span class="n">ovito_xyz_to_gif</span><span class="p">(</span><span class="n">files</span><span class="o">.</span><span class="n">read_xyz</span><span class="p">(</span><span class="s2">&quot;CNH_HCN.xyz&quot;</span><span class="p">),</span> <span class="s2">&quot;/fs/home/hch54/tmp&quot;</span><span class="p">,</span> <span class="n">renderer</span><span class="o">=</span><span class="s1">&#39;Tachyon&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><a class="reference internal" href="#squid.post_process.ovito.ovito_xyz_to_image" title="squid.post_process.ovito.ovito_xyz_to_image"><code class="xref py py-func docutils literal notranslate"><span class="pre">ovito_xyz_to_image()</span></code></a></li>
+<li><a class="reference internal" href="#squid.post_process.ovito.ovito_xyz_to_gif" title="squid.post_process.ovito.ovito_xyz_to_gif"><code class="xref py py-func docutils literal notranslate"><span class="pre">ovito_xyz_to_gif()</span></code></a></li>
+</ul>
+<hr class="docutils" />
+<dl class="function">
+<dt id="squid.post_process.ovito.get_ovito_obj">
+<code class="descclassname">squid.post_process.ovito.</code><code class="descname">get_ovito_obj</code><span class="sig-paren">(</span><em>version='2.9.0'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/squid/post_process/ovito.html#get_ovito_obj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.post_process.ovito.get_ovito_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns the ovito object.  Note, currently the code below
+only works on version 2.9.0.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="squid.post_process.ovito.ovito_xyz_to_gif">
+<code class="descclassname">squid.post_process.ovito.</code><code class="descname">ovito_xyz_to_gif</code><span class="sig-paren">(</span><em>frames</em>, <em>scratch</em>, <em>fname='image'</em>, <em>camera_pos=(10</em>, <em>0</em>, <em>0)</em>, <em>camera_dir=(-1</em>, <em>0</em>, <em>0)</em>, <em>size=(800</em>, <em>600)</em>, <em>delay=10</em>, <em>display_cell=False</em>, <em>renderer='OpenGLRenderer'</em>, <em>renderer_settings={}</em>, <em>overwrite=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/squid/post_process/ovito.html#ovito_xyz_to_gif"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.post_process.ovito.ovito_xyz_to_gif" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will, using the ovito python api, generate either a single
+image or a gif of the input frames.  Note, a gif is only generated when
+more than one frame exists.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>frames: <em>str</em> or <em>list,</em> <a class="reference internal" href="../structures/atom.html#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
+<dd>A list of frames you wish to generate an image for, or a path to
+an xyz file.</dd>
+<dt>scratch: <em>str</em></dt>
+<dd>A directory you want to have each image saved to.</dd>
+<dt>fname: <em>str, optional</em></dt>
+<dd>The prefix for the image names.</dd>
+<dt>camera_pos: <em>tuple, float, optional</em></dt>
+<dd>A tuple of x, y, and z coordinates for the camera to be positioned.</dd>
+<dt>camera_dir: <em>tuple, float, optional</em></dt>
+<dd>The direction the camera is facing.</dd>
+<dt>size: <em>tuple, int, optional</em></dt>
+<dd>Image size (width, height).</dd>
+<dt>delay: <em>int, optional</em></dt>
+<dd>In the event of a gif, how long it should play for.</dd>
+<dt>display_cell: <em>bool, optional</em></dt>
+<dd>Whether to display the box around the system or not.</dd>
+<dt>renderer: <em>str, optional</em></dt>
+<dd>What kind of renderer you wish to use: OpenGL or Tachyon.</dd>
+<dt>renderer_settings: <em>dict, optional</em></dt>
+<dd>Here you can change specific renderer settings.</dd>
+<dt>overwrite: <em>bool, optional</em></dt>
+<dd>Whether to delete any files already existing in the scratch dir.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="squid.post_process.ovito.ovito_xyz_to_image">
+<code class="descclassname">squid.post_process.ovito.</code><code class="descname">ovito_xyz_to_image</code><span class="sig-paren">(</span><em>xyz</em>, <em>scratch</em>, <em>fname='image'</em>, <em>camera_pos=(10</em>, <em>0</em>, <em>0)</em>, <em>camera_dir=(-1</em>, <em>0</em>, <em>0)</em>, <em>size=(800</em>, <em>600)</em>, <em>renderer='OpenGLRenderer'</em>, <em>display_cell=False</em>, <em>renderer_settings={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/squid/post_process/ovito.html#ovito_xyz_to_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.post_process.ovito.ovito_xyz_to_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will, using the ovito python api, generate a png image of an
+xyz file.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>xyz: <em>str</em></dt>
+<dd>A path to an xyz file.</dd>
+<dt>scratch: <em>str</em></dt>
+<dd>A directory you want to have each image saved to.</dd>
+<dt>fname: <em>str, optional</em></dt>
+<dd>The prefix for the image names.</dd>
+<dt>camera_pos: <em>tuple, float, optional</em></dt>
+<dd>A tuple of x, y, and z coordinates for the camera to be positioned.</dd>
+<dt>camera_dir: <em>tuple, float, optional</em></dt>
+<dd>The direction the camera is facing.</dd>
+<dt>size: <em>tuple, int, optional</em></dt>
+<dd>Image size (width, height).</dd>
+<dt>delay: <em>int, optional</em></dt>
+<dd>In the event of a gif, how long it should play for.</dd>
+<dt>renderer: <em>str, optional</em></dt>
+<dd>What kind of renderer you wish to use: OpenGL or Tachyon.</dd>
+<dt>display_cell: <em>bool, optional</em></dt>
+<dd>Whether to display the box around the system or not.</dd>
+<dt>renderer_settings: <em>dict, optional</em></dt>
+<dd>Here you can change specific renderer settings.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<blockquote>
+<div>None</div></blockquote>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../squid.html">Squid</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../overview/index.html">Overview</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#calcs">calcs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#files">files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#forcefields">forcefields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#g09">g09</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#geometry">geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#jdftx">jdftx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#jobs">jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#lammps">lammps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#maths">maths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#optimizers">optimizers</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../overview/index.html#orca">orca</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../orca/io.html">io</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../orca/job.html">job</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../orca/mep.html">mep</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../orca/post_process.html">post_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../orca/utils.html">utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="debyer.html">debyer</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ovito</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vmd.html">vmd</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#structures">structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/index.html#utils">utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../console_scripts.html">Console Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="debyer.html"
+                        title="previous chapter">debyer</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="vmd.html"
+                        title="next chapter">vmd</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/post_process/ovito.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vmd.html" title="vmd"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="debyer.html" title="debyer"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Squid 2.0.35 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../overview/index.html" >Overview</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Henry Herbol.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>
