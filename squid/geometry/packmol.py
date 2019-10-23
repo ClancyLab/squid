@@ -38,13 +38,44 @@ def packmol(system_obj, molecules, molecule_ratio=(1,),
     A custom script is also allowed; however, if this path is chosen, then
     ensure all file paths for packmol exist.  We change directories within
     this function to a sys_packmol folder, where all files are expected to
-    reside.
+    reside.  When a custom script is specified, the packmol script file is
+    verbatim whatever the custom script is defined as.  Otherwise, the
+    script will take on the following form (All capitals are filled in by
+    the function or as input variables).  In the case of NUMBER, if it is
+    set as None, then an internal value is calculated based on density and
+    system_obj size.
+
+    .. code-block:: bash
+
+        tolerance XXX
+        filetype xyz
+        output XXXXXX.packed.xyz
+        seed XXX
+
+        # If atoms already exist in the system object
+        structure XXXXXX_fixed.xyz
+        number 1
+        fixed CENTER_OF_MASS 0. 0. 0.
+        centerofmass
+        end structure
+
+        EXTRA_BLOCK_AT_BEGINNING
+
+        # For each molecule, the following is done
+        structure MOL_i.xyz
+        number NUMBER
+        inside box A B C D E F
+        ADDITIONAL
+        end structure
+
+        EXTRA_BLOCK_AT_END
+
 
     **Parameters**
 
-        system_obj: :class:`structures.system.System`
+        system_obj: :class:`squid.structures.system.System`
             The system object to pack the molecules into.
-        molecules: *list,* :class:`structures.molecule.Molecule`
+        molecules: *list,* :class:`squid.structures.molecule.Molecule`
             Molecules to be added to this system.
         molecule_ratio: *tuple, float, optional*
             The ration that each molecule in *molecules* will be added to

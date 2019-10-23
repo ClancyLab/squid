@@ -30,7 +30,8 @@ class DFT_out(object):
         charge_and_multiplicity: *str*
             The charge and multiplicity, in that order, of the system.
         dipole: *list, ...*
-            The dipole of the system as a list of the magnitude and moment.
+            The dipole of the system as a list of the magnitude, moment, and
+            the center of mass (for which the dipole is calculated from).
         frames: *list, list,* :class:`squid.structures.atom.Atom`
             A list lists of atoms describing each iteration in the dft
             simulation.
