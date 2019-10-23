@@ -47,7 +47,7 @@
 <span class="kn">from</span> <span class="nn">squid.geometry.misc</span> <span class="k">import</span> <span class="n">get_center_of_mass</span>
 
 
-<div class="viewcode-block" id="get_packmol_obj"><a class="viewcode-back" href="../../../codebase.html#squid.geometry.packmol.get_packmol_obj">[docs]</a><span class="k">def</span> <span class="nf">get_packmol_obj</span><span class="p">():</span>
+<div class="viewcode-block" id="get_packmol_obj"><a class="viewcode-back" href="../../../module_docs/geometry/packmol.html#squid.geometry.packmol.get_packmol_obj">[docs]</a><span class="k">def</span> <span class="nf">get_packmol_obj</span><span class="p">():</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This function will find the packmol executable and handle errors</span>
 <span class="sd">    accordingly.</span>
@@ -66,7 +66,7 @@
     <span class="k">return</span> <span class="n">packmol_path</span></div>
 
 
-<div class="viewcode-block" id="packmol"><a class="viewcode-back" href="../../../codebase.html#squid.geometry.packmol.packmol">[docs]</a><span class="k">def</span> <span class="nf">packmol</span><span class="p">(</span><span class="n">system_obj</span><span class="p">,</span> <span class="n">molecules</span><span class="p">,</span> <span class="n">molecule_ratio</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span>
+<div class="viewcode-block" id="packmol"><a class="viewcode-back" href="../../../module_docs/geometry/packmol.html#squid.geometry.packmol.packmol">[docs]</a><span class="k">def</span> <span class="nf">packmol</span><span class="p">(</span><span class="n">system_obj</span><span class="p">,</span> <span class="n">molecules</span><span class="p">,</span> <span class="n">molecule_ratio</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span>
             <span class="n">density</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">persist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">additional</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">custom</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extra_block_at_beginning</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
             <span class="n">extra_block_at_end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">2.0</span><span class="p">):</span>
@@ -79,13 +79,44 @@
 <span class="sd">    A custom script is also allowed; however, if this path is chosen, then</span>
 <span class="sd">    ensure all file paths for packmol exist.  We change directories within</span>
 <span class="sd">    this function to a sys_packmol folder, where all files are expected to</span>
-<span class="sd">    reside.</span>
+<span class="sd">    reside.  When a custom script is specified, the packmol script file is</span>
+<span class="sd">    verbatim whatever the custom script is defined as.  Otherwise, the</span>
+<span class="sd">    script will take on the following form (All capitals are filled in by</span>
+<span class="sd">    the function or as input variables).  In the case of NUMBER, if it is</span>
+<span class="sd">    set as None, then an internal value is calculated based on density and</span>
+<span class="sd">    system_obj size.</span>
+
+<span class="sd">    .. code-block:: bash</span>
+
+<span class="sd">        tolerance XXX</span>
+<span class="sd">        filetype xyz</span>
+<span class="sd">        output XXXXXX.packed.xyz</span>
+<span class="sd">        seed XXX</span>
+
+<span class="sd">        # If atoms already exist in the system object</span>
+<span class="sd">        structure XXXXXX_fixed.xyz</span>
+<span class="sd">        number 1</span>
+<span class="sd">        fixed CENTER_OF_MASS 0. 0. 0.</span>
+<span class="sd">        centerofmass</span>
+<span class="sd">        end structure</span>
+
+<span class="sd">        EXTRA_BLOCK_AT_BEGINNING</span>
+
+<span class="sd">        # For each molecule, the following is done</span>
+<span class="sd">        structure MOL_i.xyz</span>
+<span class="sd">        number NUMBER</span>
+<span class="sd">        inside box A B C D E F</span>
+<span class="sd">        ADDITIONAL</span>
+<span class="sd">        end structure</span>
+
+<span class="sd">        EXTRA_BLOCK_AT_END</span>
+
 
 <span class="sd">    **Parameters**</span>
 
-<span class="sd">        system_obj: :class:`structures.system.System`</span>
+<span class="sd">        system_obj: :class:`squid.structures.system.System`</span>
 <span class="sd">            The system object to pack the molecules into.</span>
-<span class="sd">        molecules: *list,* :class:`structures.molecule.Molecule`</span>
+<span class="sd">        molecules: *list,* :class:`squid.structures.molecule.Molecule`</span>
 <span class="sd">            Molecules to be added to this system.</span>
 <span class="sd">        molecule_ratio: *tuple, float, optional*</span>
 <span class="sd">            The ration that each molecule in *molecules* will be added to</span>

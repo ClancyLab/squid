@@ -46,7 +46,7 @@
 <span class="kn">from</span> <span class="nn">squid.orca.mep</span> <span class="k">import</span> <span class="n">electrostatic_potential_cubegen</span>
 
 
-<div class="viewcode-block" id="gbw_to_cube"><a class="viewcode-back" href="../../../codebase.html#squid.orca.post_process.gbw_to_cube">[docs]</a><span class="k">def</span> <span class="nf">gbw_to_cube</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">mo</span><span class="p">,</span> <span class="n">spin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="mi">40</span><span class="p">):</span>
+<div class="viewcode-block" id="gbw_to_cube"><a class="viewcode-back" href="../../../module_docs/orca/post_process.html#squid.orca.post_process.gbw_to_cube">[docs]</a><span class="k">def</span> <span class="nf">gbw_to_cube</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">mo</span><span class="p">,</span> <span class="n">spin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="mi">40</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Pipe in flags to orca_plot to generate a cube file for the given</span>
 <span class="sd">    molecular orbital.  Note, this is assumed to be running from the parent</span>
@@ -101,13 +101,15 @@
     <span class="k">return</span> <span class="n">mo_name</span></div>
 
 
-<div class="viewcode-block" id="mo_analysis"><a class="viewcode-back" href="../../../codebase.html#squid.orca.post_process.mo_analysis">[docs]</a><span class="k">def</span> <span class="nf">mo_analysis</span><span class="p">(</span><span class="n">name</span><span class="p">,</span>
+<div class="viewcode-block" id="mo_analysis"><a class="viewcode-back" href="../../../module_docs/orca/post_process.html#squid.orca.post_process.mo_analysis">[docs]</a><span class="k">def</span> <span class="nf">mo_analysis</span><span class="p">(</span><span class="n">name</span><span class="p">,</span>
                 <span class="n">orbital</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                 <span class="n">HOMO</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="n">LUMO</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="n">wireframe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="n">hide</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">iso</span><span class="o">=</span><span class="mf">0.04</span><span class="p">):</span>
+                <span class="n">iso</span><span class="o">=</span><span class="mf">0.04</span><span class="p">,</span>
+                <span class="n">vmd_file_name</span><span class="o">=</span><span class="s2">&quot;tmp&quot;</span><span class="p">,</span>
+                <span class="n">run_vmd</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Post process an orca job using orca_plot and vmd to display molecular</span>
 <span class="sd">    orbitals and the potential surface.  NOTE! By default Orca does not take</span>
@@ -139,6 +141,10 @@
 <span class="sd">        iso: *float, optional*</span>
 <span class="sd">            Isosurface magnitude.  Set to 0.04 by default, but 0.01 may be</span>
 <span class="sd">            better.</span>
+<span class="sd">        vmd_file_name: *str, optional*</span>
+<span class="sd">            The basename of the .vmd file to generate.  By default this is tmp.</span>
+<span class="sd">        run_vmd: *bool, optional*</span>
+<span class="sd">            Whether to run vmd on the .vmd file (via vmd -e tmp.vmd) or not.</span>
 
 <span class="sd">    **Returns**</span>
 
@@ -167,10 +173,11 @@
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">mo</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">MOs</span><span class="p">):</span>
         <span class="n">MOs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;orca/&quot;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">mo</span>
 
-    <span class="n">vmd</span><span class="o">.</span><span class="n">plot_MO_from_cube</span><span class="p">(</span><span class="n">MOs</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="n">wireframe</span><span class="p">,</span> <span class="n">hide</span><span class="o">=</span><span class="n">hide</span><span class="p">,</span> <span class="n">iso</span><span class="o">=</span><span class="n">iso</span><span class="p">)</span></div>
+    <span class="n">vmd</span><span class="o">.</span><span class="n">plot_MO_from_cube</span><span class="p">(</span><span class="n">MOs</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="n">wireframe</span><span class="p">,</span> <span class="n">hide</span><span class="o">=</span><span class="n">hide</span><span class="p">,</span> <span class="n">iso</span><span class="o">=</span><span class="n">iso</span><span class="p">,</span>
+                          <span class="n">vmd_file_name</span><span class="o">=</span><span class="n">vmd_file_name</span><span class="p">,</span> <span class="n">run_vmd</span><span class="o">=</span><span class="n">run_vmd</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="pot_analysis"><a class="viewcode-back" href="../../../codebase.html#squid.orca.post_process.pot_analysis">[docs]</a><span class="k">def</span> <span class="nf">pot_analysis</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">npoints</span><span class="o">=</span><span class="mi">80</span><span class="p">):</span>
+<div class="viewcode-block" id="pot_analysis"><a class="viewcode-back" href="../../../module_docs/orca/post_process.html#squid.orca.post_process.pot_analysis">[docs]</a><span class="k">def</span> <span class="nf">pot_analysis</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">npoints</span><span class="o">=</span><span class="mi">80</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Post process an orca job using orca_plot and vmd to display the</span>
 <span class="sd">    electrostatic potential mapped onto the electron density surface.</span>

@@ -3577,13 +3577,42 @@ followed by a block for the solvent.</p>
 <p>A custom script is also allowed; however, if this path is chosen, then
 ensure all file paths for packmol exist.  We change directories within
 this function to a sys_packmol folder, where all files are expected to
-reside.</p>
+reside.  When a custom script is specified, the packmol script file is
+verbatim whatever the custom script is defined as.  Otherwise, the
+script will take on the following form (All capitals are filled in by
+the function or as input variables).  In the case of NUMBER, if it is
+set as None, then an internal value is calculated based on density and
+system_obj size.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>tolerance XXX
+filetype xyz
+output XXXXXX.packed.xyz
+seed XXX
+
+<span class="c1"># If atoms already exist in the system object</span>
+structure XXXXXX_fixed.xyz
+number <span class="m">1</span>
+fixed CENTER_OF_MASS <span class="m">0</span>. <span class="m">0</span>. <span class="m">0</span>.
+centerofmass
+end structure
+
+EXTRA_BLOCK_AT_BEGINNING
+
+<span class="c1"># For each molecule, the following is done</span>
+structure MOL_i.xyz
+number NUMBER
+inside box A B C D E F
+ADDITIONAL
+end structure
+
+EXTRA_BLOCK_AT_END
+</pre></div>
+</div>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>system_obj: <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.system.System</span></code></dt>
+<dt>system_obj: <a class="reference internal" href="#squid.structures.system.System" title="squid.structures.system.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.system.System</span></code></a></dt>
 <dd>The system object to pack the molecules into.</dd>
-<dt>molecules: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.molecule.Molecule</span></code></dt>
+<dt>molecules: <em>list,</em> <a class="reference internal" href="#squid.structures.molecule.Molecule" title="squid.structures.molecule.Molecule"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.molecule.Molecule</span></code></a></dt>
 <dd>Molecules to be added to this system.</dd>
 <dt>molecule_ratio: <em>tuple, float, optional</em></dt>
 <dd>The ration that each molecule in <em>molecules</em> will be added to
@@ -4117,7 +4146,7 @@ applied via right side multiplication.</dd>
 </div></blockquote>
 <p><strong>See also</strong></p>
 <blockquote>
-<div>For more information, see <a class="reference internal" href="module_docs/geometry/spatial.html#squid.geometry.spatial.orthogonal_procrustes" title="squid.geometry.spatial.orthogonal_procrustes"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.spatial.orthogonal_procrustes()</span></code></a>.</div></blockquote>
+<div>For more information, see <a class="reference internal" href="#squid.geometry.spatial.orthogonal_procrustes" title="squid.geometry.spatial.orthogonal_procrustes"><code class="xref py py-func docutils literal notranslate"><span class="pre">squid.geometry.spatial.orthogonal_procrustes()</span></code></a>.</div></blockquote>
 </dd></dl>
 
 <dl class="function">
@@ -6164,7 +6193,7 @@ this is 0 indexed.</dd>
 
 <dl class="function">
 <dt id="squid.orca.post_process.mo_analysis">
-<code class="descclassname">squid.orca.post_process.</code><code class="descname">mo_analysis</code><span class="sig-paren">(</span><em>name</em>, <em>orbital=None</em>, <em>HOMO=True</em>, <em>LUMO=True</em>, <em>wireframe=True</em>, <em>hide=True</em>, <em>iso=0.04</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/squid/orca/post_process.html#mo_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.orca.post_process.mo_analysis" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">squid.orca.post_process.</code><code class="descname">mo_analysis</code><span class="sig-paren">(</span><em>name</em>, <em>orbital=None</em>, <em>HOMO=True</em>, <em>LUMO=True</em>, <em>wireframe=True</em>, <em>hide=True</em>, <em>iso=0.04</em>, <em>vmd_file_name='tmp'</em>, <em>run_vmd=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/squid/orca/post_process.html#mo_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.orca.post_process.mo_analysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Post process an orca job using orca_plot and vmd to display molecular
 orbitals and the potential surface.  NOTE! By default Orca does not take
 into account degenerate energy states when populating.  To do so, ensure
@@ -6195,6 +6224,10 @@ opening.</dd>
 <dt>iso: <em>float, optional</em></dt>
 <dd>Isosurface magnitude.  Set to 0.04 by default, but 0.01 may be
 better.</dd>
+<dt>vmd_file_name: <em>str, optional</em></dt>
+<dd>The basename of the .vmd file to generate.  By default this is tmp.</dd>
+<dt>run_vmd: <em>bool, optional</em></dt>
+<dd>Whether to run vmd on the .vmd file (via vmd -e tmp.vmd) or not.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
@@ -6413,12 +6446,12 @@ xyz file.</p>
 <span id="vmd"></span><h3>vmd<a class="headerlink" href="#module-squid.post_process.vmd" title="Permalink to this headline">¶</a></h3>
 <p>The vmd package automates various vmd post-processing tasks.</p>
 <ul class="simple">
-<li><a class="reference internal" href="#squid.post_process.vmd.plot_MO_from_cube" title="squid.post_process.vmd.plot_MO_from_cube"><code class="xref py py-func docutils literal notranslate"><span class="pre">plot_MO_from_cube()</span></code></a></li>
+<li><a class="reference internal" href="module_docs/post_process/vmd.html#squid.post_process.vmd.plot_MO_from_cube" title="squid.post_process.vmd.plot_MO_from_cube"><code class="xref py py-func docutils literal notranslate"><span class="pre">plot_MO_from_cube()</span></code></a></li>
 </ul>
 <hr class="docutils" />
 <dl class="function">
 <dt id="squid.post_process.vmd.plot_MO_from_cube">
-<code class="descclassname">squid.post_process.vmd.</code><code class="descname">plot_MO_from_cube</code><span class="sig-paren">(</span><em>fptrs</em>, <em>wireframe=True</em>, <em>hide=True</em>, <em>iso=0.04</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/squid/post_process/vmd.html#plot_MO_from_cube"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.post_process.vmd.plot_MO_from_cube" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">squid.post_process.vmd.</code><code class="descname">plot_MO_from_cube</code><span class="sig-paren">(</span><em>fptrs</em>, <em>wireframe=True</em>, <em>hide=True</em>, <em>iso=0.04</em>, <em>vmd_file_name='tmp'</em>, <em>run_vmd=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/squid/post_process/vmd.html#plot_MO_from_cube"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.post_process.vmd.plot_MO_from_cube" title="Permalink to this definition">¶</a></dt>
 <dd><p>A function to generate a VMD visualization of a molecular orbital from
 a cube file.</p>
 <p><strong>Parameters</strong></p>
@@ -6435,6 +6468,10 @@ not (False).</dd>
 <dt>iso: <em>float, optional</em></dt>
 <dd>Isosurface magnitude.  Set to 0.04 by default, but 0.01 may be
 better.</dd>
+<dt>vmd_file_name: <em>str, optional</em></dt>
+<dd>The basename of the .vmd file to generate.  By default this is tmp.</dd>
+<dt>run_vmd: <em>bool, optional</em></dt>
+<dd>Whether to run vmd on the .vmd file (via vmd -e tmp.vmd) or not.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>
@@ -6883,7 +6920,8 @@ dft configurations.</dd>
 <dt>charge_and_multiplicity: <em>str</em></dt>
 <dd>The charge and multiplicity, in that order, of the system.</dd>
 <dt>dipole: <em>list, …</em></dt>
-<dd>The dipole of the system as a list of the magnitude and moment.</dd>
+<dd>The dipole of the system as a list of the magnitude, moment, and
+the center of mass (for which the dipole is calculated from).</dd>
 <dt>frames: <em>list, list,</em> <a class="reference internal" href="#squid.structures.atom.Atom" title="squid.structures.atom.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.atom.Atom</span></code></a></dt>
 <dd>A list lists of atoms describing each iteration in the dft
 simulation.</dd>

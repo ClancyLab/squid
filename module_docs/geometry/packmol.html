@@ -61,13 +61,42 @@ followed by a block for the solvent.</p>
 <p>A custom script is also allowed; however, if this path is chosen, then
 ensure all file paths for packmol exist.  We change directories within
 this function to a sys_packmol folder, where all files are expected to
-reside.</p>
+reside.  When a custom script is specified, the packmol script file is
+verbatim whatever the custom script is defined as.  Otherwise, the
+script will take on the following form (All capitals are filled in by
+the function or as input variables).  In the case of NUMBER, if it is
+set as None, then an internal value is calculated based on density and
+system_obj size.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>tolerance XXX
+filetype xyz
+output XXXXXX.packed.xyz
+seed XXX
+
+<span class="c1"># If atoms already exist in the system object</span>
+structure XXXXXX_fixed.xyz
+number <span class="m">1</span>
+fixed CENTER_OF_MASS <span class="m">0</span>. <span class="m">0</span>. <span class="m">0</span>.
+centerofmass
+end structure
+
+EXTRA_BLOCK_AT_BEGINNING
+
+<span class="c1"># For each molecule, the following is done</span>
+structure MOL_i.xyz
+number NUMBER
+inside box A B C D E F
+ADDITIONAL
+end structure
+
+EXTRA_BLOCK_AT_END
+</pre></div>
+</div>
 <p><strong>Parameters</strong></p>
 <blockquote>
 <div><dl class="docutils">
-<dt>system_obj: <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.system.System</span></code></dt>
+<dt>system_obj: <a class="reference internal" href="../../codebase.html#squid.structures.system.System" title="squid.structures.system.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.system.System</span></code></a></dt>
 <dd>The system object to pack the molecules into.</dd>
-<dt>molecules: <em>list,</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">structures.molecule.Molecule</span></code></dt>
+<dt>molecules: <em>list,</em> <a class="reference internal" href="../../codebase.html#squid.structures.molecule.Molecule" title="squid.structures.molecule.Molecule"><code class="xref py py-class docutils literal notranslate"><span class="pre">squid.structures.molecule.Molecule</span></code></a></dt>
 <dd>Molecules to be added to this system.</dd>
 <dt>molecule_ratio: <em>tuple, float, optional</em></dt>
 <dd>The ration that each molecule in <em>molecules</em> will be added to

@@ -44,7 +44,7 @@
 <hr class="docutils" />
 <dl class="function">
 <dt id="squid.post_process.vmd.plot_MO_from_cube">
-<code class="descclassname">squid.post_process.vmd.</code><code class="descname">plot_MO_from_cube</code><span class="sig-paren">(</span><em>fptrs</em>, <em>wireframe=True</em>, <em>hide=True</em>, <em>iso=0.04</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/post_process/vmd.html#plot_MO_from_cube"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.post_process.vmd.plot_MO_from_cube" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">squid.post_process.vmd.</code><code class="descname">plot_MO_from_cube</code><span class="sig-paren">(</span><em>fptrs</em>, <em>wireframe=True</em>, <em>hide=True</em>, <em>iso=0.04</em>, <em>vmd_file_name='tmp'</em>, <em>run_vmd=True</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/squid/post_process/vmd.html#plot_MO_from_cube"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#squid.post_process.vmd.plot_MO_from_cube" title="Permalink to this definition">¶</a></dt>
 <dd><p>A function to generate a VMD visualization of a molecular orbital from
 a cube file.</p>
 <p><strong>Parameters</strong></p>
@@ -61,6 +61,10 @@ not (False).</dd>
 <dt>iso: <em>float, optional</em></dt>
 <dd>Isosurface magnitude.  Set to 0.04 by default, but 0.01 may be
 better.</dd>
+<dt>vmd_file_name: <em>str, optional</em></dt>
+<dd>The basename of the .vmd file to generate.  By default this is tmp.</dd>
+<dt>run_vmd: <em>bool, optional</em></dt>
+<dd>Whether to run vmd on the .vmd file (via vmd -e tmp.vmd) or not.</dd>
 </dl>
 </div></blockquote>
 <p><strong>Returns</strong></p>

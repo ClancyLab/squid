@@ -9,7 +9,7 @@ Squid - Table of Contents
 Contents:
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 3
 
     squid
     overview
