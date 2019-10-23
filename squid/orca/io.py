@@ -271,7 +271,9 @@ Lowest energy orbital is empty.")
             x = float(COM[0].strip()[1:-1])
             y = float(COM[1].strip())
             z = float(COM[2].strip()[:-1])
-            COM = (x, y, z)
+            COM = tuple(map(
+                lambda d: units.convert_dist("Bohr", "Ang", d), (x, y, z)
+            ))
         dipole = [dipole_mag, dipole_moment, COM]
     else:
         dipole = None
