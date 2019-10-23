@@ -265,7 +265,14 @@ Lowest energy orbital is empty.")
             dipole_mag = float(dipole_mag.strip().split()[-1])
         else:
             dipole_mag = None
-        dipole = [dipole_mag, dipole_moment]
+        COM = None
+        if data.rfind("CENTER OF MASS") != -1:
+            COM = data[data.rfind("CENTER OF MASS"):].split("\n")[0].strip().split()[-3:]
+            x = float(COM[0].strip()[1:-1])
+            y = float(COM[1].strip())
+            z = float(COM[2].strip()[:-1])
+            COM = (x, y, z)
+        dipole = [dipole_mag, dipole_moment, COM]
     else:
         dipole = None
 
