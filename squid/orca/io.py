@@ -1,6 +1,7 @@
 import os
 import re
 import copy
+import numpy as np
 from squid.utils import units
 from squid.structures import results
 from squid.structures.atom import Atom
@@ -312,7 +313,13 @@ Lowest energy orbital is empty.")
         charge_and_multiplicity.strip().split())
     data.frames = frames
     data.atoms = atoms
-    data.gradients = gradients
+    data.gradients = gradients  # In default units of Ha/Bohr
+    data.forces = None
+    # Forces are in Ha/Ang, more "reasonable" units for what we expect when
+    # we use forces on the coordinates (in Ang)
+    if data.gradients is not None:
+        data.forces = -1.0 * np.array(gradients) *\
+            units.convert("Ha/Bohr", "Ha/Ang", 1.0)
     data.energies = energies
     data.energy = energy
     data.charges_MULLIKEN = charges_MULLIKEN
@@ -329,7 +336,7 @@ Lowest energy orbital is empty.")
     data.orbitals = orbitals
     data.finished = finished
     data.warnings = warnings
-    data.dipole = dipole
+    data.dipole = dipole  # Dipole are in units of Angstrom and/or Debye
 
     return data
 
