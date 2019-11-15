@@ -520,20 +520,21 @@ Should be either 8, 9, 14, or 15!" % len(params)
 
             None
         '''
+        EPS = 1E-8  # Epsilon to handle floating point errors
         self.indices = [str(x) for x in self.indices]
         self.m = int(self.m)
         assert self.m in [1, 3],\
             "In Tersoff %s, m = %.2f must be either 1 or 3!"\
             % (str(self.indices), self.m)
         self.gamma = float(self.gamma)
-        assert self.gamma >= 0 and self.gamma <= 1,\
-            "In Tersoff %s, gamma = %.2f must be [0, 1] inclusive!"\
-            % (str(self.indices), self.gamma)
+        assert -EPS < self.gamma < 1.0 + EPS,\
+            "In Tersoff %s, gamma = %s must be [0, 1] inclusive!"\
+            % (str(self.indices), str(self.gamma))
         self.lambda3 = float(self.lambda3)
         self.costheta0 = float(self.costheta0)
-        assert abs(self.costheta0) <= 1.0,\
-            "In Tersoff %s, costheta0 = %.2f must be [-1, 1] inclusive!"\
-            % (str(self.indices), self.costheta0)
+        assert abs(self.costheta0) < 1.0 + EPS,\
+            "In Tersoff %s, costheta0 = %s must be [-1, 1] inclusive!"\
+            % (str(self.indices), str(self.costheta0))
         self.n = float(self.n)
         self.beta = float(self.beta)
         self.lambda2 = float(self.lambda2)
