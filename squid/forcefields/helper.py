@@ -133,3 +133,29 @@ def random_in_range(bounds):
         bounds = (bounds[1] * 0.5, bounds[1])
 
     return random.random() * (bounds[1] - bounds[0]) + bounds[0]
+
+
+def adjust_bounds(adjust, value, bounds):
+    '''
+    A helper function to adjust bounds if value is out of them.
+
+    **Parameters**
+
+        adjust: *bool*
+            Whether adjustment is desired or not.
+        value: *float or None*
+            The value of the parameter.
+        bounds: *tuple, float*
+            The low, high bounds for the parameter.
+
+    **Returns**
+
+        new_bounds: *tuple, float*
+            The new bounds that should be used.
+    '''
+    if not adjust or value is None:
+        return bounds
+    else:
+        low, high = bounds
+        return (min(low, value), max(high, value))
+

@@ -1,7 +1,7 @@
 import copy
 import numpy as np
 from itertools import combinations_with_replacement
-from squid.forcefields.helper import check_restriction, random_in_range
+from squid.forcefields.helper import check_restriction, random_in_range, adjust_bounds
 
 
 BOUND_EPS = 1E-6
@@ -75,6 +75,9 @@ class Morse(object):
             rc describes the cutoff of the pairwise interaction.
         line: *str*
             A line from a parameter file to be parsed.
+        adjust_range: *bool, optional*
+            Whether to adjust the default bounds range to account for
+            read in values from a file being out of bounds.
 
     **Returns**
 
@@ -83,20 +86,24 @@ class Morse(object):
     '''
 
     def __init__(self, indices=None, D0=None, alpha=None,
-                 r0=None, rc=None, line=None):
+                 r0=None, rc=None, line=None, adjust_range=False):
         # Assign default bounds
         # For the programmer: The bounds need reconsidering.
-        self.D0_bounds = D0_BOUNDS
-        self.alpha_bounds = ALPHA_BOUNDS
-        self.r0_bounds = R0_BOUNDS
-        self.rc_bounds = RC_BOUNDS
+        self.D0_bounds = adjust_bounds(
+            adjust_range, D0, D0_BOUNDS)
+        self.alpha_bounds = adjust_bounds(
+            adjust_range, alpha, ALPHA_BOUNDS)
+        self.r0_bounds = adjust_bounds(
+            adjust_range, r0, R0_BOUNDS)
+        self.rc_bounds = adjust_bounds(
+            adjust_range, rc, RC_BOUNDS)
 
         # How many parameters exist in this potential
         self.N_params = 4
 
         values = (indices, D0, alpha, r0, rc)
         if line is not None and all([x is None for x in values]):
-            self.assign_line(line)
+            self.assign_line(line, adjust_range=adjust_range)
         elif line is None and all([x is not None for x in values[:-1]]):
             assert isinstance(indices, list) or isinstance(indices, tuple),\
                 "In Morse, initialized with indices not being a list or tuple!"
@@ -350,7 +357,7 @@ Should be either 3, 4, or 5!" % len(params)
 
         return indices, D0, alpha, r0, rc
 
-    def assign_line(self, line):
+    def assign_line(self, line, adjust_range=False):
         '''
         Parse line inputs and assign to this object.
 
@@ -358,6 +365,9 @@ Should be either 3, 4, or 5!" % len(params)
 
             line: *str*
                 A string that holds a three-body Morse parameter set.
+            adjust_range: *bool, optional*
+                Whether to adjust the default bounds range to account for
+                read in values from a file being out of bounds.
 
         **Returns**
 
@@ -365,6 +375,16 @@ Should be either 3, 4, or 5!" % len(params)
         '''
         self.indices, self.D0, self.alpha, self.r0, self.rc =\
             self.parse_line(line)
+
+        self.D0_bounds = adjust_bounds(
+            adjust_range, self.D0, self.D0_bounds)
+        self.alpha_bounds = adjust_bounds(
+            adjust_range, self.alpha, self.alpha_bounds)
+        self.r0_bounds = adjust_bounds(
+            adjust_range, self.r0, self.r0_bounds)
+        self.rc_bounds = adjust_bounds(
+            adjust_range, self.rc, self.rc_bounds)
+
         self.validate()
 
     def fix(self, params='all', value=None):
@@ -494,7 +514,8 @@ value when fixing rc in Morse (passed %s)." % str(value)
                 self.alpha_bounds[0]
 
     @classmethod
-    def load_smrff(cls, parsed_file, pfile_name=None, restrict=None):
+    def load_smrff(cls, parsed_file, pfile_name=None, restrict=None,
+                   adjust_range=False):
         '''
         Given a parameter file, import the Morse parameters if possible.
 
@@ -510,6 +531,9 @@ value when fixing rc in Morse (passed %s)." % str(value)
             restrict: *list, str, optional*
                 A list of atom labels to include when loading.  If not
                 specified, everything is loaded.
+            adjust_range: *bool, optional*
+                Whether to adjust the default bounds range to account for
+                read in values from a file being out of bounds.
 
         **Returns**
 
@@ -529,7 +553,8 @@ value when fixing rc in Morse (passed %s)." % str(value)
         parsed_file = [cls.parse_line(line) for line in parsed_file]
 
         return [
-            cls(indices=indices, D0=D0, alpha=alpha, r0=r0, rc=rc, line=None)
+            cls(indices=indices, D0=D0, alpha=alpha, r0=r0, rc=rc,
+                line=None, adjust_range=adjust_range)
             for indices, D0, alpha, r0, rc in parsed_file
             if check_restriction(indices, restrict)
         ]

@@ -1,5 +1,5 @@
 import copy
-from squid.forcefields.helper import check_restriction, random_in_range
+from squid.forcefields.helper import check_restriction, random_in_range, adjust_bounds
 
 # These are the identifiers in the parameter file that we seek out
 # NOTE! THEY ARE CASE SENSITIVE!
@@ -40,6 +40,9 @@ class LJ(object):
             Epsilon in LJ expression.
         line: *str*
             A line from a parameter file to be parsed.
+        adjust_range: *bool, optional*
+            Whether to adjust the parameter bounds to account for read
+            in values, or not.
 
     **Returns**
 
@@ -47,26 +50,30 @@ class LJ(object):
             A LJ object.
     '''
 
-    def __init__(self, index=None, sigma=None, epsilon=None, line=None):
+    def __init__(self, index=None, sigma=None, epsilon=None, line=None,
+                 adjust_range=False):
         # How many parameters exist in this potential
         self.N_params = 2
 
         if all([x is None for x in [index, sigma, epsilon]])\
                 and line is not None:
-            self.assign_line(line)
+            self.assign_line(line, adjust_range=adjust_range)
         elif line is None and all([x is not None
                                    for x in [index, sigma, epsilon]]):
             assert not isinstance(index, list),\
                 "In LJ, initialized with index being a list, not a string/int!"
             self.index, self.sigma, self.epsilon = index, sigma, epsilon
-            self.validate()
         else:
             raise Exception("You must either specify only index, sigma, \
 and epsilon OR line, but not all.")
 
         # Assign default bounds
-        self.sigma_bounds = SIGMA_BOUNDS
-        self.epsilon_bounds = EPSILON_BOUNDS
+        self.sigma_bounds = adjust_bounds(
+            adjust_range, self.sigma, SIGMA_BOUNDS)
+        self.epsilon_bounds = adjust_bounds(
+            adjust_range, self.epsilon, EPSILON_BOUNDS)
+
+        self.validate()
 
     def __repr__(self):
         '''
@@ -279,7 +286,7 @@ larger than 0! It is %f" % (self.index, self.epsilon)
         epsilon = float(line[2])
         return index, sigma, epsilon
 
-    def assign_line(self, line):
+    def assign_line(self, line, adjust_range=False):
         '''
         Parse line inputs and assign to this object.
 
@@ -287,12 +294,21 @@ larger than 0! It is %f" % (self.index, self.epsilon)
 
             line: *str*
                 A string that holds LJ information.
+            adjust_range: *bool, optional*
+                Whether to adjust the parameter bounds to account for read
+                in values, or not.
 
         **Returns**
 
             None
         '''
         self.index, self.sigma, self.epsilon = self.parse_line(line)
+
+        self.sigma_bounds = adjust_bounds(
+            adjust_range, self.sigma, self.sigma_bounds)
+        self.epsilon_bounds = adjust_bounds(
+            adjust_range, self.epsilon, self.epsilon_bounds)
+
         self.validate()
 
     def fix(self, params='all', value=None):
@@ -347,7 +363,8 @@ larger than 0! It is %f" % (self.index, self.epsilon)
                 "In LJ, tried fixing %s parameter (does not exist)!" % params)
 
     @classmethod
-    def load_smrff(cls, parsed_file, pfile_name=None, restrict=None):
+    def load_smrff(cls, parsed_file, pfile_name=None, restrict=None,
+                   adjust_range=False):
         '''
         Given a parameter file, inport the coulomb parameters if possible.
 
@@ -363,6 +380,9 @@ larger than 0! It is %f" % (self.index, self.epsilon)
             restrict: *list, str, optional*
                 A list of atom labels to include when loading.  If not
                 specified, everything is loaded.
+            adjust_range: *bool, optional*
+                Whether to adjust the parameter bounds to account for read
+                in values, or not.
 
         **Returns**
 
@@ -383,7 +403,8 @@ larger than 0! It is %f" % (self.index, self.epsilon)
         parsed_file = [cls.parse_line(line) for line in parsed_file]
 
         return [
-            cls(index=index, sigma=sigma, epsilon=epsilon)
+            cls(index=index, sigma=sigma, epsilon=epsilon,
+                adjust_range=adjust_range)
             for index, sigma, epsilon in parsed_file
             if check_restriction(index, restrict)
         ]

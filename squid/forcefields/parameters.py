@@ -99,7 +99,7 @@ class Parameters(object):
 
     def __init__(self,
                  restrict, opls_file=OPLS_FILE, smrff_file=None,
-                 force_ters_2body_symmetry=False):
+                 force_ters_2body_symmetry=False, adjust_range=False):
         #####################################
         # Initialize empty data lists
         self.lj_params = []
@@ -132,6 +132,7 @@ class Parameters(object):
         self.smrff_types = None
 
         self.system_name = None
+        self.adjust_range = adjust_range
 
         # Force restrict to be that of strings
         self.restrict = None
@@ -583,7 +584,9 @@ is not a pair potential."
         raw = smrff_utils.parse_pfile(fname)
 
         # For each possible param type, check if it exists and load it
-        lj_params = LJ.load_smrff(raw, pfile_name=None, restrict=self.restrict)
+        lj_params = LJ.load_smrff(
+            raw, pfile_name=None, restrict=self.restrict,
+            adjust_range=self.adjust_range)
         for lj in lj_params:
             if lj not in self.lj_params:
                 self.lj_params.append(lj)
@@ -591,8 +594,8 @@ is not a pair potential."
                 lj_index = self.lj_params.index(lj)
                 self.lj_params[lj_index].pack(lj.unpack())
 
-        coul_params = Coul.load_smrff(raw, pfile_name=None,
-                                      restrict=self.restrict)
+        coul_params = Coul.load_smrff(
+            raw, pfile_name=None, restrict=self.restrict)
         for coul in coul_params:
             if coul not in self.coul_params:
                 self.coul_params.append(coul)
@@ -601,13 +604,15 @@ is not a pair potential."
                 self.coul_params[coul_index].pack(coul.unpack())
 
         self.tersoff_params += Tersoff.load_smrff(
-            raw, pfile_name=None, restrict=self.restrict)
+            raw, pfile_name=None, restrict=self.restrict,
+            adjust_range=self.adjust_range)
 
         if self.force_ters_2body_symmetry:
             sorted_force_2body_symmetry(self.tersoff_params)
         verify_tersoff_2body_symmetry(self.tersoff_params)
         self.morse_params += Morse.load_smrff(
-            raw, pfile_name=None, restrict=self.restrict)
+            raw, pfile_name=None, restrict=self.restrict,
+            adjust_range=self.adjust_range)
         self.smooth_params += SmoothSinLR.load_smrff(
             raw, pfile_name=None, restrict=self.restrict)
         self.smooth_params += SmoothSinInOut.load_smrff(

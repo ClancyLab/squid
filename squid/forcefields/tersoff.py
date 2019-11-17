@@ -3,7 +3,7 @@ import numpy as np
 from itertools import product
 from squid.utils.cast import is_numeric
 import squid.forcefields.smrff as smrff_utils
-from squid.forcefields.helper import check_restriction, random_in_range
+from squid.forcefields.helper import check_restriction, random_in_range, adjust_bounds
 
 BOUND_EPS = 1E-6
 # These are the identifiers in the parameter file that we seek out
@@ -110,6 +110,10 @@ class Tersoff(object):
             Whether to use the original form (m=3, gamma=1) or the
             Albe et al form (m=1, beta=1).  Must be original or albe.
 
+        adjust_range: *bool, optional*
+            Whether to adjust the default bounds range to account for
+            read in values from a file being out of bounds.
+
     **Returns**
 
         tersoff: :class:`squid.forcefields.tersoff.Tersoff`
@@ -119,7 +123,7 @@ class Tersoff(object):
     def __init__(self, indices=None, m=None, gamma=None, lambda3=None, c=None,
                  d=None, costheta0=None, n=None, beta=None, lambda2=None,
                  B=None, R=None, D=None, lambda1=None, A=None, line=None,
-                 form="original"):
+                 form="original", adjust_range=False):
 
         form = form.lower()
         assert form in ["original", "albe"],\
@@ -194,7 +198,7 @@ class Tersoff(object):
             raise Exception("Either specify all Tersoff parameters, or the \
 line to be parsed, but not both.")
 
-        self.set_default_bounds()
+        self.set_default_bounds(adjust_range=adjust_range)
         self.validate()
 
     def __repr__(self):
@@ -316,28 +320,35 @@ line to be parsed, but not both.")
         '''
         return self._printer(with_indices=True, bounds=1)
 
-    def set_default_bounds(self):
+    def set_default_bounds(self, adjust_range=False):
         '''
         Assign default bounds.  Further, if this is the case of A-B-B vs A-B-C
         we can simplify the bounds as only in the case of A-B-B are two body
         parameters n, Beta, lambda2, lambda1, and A read in.
 
+        **Parameters**
+
+            adjust_range: *bool, optional*
+                Whether to adjust the default bounds range to account for
+                read in values from a file being out of bounds.
+
         **Returns**
 
             None
         '''
-        self.lambda3_bounds = (0.0, 2.0)
-        self.c_bounds = (0.1, 150000.0)
-        self.d_bounds = (0.1, 50.0)
-        self.costheta0_bounds = (-1.0, 1.0)
-        self.R_bounds = (0.0002, 5.0)
-        self.D_bounds = (0.0001, 1.1)
+        f = lambda v, b: adjust_bounds(adjust_range, v, b)
+        self.lambda3_bounds = f(self.lambda3, (0.0, 2.0))
+        self.c_bounds = f(self.c, (0.1, 150000.0))
+        self.d_bounds = f(self.d, (0.1, 50.0))
+        self.costheta0_bounds = (-1.0, 1.0)  # Impossible otherwise
+        self.R_bounds = f(self.R, (0.0002, 5.0))
+        self.D_bounds = f(self.D, (0.0001, 1.1))
         if self.indices is None or self.indices[-1] == self.indices[-2]:
-            self.n_bounds = (0.1, 2.0)
-            self.lambda2_bounds = (0.5, 5.0)
-            self.B_bounds = (200.0, 300000.0)
-            self.lambda1_bounds = (0.5, 5.0)
-            self.A_bounds = (200.0, 300000.0)
+            self.n_bounds = f(self.n, (0.1, 2.0))
+            self.lambda2_bounds = f(self.lambda2, (0.5, 5.0))
+            self.B_bounds = f(self.B, (200.0, 300000.0))
+            self.lambda1_bounds = f(self.lambda1, (0.5, 5.0))
+            self.A_bounds = f(self.A, (200.0, 300000.0))
         elif self.indices[-1] != self.indices[-2]:
             self.n_bounds = (1.0, 1.0)
             self.lambda2_bounds = (1.0, 1.0)
@@ -895,7 +906,8 @@ passed instead." % str(value)
                 % params)
 
     @classmethod
-    def load_smrff(cls, parsed_file, pfile_name=None, restrict=None):
+    def load_smrff(cls, parsed_file, pfile_name=None, restrict=None,
+                   adjust_range=False):
         '''
         Given a parameter file, inport the coulomb parameters if possible.
 
@@ -910,6 +922,9 @@ passed instead." % str(value)
             restrict: *list, str, optional*
                 A list of atom labels to include when loading.  If not
                 specified, everything is loaded.
+            adjust_range: *bool, optional*
+                Whether to adjust the default bounds range to account for
+                read in values from a file being out of bounds.
 
         **Returns**
 
@@ -944,7 +959,7 @@ parameters are defined."
         return [
             cls(indices=indices, m=m, gamma=gamma, lambda3=lambda3, c=c, d=d,
                 costheta0=costheta0, n=n, beta=beta, lambda2=lambda2, B=B,
-                R=R, D=D, lambda1=lambda1, A=A)
+                R=R, D=D, lambda1=lambda1, A=A, adjust_range=adjust_range)
             for indices, m, gamma, lambda3, c, d, costheta0, n,
             beta, lambda2, B, R, D, lambda1, A in parsed_file
             if check_restriction(indices, restrict)
