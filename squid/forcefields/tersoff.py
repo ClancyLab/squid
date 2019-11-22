@@ -531,7 +531,7 @@ Should be either 8, 9, 14, or 15!" % len(params)
 
             None
         '''
-        EPS = 1E-8  # Epsilon to handle floating point errors
+        EPS = 1E-6  # Epsilon to handle floating point errors
         self.indices = [str(x) for x in self.indices]
         self.m = int(self.m)
         assert self.m in [1, 3],\
