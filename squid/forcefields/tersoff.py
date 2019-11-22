@@ -1054,6 +1054,43 @@ parameters are defined."
         self.R_bounds = other.R_bounds
         self.D_bounds = other.D_bounds
 
+    def predicted_2body_r0(self):
+        '''
+        This will try to predict where the minima will occur with the given
+        parameters.  If no prediction is available, None is returned.  This
+        is solely based on the 2body parameters!
+
+        **Returns**
+
+            r0: *float*
+                The location of the minima, or None if none is available.
+        '''
+        A, l1, B, l2 = self.A, self.lambda1, self.B, self.lambda2
+        if any([A is None, B is None, l1 is None, l2 is None]):
+            return None
+        if l1 == l2:
+            return None
+        if l2 == 0 or B == 0:
+            return None
+        return 1.0 / (l1 - l2) * np.log(l1 * A / (l2 * B))
+
+    def predicted_2body_Emin(self):
+        '''
+        This will try to predict the minimum energy well for these
+        given parameters.  If no prediction is available, None is returned.
+        This is solely based on the 2body parameters, and likely the
+        well will be smaller than this from the 3-body contributions.
+
+        **Returns**
+
+            emin: *float*
+                The predicted minima well depth from 2body contributions.
+        '''
+        r0 = self.predicted_2body_r0()
+        if r0 is None:
+            return None
+        return self.ff_energy_2body(r0)
+
     def ff_energy_2body(self, r):
         '''
         Given the current parameters, what is the 2body only energy for the
