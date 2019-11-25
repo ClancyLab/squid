@@ -349,6 +349,7 @@ line to be parsed, but not both.")
             self.B_bounds = f(self.B, (200.0, 300000.0))
             self.lambda1_bounds = f(self.lambda1, (0.5, 5.0))
             self.A_bounds = f(self.A, (200.0, 300000.0))
+            self.beta_bounds = f(self.beta, self.beta_bounds)
         elif self.indices[-1] != self.indices[-2]:
             self.n_bounds = (1.0, 1.0)
             self.lambda2_bounds = (1.0, 1.0)
