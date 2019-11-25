@@ -6,7 +6,7 @@ from squid.forcefields.helper import check_restriction, random_in_range, adjust_
 LJ_PFILE_ID = "LENNARD-JONES"
 END_ID = "END"
 SIGMA_BOUNDS = (0.01, 5.0)
-EPSILON_BOUNDS = (0.0001, 3.0)
+EPSILON_BOUNDS = (0.0001, 300.0)
 
 
 class LJ(object):

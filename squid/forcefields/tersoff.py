@@ -274,8 +274,8 @@ line to be parsed, but not both.")
             held_m, held_beta, held_gamma
 
         return (" ".join(list(self.indices)) +
-                "      %d   %.4f   %.4f   %.4f   %.4f   %.4f" % first_row +
-                "\n\t\t %.4f   %.4f   %.4f   %.4f   %.4f   %.4f   %.4f   %.4f\n\n" % second_row
+                "      %d   %.6f   %.6f   %.6f   %.6f   %.6f" % first_row +
+                "\n\t\t %.6f   %.6f   %.6f   %.6f   %.6f   %.6f   %.6f   %.6f\n\n" % second_row
                 )
 
     def dump_line(self):
@@ -338,17 +338,17 @@ line to be parsed, but not both.")
         '''
         f = lambda v, b: adjust_bounds(adjust_range, v, b)
         self.lambda3_bounds = f(self.lambda3, (0.0, 2.0))
-        self.c_bounds = f(self.c, (0.1, 150000.0))
+        self.c_bounds = f(self.c, (0.1, 100.0))
         self.d_bounds = f(self.d, (0.1, 50.0))
         self.costheta0_bounds = (-1.0, 1.0)  # Impossible otherwise
         self.R_bounds = f(self.R, (0.0002, 5.0))
         self.D_bounds = f(self.D, (0.0001, 1.1))
         if self.indices is None or self.indices[-1] == self.indices[-2]:
             self.n_bounds = f(self.n, (0.1, 2.0))
-            self.lambda2_bounds = f(self.lambda2, (0.5, 5.0))
-            self.B_bounds = f(self.B, (200.0, 300000.0))
-            self.lambda1_bounds = f(self.lambda1, (0.5, 5.0))
-            self.A_bounds = f(self.A, (200.0, 300000.0))
+            self.lambda2_bounds = f(self.lambda2, (0.01, 2.49))
+            self.B_bounds = f(self.B, (100.0, 20000.0))
+            self.lambda1_bounds = f(self.lambda1, (2.51, 5.0))
+            self.A_bounds = f(self.A, (20000.0, 70000.0))
             self.beta_bounds = f(self.beta, self.beta_bounds)
         elif self.indices[-1] != self.indices[-2]:
             self.n_bounds = (1.0, 1.0)
@@ -1006,18 +1006,18 @@ parameters are defined."
                 gamma = random_in_range((0.0, 1.0))
 
             lambda3 = random_in_range((0, 2.0))
-            c = random_in_range((0.1, 150000.0))
+            c = random_in_range((0.1, 100.0))
             d = random_in_range((0.1, 50.0))
             costheta0 = random_in_range((-1.0, 1.0))
             n = random_in_range((0.1, 2.0))
-            lambda2 = random_in_range((0.5, 5.0))
+            lambda2 = random_in_range((0.01, 2.49))
             # We expect A >> B, so we randomly generate B to being smaller.
             # However, we do have a B_bounds that goes up to 300,000.0
-            B = random_in_range((200.0, 50000.0))
-            R = random_in_range((1.1, 3.0))
+            B = random_in_range((100.0, 20000.0))
+            R = random_in_range((1.1, 3.5))
             D = random_in_range((0.1, 1.0))
-            lambda1 = random_in_range((0.5, 5.0))
-            A = random_in_range((200.0, 300000.0))
+            lambda1 = random_in_range((2.51, 5.0))
+            A = random_in_range((20000.0, 70000.0))
 
             Tersoff_Objs.append(
                 cls(
