@@ -1202,8 +1202,8 @@ def verify_tersoff_2body_symmetry(tersoff_params):
                 ters_A.indices[1] == ters_A.indices[2],
                     ters_B.indices[1] == ters_B.indices[2]]):
                 assert all([
-                    ters_A.n == ters_B.n,
-                    ters_A.beta == ters_B.beta,
+                    # ters_A.n == ters_B.n,
+                    # ters_A.beta == ters_B.beta,
                     ters_A.lambda1 == ters_B.lambda1,
                     ters_A.lambda2 == ters_B.lambda2,
                     ters_A.A == ters_B.A,
