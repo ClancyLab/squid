@@ -410,9 +410,11 @@ line to be parsed, but not both.")
                 self.lambda3_bounds[bounds],
                 self.c_bounds[bounds], self.d_bounds[bounds],
                 self.costheta0_bounds[bounds],
-                self.n_bounds[bounds] if not tag_for_2body else None,
-                self.beta_bounds[bounds] if not all([
-                    tag_for_2body, not self.skip_beta]) else None,
+                self.n_bounds[bounds],
+                self.beta_bounds[bounds] if not self.skip_beta else None,
+                # self.n_bounds[bounds] if not tag_for_2body else None,
+                # self.beta_bounds[bounds] if not all([
+                #     tag_for_2body, not self.skip_beta]) else None,
                 self.lambda2_bounds[bounds] if not tag_for_2body else None,
                 self.B_bounds[bounds] if not tag_for_2body else None,
                 self.R_bounds[bounds] if not tag_for_2body else None,
@@ -427,9 +429,10 @@ line to be parsed, but not both.")
                 self.gamma if not self.skip_gamma else None,
                 self.lambda3,
                 self.c, self.d, self.costheta0,
-                self.n if not tag_for_2body else None,
-                self.beta if not all([
-                    tag_for_2body, not self.skip_beta]) else None,
+                self.n, self.beta if not self.skip_beta else None,
+                # self.n if not tag_for_2body else None,
+                # self.beta if not all([
+                #     tag_for_2body, not self.skip_beta]) else None,
                 self.lambda2 if not tag_for_2body else None,
                 self.B if not tag_for_2body else None,
                 self.R if not tag_for_2body else None,
@@ -447,9 +450,11 @@ line to be parsed, but not both.")
                 self.lambda3_bounds,
                 self.c_bounds, self.d_bounds,
                 self.costheta0_bounds,
-                self.n_bounds if not tag_for_2body else None,
-                self.beta_bounds if not all([
-                    tag_for_2body, not self.skip_beta]) else None,
+                self.n_bounds,
+                self.beta_bounds if not self.skip_beta else None,
+                # self.n_bounds if not tag_for_2body else None,
+                # self.beta_bounds if not all([
+                #     tag_for_2body, not self.skip_beta]) else None,
                 self.lambda2_bounds if not tag_for_2body else None,
                 self.B_bounds if not tag_for_2body else None,
                 self.R_bounds if not tag_for_2body else None,
@@ -504,13 +509,13 @@ Should be either 8, 9, 14, or 15!" % len(params)
         self.c = params[4 + offset]
         self.d = params[5 + offset]
         self.costheta0 = params[6 + offset]
+        self.n = params[7 + offset]
+        if not self.skip_beta:
+            self.beta = params[8 + offset]
+        else:
+            offset -= 1
 
         if not self.sym_2body_tag:
-            self.n = params[7 + offset]
-            if not self.skip_beta:
-                self.beta = params[8 + offset]
-            else:
-                offset -= 1
             self.lambda2 = params[9 + offset]
             self.B = params[10 + offset]
 
