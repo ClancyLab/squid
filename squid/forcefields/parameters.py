@@ -1446,6 +1446,40 @@ pair_coeff 2 2 sin_r 0 3.25 0.32
     assert all([s1 == s2 for s1, s2 in zip(s_chk, s_held)]),\
         "Error - Failed pack/unpack or dump_style."
 
+    # Here we test out for each parameter if we can change it, pack, and unpack
+    # (for tersoff that is)
+    P = Tersoff.generate(["xA", "xB", "xC"], form="original")
+    P = Parameters(["xA", "xB", "xC"])
+    P.smrff_types = ["xA", "xB", "xC"]
+    P.set_smoothed_pair_potentials([
+        ("tersoff", 4.5, "NULL"),
+        ("lj/cut/coul/long", 12.0, "ters_l")
+    ])
+    P.generate(
+        ["A", "B", "C"],
+        signs=[1, -1],
+        couple_smooths=True,
+    )
+
+    for ters in P.tersoff_params:
+        ters.R_bounds = (1.0, 3.0)
+        ters.D_bounds = (0.1, 0.5)
+        ters.R = 2.0
+        ters.D = 0.3
+
+    for i in range(10):
+        held, low, high = P.unpack(with_bounds=True)
+        new = [
+            np.random.random() * (h - l) + l
+            for j, l, h in zip(range(len(high)), low, high)
+        ]
+        P.pack(new)
+        test = P.unpack()
+        assert all([
+            abs(p1 - p2) < EPS
+            for p1, p2 in zip(new, test)
+        ]), "Failed to pack and unpack tersoff."
+
 
 if __name__ == "__main__":
     run_unit_tests()
