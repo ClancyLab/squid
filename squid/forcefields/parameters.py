@@ -1,4 +1,6 @@
 import os
+import copy
+import numpy as np
 from squid.forcefields.lj import LJ
 import squid.forcefields.helper as ffh
 from squid.forcefields.morse import Morse

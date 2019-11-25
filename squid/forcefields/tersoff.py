@@ -1299,6 +1299,12 @@ def tag_tersoff_for_duplicate_2bodies(tersoff_params):
     two_body = _unique_grab_2body(tersoff_params)
 
     for a, b in two_body:
+        # There are 14 parameters in total.  Considering m and gamma
+        # are normally fixed, this is commonly 12.  But, as we account
+        # for the fix we look at 14.  Next, we remove A, B, l1, and l2.
+        # Thus we only have 10 parameters.  Next, we also consider that
+        # we want to keep the same R and D for 2-body sym, so we now
+        # have only 8 parameters.
         index = tersoff_params.index((b, a, a))
         tersoff_params[index].sym_2body_tag = True
         # Essentially, we no longer recognize the other params here.
@@ -1306,8 +1312,8 @@ def tag_tersoff_for_duplicate_2bodies(tersoff_params):
         # In this case, we also ignore R and D
         # tersoff_params[index].N_params = 6
 
-        # Don't include n and beta
-        tersoff_params[index].N_params = 4
+        # 14 - (A, B, l1, l2, R, D)
+        tersoff_params[index].N_params = 8
 
         # Handle any other removals too
         tersoff_params[index].N_params -= int(tersoff_params[index].skip_m)
