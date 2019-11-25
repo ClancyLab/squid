@@ -1037,8 +1037,9 @@ parameters are defined."
 
             None
         '''
-        self.n = other.n
-        self.beta = other.beta
+        # self.n = other.n
+        # self.beta = other.beta
+
         self.lambda1 = other.lambda1
         self.lambda2 = other.lambda2
         self.A = other.A
@@ -1046,8 +1047,9 @@ parameters are defined."
         self.R = other.R
         self.D = other.D
 
-        self.n_bounds = other.n_bounds
-        self.beta_bounds = other.beta_bounds
+        # self.n_bounds = other.n_bounds
+        # self.beta_bounds = other.beta_bounds
+
         self.lambda1_bounds = other.lambda1_bounds
         self.lambda2_bounds = other.lambda2_bounds
         self.A_bounds = other.A_bounds
@@ -1297,7 +1299,11 @@ def tag_tersoff_for_duplicate_2bodies(tersoff_params):
         # Essentially, we no longer recognize the other params here.
         # tersoff_params[index].N_params = 8
         # In this case, we also ignore R and D
-        tersoff_params[index].N_params = 6
+        # tersoff_params[index].N_params = 6
+
+        # Don't include n and beta
+        tersoff_params[index].N_params = 4
+
         # Handle any other removals too
         tersoff_params[index].N_params -= int(tersoff_params[index].skip_m)
         tersoff_params[index].N_params -= int(tersoff_params[index].skip_gamma)
