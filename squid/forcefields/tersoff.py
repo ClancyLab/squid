@@ -343,26 +343,29 @@ line to be parsed, but not both.")
         self.costheta0_bounds = (-1.0, 1.0)  # Impossible otherwise
         self.R_bounds = f(self.R, (0.0002, 5.0))
         self.D_bounds = f(self.D, (0.0001, 1.1))
+        self.n_bounds = f(self.n, (0.1, 2.0))
+        self.beta_bounds = f(self.beta, self.beta_bounds)
         if self.indices is None or self.indices[-1] == self.indices[-2]:
-            self.n_bounds = f(self.n, (0.1, 2.0))
+            # self.n_bounds = f(self.n, (0.1, 2.0))
             self.lambda2_bounds = f(self.lambda2, (0.01, 2.49))
             self.B_bounds = f(self.B, (100.0, 20000.0))
             self.lambda1_bounds = f(self.lambda1, (2.51, 5.0))
             self.A_bounds = f(self.A, (20000.0, 70000.0))
-            self.beta_bounds = f(self.beta, self.beta_bounds)
+            # self.beta_bounds = f(self.beta, self.beta_bounds)
         elif self.indices[-1] != self.indices[-2]:
-            self.n_bounds = (1.0, 1.0)
             self.lambda2_bounds = (1.0, 1.0)
             self.B_bounds = (1.0, 1.0)
             self.lambda1_bounds = (1.0, 1.0)
             self.A_bounds = (1.0, 1.0)
-            self.beta_bounds = (1.0, 1.0)
-            self.n = 1.0
             self.lambda2 = 1.0
             self.B = 1.0
             self.lambda1 = 1.0
             self.A = 1.0
-            self.beta = 1.0
+
+            # self.n_bounds = (1.0, 1.0)
+            # self.beta_bounds = (1.0, 1.0)
+            # self.n = 1.0
+            # self.beta = 1.0
         else:
             raise Exception("This should never happen!")
 
@@ -1342,34 +1345,34 @@ def run_unit_tests():
     # In this case, because we do not have a 2-body interaction (x-y-y in indices),
     # many parameters take on a default.  Ensure this is true!
     ct1 = Tersoff(
-        indices=["1", "1", "2"], m=3, gamma=1.0, lambda3=1.2, c=80000.0,
+        indices=["1", "1", "2"], m=3, gamma=1.0, lambda3=1.2, c=100.0,
         d=20.0, costheta0=0.2, n=0.5, beta=0.8, lambda2=4.9,
         B=12000.0, R=3.0, D=0.5, lambda1=1.1, A=60000.0, line=None
     )
-    ct1_s_a = "1 1 2      3   1.0000   1.2000   80000.0000   20.0000   0.2000"
-    ct1_s_b = "1.0000   1.0000   1.0000   1.0000   3.0000   0.5000   1.0000   1.0000"
+    ct1_s_a = "1 1 2      3   1.000000   1.200000   100.000000   20.000000   0.200000"
+    ct1_s_b = "0.500000   0.800000   1.000000   1.000000   3.000000   0.500000   1.000000   1.000000"
     chk_s_a, chk_s_b = str(ct1).strip().split("\n")
     assert ct1_s_a == chk_s_a.strip(), "Error - String formatting has changed"
     assert ct1_s_b == chk_s_b.strip(), "Error - String formatting has changed"
 
     ct1 = Tersoff(
-        indices=["1", "1", "1"], m=3, gamma=1.0, lambda3=1.2, c=80000.0,
-        d=20.0, costheta0=0.2, n=0.5, beta=0.8, lambda2=4.9,
-        B=12000.0, R=3.0, D=0.5, lambda1=1.1, A=60000.0, line=None
+        indices=["1", "1", "1"], m=3, gamma=1.0, lambda3=1.2, c=100.0,
+        d=20.0, costheta0=0.2, n=0.5, beta=0.8, lambda2=1.1,
+        B=12000.0, R=3.0, D=0.5, lambda1=3.0, A=60000.0, line=None
     )
-    ct1_s_a = "1 1 1      3   1.0000   1.2000   80000.0000   20.0000   0.2000"
-    ct1_s_b = "0.5000   0.8000   4.9000   12000.0000   3.0000   0.5000   1.1000   60000.0000"
+    ct1_s_a = "1 1 1      3   1.000000   1.200000   100.000000   20.000000   0.200000"
+    ct1_s_b = "0.500000   0.800000   1.100000   12000.000000   3.000000   0.500000   3.000000   60000.000000"
     chk_s_a, chk_s_b = str(ct1).strip().split("\n")
     assert ct1_s_a == chk_s_a.strip(), "Error - String formatting has changed"
     assert ct1_s_b == chk_s_b.strip(), "Error - String formatting has changed"
 
     ct2 = Tersoff(
-        indices=["1", "1", "1"], m=3, gamma=1.0, lambda3=1.2, c=10000.0,
-        d=20.0, costheta0=-0.2, n=0.9, beta=0.92, lambda2=4.9,
-        B=3000.0, R=3.0, D=0.5, lambda1=1.1, A=100000.0, line=None
+        indices=["1", "1", "1"], m=3, gamma=1.0, lambda3=1.2, c=100.0,
+        d=20.0, costheta0=-0.2, n=0.9, beta=0.92, lambda2=1.1,
+        B=3000.0, R=3.0, D=0.5, lambda1=3.1, A=50000.0, line=None
     )
-    ct2_s_a = "1 1 1      3   1.0000   1.2000   10000.0000   20.0000   -0.2000"
-    ct2_s_b = "0.9000   0.9200   4.9000   3000.0000   3.0000   0.5000   1.1000   100000.0000"
+    ct2_s_a = "1 1 1      3   1.000000   1.200000   100.000000   20.000000   -0.200000"
+    ct2_s_b = "0.900000   0.920000   1.100000   3000.000000   3.000000   0.500000   3.100000   50000.000000"
     chk_s_a, chk_s_b = str(ct2).strip().split("\n")
     assert ct2_s_a == chk_s_a.strip(), "Error - String formatting has changed"
     assert ct2_s_b == chk_s_b.strip(), "Error - String formatting has changed"
@@ -1397,34 +1400,34 @@ def run_unit_tests():
         "Error - Unpack is not correct!"
 
     # Test parsing of a line
-    ct3 = Tersoff(line='''1 1 1      3   1.0000   1.2000   10000.0000   20.0000   -0.2000
-        0.9000   0.9200   4.9000   3000.0000   3.0000   0.5000   1.1000   100000.0000''')
+    ct3 = Tersoff(line='''1 1 1      3   1.0000   1.2000   99.0000   20.0000   -0.2000
+        0.9000   0.9200   1.1000   3000.0000   3.0000   0.5000   3.1000   64000.0000''')
     assert ct3.indices == ["1", "1", "1"],\
         "Error - Unable to parse indices from line."
     assert ct3.m == 3, "Error - Unable to parse m from line."
     assert ct3.gamma == 1, "Error - Unable to parse gamma from line."
     assert ct3.lambda3 == 1.2, "Error - Unable to parse lambda3 from line."
-    assert ct3.c == 10000, "Error - Unable to parse c from line."
+    assert ct3.c == 99, "Error - Unable to parse c from line."
     assert ct3.d == 20, "Error - Unable to parse d from line."
     assert ct3.costheta0 == -0.2,\
         "Error - Unable to parse costheta0 from line."
     assert ct3.n == 0.9, "Error - Unable to parse n from line."
     assert ct3.beta == 0.92, "Error - Unable to parse beta from line."
-    assert ct3.lambda2 == 4.9, "Error - Unable to parse lambda2 from line."
+    assert ct3.lambda2 == 1.1, "Error - Unable to parse lambda2 from line."
     assert ct3.B == 3000.0, "Error - Unable to parse B from line."
     assert ct3.R == 3.0, "Error - Unable to parse R from line."
     assert ct3.D == 0.5, "Error - Unable to parse D from line."
-    assert ct3.lambda1 == 1.1, "Error - Unable to parse lambda1 from line."
-    assert ct3.A == 100000, "Error - Unable to parse A from line."
+    assert ct3.lambda1 == 3.1, "Error - Unable to parse lambda1 from line."
+    assert ct3.A == 64000, "Error - Unable to parse A from line."
 
     # Test packing and unpacking more robustly
     # By default, if we have original, we do not need to unpack m and gamma!
-    ct1 = Tersoff(line='''1 1 1      3   1.0000   1.2000   10000.0000   20.0000   -0.2000
-        0.9000   0.9200   4.9000   3000.0000   3.0000   0.5000   1.1000   100000.0000''')
+    ct1 = Tersoff(line='''1 1 1      3   1.0000   1.2000   89.0000   20.0000   -0.2000
+        0.9000   0.9200   1.9000   3000.0000   3.0000   0.5000   3.4000   64000.0000''')
     values = ct1.unpack()
     values_stored = [
-        ['1', '1', '1'], 1.2, 10000.0, 20.0, -0.2, 0.9, 0.92,
-        4.9, 3000.0, 3.0, 0.5, 1.1, 100000.0
+        ['1', '1', '1'], 1.2, 89.0, 20.0, -0.2, 0.9, 0.92,
+        1.9, 3000.0, 3.0, 0.5, 3.4, 64000.0
     ]
     assert all([v1 == v2 for v1, v2 in zip(values, values_stored)]),\
         "Error - Unable to unpack original correctly."
@@ -1432,8 +1435,8 @@ def run_unit_tests():
     # Should be able to pack with indices, skipping m and beta
     # (as it is original tersoff)
     new_values_1 = [
-        ['3', '3', '3'], 1.3, 10000.1, 20.1, -0.3, 0.95, 0.93,
-        4.8, 3000.1, 3.1, 0.4, 1.2, 100001.0
+        ['3', '3', '3'], 1.3, 35.1, 10.1, -0.3, 0.95, 0.93,
+        1.8, 3000.1, 3.1, 0.4, 4.2, 56987.0
     ]
     ct1.pack(new_values_1)
     values = ct1.unpack()
@@ -1443,8 +1446,8 @@ def run_unit_tests():
     # Should be able to pack without indices, skipping m and beta
     # (as it is original tersoff)
     new_values_1 = [
-        1.2, 10000.0, 20.0, -0.2, 0.9, 0.92,
-        4.9, 3000.0, 3.0, 0.5, 1.1, 100000.0
+        1.3, 35.1, 10.1, -0.3, 0.95, 0.93,
+        1.8, 3000.1, 3.1, 0.4, 4.2, 56987.0
     ]
     ct1.pack(new_values_1)
     values = ct1.unpack(with_indices=False)
