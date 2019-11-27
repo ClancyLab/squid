@@ -387,6 +387,9 @@ set_positions.")
 
             None
         '''
+        # If we have no bonds, this is pointless to do, so return None
+        if self.bonds is None or not self.bonds:
+            return None
 
         # Get a list of bonded interactions to each atom.
         bonded = [

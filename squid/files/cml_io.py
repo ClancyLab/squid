@@ -35,6 +35,31 @@ def read_cml(name):
     # appropriate section when it is found
     atoms, bonds = [], []
 
+    def _gen_atom(atom, required_attrs, translated_attrs):
+        # Error handle
+        keys = atom.attrib.keys()
+        error_msg = "Error - CML file requires the following: " +\
+                    ", ".join(required_attrs)
+        assert all([attr in keys for attr in required_attrs]), error_msg
+
+        # Generate a blank atom
+        a = Atom(element=None, x=None, y=None, z=None)
+
+        # Assign all values
+        for cml_attr in keys:
+            atom_attr = cml_attr
+            if cml_attr in translated_attrs:
+                atom_attr = translated_attrs[cml_attr]
+            # Special handling for index, where we remove the a
+            if atom_attr == "index":
+                setattr(a, atom_attr, int(atom.attrib[cml_attr][1:]))
+            elif atom_attr in ['x', 'y', 'z']:
+                setattr(a, atom_attr, float(atom.attrib[cml_attr]))
+            else:
+                setattr(a, atom_attr, atom.attrib[cml_attr])
+
+        return a
+
     # Parse the atoms of a cml file
     def _parse_atoms(child):
         required_attrs = ['elementType', 'x3', 'y3', 'z3', 'id']
@@ -45,34 +70,10 @@ def read_cml(name):
             'z3': 'z',
             'id': 'index'
         }
-        child_atoms = []
-        for atom in child:
-            # Error handle
-            keys = atom.attrib.keys()
-            error_msg = "Error - CML file requires the following: " +\
-                        ", ".join(required_attrs)
-            assert all([attr in keys for attr in required_attrs]), error_msg
-
-            # Generate a blank atom
-            a = Atom(element=None, x=None, y=None, z=None)
-
-            # Assign all values
-            for cml_attr in keys:
-                atom_attr = cml_attr
-                if cml_attr in translated_attrs:
-                    atom_attr = translated_attrs[cml_attr]
-                # Special handling for index, where we remove the a
-                if atom_attr == "index":
-                    setattr(a, atom_attr, int(atom.attrib[cml_attr][1:]))
-                elif atom_attr in ['x', 'y', 'z']:
-                    setattr(a, atom_attr, float(atom.attrib[cml_attr]))
-                else:
-                    setattr(a, atom_attr, atom.attrib[cml_attr])
-
-            # Save this atom
-            child_atoms.append(a)
-
-        return child_atoms
+        return [
+            _gen_atom(atom, required_attrs, translated_attrs)
+            for atom in child
+        ]
 
     # Parse the bonds of a cml file
     def _parse_bonds(child, child_atoms):
