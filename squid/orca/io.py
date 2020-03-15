@@ -69,7 +69,7 @@ job most likely crashed.' % input_path)
     energies = [float(e) for e in energies]
 
     if len(energies) > 0:
-        energy = min(energies)
+        energy = energies[-1]
     else:
         energy = None
 
