@@ -1,0 +1,7 @@
+[console_scripts]
+chkDFT = squid.console_scripts.chkDFT:chkDFT
+chko = squid.console_scripts.chkDFT:chkDFT
+procrustes = squid.console_scripts.procrustes:procrustes
+pysub = squid.console_scripts.pysub:pysub
+scanDFT = squid.console_scripts.scanDFT:scanDFT
+
