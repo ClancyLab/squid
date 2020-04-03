@@ -1,4 +1,0 @@
-pyDOE
-numpy
-scipy
-psutil
